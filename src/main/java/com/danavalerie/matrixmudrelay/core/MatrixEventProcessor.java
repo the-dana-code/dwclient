@@ -63,22 +63,22 @@ public final class MatrixEventProcessor {
         String lower = body.toLowerCase();
 
         // Reserved words precedence
-        if (lower.equals("connect")) {
+        if (!mud.isConnected() && lower.equals("#connect")) {
             handleConnect();
             return;
         }
-        if (lower.equals("disconnect")) {
+        if (mud.isConnected() && lower.equals("#disconnect")) {
             handleDisconnect();
             return;
         }
-        if (lower.equals("status")) {
+        if (lower.equals("#status")) {
             handleStatus();
             return;
         }
 
         // Hard safety rule: never send controller text to MUD unless currently connected
         if (!mud.isConnected()) {
-            sender.sendText(roomId, "Error: MUD is disconnected. Send `connect` first.");
+            sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.");
             return;
         }
 
