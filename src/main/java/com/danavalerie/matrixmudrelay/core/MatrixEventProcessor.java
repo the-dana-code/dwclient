@@ -84,17 +84,21 @@ public final class MatrixEventProcessor {
 
         // Alias expansion (exact match, reserved words excluded)
         Map<String, List<String>> aliases = cfg.aliases;
-        if (aliases != null && aliases.containsKey(body)) {
-            List<String> lines = aliases.get(body);
-            if (lines == null || lines.isEmpty()) return;
-            transcript.logMatrixToMud("[alias:" + body + "] " + String.join(" | ", lines));
-            mud.sendLinesFromController(lines);
-            return;
-        }
+        try {
+            if (aliases != null && aliases.containsKey(body)) {
+                List<String> lines = aliases.get(body);
+                if (lines == null || lines.isEmpty()) return;
+                transcript.logMatrixToMud("[alias:" + body + "] " + String.join(" | ", lines));
+                mud.sendLinesFromController(lines);
+                return;
+            }
 
-        String sanitized = Sanitizer.sanitizeMudInput(body);
-        transcript.logMatrixToMud(sanitized);
-        mud.sendLinesFromController(List.of(sanitized));
+            String sanitized = Sanitizer.sanitizeMudInput(body);
+            transcript.logMatrixToMud(sanitized);
+            mud.sendLinesFromController(List.of(sanitized));
+        } catch (IllegalStateException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage());
+        }
     }
 
     private void handleConnect() {

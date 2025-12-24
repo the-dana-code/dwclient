@@ -33,11 +33,11 @@ public class MudClient {
     private final Object lock = new Object();
     private volatile boolean connected = false;
 
-    private Socket socket;
-    private InputStream in;
-    private OutputStream out;
+    private volatile Socket socket;
+    private volatile InputStream in;
+    private volatile OutputStream out;
     private Thread readerThread;
-    private ExecutorService writer;
+    private volatile ExecutorService writer;
 
     public MudClient(BotConfig.Mud cfg,
                      MudLineListener lineListener,
@@ -64,8 +64,6 @@ public class MudClient {
             in = socket.getInputStream();
             out = socket.getOutputStream();
 
-            connected = true;
-
             // Writer executor: commands only originate from controller message handling.
             writer = Executors.newSingleThreadExecutor(r -> {
                 Thread t = new Thread(r, "mud-write");
@@ -73,6 +71,7 @@ public class MudClient {
                 return t;
             });
 
+            connected = true;
             startReader();
             log.info("mud connected host={} port={}", cfg.host, cfg.port);
         }
@@ -86,19 +85,14 @@ public class MudClient {
 
     private void readLoop() {
         Charset cs = Charset.forName(cfg.charset);
-        TelnetDecoder decoder = new TelnetDecoder(() -> {
-            synchronized (lock) { return out; }
-        });
+        TelnetDecoder decoder = new TelnetDecoder(() -> out);
 
         ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(1024);
 
         try {
-            while (true) {
-                int b;
-                synchronized (lock) {
-                    if (!connected || in == null) return;
-                    b = in.read();
-                }
+            InputStream currentIn = in;
+            while (connected && currentIn != null) {
+                int b = currentIn.read();
                 if (b == -1) {
                     disconnect("eof");
                     return;
@@ -122,9 +116,13 @@ public class MudClient {
                 }
             }
         } catch (IOException e) {
-            disconnect("io_error: " + e.getMessage());
+            if (connected) {
+                disconnect("io_error: " + e.getMessage());
+            }
         } catch (Exception e) {
-            disconnect("unexpected: " + e.getMessage());
+            if (connected) {
+                disconnect("unexpected: " + e.getMessage());
+            }
         }
     }
 
@@ -135,53 +133,61 @@ public class MudClient {
 
     public void sendLinesFromController(List<String> lines) {
         // Hard gate: never send unless connected at send time.
-        synchronized (lock) {
-            if (!connected || writer == null) return;
+        if (!connected) {
+            throw new IllegalStateException("Not connected to MUD");
         }
-        writer.submit(() -> doWrite(lines));
+        ExecutorService w = writer;
+        if (w == null) {
+            throw new IllegalStateException("Writer not initialized");
+        }
+        w.submit(() -> doWrite(lines));
     }
 
     private void doWrite(List<String> lines) {
-        synchronized (lock) {
-            if (!connected || out == null) return;
-            try {
-                for (String raw : lines) {
-                    String line = raw == null ? "" : raw;
-                    line = Sanitizer.sanitizeMudInput(line);
+        OutputStream currentOut = out;
+        if (!connected || currentOut == null) return;
+        try {
+            for (String raw : lines) {
+                String line = raw == null ? "" : raw;
+                line = Sanitizer.sanitizeMudInput(line);
 
-                    // MUD line-oriented input; CRLF for telnet compatibility
-                    out.write(line.getBytes(Charset.forName(cfg.charset)));
-                    out.write('\r');
-                    out.write('\n');
+                // MUD line-oriented input; CRLF for telnet compatibility
+                currentOut.write(line.getBytes(Charset.forName(cfg.charset)));
+                currentOut.write('\r');
+                currentOut.write('\n');
 
-                    transcript.logMatrixToMud(line);
-                }
-                out.flush();
-            } catch (IOException e) {
-                disconnect("write_error: " + e.getMessage());
+                transcript.logMatrixToMud(line);
             }
+            currentOut.flush();
+        } catch (IOException e) {
+            disconnect("write_error: " + e.getMessage());
         }
     }
 
     public void disconnect(String reason) {
         Socket s;
         ExecutorService w;
+        InputStream i;
+        OutputStream o;
+
         synchronized (lock) {
             if (!connected) return;
             connected = false;
 
             s = socket;
             socket = null;
-
-            closeQuietly(in); in = null;
-            closeQuietly(out); out = null;
-
+            i = in;
+            in = null;
+            o = out;
+            out = null;
             w = writer;
             writer = null;
         }
 
         if (w != null) w.shutdownNow();
-        if (s != null) closeQuietly(s);
+        closeQuietly(i);
+        closeQuietly(o);
+        closeQuietly(s);
 
         log.info("mud disconnected reason={}", reason);
         disconnectListener.onDisconnected(reason);
