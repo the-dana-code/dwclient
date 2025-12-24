@@ -1,21 +1,20 @@
 package com.danavalerie.matrixmudrelay.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class ConfigLoader {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final Gson GSON = new GsonBuilder().create();
 
     private ConfigLoader() {}
 
     public static BotConfig load(Path path) throws IOException {
-        byte[] json = Files.readAllBytes(path);
-        BotConfig cfg = MAPPER.readValue(json, BotConfig.class);
+        String json = Files.readString(path);
+        BotConfig cfg = GSON.fromJson(json, BotConfig.class);
         validate(cfg);
         return cfg;
     }

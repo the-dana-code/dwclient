@@ -1,8 +1,10 @@
 package com.danavalerie.matrixmudrelay.matrix;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RetryingMatrixSender {
     private static final Logger log = LoggerFactory.getLogger(RetryingMatrixSender.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final Gson GSON = new GsonBuilder().create();
 
     private final MatrixClient client;
     private final BotConfig.Retry retry;
@@ -78,9 +80,9 @@ public class RetryingMatrixSender {
 
     private static long parseRetryAfterMs(String body) {
         try {
-            JsonNode n = MAPPER.readTree(body);
-            JsonNode ra = n.get("retry_after_ms");
-            return ra == null ? -1 : ra.asLong(-1);
+            JsonObject n = GSON.fromJson(body, JsonObject.class);
+            JsonElement ra = n.get("retry_after_ms");
+            return ra == null ? -1 : ra.getAsLong();
         } catch (Exception ignored) {
             return -1;
         }

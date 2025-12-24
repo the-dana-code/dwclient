@@ -1,12 +1,9 @@
 package com.danavalerie.matrixmudrelay.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public final class BotConfig {
     public Matrix matrix = new Matrix();
     public Mud mud = new Mud();
@@ -17,7 +14,6 @@ public final class BotConfig {
     public Transcript transcript = new Transcript();
     public Retry retry = new Retry();
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Matrix {
         public String homeserverUrl;           // e.g. https://myserver.danavalerie.com
         public String accessToken;             // SENSITIVE
@@ -32,7 +28,6 @@ public final class BotConfig {
         public boolean respondToUnauthorized = false;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Mud {
         public String host;
         public int port;
@@ -40,7 +35,6 @@ public final class BotConfig {
         public int connectTimeoutMs = 10000;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Transcript {
         public boolean enabled = false;
         public String directory = "./transcripts";
@@ -48,7 +42,6 @@ public final class BotConfig {
         public int maxFiles = 20;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Retry {
         public long initialBackoffMs = 500;
         public long maxBackoffMs = 5000;

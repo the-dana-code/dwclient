@@ -5,7 +5,8 @@ import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public final class MatrixEventProcessor {
         this.transcript = transcript;
     }
 
-    public void onMatrixEvent(JsonNode ev) {
+    public void onMatrixEvent(JsonObject ev) {
         String type = text(ev.get("type"));
         if (!"m.room.message".equals(type)) return;
 
@@ -39,13 +40,13 @@ public final class MatrixEventProcessor {
         // Ignore our own messages
         if (senderId.equals(cfg.matrix.userId)) return;
 
-        JsonNode content = ev.get("content");
-        if (content == null) return;
+        JsonElement content = ev.get("content");
+        if (content == null || !content.isJsonObject()) return;
 
-        String msgtype = text(content.get("msgtype"));
+        String msgtype = text(content.getAsJsonObject().get("msgtype"));
         if (msgtype != null && !"m.text".equals(msgtype)) return;
 
-        String body = text(content.get("body"));
+        String body = text(content.getAsJsonObject().get("body"));
         if (body == null) return;
 
         body = body.trim();
@@ -124,8 +125,8 @@ public final class MatrixEventProcessor {
         sender.sendText(roomId, "Status: " + (mud.isConnected() ? "CONNECTED" : "DISCONNECTED"));
     }
 
-    private static String text(JsonNode n) {
-        if (n == null || n.isNull()) return null;
-        return n.asText(null);
+    private static String text(JsonElement n) {
+        if (n == null || n.isJsonNull()) return null;
+        return n.getAsString();
     }
 }

@@ -1,8 +1,9 @@
 package com.danavalerie.matrixmudrelay.matrix;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,7 +16,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 public final class MatrixClient {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final Gson GSON = new GsonBuilder().create();
 
     private final HttpClient http;
     private final String baseUrl;     // e.g. https://example.com
@@ -41,34 +42,34 @@ public final class MatrixClient {
     public String joinAndResolveRoom(String roomOrAlias) throws IOException, InterruptedException, MatrixApiException {
         // POST /_matrix/client/v3/join/{roomIdOrAlias}
         String path = "/_matrix/client/v3/join/" + urlPath(roomOrAlias);
-        JsonNode resp = postJson(path, MAPPER.createObjectNode());
-        JsonNode roomId = resp.get("room_id");
-        if (roomId == null || roomId.asText().isBlank()) {
+        JsonObject resp = postJson(path, new JsonObject());
+        JsonElement roomId = resp.get("room_id");
+        if (roomId == null || roomId.getAsString().isBlank()) {
             if (roomOrAlias.startsWith("!")) return roomOrAlias;
             return resolveRoomAlias(roomOrAlias);
         }
-        return roomId.asText();
+        return roomId.getAsString();
     }
 
     public String resolveRoomAlias(String roomAlias) throws IOException, InterruptedException, MatrixApiException {
         // GET /_matrix/client/v3/directory/room/{roomAlias}
         String path = "/_matrix/client/v3/directory/room/" + urlPath(roomAlias);
-        JsonNode resp = get(path);
-        JsonNode roomId = resp.get("room_id");
-        if (roomId == null || roomId.asText().isBlank()) throw new MatrixApiException(500, "No room_id in directory response");
-        return roomId.asText();
+        JsonObject resp = get(path);
+        JsonElement roomId = resp.get("room_id");
+        if (roomId == null || roomId.getAsString().isBlank()) throw new MatrixApiException(500, "No room_id in directory response");
+        return roomId.getAsString();
     }
 
     /**
      * Create a server-side filter and return filter_id (spec-compliant usage for /sync filter parameter).
      */
-    public String createFilter(ObjectNode filter) throws IOException, InterruptedException, MatrixApiException {
+    public String createFilter(JsonObject filter) throws IOException, InterruptedException, MatrixApiException {
         // POST /_matrix/client/v3/user/{userId}/filter
         String path = "/_matrix/client/v3/user/" + urlPath(userId) + "/filter";
-        JsonNode resp = postJson(path, filter);
-        JsonNode fid = resp.get("filter_id");
-        if (fid == null || fid.asText().isBlank()) throw new MatrixApiException(500, "No filter_id in response");
-        return fid.asText();
+        JsonObject resp = postJson(path, filter);
+        JsonElement fid = resp.get("filter_id");
+        if (fid == null || fid.getAsString().isBlank()) throw new MatrixApiException(500, "No filter_id in response");
+        return fid.getAsString();
     }
 
     public SyncResponse sync(String since, int timeoutMs, String filterId)
@@ -86,7 +87,7 @@ public final class MatrixClient {
         String query = qs.length() == 0 ? "" : ("?" + qs.substring(0, qs.length() - 1));
         String path = "/_matrix/client/v3/sync" + query;
 
-        JsonNode resp = get(path);
+        JsonObject resp = get(path);
         return new SyncResponse(resp);
     }
 
@@ -97,44 +98,66 @@ public final class MatrixClient {
         String path = "/_matrix/client/v3/rooms/" + urlPath(roomId)
                 + "/send/m.room.message/" + urlPath(txnId);
 
-        ObjectNode content = MAPPER.createObjectNode();
-        content.put("msgtype", "m.text");
-        content.put("body", body);
+        JsonObject content = new JsonObject();
+        content.addProperty("msgtype", "m.text");
+        content.addProperty("body", body);
 
-        JsonNode resp = putJson(path, content);
-        JsonNode eventId = resp.get("event_id");
-        return eventId == null ? null : eventId.asText();
+        JsonObject resp = putJson(path, content);
+        JsonElement eventId = resp.get("event_id");
+        return eventId == null ? null : eventId.getAsString();
     }
 
     public static final class SyncResponse {
-        public final JsonNode root;
-        public SyncResponse(JsonNode root) { this.root = root; }
+        public final JsonObject root;
+        public SyncResponse(JsonObject root) { this.root = root; }
         public String nextBatch() {
-            JsonNode nb = root.get("next_batch");
-            return nb == null ? null : nb.asText();
+            JsonElement nb = root.get("next_batch");
+            return nb == null ? null : nb.getAsString();
         }
     }
 
     // Build a filter object that restricts timeline events to m.room.message in the given room.
-    public static ObjectNode buildRoomMessageFilter(String roomId) {
-        ObjectNode root = MAPPER.createObjectNode();
-        ObjectNode room = root.putObject("room");
-        room.putArray("rooms").add(roomId);
+    public static JsonObject buildRoomMessageFilter(String roomId) {
+        JsonObject root = new JsonObject();
+        JsonObject room = new JsonObject();
+        root.add("room", room);
 
-        ObjectNode timeline = room.putObject("timeline");
-        timeline.putArray("types").add("m.room.message");
-        timeline.put("limit", 20);
+        com.google.gson.JsonArray rooms = new com.google.gson.JsonArray();
+        rooms.add(roomId);
+        room.add("rooms", rooms);
+
+        JsonObject timeline = new JsonObject();
+        room.add("timeline", timeline);
+        com.google.gson.JsonArray types = new com.google.gson.JsonArray();
+        types.add("m.room.message");
+        timeline.add("types", types);
+        timeline.addProperty("limit", 20);
 
         // Reduce noise
-        room.putObject("state").putArray("types");
-        room.putObject("ephemeral").putArray("types");
-        room.putObject("account_data").putArray("types");
-        root.putObject("presence").putArray("types");
-        root.putObject("account_data").putArray("types");
+        JsonObject state = new JsonObject();
+        state.add("types", new com.google.gson.JsonArray());
+        room.add("state", state);
+
+        JsonObject ephemeral = new JsonObject();
+        ephemeral.add("types", new com.google.gson.JsonArray());
+        room.add("ephemeral", ephemeral);
+
+        JsonObject accountData = new JsonObject();
+        accountData.add("types", new com.google.gson.JsonArray());
+        room.add("account_data", accountData);
+
+        JsonObject presence = new JsonObject();
+        presence.add("types", new com.google.gson.JsonArray());
+        root.add("presence", presence);
+
+        JsonObject rootAccountData = new JsonObject();
+        rootAccountData.add("types", new com.google.gson.JsonArray());
+        root.add("account_data", rootAccountData);
+
         return root;
     }
 
-    private JsonNode get(String path) throws IOException, InterruptedException, MatrixApiException {
+    private JsonObject get(String path) throws IOException, InterruptedException, MatrixApiException {
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(70))
@@ -145,38 +168,38 @@ public final class MatrixClient {
         return send(req);
     }
 
-    private JsonNode postJson(String path, JsonNode body) throws IOException, InterruptedException, MatrixApiException {
+    private JsonObject postJson(String path, JsonObject body) throws IOException, InterruptedException, MatrixApiException {
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(30))
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(MAPPER.writeValueAsString(body)))
+                .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(body)))
                 .build();
         return send(req);
     }
 
-    private JsonNode putJson(String path, JsonNode body) throws IOException, InterruptedException, MatrixApiException {
+    private JsonObject putJson(String path, JsonObject body) throws IOException, InterruptedException, MatrixApiException {
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(30))
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(MAPPER.writeValueAsString(body)))
+                .PUT(HttpRequest.BodyPublishers.ofString(GSON.toJson(body)))
                 .build();
         return send(req);
     }
 
-    private JsonNode send(HttpRequest req) throws IOException, InterruptedException, MatrixApiException {
+    private JsonObject send(HttpRequest req) throws IOException, InterruptedException, MatrixApiException {
         HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         int sc = resp.statusCode();
         String body = resp.body() == null ? "" : resp.body();
         if (sc / 100 != 2) {
             throw new MatrixApiException(sc, body);
         }
-        if (body.isBlank()) return MAPPER.createObjectNode();
+        if (body.isBlank()) return new JsonObject();
         try {
-            return MAPPER.readTree(body);
+            return GSON.fromJson(body, JsonObject.class);
         } catch (Exception e) {
             throw new IOException("Failed to parse Matrix JSON: " + e.getMessage() + " body=" + body, e);
         }

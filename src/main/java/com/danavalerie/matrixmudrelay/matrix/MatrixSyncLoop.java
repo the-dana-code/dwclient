@@ -1,7 +1,9 @@
 package com.danavalerie.matrixmudrelay.matrix;
 
 import com.danavalerie.matrixmudrelay.core.MatrixEventProcessor;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,23 +62,25 @@ public final class MatrixSyncLoop {
                 }
                 first = false;
 
-                JsonNode root = resp.root;
-                JsonNode rooms = root.get("rooms");
-                if (rooms == null) continue;
-                JsonNode join = rooms.get("join");
-                if (join == null) continue;
+                JsonObject root = resp.root;
+                JsonElement rooms = root.get("rooms");
+                if (rooms == null || !rooms.isJsonObject()) continue;
+                JsonElement join = rooms.getAsJsonObject().get("join");
+                if (join == null || !join.isJsonObject()) continue;
 
-                JsonNode room = join.get(roomId);
-                if (room == null) continue;
+                JsonElement room = join.getAsJsonObject().get(roomId);
+                if (room == null || !room.isJsonObject()) continue;
 
-                JsonNode timeline = room.get("timeline");
-                if (timeline == null) continue;
+                JsonElement timeline = room.getAsJsonObject().get("timeline");
+                if (timeline == null || !timeline.isJsonObject()) continue;
 
-                JsonNode events = timeline.get("events");
-                if (events == null || !events.isArray()) continue;
+                JsonElement events = timeline.getAsJsonObject().get("events");
+                if (events == null || !events.isJsonArray()) continue;
 
-                for (JsonNode ev : events) {
-                    processor.onMatrixEvent(ev);
+                for (JsonElement ev : events.getAsJsonArray()) {
+                    if (ev.isJsonObject()) {
+                        processor.onMatrixEvent(ev.getAsJsonObject());
+                    }
                 }
 
             } catch (InterruptedException e) {
