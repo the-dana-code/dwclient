@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -16,7 +18,8 @@ import java.time.Duration;
 import java.util.UUID;
 
 public final class MatrixClient {
-    private static final Gson GSON = new GsonBuilder().create();
+    private static final Logger log = LoggerFactory.getLogger(MatrixClient.class);
+    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
     private final HttpClient http;
     private final String baseUrl;     // e.g. https://example.com
@@ -29,6 +32,7 @@ public final class MatrixClient {
         this.userId = userId;
         this.http = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(15))
+                .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
     }
 
@@ -163,37 +167,62 @@ public final class MatrixClient {
                 .timeout(Duration.ofSeconds(70))
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Accept", "application/json")
+                .header("User-Agent", "MatrixMudRelay/1.0")
                 .GET()
                 .build();
+        logCurl(req, null);
         return send(req);
     }
 
     private JsonObject postJson(String path, JsonObject body) throws IOException, InterruptedException, MatrixApiException {
+        String json = GSON.toJson(body);
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(30))
                 .header("Authorization", "Bearer " + accessToken)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(body)))
+                .header("Content-Type", "application/json; charset=utf-8")
+                .header("User-Agent", "MatrixMudRelay/1.0")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+        logCurl(req, json);
         return send(req);
     }
 
     private JsonObject putJson(String path, JsonObject body) throws IOException, InterruptedException, MatrixApiException {
+        String json = GSON.toJson(body);
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + path))
                 .timeout(Duration.ofSeconds(30))
                 .header("Authorization", "Bearer " + accessToken)
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(GSON.toJson(body)))
+                .header("Content-Type", "application/json; charset=utf-8")
+                .header("User-Agent", "MatrixMudRelay/1.0")
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+        logCurl(req, json);
         return send(req);
+    }
+
+    private void logCurl(HttpRequest req, String body) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("curl -X ").append(req.method()).append(" '").append(req.uri()).append("'");
+        req.headers().map().forEach((name, values) -> {
+            for (String value : values) {
+                sb.append(" -H '").append(name).append(": ").append(value).append("'");
+            }
+        });
+        if (body != null && !body.isEmpty()) {
+            sb.append(" --data '").append(body.replace("'", "'\\''")).append("'");
+        }
+        log.info("Matrix request: {}", sb.toString());
     }
 
     private JsonObject send(HttpRequest req) throws IOException, InterruptedException, MatrixApiException {
         HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         int sc = resp.statusCode();
         String body = resp.body() == null ? "" : resp.body();
+
+        log.info("Matrix response: status={} body={}", sc, body);
+
         if (sc / 100 != 2) {
             throw new MatrixApiException(sc, body);
         }
@@ -211,7 +240,11 @@ public final class MatrixClient {
 
     private static String urlPath(String s) {
         // For Matrix identifiers (no spaces), URLEncoder is acceptable.
-        return URLEncoder.encode(s, StandardCharsets.UTF_8);
+        // But we keep :, @, ! literal for better server compatibility in paths.
+        return URLEncoder.encode(s, StandardCharsets.UTF_8)
+                .replace("%3A", ":")
+                .replace("%40", "@")
+                .replace("%21", "!");
     }
 
     private static String stripTrailingSlash(String s) {
