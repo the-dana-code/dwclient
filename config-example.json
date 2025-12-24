@@ -1,0 +1,37 @@
+{
+  "matrix": {
+    "homeserverUrl": "https://myserver.danavalerie.com",
+    "accessToken": "YOUR_ACCESS_TOKEN_HERE",
+    "userId": "@mudbot:myserver.danavalerie.com",
+    "room": "!YOURROOMID:myserver.danavalerie.com",
+    "controllingUserId": "@dana:myserver.danavalerie.com",
+    "syncTimeoutMs": 30000,
+    "ignoreInitialTimeline": true,
+    "respondToUnauthorized": false
+  },
+  "mud": {
+    "host": "mud.example.com",
+    "port": 4000,
+    "charset": "UTF-8",
+    "connectTimeoutMs": 10000
+  },
+  "aliases": {
+    "n": ["north"],
+    "s": ["south"],
+    "login": [
+      "connect myuser mypassword",
+      "look"
+    ]
+  },
+  "transcript": {
+    "enabled": true,
+    "directory": "./transcripts",
+    "maxBytes": 10485760,
+    "maxFiles": 20
+  },
+  "retry": {
+    "initialBackoffMs": 500,
+    "maxBackoffMs": 5000,
+    "maxAttempts": 0
+  }
+}
