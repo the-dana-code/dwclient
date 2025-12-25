@@ -37,7 +37,11 @@ public class MudClient {
     private volatile InputStream in;
     private volatile OutputStream out;
     private Thread readerThread;
-    private volatile ExecutorService writer;
+    private final ExecutorService writer = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "mud-write");
+        t.setDaemon(true);
+        return t;
+    });;
 
     public MudClient(BotConfig.Mud cfg,
                      MudLineListener lineListener,
@@ -65,11 +69,6 @@ public class MudClient {
             out = socket.getOutputStream();
 
             // Writer executor: commands only originate from controller message handling.
-            writer = Executors.newSingleThreadExecutor(r -> {
-                Thread t = new Thread(r, "mud-write");
-                t.setDaemon(true);
-                return t;
-            });
 
             connected = true;
             startReader();
@@ -180,11 +179,8 @@ public class MudClient {
             in = null;
             o = out;
             out = null;
-            w = writer;
-            writer = null;
         }
 
-        if (w != null) w.shutdownNow();
         closeQuietly(i);
         closeQuietly(o);
         closeQuietly(s);
