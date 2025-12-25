@@ -94,6 +94,7 @@ public class MudClient {
 
         ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(1024);
         List<String> messageBuffer = new ArrayList<>();
+        long bufferStartTime = 0;
 
         try {
             InputStream currentIn = in.get();
@@ -103,6 +104,7 @@ public class MudClient {
                     b = currentIn.read();
                 } catch (java.net.SocketTimeoutException e) {
                     if (lineBuf.size() > 0) {
+                        if (messageBuffer.isEmpty()) bufferStartTime = System.currentTimeMillis();
                         appendToMessageBuffer(messageBuffer, lineBuf, cs);
                     }
                     if (!messageBuffer.isEmpty()) {
@@ -121,7 +123,14 @@ public class MudClient {
                 byte[] decoded = decoder.accept((byte) b);
                 for (byte db : decoded) {
                     if (db == (byte) '\n') {
+                        if (messageBuffer.isEmpty()) bufferStartTime = System.currentTimeMillis();
                         appendToMessageBuffer(messageBuffer, lineBuf, cs);
+
+                        if (System.currentTimeMillis() - bufferStartTime > 1000) {
+                            String combined = String.join("\n", messageBuffer);
+                            lineListener.onLine(combined);
+                            messageBuffer.clear();
+                        }
                     } else {
                         lineBuf.write(db);
                     }
