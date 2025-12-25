@@ -32,7 +32,7 @@ public class RetryingMatrixSender {
     }
 
     public void sendText(String roomId, String body, boolean notify) {
-        single.submit(() -> sendWithRetry(roomId, body, notify));
+        single.submit(() -> sendWithRetry(roomId, body.replaceAll("<", "&lt;"), notify));
     }
 
     private void sendWithRetry(String roomId, String body, boolean notify) {
