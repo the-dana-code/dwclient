@@ -165,12 +165,13 @@ public class MudClient {
         if (!connected.get() || currentOut == null) return;
         try {
             for (String raw : lines) {
+                System.out.println("Writing line: " + raw);
                 String line = raw == null ? "" : raw;
                 line = Sanitizer.sanitizeMudInput(line);
 
                 // MUD line-oriented input; CRLF for telnet compatibility
                 currentOut.write(line.getBytes(Charset.forName(cfg.charset)));
-                currentOut.write('\r');
+//                currentOut.write('\r');
                 currentOut.write('\n');
 
                 transcript.logMatrixToMud(line);
