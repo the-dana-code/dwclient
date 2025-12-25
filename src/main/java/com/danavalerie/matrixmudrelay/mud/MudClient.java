@@ -13,6 +13,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MudClient {
     private static final Logger log = LoggerFactory.getLogger(MudClient.class);
@@ -30,12 +32,11 @@ public class MudClient {
     private final MudDisconnectListener disconnectListener;
     private final TranscriptLogger transcript;
 
-    private final Object lock = new Object();
-    private volatile boolean connected = false;
+    private final AtomicBoolean connected = new AtomicBoolean(false);
 
-    private volatile Socket socket;
-    private volatile InputStream in;
-    private volatile OutputStream out;
+    private final AtomicReference<Socket> socket = new AtomicReference<>();
+    private final AtomicReference<InputStream> in = new AtomicReference<>();
+    private final AtomicReference<OutputStream> out = new AtomicReference<>();
     private Thread readerThread;
     private final ExecutorService writer = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "mud-write");
@@ -54,25 +55,28 @@ public class MudClient {
     }
 
     public boolean isConnected() {
-        return connected;
+        return connected.get();
     }
 
     public void connect() throws IOException {
-        synchronized (lock) {
-            if (connected) return;
+        if (!connected.compareAndSet(false, true)) {
+            return;
+        }
 
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(cfg.host, cfg.port), cfg.connectTimeoutMs);
-            socket.setTcpNoDelay(true);
+        try {
+            Socket s = new Socket();
+            s.connect(new InetSocketAddress(cfg.host, cfg.port), cfg.connectTimeoutMs);
+            s.setTcpNoDelay(true);
 
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
+            socket.set(s);
+            in.set(s.getInputStream());
+            out.set(s.getOutputStream());
 
-            // Writer executor: commands only originate from controller message handling.
-
-            connected = true;
             startReader();
             log.info("mud connected host={} port={}", cfg.host, cfg.port);
+        } catch (IOException e) {
+            connected.set(false);
+            throw e;
         }
     }
 
@@ -84,13 +88,13 @@ public class MudClient {
 
     private void readLoop() {
         Charset cs = Charset.forName(cfg.charset);
-        TelnetDecoder decoder = new TelnetDecoder(() -> out);
+        TelnetDecoder decoder = new TelnetDecoder(out::get);
 
         ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(1024);
 
         try {
-            InputStream currentIn = in;
-            while (connected && currentIn != null) {
+            InputStream currentIn = in.get();
+            while (connected.get() && currentIn != null) {
                 int b = currentIn.read();
                 if (b == -1) {
                     disconnect("eof");
@@ -115,11 +119,11 @@ public class MudClient {
                 }
             }
         } catch (IOException e) {
-            if (connected) {
+            if (connected.get()) {
                 disconnect("io_error: " + e.getMessage());
             }
         } catch (Exception e) {
-            if (connected) {
+            if (connected.get()) {
                 disconnect("unexpected: " + e.getMessage());
             }
         }
@@ -132,7 +136,7 @@ public class MudClient {
 
     public void sendLinesFromController(List<String> lines) {
         // Hard gate: never send unless connected at send time.
-        if (!connected) {
+        if (!connected.get()) {
             throw new IllegalStateException("Not connected to MUD");
         }
         ExecutorService w = writer;
@@ -143,8 +147,8 @@ public class MudClient {
     }
 
     private void doWrite(List<String> lines) {
-        OutputStream currentOut = out;
-        if (!connected || currentOut == null) return;
+        OutputStream currentOut = out.get();
+        if (!connected.get() || currentOut == null) return;
         try {
             for (String raw : lines) {
                 String line = raw == null ? "" : raw;
@@ -164,22 +168,13 @@ public class MudClient {
     }
 
     public void disconnect(String reason) {
-        Socket s;
-        ExecutorService w;
-        InputStream i;
-        OutputStream o;
-
-        synchronized (lock) {
-            if (!connected) return;
-            connected = false;
-
-            s = socket;
-            socket = null;
-            i = in;
-            in = null;
-            o = out;
-            out = null;
+        if (!connected.compareAndSet(true, false)) {
+            return;
         }
+
+        InputStream i = in.getAndSet(null);
+        OutputStream o = out.getAndSet(null);
+        Socket s = socket.getAndSet(null);
 
         closeQuietly(i);
         closeQuietly(o);
