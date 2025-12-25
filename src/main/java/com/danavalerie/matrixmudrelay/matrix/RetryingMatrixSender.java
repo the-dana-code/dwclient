@@ -31,18 +31,18 @@ public class RetryingMatrixSender {
         });
     }
 
-    public void sendText(String roomId, String body) {
-        single.submit(() -> sendWithRetry(roomId, body));
+    public void sendText(String roomId, String body, boolean notify) {
+        single.submit(() -> sendWithRetry(roomId, body, notify));
     }
 
-    private void sendWithRetry(String roomId, String body) {
+    private void sendWithRetry(String roomId, String body, boolean notify) {
         long backoff = Math.max(0, retry.initialBackoffMs);
         int attempts = 0;
 
         while (true) {
             attempts++;
             try {
-                client.sendTextMessage(roomId, body);
+                client.sendTextMessage(roomId, body, notify);
                 return;
             } catch (MatrixApiException e) {
                 if (e.statusCode == 429) {

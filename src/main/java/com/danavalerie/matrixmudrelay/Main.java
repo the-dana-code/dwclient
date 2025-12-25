@@ -43,12 +43,12 @@ public final class Main {
                 cfg.mud,
                 line -> {
                     transcript.logMudToMatrix(line);
-                    sender.sendText(roomId, line);
+                    sender.sendText(roomId, line, shouldNotify(line));
                 },
                 reason -> {
                     String msg = "* MUD disconnected: " + reason;
                     transcript.logSystem(msg);
-                    sender.sendText(roomId, msg);
+                    sender.sendText(roomId, msg, true);
                 },
                 transcript
         );
@@ -75,5 +75,10 @@ public final class Main {
         syncLoop.start();
 
         new CountDownLatch(1).await();
+    }
+
+    private static boolean shouldNotify(String line) {
+        System.out.println("notify = false, line: " + line);
+        return false;
     }
 }

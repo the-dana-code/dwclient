@@ -55,7 +55,7 @@ public final class MatrixEventProcessor {
         boolean isController = senderId.equals(cfg.matrix.controllingUserId);
         if (!isController) {
             if (cfg.matrix.respondToUnauthorized) {
-                sender.sendText(roomId, "Ignored: only " + cfg.matrix.controllingUserId + " may control this relay.");
+                sender.sendText(roomId, "Ignored: only " + cfg.matrix.controllingUserId + " may control this relay.", false);
             }
             return;
         }
@@ -78,7 +78,7 @@ public final class MatrixEventProcessor {
 
         // Hard safety rule: never send controller text to MUD unless currently connected
         if (!mud.isConnected()) {
-            sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.");
+            sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.", false);
             return;
         }
 
@@ -97,36 +97,36 @@ public final class MatrixEventProcessor {
             transcript.logMatrixToMud(sanitized);
             mud.sendLinesFromController(List.of(sanitized));
         } catch (IllegalStateException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage());
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
         }
     }
 
     private void handleConnect() {
         if (mud.isConnected()) {
-            sender.sendText(roomId, "Already connected.");
+            sender.sendText(roomId, "Already connected.", false);
             return;
         }
-        sender.sendText(roomId, "Connecting to MUD...");
+        sender.sendText(roomId, "Connecting to MUD...", false);
         try {
             mud.connect();
-            sender.sendText(roomId, "Connected.");
+            sender.sendText(roomId, "Connected.", false);
         } catch (Exception e) {
             log.warn("connect failed err={}", e.toString());
-            sender.sendText(roomId, "Connect failed: " + e.getMessage());
+            sender.sendText(roomId, "Connect failed: " + e.getMessage(), false);
         }
     }
 
     private void handleDisconnect() {
         if (!mud.isConnected()) {
-            sender.sendText(roomId, "Already disconnected.");
+            sender.sendText(roomId, "Already disconnected.", false);
             return;
         }
         mud.disconnect("controller requested");
-        sender.sendText(roomId, "Disconnected.");
+        sender.sendText(roomId, "Disconnected.", false);
     }
 
     private void handleStatus() {
-        sender.sendText(roomId, "Status: " + (mud.isConnected() ? "CONNECTED" : "DISCONNECTED"));
+        sender.sendText(roomId, "Status: " + (mud.isConnected() ? "CONNECTED" : "DISCONNECTED"), false);
     }
 
     private static String text(JsonElement n) {
