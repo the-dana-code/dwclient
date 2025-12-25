@@ -3,22 +3,22 @@
     "homeserverUrl": "https://myserver.danavalerie.com",
     "accessToken": "YOUR_ACCESS_TOKEN_HERE",
     "userId": "@mudbot:myserver.danavalerie.com",
-    "room": "!YOURROOMID:myserver.danavalerie.com",
+    "room": "!suEgNpS5Zmo_MrmACu8Aq2SdufFI91WJeb4inMHV-jI",
     "controllingUserId": "@dana:myserver.danavalerie.com",
     "syncTimeoutMs": 30000,
     "ignoreInitialTimeline": true,
     "respondToUnauthorized": false
   },
   "mud": {
-    "host": "mud.example.com",
-    "port": 4000,
+    "host": "discworld.starturtle.net",
+    "port": 4242,
     "charset": "UTF-8",
     "connectTimeoutMs": 10000
   },
   "aliases": {
-    "n": ["north"],
-    "s": ["south"],
-    "login": [
+    "sample-n": ["north"],
+    "sample-s": ["south"],
+    "sample-login": [
       "connect myuser mypassword",
       "look"
     ]

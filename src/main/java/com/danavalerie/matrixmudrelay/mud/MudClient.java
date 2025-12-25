@@ -67,6 +67,7 @@ public class MudClient {
             Socket s = new Socket();
             s.connect(new InetSocketAddress(cfg.host, cfg.port), cfg.connectTimeoutMs);
             s.setTcpNoDelay(true);
+            s.setSoTimeout(250);
 
             socket.set(s);
             in.set(s.getInputStream());
@@ -95,7 +96,16 @@ public class MudClient {
         try {
             InputStream currentIn = in.get();
             while (connected.get() && currentIn != null) {
-                int b = currentIn.read();
+                int b;
+                try {
+                    b = currentIn.read();
+                } catch (java.net.SocketTimeoutException e) {
+                    if (lineBuf.size() > 0) {
+                        flushLineBuffer(lineBuf, cs);
+                    }
+                    continue;
+                }
+
                 if (b == -1) {
                     disconnect("eof");
                     return;
@@ -104,15 +114,7 @@ public class MudClient {
                 byte[] decoded = decoder.accept((byte) b);
                 for (byte db : decoded) {
                     if (db == (byte) '\n') {
-                        String line = lineBuf.toString(cs);
-                        lineBuf.reset();
-                        line = stripTrailingCR(line);
-
-                        // Sanitization removes control characters.
-                        line = Sanitizer.sanitizeMudOutput(line);
-
-                        // Send immediately (including empty lines).
-                        lineListener.onLine(line);
+                        flushLineBuffer(lineBuf, cs);
                     } else {
                         lineBuf.write(db);
                     }
@@ -127,6 +129,18 @@ public class MudClient {
                 disconnect("unexpected: " + e.getMessage());
             }
         }
+    }
+
+    private void flushLineBuffer(ByteArrayOutputStream lineBuf, Charset cs) {
+        String line = lineBuf.toString(cs);
+        lineBuf.reset();
+        line = stripTrailingCR(line);
+
+        // Sanitization removes control characters.
+        line = Sanitizer.sanitizeMudOutput(line);
+
+        // Send immediately (including empty lines).
+        lineListener.onLine(line);
     }
 
     private static String stripTrailingCR(String s) {
