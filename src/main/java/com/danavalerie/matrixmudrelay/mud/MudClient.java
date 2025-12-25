@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,6 +93,7 @@ public class MudClient {
         TelnetDecoder decoder = new TelnetDecoder(out::get);
 
         ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(1024);
+        List<String> messageBuffer = new ArrayList<>();
 
         try {
             InputStream currentIn = in.get();
@@ -101,7 +103,12 @@ public class MudClient {
                     b = currentIn.read();
                 } catch (java.net.SocketTimeoutException e) {
                     if (lineBuf.size() > 0) {
-                        flushLineBuffer(lineBuf, cs);
+                        appendToMessageBuffer(messageBuffer, lineBuf, cs);
+                    }
+                    if (!messageBuffer.isEmpty()) {
+                        String combined = String.join("\n", messageBuffer);
+                        lineListener.onLine(combined);
+                        messageBuffer.clear();
                     }
                     continue;
                 }
@@ -114,7 +121,7 @@ public class MudClient {
                 byte[] decoded = decoder.accept((byte) b);
                 for (byte db : decoded) {
                     if (db == (byte) '\n') {
-                        flushLineBuffer(lineBuf, cs);
+                        appendToMessageBuffer(messageBuffer, lineBuf, cs);
                     } else {
                         lineBuf.write(db);
                     }
@@ -131,16 +138,12 @@ public class MudClient {
         }
     }
 
-    private void flushLineBuffer(ByteArrayOutputStream lineBuf, Charset cs) {
+    private void appendToMessageBuffer(List<String> messageBuffer, ByteArrayOutputStream lineBuf, Charset cs) {
         String line = lineBuf.toString(cs);
         lineBuf.reset();
         line = stripTrailingCR(line);
-
-        // Sanitization removes control characters.
         line = Sanitizer.sanitizeMudOutput(line);
-
-        // Send immediately (including empty lines).
-        lineListener.onLine(line);
+        messageBuffer.add(line);
     }
 
     private static String stripTrailingCR(String s) {
