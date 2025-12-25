@@ -1,17 +1,25 @@
 package com.danavalerie.matrixmudrelay.util;
 
+import java.util.regex.Pattern;
+
 public final class Sanitizer {
     private Sanitizer() {}
 
+    private static final Pattern ANSI_PATTERN = Pattern.compile("\\e\\[[\\d;]*[^\\d;]");
+
     /**
-     * Remove control chars from MUD output before posting to Matrix.
+     * Remove ANSI codes and other control chars from MUD output before posting to Matrix.
      * Keeps tabs; removes ASCII control range and DEL.
      */
     public static String sanitizeMudOutput(String s) {
         if (s == null || s.isEmpty()) return "";
-        StringBuilder sb = new StringBuilder(s.length());
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
+
+        // First, strip ANSI escape sequences
+        String stripped = ANSI_PATTERN.matcher(s).replaceAll("");
+
+        StringBuilder sb = new StringBuilder(stripped.length());
+        for (int i = 0; i < stripped.length(); i++) {
+            char ch = stripped.charAt(i);
 
             if (ch == '\t') { sb.append(ch); continue; }
             if (ch < 0x20) continue;
