@@ -60,7 +60,8 @@ public final class MatrixClient {
         String path = "/_matrix/client/v3/directory/room/" + urlPath(roomAlias);
         JsonObject resp = get(path);
         JsonElement roomId = resp.get("room_id");
-        if (roomId == null || roomId.getAsString().isBlank()) throw new MatrixApiException(500, "No room_id in directory response");
+        if (roomId == null || roomId.getAsString().isBlank())
+            throw new MatrixApiException(500, "No room_id in directory response");
         return roomId.getAsString();
     }
 
@@ -99,12 +100,13 @@ public final class MatrixClient {
             throws IOException, InterruptedException, MatrixApiException {
         // PUT /_matrix/client/v3/rooms/{roomId}/send/m.room.message/{txnId}
         String txnId = UUID.randomUUID().toString();
-        String path = "/_matrix/client/v3/rooms/" + urlPath(roomId)
-                + "/send/m.room.message/" + urlPath(txnId);
+        String path = "/_matrix/client/v3/rooms/" + urlPath(roomId) + "/send/m.room.message/" + urlPath(txnId);
 
         JsonObject content = new JsonObject();
-        content.addProperty("msgtype", "m.text");
-        content.addProperty("body", body);
+//        content.addProperty("msgtype", "m.text");
+        content.addProperty("msgtype", "m.notice");
+        String toSend = body.isEmpty() ? " " : body; // Sending a zero-length string causes problems
+        content.addProperty("body", toSend);
 
         JsonObject resp = putJson(path, content);
         JsonElement eventId = resp.get("event_id");
@@ -113,7 +115,11 @@ public final class MatrixClient {
 
     public static final class SyncResponse {
         public final JsonObject root;
-        public SyncResponse(JsonObject root) { this.root = root; }
+
+        public SyncResponse(JsonObject root) {
+            this.root = root;
+        }
+
         public String nextBatch() {
             JsonElement nb = root.get("next_batch");
             return nb == null ? null : nb.getAsString();
@@ -203,6 +209,9 @@ public final class MatrixClient {
     }
 
     private void logCurl(HttpRequest req, String body) {
+        if (true) {
+            return; // disable
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("curl -X ").append(req.method()).append(" '").append(req.uri()).append("'");
         req.headers().map().forEach((name, values) -> {
@@ -221,7 +230,7 @@ public final class MatrixClient {
         int sc = resp.statusCode();
         String body = resp.body() == null ? "" : resp.body();
 
-        log.info("Matrix response: status={} body={}", sc, body);
+//        log.info("Matrix response: status={} body={}", sc, body);
 
         if (sc / 100 != 2) {
             throw new MatrixApiException(sc, body);
