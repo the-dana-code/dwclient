@@ -57,25 +57,42 @@ public final class MatrixSyncLoop {
                 if (next != null) since = next;
 
                 if (first && ignoreInitialTimeline) {
+                    log.info("sync: skipping initial timeline as requested (ignoreInitialTimeline=true)");
                     first = false;
                     continue;
                 }
                 first = false;
 
                 JsonObject root = resp.root;
+                log.debug("sync response: {}", root);
                 JsonElement rooms = root.get("rooms");
-                if (rooms == null || !rooms.isJsonObject()) continue;
+                if (rooms == null || !rooms.isJsonObject()) {
+                    log.debug("sync: no rooms in response");
+                    continue;
+                }
                 JsonElement join = rooms.getAsJsonObject().get("join");
-                if (join == null || !join.isJsonObject()) continue;
+                if (join == null || !join.isJsonObject()) {
+                    log.debug("sync: no join in rooms");
+                    continue;
+                }
 
                 JsonElement room = join.getAsJsonObject().get(roomId);
-                if (room == null || !room.isJsonObject()) continue;
+                if (room == null || !room.isJsonObject()) {
+                    log.debug("sync: room {} not found in join. available: {}", roomId, join.getAsJsonObject().keySet());
+                    continue;
+                }
 
                 JsonElement timeline = room.getAsJsonObject().get("timeline");
-                if (timeline == null || !timeline.isJsonObject()) continue;
+                if (timeline == null || !timeline.isJsonObject()) {
+                    log.debug("sync: no timeline in room {}", roomId);
+                    continue;
+                }
 
                 JsonElement events = timeline.getAsJsonObject().get("events");
-                if (events == null || !events.isJsonArray()) continue;
+                if (events == null || !events.isJsonArray()) {
+                    log.debug("sync: no events in timeline of room {}", roomId);
+                    continue;
+                }
 
                 for (JsonElement ev : events.getAsJsonArray()) {
                     if (ev.isJsonObject()) {

@@ -133,6 +133,7 @@ public final class MatrixClient {
         JsonObject room = new JsonObject();
         root.add("room", room);
 
+        // We'll keep the room list for efficiency, but let's see if including encrypted events helps.
         com.google.gson.JsonArray rooms = new com.google.gson.JsonArray();
         rooms.add(roomId);
         room.add("rooms", rooms);
@@ -141,29 +142,9 @@ public final class MatrixClient {
         room.add("timeline", timeline);
         com.google.gson.JsonArray types = new com.google.gson.JsonArray();
         types.add("m.room.message");
+        types.add("m.room.encrypted"); // Often enabled by default in Synapse private rooms
         timeline.add("types", types);
-        timeline.addProperty("limit", 20);
-
-        // Reduce noise
-        JsonObject state = new JsonObject();
-        state.add("types", new com.google.gson.JsonArray());
-        room.add("state", state);
-
-        JsonObject ephemeral = new JsonObject();
-        ephemeral.add("types", new com.google.gson.JsonArray());
-        room.add("ephemeral", ephemeral);
-
-        JsonObject accountData = new JsonObject();
-        accountData.add("types", new com.google.gson.JsonArray());
-        room.add("account_data", accountData);
-
-        JsonObject presence = new JsonObject();
-        presence.add("types", new com.google.gson.JsonArray());
-        root.add("presence", presence);
-
-        JsonObject rootAccountData = new JsonObject();
-        rootAccountData.add("types", new com.google.gson.JsonArray());
-        root.add("account_data", rootAccountData);
+        timeline.addProperty("limit", 50);
 
         return root;
     }

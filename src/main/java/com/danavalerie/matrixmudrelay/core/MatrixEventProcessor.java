@@ -31,8 +31,14 @@ public final class MatrixEventProcessor {
     }
 
     public void onMatrixEvent(JsonObject ev) {
+        log.debug("onMatrixEvent: {}", ev);
         String type = text(ev.get("type"));
-        if (!"m.room.message".equals(type)) return;
+        if (!"m.room.message".equals(type)) {
+            if ("m.room.encrypted".equals(type)) {
+                log.warn("RECEIVED ENCRYPTED EVENT. This bot does NOT support encryption. Please disable encryption in the Matrix room settings.");
+            }
+            return;
+        }
 
         String senderId = text(ev.get("sender"));
         if (senderId == null) return;
