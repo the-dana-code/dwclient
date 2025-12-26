@@ -33,21 +33,21 @@ public class RetryingMatrixSender {
     }
 
     public void sendText(String roomId, String body, boolean notify) {
-        single.submit(() -> sendWithRetry(roomId, body, "<pre>" + Sanitizer.escapeHtml(body) + "</pre>", notify));
+        single.submit(() -> sendWithRetry(roomId, body, "<pre>" + Sanitizer.escapeHtml(body) + "</pre>", body, notify));
     }
 
-    public void sendHtml(String roomId, String body, String html, boolean notify) {
-        single.submit(() -> sendWithRetry(roomId, body, html, notify));
+    public void sendHtml(String roomId, String body, String html, String originalText, boolean notify) {
+        single.submit(() -> sendWithRetry(roomId, body, html, originalText, notify));
     }
 
-    private void sendWithRetry(String roomId, String body, String html, boolean notify) {
+    private void sendWithRetry(String roomId, String body, String html, String originalText, boolean notify) {
         long backoff = Math.max(0, retry.initialBackoffMs);
         int attempts = 0;
 
         while (true) {
             attempts++;
             try {
-                client.sendTextMessage(roomId, body, html, notify);
+                client.sendTextMessage(roomId, body, html, originalText, notify);
                 return;
             } catch (MatrixApiException e) {
                 if (e.statusCode == 429) {

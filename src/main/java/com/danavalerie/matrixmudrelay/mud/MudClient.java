@@ -161,7 +161,6 @@ public class MudClient {
         String line = lineBuf.toString(cs);
         lineBuf.reset();
         line = stripTrailingCR(line);
-        line = Sanitizer.sanitizeMudOutput(line);
         messageBuffer.add(line);
     }
 

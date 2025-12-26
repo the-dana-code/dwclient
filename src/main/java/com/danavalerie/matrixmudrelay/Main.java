@@ -44,8 +44,9 @@ public final class Main {
                 cfg.mud,
                 line -> {
                     transcript.logMudToMatrix(line);
-                    Sanitizer.MxpResult res = Sanitizer.processMxp(line);
-                    sender.sendHtml(roomId, res.plain, res.html, shouldNotify(line));
+                    String sanitized = Sanitizer.sanitizeMudOutput(line);
+                    Sanitizer.MxpResult res = Sanitizer.processMxp(sanitized);
+                    sender.sendHtml(roomId, res.plain, res.html, line, shouldNotify(line));
                 },
                 reason -> {
                     String msg = "* MUD disconnected: " + reason;

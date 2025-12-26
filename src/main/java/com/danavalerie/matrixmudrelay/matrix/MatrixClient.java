@@ -96,7 +96,7 @@ public final class MatrixClient {
         return new SyncResponse(resp);
     }
 
-    public String sendTextMessage(String roomId, String body, String formattedBody, boolean notify)
+    public String sendTextMessage(String roomId, String body, String formattedBody, String originalText, boolean notify)
             throws IOException, InterruptedException, MatrixApiException {
         // PUT /_matrix/client/v3/rooms/{roomId}/send/m.room.message/{txnId}
         String txnId = UUID.randomUUID().toString();
@@ -109,6 +109,10 @@ public final class MatrixClient {
         if (formattedBody != null) {
             content.addProperty("format", "org.matrix.custom.html");
             content.addProperty("formatted_body", formattedBody);
+        }
+
+        if (originalText != null) {
+            content.addProperty("originalText", originalText);
         }
 
         JsonObject resp = putJson(path, content);

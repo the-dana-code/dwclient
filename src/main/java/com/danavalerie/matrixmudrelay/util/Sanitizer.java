@@ -21,7 +21,7 @@ public final class Sanitizer {
         for (int i = 0; i < stripped.length(); i++) {
             char ch = stripped.charAt(i);
 
-            if (ch == '\t') { sb.append(ch); continue; }
+            if (ch == '\t' || ch == '\n' || ch == '\r') { sb.append(ch); continue; }
             if (ch < 0x20) continue;
             if (ch == 0x7F) continue;
 
