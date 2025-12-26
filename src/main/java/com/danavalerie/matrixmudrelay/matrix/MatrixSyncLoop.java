@@ -16,6 +16,7 @@ public final class MatrixSyncLoop {
     private final int timeoutMs;
     private final boolean ignoreInitialTimeline;
     private final MatrixEventProcessor processor;
+    private final String initialSince;
 
     private volatile boolean running = false;
     private Thread thread;
@@ -26,12 +27,23 @@ public final class MatrixSyncLoop {
                           int timeoutMs,
                           boolean ignoreInitialTimeline,
                           MatrixEventProcessor processor) {
+        this(client, roomId, filterId, timeoutMs, ignoreInitialTimeline, processor, null);
+    }
+
+    public MatrixSyncLoop(MatrixClient client,
+                          String roomId,
+                          String filterId,
+                          int timeoutMs,
+                          boolean ignoreInitialTimeline,
+                          MatrixEventProcessor processor,
+                          String initialSince) {
         this.client = client;
         this.roomId = roomId;
         this.filterId = filterId;
         this.timeoutMs = timeoutMs;
         this.ignoreInitialTimeline = ignoreInitialTimeline;
         this.processor = processor;
+        this.initialSince = initialSince;
     }
 
     public void start() {
@@ -47,21 +59,25 @@ public final class MatrixSyncLoop {
     }
 
     private void run() {
-        String since = null;
-        boolean first = true;
+        long startTime = System.currentTimeMillis();
+        String since = initialSince;
+        boolean firstSync = true;
 
         while (running) {
             try {
+                log.debug("sync: calling /sync since={}", since);
                 MatrixClient.SyncResponse resp = client.sync(since, timeoutMs, filterId);
                 String next = resp.nextBatch();
-                if (next != null) since = next;
 
-                if (first && ignoreInitialTimeline) {
-                    log.info("sync: skipping initial timeline as requested (ignoreInitialTimeline=true)");
-                    first = false;
+                if (firstSync && ignoreInitialTimeline) {
+                    log.info("sync: first sync response received, skipping initial timeline events");
+                    if (next != null) since = next;
+                    firstSync = false;
                     continue;
                 }
-                first = false;
+                firstSync = false;
+
+                if (next != null) since = next;
 
                 JsonObject root = resp.root;
                 log.debug("sync response: {}", root);
@@ -96,7 +112,20 @@ public final class MatrixSyncLoop {
 
                 for (JsonElement ev : events.getAsJsonArray()) {
                     if (ev.isJsonObject()) {
-                        processor.onMatrixEvent(ev.getAsJsonObject());
+                        JsonObject eventObj = ev.getAsJsonObject();
+
+                        // Timestamp-based history skipping
+                        JsonElement tsEl = eventObj.get("origin_server_ts");
+                        long ts = (tsEl != null && tsEl.isJsonPrimitive()) ? tsEl.getAsLong() : 0;
+                        if (ignoreInitialTimeline && ts > 0 && ts < (startTime - 10000)) {
+                            log.info("sync: skipping old event (ts={} startTime={} diff={}ms id={})",
+                                     ts, startTime, (startTime - ts), eventObj.get("event_id"));
+                            continue;
+                        }
+
+                        log.info("sync: processing event type={} id={}",
+                                 eventObj.get("type"), eventObj.get("event_id"));
+                        processor.onMatrixEvent(eventObj);
                     }
                 }
 

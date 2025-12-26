@@ -55,13 +55,33 @@ public final class Main {
 
         MatrixEventProcessor processor = new MatrixEventProcessor(cfg, roomId, sender, mud, transcript);
 
+        String initialSince = null;
+        if (cfg.matrix.ignoreInitialTimeline) {
+            log.info("matrix performing initial sync to skip history...");
+            // Retry initial sync a few times if it fails, but don't block forever if it keeps failing.
+            for (int i = 0; i < 5; i++) {
+                try {
+                    MatrixClient.SyncResponse resp = matrix.sync(null, 0, filterId);
+                    initialSince = resp.nextBatch();
+                    if (initialSince != null) {
+                        log.info("matrix initial sync complete, token={}", initialSince);
+                        break;
+                    }
+                } catch (Exception e) {
+                    log.warn("matrix initial sync attempt {} failed: {}", i + 1, e.toString());
+                    Thread.sleep(1000);
+                }
+            }
+        }
+
         MatrixSyncLoop syncLoop = new MatrixSyncLoop(
                 matrix,
                 roomId,
                 filterId,
                 cfg.matrix.syncTimeoutMs,
                 cfg.matrix.ignoreInitialTimeline,
-                processor
+                processor,
+                initialSince
         );
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
