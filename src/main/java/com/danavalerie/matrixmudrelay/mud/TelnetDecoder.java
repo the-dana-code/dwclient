@@ -19,6 +19,8 @@ public final class TelnetDecoder {
     private static final byte SB   = (byte)250;
     private static final byte SE   = (byte)240;
 
+    private static final byte MXP  = (byte)91;
+
     private enum State { DATA, IAC, OPT, SB, SB_IAC }
 
     private State state = State.DATA;
@@ -84,9 +86,17 @@ public final class TelnetDecoder {
         if (out == null) return;
 
         if (cmd == DO) {
-            send(out, WONT, opt);
+            if (opt == MXP) {
+                send(out, WILL, opt);
+            } else {
+                send(out, WONT, opt);
+            }
         } else if (cmd == WILL) {
-            send(out, DONT, opt);
+            if (opt == MXP) {
+                send(out, DO, opt);
+            } else {
+                send(out, DONT, opt);
+            }
         } else {
             // DONT/WONT => ignore
         }
