@@ -106,8 +106,8 @@ public final class MatrixClient {
         content.addProperty("msgtype", notify ? "m.text" : "m.notice");
         String toSend = body.isEmpty() ? " " : body; // Sending a zero-length string causes problems
         content.addProperty("format", "org.matrix.custom.html");
-        content.addProperty("body", "```" + toSend + "```");
-        content.addProperty("formatted_body", "<pre>" + toSend + "</pre>");
+        content.addProperty("body", " ");
+        content.addProperty("formatted_body", "<html><pre>" + toSend + "</pre></html>");
 
         JsonObject resp = putJson(path, content);
         JsonElement eventId = resp.get("event_id");
