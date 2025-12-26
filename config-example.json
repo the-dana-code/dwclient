@@ -3,7 +3,7 @@
     "homeserverUrl": "https://myserver.danavalerie.com",
     "accessToken": "YOUR_ACCESS_TOKEN_HERE",
     "userId": "@mudbot:myserver.danavalerie.com",
-    "room": "!suEgNpS5Zmo_MrmACu8Aq2SdufFI91WJeb4inMHV-jI",
+    "room": "!rjInTxYARfrsOGkivW:myserver.danavalerie.com",
     "controllingUserId": "@dana:myserver.danavalerie.com",
     "syncTimeoutMs": 30000,
     "ignoreInitialTimeline": true,
@@ -16,12 +16,7 @@
     "connectTimeoutMs": 10000
   },
   "aliases": {
-    "sample-n": ["north"],
-    "sample-s": ["south"],
-    "sample-login": [
-      "connect myuser mypassword",
-      "look"
-    ]
+    "#password": ["E9crNWzX"]
   },
   "transcript": {
     "enabled": true,
