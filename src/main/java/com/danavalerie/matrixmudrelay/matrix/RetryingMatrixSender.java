@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.matrix;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -32,17 +33,21 @@ public class RetryingMatrixSender {
     }
 
     public void sendText(String roomId, String body, boolean notify) {
-        single.submit(() -> sendWithRetry(roomId, body.replaceAll("<", "&lt;"), notify));
+        single.submit(() -> sendWithRetry(roomId, body, "<pre>" + Sanitizer.escapeHtml(body) + "</pre>", notify));
     }
 
-    private void sendWithRetry(String roomId, String body, boolean notify) {
+    public void sendHtml(String roomId, String body, String html, boolean notify) {
+        single.submit(() -> sendWithRetry(roomId, body, html, notify));
+    }
+
+    private void sendWithRetry(String roomId, String body, String html, boolean notify) {
         long backoff = Math.max(0, retry.initialBackoffMs);
         int attempts = 0;
 
         while (true) {
             attempts++;
             try {
-                client.sendTextMessage(roomId, body, notify);
+                client.sendTextMessage(roomId, body, html, notify);
                 return;
             } catch (MatrixApiException e) {
                 if (e.statusCode == 429) {

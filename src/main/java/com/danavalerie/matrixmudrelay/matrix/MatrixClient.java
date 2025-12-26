@@ -96,7 +96,7 @@ public final class MatrixClient {
         return new SyncResponse(resp);
     }
 
-    public String sendTextMessage(String roomId, String body, boolean notify)
+    public String sendTextMessage(String roomId, String body, String formattedBody, boolean notify)
             throws IOException, InterruptedException, MatrixApiException {
         // PUT /_matrix/client/v3/rooms/{roomId}/send/m.room.message/{txnId}
         String txnId = UUID.randomUUID().toString();
@@ -104,10 +104,12 @@ public final class MatrixClient {
 
         JsonObject content = new JsonObject();
         content.addProperty("msgtype", notify ? "m.text" : "m.notice");
-        String toSend = body.isEmpty() ? " " : body; // Sending a zero-length string causes problems
-        content.addProperty("format", "org.matrix.custom.html");
-        content.addProperty("body", " ");
-        content.addProperty("formatted_body", "<pre>" + toSend + "</pre>");
+        content.addProperty("body", body.isEmpty() ? " " : body);
+
+        if (formattedBody != null) {
+            content.addProperty("format", "org.matrix.custom.html");
+            content.addProperty("formatted_body", formattedBody);
+        }
 
         JsonObject resp = putJson(path, content);
         JsonElement eventId = resp.get("event_id");

@@ -7,6 +7,7 @@ import com.danavalerie.matrixmudrelay.matrix.MatrixClient;
 import com.danavalerie.matrixmudrelay.matrix.MatrixSyncLoop;
 import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
+import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,8 @@ public final class Main {
                 cfg.mud,
                 line -> {
                     transcript.logMudToMatrix(line);
-                    sender.sendText(roomId, line, shouldNotify(line));
+                    Sanitizer.MxpResult res = Sanitizer.processMxp(line);
+                    sender.sendHtml(roomId, res.plain, res.html, shouldNotify(line));
                 },
                 reason -> {
                     String msg = "* MUD disconnected: " + reason;
