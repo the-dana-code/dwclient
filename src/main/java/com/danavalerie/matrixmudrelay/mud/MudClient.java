@@ -103,14 +103,14 @@ public class MudClient {
                 try {
                     b = currentIn.read();
                 } catch (java.net.SocketTimeoutException e) {
-                    if (lineBuf.size() > 0) {
-                        if (messageBuffer.isEmpty()) bufferStartTime = System.currentTimeMillis();
-                        appendToMessageBuffer(messageBuffer, lineBuf, cs);
-                    }
-                    if (!messageBuffer.isEmpty()) {
-                        String combined = String.join("\n", messageBuffer);
-                        lineListener.onLine(combined);
-                        messageBuffer.clear();
+                    if (bufferStartTime > 0) {
+                        long now = System.currentTimeMillis();
+                        boolean maxTimeout = (now - bufferStartTime > 1000);
+                        boolean atLineBreak = (lineBuf.size() == 0);
+                        if (maxTimeout || atLineBreak) {
+                            flushBuffer(messageBuffer, lineBuf, cs);
+                            bufferStartTime = 0;
+                        }
                     }
                     continue;
                 }
@@ -122,18 +122,17 @@ public class MudClient {
 
                 byte[] decoded = decoder.accept((byte) b);
                 for (byte db : decoded) {
+                    if (bufferStartTime == 0) bufferStartTime = System.currentTimeMillis();
                     if (db == (byte) '\n') {
-                        if (messageBuffer.isEmpty()) bufferStartTime = System.currentTimeMillis();
                         appendToMessageBuffer(messageBuffer, lineBuf, cs);
-
-                        if (System.currentTimeMillis() - bufferStartTime > 1000) {
-                            String combined = String.join("\n", messageBuffer);
-                            lineListener.onLine(combined);
-                            messageBuffer.clear();
-                        }
                     } else {
                         lineBuf.write(db);
                     }
+                }
+
+                if (bufferStartTime > 0 && System.currentTimeMillis() - bufferStartTime > 1000) {
+                    flushBuffer(messageBuffer, lineBuf, cs);
+                    bufferStartTime = 0;
                 }
             }
         } catch (IOException e) {
@@ -144,6 +143,17 @@ public class MudClient {
             if (connected.get()) {
                 disconnect("unexpected: " + e.getMessage());
             }
+        }
+    }
+
+    private void flushBuffer(List<String> messageBuffer, ByteArrayOutputStream lineBuf, Charset cs) {
+        if (lineBuf.size() > 0) {
+            appendToMessageBuffer(messageBuffer, lineBuf, cs);
+        }
+        if (!messageBuffer.isEmpty()) {
+            String combined = String.join("\n", messageBuffer);
+            lineListener.onLine(combined);
+            messageBuffer.clear();
         }
     }
 
