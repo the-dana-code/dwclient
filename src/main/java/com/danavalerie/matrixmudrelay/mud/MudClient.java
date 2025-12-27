@@ -90,7 +90,14 @@ public class MudClient {
 
     private void readLoop() {
         Charset cs = Charset.forName(cfg.charset);
-        TelnetDecoder decoder = new TelnetDecoder(out::get);
+        TelnetDecoder decoder = new TelnetDecoder(out::get, (opt, data) -> {
+            if (opt == (byte)201) { // GMCP
+                String msg = new String(data, cs);
+                // In the future, we can route this to specific handlers.
+                // For now, logging it is enough to show we receive it.
+                log.debug("Received GMCP: {}", msg);
+            }
+        });
 
         ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(1024);
         List<String> messageBuffer = new ArrayList<>();
