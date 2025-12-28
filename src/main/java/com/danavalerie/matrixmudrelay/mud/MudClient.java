@@ -38,6 +38,7 @@ public class MudClient {
     private final AtomicReference<Socket> socket = new AtomicReference<>();
     private final AtomicReference<InputStream> in = new AtomicReference<>();
     private final AtomicReference<OutputStream> out = new AtomicReference<>();
+    private final CurrentRoomInfo currentRoomInfo = new CurrentRoomInfo();
     private Thread readerThread;
     private final ExecutorService writer = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "mud-write");
@@ -57,6 +58,10 @@ public class MudClient {
 
     public boolean isConnected() {
         return connected.get();
+    }
+
+    public CurrentRoomInfo.Snapshot getCurrentRoomSnapshot() {
+        return currentRoomInfo.getSnapshot();
     }
 
     public void connect() throws IOException {
@@ -96,6 +101,10 @@ public class MudClient {
                 // In the future, we can route this to specific handlers.
                 // For now, logging it is enough to show we receive it.
                 log.debug("Received GMCP: {}", msg);
+                TelnetDecoder.GmcpMessage parsed = TelnetDecoder.parseGmcpMessage(msg);
+                if (parsed != null) {
+                    currentRoomInfo.update(parsed.command(), parsed.payload());
+                }
             }
         });
 

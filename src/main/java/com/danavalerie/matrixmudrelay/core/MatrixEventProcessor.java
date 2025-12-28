@@ -81,6 +81,10 @@ public final class MatrixEventProcessor {
             handleStatus();
             return;
         }
+        if (lower.equals("#info")) {
+            handleInfo();
+            return;
+        }
 
         // Hard safety rule: never send controller text to MUD unless currently connected
         if (!mud.isConnected()) {
@@ -133,6 +137,10 @@ public final class MatrixEventProcessor {
 
     private void handleStatus() {
         sender.sendText(roomId, "Status: " + (mud.isConnected() ? "CONNECTED" : "DISCONNECTED"), false);
+    }
+
+    private void handleInfo() {
+        sender.sendText(roomId, mud.getCurrentRoomSnapshot().formatForDisplay(), false);
     }
 
     private static String text(JsonElement n) {

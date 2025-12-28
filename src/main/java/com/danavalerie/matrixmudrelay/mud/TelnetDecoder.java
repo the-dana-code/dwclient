@@ -1,5 +1,10 @@
 package com.danavalerie.matrixmudrelay.mud;
   
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,6 +45,8 @@ public final class TelnetDecoder {
     public interface SubnegotiationListener {
         void onSubnegotiation(byte opt, byte[] data);
     }
+
+    public record GmcpMessage(String command, JsonElement payload) {}
 
     public TelnetDecoder(Supplier<OutputStream> outSupplier, SubnegotiationListener subnegotiationListener) {
         this.outSupplier = outSupplier;
@@ -170,5 +177,31 @@ public final class TelnetDecoder {
         out.write(cmd);
         out.write(opt);
         out.flush();
+    }
+
+    public static GmcpMessage parseGmcpMessage(String msg) {
+        if (msg == null) return null;
+        String trimmed = msg.trim();
+        if (trimmed.isEmpty()) return null;
+        int split = trimmed.indexOf(' ');
+        String command;
+        String payloadText;
+        if (split == -1) {
+            command = trimmed;
+            payloadText = "";
+        } else {
+            command = trimmed.substring(0, split).trim();
+            payloadText = trimmed.substring(split + 1).trim();
+        }
+        if (command.isEmpty()) return null;
+        JsonElement payload = JsonNull.INSTANCE;
+        if (!payloadText.isEmpty()) {
+            try {
+                payload = JsonParser.parseString(payloadText);
+            } catch (Exception e) {
+                payload = new JsonPrimitive(payloadText);
+            }
+        }
+        return new GmcpMessage(command, payload);
     }
 }
