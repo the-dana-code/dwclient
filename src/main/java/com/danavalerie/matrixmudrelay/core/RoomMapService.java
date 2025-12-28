@@ -26,7 +26,7 @@ public class RoomMapService {
     private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private static final int IMAGE_SCALE = 2;
     private static final int IMAGE_PIXEL_SPAN = IMAGE_SPAN * IMAGE_SCALE;
-    private static final int ROOM_PIXEL_SIZE = 4 * IMAGE_SCALE;
+    private static final int ROOM_PIXEL_SIZE = 5 * IMAGE_SCALE;
     private final String dbPath;
     private final boolean driverAvailable;
 
@@ -204,6 +204,10 @@ public class RoomMapService {
     }
 
     private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent) {
+        if (isCurrent) {
+            drawCurrentRoom(g2, px, py);
+            return;
+        }
         int half = ROOM_PIXEL_SIZE / 2;
         int topLeftX = px - half;
         int topLeftY = py - half;
@@ -216,7 +220,24 @@ public class RoomMapService {
         if (width <= 0 || height <= 0) {
             return;
         }
-        g2.setColor(isCurrent ? new Color(96, 230, 118) : new Color(208, 212, 230));
+        g2.setColor(new Color(208, 212, 230));
+        g2.fillRect(startX, startY, width, height);
+    }
+
+    private static void drawCurrentRoom(Graphics2D g2, int px, int py) {
+        int half = ROOM_PIXEL_SIZE / 2;
+        int topLeftX = px - half;
+        int topLeftY = py - half;
+        int startX = Math.max(0, topLeftX);
+        int startY = Math.max(0, topLeftY);
+        int endX = Math.min(IMAGE_PIXEL_SPAN, topLeftX + ROOM_PIXEL_SIZE);
+        int endY = Math.min(IMAGE_PIXEL_SPAN, topLeftY + ROOM_PIXEL_SIZE);
+        int width = endX - startX;
+        int height = endY - startY;
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        g2.setColor(new Color(220, 48, 48));
         g2.fillRect(startX, startY, width, height);
     }
 
