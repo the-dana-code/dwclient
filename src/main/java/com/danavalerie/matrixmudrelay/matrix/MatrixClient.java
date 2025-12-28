@@ -120,6 +120,48 @@ public final class MatrixClient {
         return eventId == null ? null : eventId.getAsString();
     }
 
+    public String uploadMedia(String filename, byte[] data, String contentType)
+            throws IOException, InterruptedException, MatrixApiException {
+        String path = "/_matrix/media/v3/upload?filename=" + urlQuery(filename);
+        HttpRequest req = HttpRequest.newBuilder()
+                .uri(URI.create(baseUrl + path))
+                .timeout(Duration.ofSeconds(30))
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", contentType)
+                .header("User-Agent", "MatrixMudRelay/1.0")
+                .POST(HttpRequest.BodyPublishers.ofByteArray(data))
+                .build();
+        logCurl(req, null);
+        JsonObject resp = send(req);
+        JsonElement contentUri = resp.get("content_uri");
+        if (contentUri == null || contentUri.getAsString().isBlank()) {
+            throw new MatrixApiException(500, "No content_uri in upload response");
+        }
+        return contentUri.getAsString();
+    }
+
+    public String sendImageMessage(String roomId, String body, String contentUri, String mimeType, int width, int height, int size,
+                                   boolean notify) throws IOException, InterruptedException, MatrixApiException {
+        String txnId = UUID.randomUUID().toString();
+        String path = "/_matrix/client/v3/rooms/" + urlPath(roomId) + "/send/m.room.message/" + urlPath(txnId);
+
+        JsonObject content = new JsonObject();
+        content.addProperty("msgtype", "m.image");
+        content.addProperty("body", body.isEmpty() ? " " : body);
+        content.addProperty("url", contentUri);
+
+        JsonObject info = new JsonObject();
+        info.addProperty("mimetype", mimeType);
+        info.addProperty("w", width);
+        info.addProperty("h", height);
+        info.addProperty("size", size);
+        content.add("info", info);
+
+        JsonObject resp = putJson(path, content);
+        JsonElement eventId = resp.get("event_id");
+        return eventId == null ? null : eventId.getAsString();
+    }
+
     public static final class SyncResponse {
         public final JsonObject root;
 

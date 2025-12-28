@@ -1,5 +1,12 @@
 package com.danavalerie.matrixmudrelay.core;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,9 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 public class RoomMapService {
-    private static final int MAP_SIZE = 20;
-    private static final int HALF_SPAN = 9;
+    private static final int IMAGE_SPAN = 250;
+    private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
+    private static final int IMAGE_SCALE = 2;
+    private static final int IMAGE_PIXEL_SPAN = IMAGE_SPAN * IMAGE_SCALE;
+    private static final int ROOM_PIXEL_SIZE = 4 * IMAGE_SCALE;
     private final String dbPath;
     private final boolean driverAvailable;
 
@@ -28,7 +40,7 @@ public class RoomMapService {
         this.driverAvailable = loaded;
     }
 
-    public String renderMap(String currentRoomId) throws SQLException, MapLookupException {
+    public MapImage renderMapImage(String currentRoomId) throws SQLException, MapLookupException, IOException {
         if (currentRoomId == null || currentRoomId.isBlank()) {
             throw new MapLookupException("No room info available yet.");
         }
@@ -42,41 +54,33 @@ public class RoomMapService {
                 throw new MapLookupException("Current room not found in map database.");
             }
 
-            int minX = current.xpos - HALF_SPAN;
-            int maxX = current.xpos + (MAP_SIZE - HALF_SPAN - 1);
-            int minY = current.ypos - HALF_SPAN;
-            int maxY = current.ypos + (MAP_SIZE - HALF_SPAN - 1);
+            int minX = current.xpos - IMAGE_HALF_SPAN;
+            int maxX = minX + IMAGE_SPAN - 1;
+            int minY = current.ypos - IMAGE_HALF_SPAN;
+            int maxY = minY + IMAGE_SPAN - 1;
 
             Map<String, RoomRecord> rooms = loadRoomsInArea(conn, current.mapId, minX, maxX, minY, maxY);
-            int gridSize = MAP_SIZE * 2 - 1;
-            char[][] grid = new char[gridSize][gridSize];
-            fill(grid, ' ');
+
+            BufferedImage image = new BufferedImage(IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = image.createGraphics();
+            g2.setColor(new Color(12, 12, 18));
+            g2.fillRect(0, 0, IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g2.setStroke(new BasicStroke(IMAGE_SCALE));
 
             for (RoomRecord room : rooms.values()) {
-                int col = (room.xpos - minX) * 2;
-                int row = (maxY - room.ypos) * 2;
-                if (row < 0 || row >= gridSize || col < 0 || col >= gridSize) {
-                    continue;
-                }
-                grid[row][col] = room.roomId.equals(currentRoomId) ? '@' : 'o';
+                int px = (room.xpos - minX) * IMAGE_SCALE;
+                int py = (room.ypos - minY) * IMAGE_SCALE;
+                drawRoomSquare(g2, px, py, room.roomId.equals(currentRoomId));
             }
+            drawConnectionsImage(conn, rooms, minX, minY, g2);
 
-            drawConnections(conn, rooms, minX, maxY, grid);
+            g2.dispose();
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("Map centered on ").append(current.roomId)
-                    .append(" (").append(current.xpos).append(", ").append(current.ypos).append(")")
-                    .append(" [x=").append(minX).append("..").append(maxX)
-                    .append(", y=").append(minY).append("..").append(maxY).append("]")
-                    .append("\n");
-            sb.append("Legend: @=you o=room").append("\n");
-            for (int row = 0; row < gridSize; row++) {
-                sb.append(rtrim(grid[row]));
-                if (row < gridSize - 1) {
-                    sb.append("\n");
-                }
-            }
-            return sb.toString();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", out);
+            String body = "Map centered on " + current.roomId + " (" + current.xpos + ", " + current.ypos + ")";
+            return new MapImage(out.toByteArray(), IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN, "image/png", body);
         }
     }
 
@@ -128,7 +132,7 @@ public class RoomMapService {
         return rooms;
     }
 
-    private void drawConnections(Connection conn, Map<String, RoomRecord> rooms, int minX, int maxY, char[][] grid)
+    private void drawConnectionsImage(Connection conn, Map<String, RoomRecord> rooms, int minX, int minY, Graphics2D g2)
             throws SQLException {
         if (rooms.isEmpty()) {
             return;
@@ -140,6 +144,7 @@ public class RoomMapService {
             placeholders.append('?');
         }
         String sql = "select room_id, connect_id from room_exits where room_id in (" + placeholders + ")";
+        g2.setColor(new Color(80, 90, 120));
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < ids.size(); i++) {
                 stmt.setString(i + 1, ids.get(i));
@@ -151,44 +156,54 @@ public class RoomMapService {
                     if (from == null || to == null) {
                         continue;
                     }
-                    int dx = to.xpos - from.xpos;
-                    int dy = to.ypos - from.ypos;
-                    if (Math.abs(dx) + Math.abs(dy) != 1) {
-                        continue;
-                    }
-                    int col = (from.xpos - minX) * 2;
-                    int row = (maxY - from.ypos) * 2;
-                    if (dx == 1) {
-                        grid[row][col + 1] = '-';
-                    } else if (dx == -1) {
-                        grid[row][col - 1] = '-';
-                    } else if (dy == 1) {
-                        grid[row - 1][col] = '|';
-                    } else if (dy == -1) {
-                        grid[row + 1][col] = '|';
-                    }
+                    int fromX = (from.xpos - minX) * IMAGE_SCALE;
+                    int fromY = (from.ypos - minY) * IMAGE_SCALE;
+                    int toX = (to.xpos - minX) * IMAGE_SCALE;
+                    int toY = (to.ypos - minY) * IMAGE_SCALE;
+                    drawConnectionLine(g2, fromX, fromY, toX, toY);
                 }
             }
         }
     }
 
-    private static void fill(char[][] grid, char ch) {
-        for (char[] row : grid) {
-            for (int i = 0; i < row.length; i++) {
-                row[i] = ch;
-            }
-        }
-    }
-
-    private static String rtrim(char[] row) {
-        int end = row.length;
-        while (end > 0 && row[end - 1] == ' ') {
-            end--;
-        }
-        return new String(row, 0, end);
-    }
-
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
+    }
+
+    private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent) {
+        int half = ROOM_PIXEL_SIZE / 2;
+        int topLeftX = px - half;
+        int topLeftY = py - half;
+        int startX = Math.max(0, topLeftX);
+        int startY = Math.max(0, topLeftY);
+        int endX = Math.min(IMAGE_PIXEL_SPAN, topLeftX + ROOM_PIXEL_SIZE);
+        int endY = Math.min(IMAGE_PIXEL_SPAN, topLeftY + ROOM_PIXEL_SIZE);
+        int width = endX - startX;
+        int height = endY - startY;
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        g2.setColor(isCurrent ? new Color(96, 230, 118) : new Color(208, 212, 230));
+        g2.fillRect(startX, startY, width, height);
+    }
+
+    private static void drawConnectionLine(Graphics2D g2, int fromX, int fromY, int toX, int toY) {
+        int dx = toX - fromX;
+        int dy = toY - fromY;
+        if (dx == 0 && dy == 0) {
+            return;
+        }
+        double length = Math.hypot(dx, dy);
+        double ux = dx / length;
+        double uy = dy / length;
+        double offset = (ROOM_PIXEL_SIZE + IMAGE_SCALE) / 2.0;
+        int startX = (int) Math.round(fromX + ux * offset);
+        int startY = (int) Math.round(fromY + uy * offset);
+        int endX = (int) Math.round(toX - ux * offset);
+        int endY = (int) Math.round(toY - uy * offset);
+        g2.drawLine(startX, startY, endX, endY);
+    }
+
+    public record MapImage(byte[] data, int width, int height, String mimeType, String body) {
     }
 
     public static class MapLookupException extends Exception {

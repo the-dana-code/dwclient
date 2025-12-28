@@ -40,6 +40,11 @@ public class RetryingMatrixSender {
         single.submit(() -> sendWithRetry(roomId, body, html, originalText, notify));
     }
 
+    public void sendImage(String roomId, String body, byte[] data, String filename, String mimeType, int width, int height,
+                          boolean notify) {
+        single.submit(() -> sendImageWithRetry(roomId, body, data, filename, mimeType, width, height, notify));
+    }
+
     private void sendWithRetry(String roomId, String body, String html, String originalText, boolean notify) {
         long backoff = Math.max(0, retry.initialBackoffMs);
         int attempts = 0;
@@ -75,6 +80,51 @@ public class RetryingMatrixSender {
 
             if (retry.maxAttempts > 0 && attempts >= retry.maxAttempts) {
                 log.error("matrix_send giving_up attempts={} (maxAttempts={})", attempts, retry.maxAttempts);
+                return;
+            }
+
+            backoff = Math.min(Math.max(backoff, 1), retry.maxBackoffMs);
+            backoff = Math.min(retry.maxBackoffMs, (long) (backoff * 1.7) + 1);
+        }
+    }
+
+    private void sendImageWithRetry(String roomId, String body, byte[] data, String filename, String mimeType, int width,
+                                    int height, boolean notify) {
+        long backoff = Math.max(0, retry.initialBackoffMs);
+        int attempts = 0;
+
+        while (true) {
+            attempts++;
+            try {
+                String contentUri = client.uploadMedia(filename, data, mimeType);
+                client.sendImageMessage(roomId, body, contentUri, mimeType, width, height, data.length, notify);
+                return;
+            } catch (MatrixApiException e) {
+                if (e.statusCode == 429) {
+                    long ra = parseRetryAfterMs(e.responseBody);
+                    long sleep = ra > 0 ? ra : backoff;
+                    log.warn("matrix_image_send rate_limited status=429 sleepMs={} attempts={}", sleep, attempts);
+                    sleepMs(sleep);
+                } else if (e.statusCode / 100 == 5) {
+                    log.warn("matrix_image_send server_error status={} attempts={} backoffMs={}", e.statusCode, attempts, backoff);
+                    sleepMs(backoff);
+                } else {
+                    log.error("matrix_image_send fatal status={} body={}", e.statusCode, truncate(e.responseBody));
+                    return;
+                }
+            } catch (IOException e) {
+                log.warn("matrix_image_send io_error attempts={} backoffMs={} err={}", attempts, backoff, e.toString());
+                sleepMs(backoff);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            } catch (Exception e) {
+                log.warn("matrix_image_send unexpected attempts={} backoffMs={} err={}", attempts, backoff, e.toString());
+                sleepMs(backoff);
+            }
+
+            if (retry.maxAttempts > 0 && attempts >= retry.maxAttempts) {
+                log.error("matrix_image_send giving_up attempts={} (maxAttempts={})", attempts, retry.maxAttempts);
                 return;
             }
 

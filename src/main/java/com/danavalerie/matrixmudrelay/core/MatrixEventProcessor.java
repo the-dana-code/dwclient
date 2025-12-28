@@ -156,8 +156,9 @@ public final class MatrixEventProcessor {
             return;
         }
         try {
-            String map = mapService.renderMap(currentRoomId);
-            sender.sendText(roomId, map, false);
+            RoomMapService.MapImage mapImage = mapService.renderMapImage(currentRoomId);
+            sender.sendImage(roomId, mapImage.body(), mapImage.data(), "mud-map.png", mapImage.mimeType(),
+                    mapImage.width(), mapImage.height(), false);
         } catch (RoomMapService.MapLookupException e) {
             sender.sendText(roomId, "Error: " + e.getMessage(), false);
         } catch (Exception e) {
