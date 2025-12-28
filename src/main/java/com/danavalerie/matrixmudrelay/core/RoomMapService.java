@@ -27,6 +27,8 @@ public class RoomMapService {
     private static final int IMAGE_SCALE = 2;
     private static final int IMAGE_PIXEL_SPAN = IMAGE_SPAN * IMAGE_SCALE;
     private static final int ROOM_PIXEL_SIZE = 5 * IMAGE_SCALE;
+    private static final int ROOM_PIXEL_OFFSET_X = IMAGE_SCALE;
+    private static final int ROOM_PIXEL_OFFSET_Y = IMAGE_SCALE;
     private final String dbPath;
     private final boolean driverAvailable;
 
@@ -74,8 +76,8 @@ public class RoomMapService {
             drawMapBackground(current.mapId, minX, minY, g2);
 
             for (RoomRecord room : rooms.values()) {
-                int px = (room.xpos - minX) * IMAGE_SCALE;
-                int py = (room.ypos - minY) * IMAGE_SCALE;
+                int px = (room.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
+                int py = (room.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
                 drawRoomSquare(g2, px, py, room.roomId.equals(currentRoomId));
             }
             drawConnectionsImage(conn, rooms, minX, minY, g2);
@@ -194,7 +196,13 @@ public class RoomMapService {
                     int fromY = (from.ypos - minY) * IMAGE_SCALE;
                     int toX = (to.xpos - minX) * IMAGE_SCALE;
                     int toY = (to.ypos - minY) * IMAGE_SCALE;
-                    drawConnectionLine(g2, fromX, fromY, toX, toY);
+                    drawConnectionLine(
+                            g2,
+                            fromX + ROOM_PIXEL_OFFSET_X,
+                            fromY + ROOM_PIXEL_OFFSET_Y,
+                            toX + ROOM_PIXEL_OFFSET_X,
+                            toY + ROOM_PIXEL_OFFSET_Y
+                    );
                 }
             }
         }
