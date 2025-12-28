@@ -49,7 +49,7 @@ public final class CurrentRoomInfo {
     }
 
     private static String extractRoomId(JsonObject obj) {
-        String[] keys = {"id", "num", "vnum", "roomid"};
+        String[] keys = {"id", "num", "vnum", "roomid", "identifier"};
         for (String key : keys) {
             JsonElement val = obj.get(key);
             if (val == null || val.isJsonNull()) continue;

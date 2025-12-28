@@ -21,6 +21,7 @@ public final class MatrixEventProcessor {
     private final RetryingMatrixSender sender;
     private final MudClient mud;
     private final TranscriptLogger transcript;
+    private final RoomMapService mapService;
 
     public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud, TranscriptLogger transcript) {
         this.cfg = cfg;
@@ -28,6 +29,7 @@ public final class MatrixEventProcessor {
         this.sender = sender;
         this.mud = mud;
         this.transcript = transcript;
+        this.mapService = new RoomMapService("database.db");
     }
 
     public void onMatrixEvent(JsonObject ev) {
@@ -83,6 +85,10 @@ public final class MatrixEventProcessor {
         }
         if (lower.equals("#info")) {
             handleInfo();
+            return;
+        }
+        if (lower.equals("#map")) {
+            handleMap();
             return;
         }
 
@@ -141,6 +147,23 @@ public final class MatrixEventProcessor {
 
     private void handleInfo() {
         sender.sendText(roomId, mud.getCurrentRoomSnapshot().formatForDisplay(), false);
+    }
+
+    private void handleMap() {
+        String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
+        if (currentRoomId == null || currentRoomId.isBlank()) {
+            sender.sendText(roomId, "Error: No room info available yet.", false);
+            return;
+        }
+        try {
+            String map = mapService.renderMap(currentRoomId);
+            sender.sendText(roomId, map, false);
+        } catch (RoomMapService.MapLookupException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+        } catch (Exception e) {
+            log.warn("map render failed err={}", e.toString());
+            sender.sendText(roomId, "Error: Unable to render map.", false);
+        }
     }
 
     private static String text(JsonElement n) {
