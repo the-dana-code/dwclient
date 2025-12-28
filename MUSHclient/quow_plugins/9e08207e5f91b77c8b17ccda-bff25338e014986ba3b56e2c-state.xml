@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+<!-- Saved on Sunday, December 28, 2025, 2:00 AM -->
+<!-- MuClient version 5.06 -->
+<!-- Written by Nick Gammon -->
+<!-- Home Page: http://www.mushclient.com/ -->
+
+<!-- Plugin state saved. Plugin: "QuowMindspace". World: "Discworld". -->
+
+<muclient>
+
+<!-- variables -->
+
+<variables
+   muclient_version="5.06"
+   world_file_version="15"
+   date_saved="2025-12-28 02:00:59"
+  >
+  <variable name="SpecialPerAlt">{"NoName":0}</variable>
+  <variable name="SpinfoPerAlt">{"lesa":{},"maemot":{"Gillimer's Ring of Temperate Weather":{"first":1766162017,"last":1766836639,"casts":5}}}</variable>
+  <variable name="sCurChar">lesa</variable>
+</variables>
+</muclient>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+<!-- Saved on Wednesday, December 17, 2025, 12:30 PM -->
+<!-- MuClient version 5.06 -->
+<!-- Written by Nick Gammon -->
+<!-- Home Page: http://www.mushclient.com/ -->
+
+<!-- Plugin state saved. Plugin: "QuowMindspace". World: "Discworld". -->
+
+<muclient>
+
+<!-- variables -->
+
+<variables
+   muclient_version="5.06"
+   world_file_version="15"
+   date_saved="2025-12-17 12:30:30"
+  >
+  <variable name="SpecialPerAlt">{"NoName":0}</variable>
+  <variable name="SpellsPerAlt">{"maemot":{"jpct":1,"fhe":1,"eff":1,"sfp":1,"sss":1,"ahsb":1,"dtld":1,"fnp":1,"mwlc":1,"grtw":1,"tpa":1,"otf":1},"NoName":{},"lesa":{},"ngao":{}}</variable>
+  <variable name="SpinfoPerAlt">{"NoName":{},"maemot":{"Transcendent Pneumatic Alleviator":{"first":1765695323,"casts":1,"last":1765695323},"Jogloran's Portal of Cheaper Travel":{"first":1765694214,"casts":6,"last":1765941656},"Gillimer's Ring of Temperate Weather":{"first":1765880575,"last":1765884245,"casts":10},"Sorklin's Field of Protection":{"first":1765699443,"casts":2,"last":1765941713},"Al'Hrahaz's Scintillating Blorpler":{"first":1765695342,"casts":2,"last":1765695375},"Fyodor's Nimbus of Porterage":{"first":1765697554,"casts":1,"last":1765697554}},"lesa":{"Fyodor's Nimbus of Porterage":{"first":1765702345,"casts":3,"last":1765867193},"Master Woddeley's Luminescent Companion":{"first":1765698409,"casts":1,"last":1765698409}},"ngao":{}}</variable>
+  <variable name="sCurChar">lesa</variable>
+</variables>
+</muclient>

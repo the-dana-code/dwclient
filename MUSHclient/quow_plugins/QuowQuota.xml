@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE muclient>
+
+<!-- Simplistic Quota handler, that changes your MUSHclient status bar (View->Status Bar to enable), by Quow -->
+<!-- There are warnings below an hour remaining if you have fees due/haven't reached quota, that can go to your Cow Bar comms window -->
+<!-- If you login as a non-thief, it will auto-disable, and log back to a thief, auto-enable again - no annoyances with alts! -->
+<!-- You can edit the warning notification timer times/colours below, at the start of the code (lines 35-50, it is explained!) -->
+
+<!-- "quota holiday" will toggle the plugin off/on (for going "on holiday" from your quota or back again) -->
+
+<muclient>
+<plugin
+   name="QuowQuotas"
+   author="Quow"
+   id="8b74a094bbafa4ba423f0a05"
+   language="Lua"
+   purpose="Quota Quasher"
+   date_written="2018-10-21"
+   date_modified="2018-10-21"
+   save_state="y"
+   requires="4.84"
+   version="0.01"
+   >
+</plugin>
+<aliases>
+  <!-- An alias to toggle setting yourself on "holiday" or back again - basically disables the timer/plugin or not -->
+  <alias
+   match="quota holiday"
+   enabled="y"
+   script="QuotaHoliday"
+   sequence="100"
+  >
+  </alias>
+  <!-- An alias to manually reset the quota value-owed to $0, eg after paying your quota off -->
+  <alias
+   match="quota reset"
+   enabled="y"
+   script="QuotaReset"
+   sequence="100"
+  >
+  </alias>
+</aliases>
+<script>
+<![CDATA[
+
+-- Do we want the "timer warnings" (that happen on iDefaultNotificationTimes times below) to also add to our chat bar window?
+-- Set to true, or false
+bChatBarWarnings = true
+
+-- Comma-seperated list as to what minute-count warnings that you have not hit your quota/not paid your fees should be shown
+-- You can delete lines/add lines to have as many or as few warning-points as you want, but each line should be in this format:
+-- [minute] = {true, "darkorange"},
+-- For example for red warnings at 10 minutes, on a line by itself:
+-- [10] = {true, "red"},
+-- Or with hex colours:
+-- [10] = {true, "#FF0000"},
+-- If you want *NO* notifications, the array should be empty, like this;
+-- iDefaultNotificationTimes = {}
+iDefaultNotificationTimes = {
+  [60] = {true, "cyan"},
+  [30] = {true, "darkorange"},
+  [10] = {true, "yellow"},
+  [5] = {true, "red"}, 
+}
+
+
+-- STOP!
+-- Main plugin code follows, not for the faint-of-heart or beginners to edit unless you know what you are doing!
+
+
+-- Default to NOT on holiday, but load variable in from memory otherwise
+bQuotaHoliday = false
+if (GetVariable("bQuotaHoliday") == "true") then
+  bQuotaHoliday = true
+end
+
+
+-- Detecting the first line of brief and verbose quotas and starting the trigger-chain
+function PrimeQuota()
+  -- Prime the initial brief and verbose trigger possibilities
+  EnableTrigger("V_PrimeQuotaReceipts", true)
+  EnableTrigger("B_QuotaReceipts", true)
+end
+
+-- Leave of absence reported by quota
+function QuotaLeaveAbsence()
+  EnableTrigger("V_PrimeQuotaReceipts", false)
+  EnableTrigger("B_QuotaReceipts", false)
+  if (bQuotaHoliday == false) then
+    QuotaHoliday()
+  end
+end
+
+-- ========
+-- Verboses
+-- ========
+-- Starting the VERBOSE chain of triggers, step 1 quota receipts
+function V_PrimeQuotaReceipts()
+  -- Disable last triggers
+  EnableTrigger("V_PrimeQuotaReceipts", false)
+  EnableTrigger("B_QuotaReceipts", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaReceipts", true)
+end
+function V_QuotaReceipts(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaReceipts", false)
+  -- Enable next triggers
+  EnableTrigger("V_PrimeQuotaCut", true)
+  -- Get the receipt total
+  if (string.sub(wildcards.value, -1) == "p") then
+    iStolenTotal = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iStolenTotal = tonumber(wildcards.value)
+  end
+  if (iStolenTotal == nil) then iStolenTotal = 0 end
+end
+-- Step 2, verbose guild cuts
+function V_PrimeQuotaCut()
+  -- Disable last triggers
+  EnableTrigger("V_PrimeQuotaCut", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaCut", true)
+end
+function V_QuotaCut(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaCut", false)
+  -- Enable next triggers
+  EnableTrigger("V_PrimeQuotaPaid", true)
+  -- Get the quota cut
+  if (string.sub(wildcards.value, -1) == "p") then
+    iGuildCut = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iGuildCut = tonumber(wildcards.value)
+  end
+  if (iGuildCut == nil) then iGuildCut = 0 end
+end
+-- Step 3, verbose guild paid
+function V_PrimeQuotaPaid()
+  -- Disable last triggers
+  EnableTrigger("V_PrimeQuotaPaid", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaPaid", true)
+end
+function V_QuotaPaid(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaPaid", false)
+  -- Enable next triggers
+  EnableTrigger("V_PrimeQuotaOwed", true)
+  -- Get the paid amount
+  if (string.sub(wildcards.value, -1) == "p") then
+    iDebtPaid = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iDebtPaid = tonumber(wildcards.value)
+  end
+  if (iDebtPaid == nil) then iDebtPaid = 0 end
+end
+-- Step 3, verbose still-owed amount
+function V_PrimeQuotaOwed()
+  -- Disable last triggers
+  EnableTrigger("V_PrimeQuotaOwed", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaOwed", true)
+end
+function V_QuotaOwed(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaOwed", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaTimeLeft", true)
+  -- Get the owed amount
+  if (string.sub(wildcards.value, -1) == "p") then
+    iDebtOutstanding = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iDebtOutstanding = tonumber(wildcards.value)
+  end
+  if (iDebtOutstanding == nil) then iDebtOutstanding = 0 end
+end
+-- Verbose step 5 time left
+function V_QuotaTimeLeft(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaTimeLeft", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaMinAmount", true)
+  -- Get the time left
+  local iHours, iMinutes, iSeconds = wildcards.hourcount, wildcards.mincount, wildcards.seccount
+  if (iHours == "") then iHours = 0 end
+  if (iMinutes == "") then iMinutes = 0 end
+  if (iSeconds == "") then iSeconds = 0 end
+  iQuotaEndTime = os.time() + (iSeconds + (iMinutes * 60) + (iHours * 3600))
+end
+-- Verbose step 6 minimum quota
+function V_QuotaMinAmount(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaMinAmount", false)
+  -- Enable next triggers
+  EnableTrigger("V_QuotaMaxAmount", true)
+  -- Get the minimum quota
+  if (string.sub(wildcards.value, -1) == "p") then
+    iMinQuota = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iMinQuota = tonumber(wildcards.value)
+  end
+  if (iMinQuota == nil) then iMinQuota = 0 end
+end
+-- Verbose step 7 maximum quota
+function V_QuotaMaxAmount(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_QuotaMinAmount", false)
+  -- Get the maximum quota
+  if (string.sub(wildcards.value, -1) == "p") then
+    iMaxQuota = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iMaxQuota = tonumber(wildcards.value)
+  end
+  if (iMaxQuota == nil) then iMaxQuota = 0 end
+  -- Render it all
+  UpdateQuotaText()
+end
+
+
+-- ======
+-- Briefs
+-- ======
+-- Starting the BRIEF chain of triggers, step 1 quota receipts
+function B_QuotaReceipts(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("V_PrimeQuotaReceipts", false)
+  EnableTrigger("B_QuotaReceipts", false)
+  -- Enable next triggers
+  EnableTrigger("B_QuotaCut", true)
+  -- Get the receipt total
+  if (string.sub(wildcards.value, -1) == "p") then
+    iStolenTotal = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iStolenTotal = tonumber(wildcards.value)
+  end
+  if (iStolenTotal == nil) then iStolenTotal = 0 end
+end
+-- Brief step 2 quota cut
+function B_QuotaCut(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("B_QuotaCut", false)
+  -- Enable next triggers
+  EnableTrigger("B_QuotaPaid", true)
+  -- Get the quota cut
+  if (string.sub(wildcards.value, -1) == "p") then
+    iGuildCut = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iGuildCut = tonumber(wildcards.value)
+  end
+  if (iGuildCut == nil) then iGuildCut = 0 end
+end
+-- Brief step 3 quota paid
+function B_QuotaPaid(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("B_QuotaPaid", false)
+  -- Enable next triggers
+  EnableTrigger("B_QuotaOwed", true)
+  -- Get the paid amount
+  if (string.sub(wildcards.value, -1) == "p") then
+    iDebtPaid = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iDebtPaid = tonumber(wildcards.value)
+  end
+  if (iDebtPaid == nil) then iDebtPaid = 0 end
+end
+-- Brief step 4 quota owed
+function B_QuotaOwed(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("B_QuotaOwed", false)
+  -- Enable next triggers
+  EnableTrigger("B_QuotaTimeLeft", true)
+  -- Get the owed amount
+  if (string.sub(wildcards.value, -1) == "p") then
+    iDebtOutstanding = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iDebtOutstanding = tonumber(wildcards.value)
+  end
+  if (iDebtOutstanding == nil) then iDebtOutstanding = 0 end
+end
+-- Brief step 5 time left
+function B_QuotaTimeLeft(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("B_QuotaTimeLeft", false)
+  -- Enable next triggers
+  EnableTrigger("B_QuotaMinAmount", true)
+  -- Get the time left
+  local iHours, iMinutes, iSeconds = wildcards.hourcount, wildcards.mincount, wildcards.seccount
+  if (iHours == nil) then iHours = 0 end
+  if (iMinutes == nil) then iMinutes = 0 end
+  if (iSeconds == nil) then iSeconds = 0 end
+  iQuotaEndTime = os.time() + (iSeconds + (iMinutes * 60) + (iHours * 3600))
+end
+-- Brief step 6 minimum quota
+function B_QuotaMinAmount(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("B_QuotaMinAmount", false)
+  -- Enable next triggers
+  EnableTrigger("B_QuotaMaxAmount", true)
+  -- Get the minimum quota
+  if (string.sub(wildcards.value, -1) == "p") then
+    iMinQuota = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iMinQuota = tonumber(wildcards.value)
+  end
+  if (iMinQuota == nil) then iMinQuota = 0 end
+end
+-- Brief step 7 maximum quota
+function B_QuotaMaxAmount(sName, sLine, wildcards)
+  -- Disable last triggers
+  EnableTrigger("B_QuotaMinAmount", false)
+  -- Get the maximum quota
+  if (string.sub(wildcards.value, -1) == "p") then
+    iMaxQuota = tonumber(string.sub(wildcards.value, 0, -2)) / 100
+  else
+    iMaxQuota = tonumber(wildcards.value)
+  end
+  if (iMaxQuota == nil) then iMaxQuota = 0 end
+  -- Render it all
+  UpdateQuotaText()
+end
+
+-- Necessary variables
+iStolenTotal = 0
+iGuildCut = 0
+iDebtPaid = 0
+iDebtOutstanding = 0
+iQuotaEndTime = nil
+iMinQuota = 0
+iMaxQuota = 0
+sQuotaStatusText = ""
+sGuildType = ""
+sLastCharacter = ""
+
+-- Go "on holiday" or back again
+function QuotaHoliday()
+  if (bQuotaHoliday == true) then
+    -- Come back from holiday, yay!  Re-enable everything
+    bQuotaHoliday = false
+    iLastDisconnectTime = nil
+    RefreshStatusBar()
+    EnableTimer("RefreshStatusBar", true)
+    ColourNote("darkorange", "", "Quow's Quota Note:  You are no longer 'on holiday', be sure to 'check quota' to update!")
+  else
+    -- On holiday, boooo, disable everything
+    bQuotaHoliday = true
+    SetStatus("")
+    EnableTimer("RefreshStatusBar", false)
+    ColourNote("darkorange", "", "Quow's Quota Note:  You are now 'on holiday', so the quota status will not be updated!")
+  end
+  SetVariable("bQuotaHoliday", tostring(bQuotaHoliday))
+end
+
+-- Reset what's "owed" to 0 eg seeing Artan whisper to you
+function QuotaReset()
+  iDebtOutstanding = 0
+  UpdateQuotaText()
+end
+
+-- Re-create the quota-status text, no point doing this very second, only when there's changes detected
+function UpdateQuotaText()
+  sQuotaStatusText = ""
+  if (iStolenTotal < iMinQuota) then
+    if (sQuotaStatusText ~= "") then sQuotaStatusText = sQuotaStatusText .. "  " end
+    sQuotaStatusText = sQuotaStatusText .. "[UNDER QUOTA] Steal A$" .. string.format("%4.2f", (iMinQuota - iStolenTotal)) .. "+"
+  end
+  if (iStolenTotal > iMaxQuota) then
+    if (sQuotaStatusText ~= "") then sQuotaStatusText = sQuotaStatusText .. "  " end
+    sQuotaStatusText = sQuotaStatusText .. "[OVER QUOTA] Whoops! A$" .. string.format("%4.2f", (iStolenTotal - iMaxQuota)) .. " over!"
+  end
+  if (iDebtOutstanding > 0) then
+    if (sQuotaStatusText ~= "") then sQuotaStatusText = sQuotaStatusText .. "  " end
+    sQuotaStatusText = sQuotaStatusText .. "[FEES DUE] Pay A$" .. string.format("%4.2f", iDebtOutstanding) .. " fees!"
+  end
+  if (iStolenTotal == iMaxQuota) then
+    if (sQuotaStatusText ~= "") then 
+      sQuotaStatusText = sQuotaStatusText .. "  "
+    else
+      sQuotaStatusText = sQuotaStatusText .. "[Quota Max] "
+    end
+    sQuotaStatusText = sQuotaStatusText.. "No more stealing!"
+  elseif (iStolenTotal > iMinQuota) then
+    if (sQuotaStatusText ~= "") then 
+      sQuotaStatusText = sQuotaStatusText .. "  "
+    else
+      sQuotaStatusText = sQuotaStatusText .. "[Minimum Reached] "
+    end
+    sQuotaStatusText = sQuotaStatusText.. "Can steal A$" .. string.format("%4.2f", (iMaxQuota - iStolenTotal)) .. " more."
+  end
+  sQuotaStatusText = sQuotaStatusText .. "  (Quota: A$" .. string.format("%4.2f", iMinQuota) .. " - A$" .. string.format("%4.2f", iMaxQuota) .. " | Stole: A$" .. string.format("%4.2f", iStolenTotal) .. " | Owed: A$" .. string.format("%4.2f", iDebtOutstanding) .. ")"
+  RefreshStatusBar()
+end
+
+-- Actually update the timer-remaining value
+function RefreshStatusBar()
+  -- Calculate time remaining
+  if (iQuotaEndTime ~= nil) then
+    local sQuotaString, iTotalTimeLeft = "", iQuotaEndTime - os.time()
+    if (iTotalTimeLeft > 0) then
+      local iHours = math.floor(iTotalTimeLeft / 3600)
+      local iMinutes = math.floor((iTotalTimeLeft - (iHours * 3600)) / 60)
+      local iSeconds = iTotalTimeLeft - ((iHours * 3600) + iMinutes * 60)
+      sQuotaString = string.format("%02d", iHours) .. ":" .. string.format("%02d", iMinutes) .. ":" .. string.format("%02d", iSeconds)
+      if (iDebtOutstanding > 0 or iStolenTotal < iMinQuota) then
+        local iTotalMinutesRemaining = math.floor(iTotalTimeLeft / 60)
+        -- Notifications at minute passups:
+        for iMinutePassed, NotificationData in pairs(iDefaultNotificationTimes) do
+          if (iTotalMinutesRemaining < iMinutePassed) then
+            if (NotificationData[1] == true) then
+              iDefaultNotificationTimes[iMinutePassed][1] = false
+              local sThisWarning = ""
+              if (iStolenTotal < iMinQuota) then
+                sThisWarning = sThisWarning .. "MUST steal A$" .. string.format("%4.2f", (iMinQuota - iStolenTotal)) .. "+"
+              end
+              if (iDebtOutstanding > 0) then
+                if (sThisWarning ~= "") then sThisWarning = sThisWarning .. " and " end
+                sThisWarning = sThisWarning .. "MUST pay A$" .. string.format("%4.2f", iDebtOutstanding) .. " fees."
+              end
+              sThisWarning = "Quow's Quotas: " .. sQuotaString .. " time left. " .. sThisWarning
+              ColourNote(NotificationData[2], "", sThisWarning)
+              -- If bChatBarWarnings is set to true at the top of the script, then try to send the user a "fake tell" to their chat bar too
+              if (bChatBarWarnings == true) then
+                local objEncoded = json.encode({"Tells_In", sThisWarning, {[1] = {["textcolour"] = ColourNameToRGB(NotificationData[2]), ["backcolour"] = 0, ["text"] = sThisWarning, ["length"] = string.len(sThisWarning)}}})
+                CallPlugin ("bfe35205f026786ea1d56e3b", "HandleExternalComms", objEncoded)
+              end
+              -- Max one update per loop
+              break
+            end
+          else
+            iDefaultNotificationTimes[iMinutePassed][1] = true
+          end
+        end
+      end
+    else
+      sQuotaString = "Time Up"
+    end
+    SetStatus("Quota:  " .. sQuotaString .. "  " .. sQuotaStatusText)
+  else
+    SetStatus("Quota: 'Check' your quota to update, or 'quota holiday' to disable.")
+  end
+end
+
+-- Get data from the Cow Bar on our character guild type
+require "json"
+-- char.info {"name":"name","capname":"CapName","guildspec":"circle","role":"player","guild":"wizards"}
+function OnPluginBroadcast(msg, id, name, sDataLine)
+  if (bQuotaHoliday == false and msg == 1 and id == "bfe35205f026786ea1d56e3b" and string.sub(sDataLine, 1, 10) == "char.info ") then
+    local sDataLine = string.sub(sDataLine, 11)
+    if (sDataLine ~= "") then
+      sDataLine = json.decode(sDataLine)
+      if (sDataLine["guild"] ~= nil) then 
+        sGuildType = sDataLine["guild"]
+        local sNewCharacter = sDataLine["name"]
+        if (sGuildType ~= "thieves") then
+          SetStatus("")
+          EnableTimer("RefreshStatusBar", false)
+        else
+          if (sLastCharacter ~= "" and sNewCharacter ~= sLastCharacter) then
+            iStolenTotal = 0
+            iGuildCut = 0
+            iDebtPaid = 0
+            iDebtOutstanding = 0
+            iQuotaEndTime = nil
+            iMinQuota = 0
+            iMaxQuota = 0
+            sQuotaStatusText = ""
+          end
+          sLastCharacter = sNewCharacter
+          RefreshStatusBar()
+          EnableTimer("RefreshStatusBar", true)
+        end
+      end
+    end
+  end
+end
+
+-- Plugin disconnected, disable timer
+iLastDisconnectTime = nil
+function OnPluginDisconnect ()
+  EnableTimer("RefreshStatusBar", false)
+  iLastDisconnectTime = os.time()
+end
+-- Plugin enabled, re-enable timer
+function OnPluginConnect ()
+  if (iQuotaEndTime ~= nil and iLastDisconnectTime ~= nil) then
+    iQuotaEndTime = iQuotaEndTime + (os.time() - iLastDisconnectTime)
+  end
+  iLastDisconnectTime = nil
+  if (bQuotaHoliday == false) then
+    RefreshStatusBar()
+    EnableTimer("RefreshStatusBar", true)
+  end
+end -- function
+
+-- Initialise
+function OnPluginInstall ()
+  -- We're on holiday, so don't enable the timer
+  if (bQuotaHoliday == true) then
+    EnableTimer("RefreshStatusBar", false)
+    ColourNote("darkorange", "", "Quow's Quota Note:  You are 'on holiday' so the quota bar display is disabled. Type 'quota holiday' to enable again.")
+  else
+    UpdateQuotaText()
+    EnableTimer("RefreshStatusBar", true)
+  end
+end
+
+-- Save holiday flag
+function OnPluginSaveState()
+  SetVariable("bQuotaHoliday", tostring(bQuotaHoliday))
+end
+
+]]>
+</script>
+<!--  Triggers  -->
+<triggers>
+  <!-- Primary trigger, enables other triggers automatically, mimimizes volume of "always on" triggers -->
+  <trigger
+   enabled="y"
+   keep_evaluating="n"
+   match="^(?:Letting your fingers slide over the Thieves' Cant on the licence, you read the following:|         > Ankh-Morpork Thieves' Guild Licence \(tm\) <)$"
+   regexp="y"
+   script="PrimeQuota"
+   name="PrimeQuota"
+   sequence="10"
+  >
+  </trigger>
+  <!-- Holiday-Quota -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^(> You are on leave of absence\.  <|You are on leave of absence\.)$"
+   regexp="y"
+   script="QuotaLeaveAbsence"
+   name="QuotaLeaveAbsence"
+   sequence="12"
+  >
+  </trigger>
+  <!-- Guild Receipt Handlers -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^People have brought receipts to the guild, with the following value:$"
+   regexp="y"
+   script="V_PrimeQuotaReceipts"
+   name="V_PrimeQuotaReceipts"
+   sequence="12"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^    (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="V_QuotaReceipts"
+   name="V_QuotaReceipts"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Receipts received: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="B_QuotaReceipts"
+   name="B_QuotaReceipts"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Guild Cut Handlers -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^The guild cut is 30% of that, which amounts to:$"
+   regexp="y"
+   script="V_PrimeQuotaCut"
+   name="V_PrimeQuotaCut"
+   sequence="12"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^    (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="V_QuotaCut"
+   name="V_QuotaCut"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Guild cut: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="B_QuotaCut"
+   name="B_QuotaCut"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Guild Paid Handlers -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^You've already paid the guild:$"
+   regexp="y"
+   script="V_PrimeQuotaPaid"
+   name="V_PrimeQuotaPaid"
+   sequence="12"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^    (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="V_QuotaPaid"
+   name="V_QuotaPaid"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Amount paid: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="B_QuotaPaid"
+   name="B_QuotaPaid"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Guild Owed Handlers -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^That leaves to pay:$"
+   regexp="y"
+   script="V_PrimeQuotaOwed"
+   name="V_PrimeQuotaOwed"
+   sequence="12"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^    (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="V_QuotaOwed"
+   name="V_QuotaOwed"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Amount owed: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="B_QuotaOwed"
+   name="B_QuotaOwed"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Time left handlers -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^You still have (?:(?P<hourcount>[0-9]{1,2}) hours?(?:, )?)?(?:(?P<mincount>[0-9]{1,2}) minutes?(?:, )?)?(?:(?P<seccount>[0-9]{1,2}) seconds?)? left this quota period\.$"
+   regexp="y"
+   script="V_QuotaTimeLeft"
+   name="V_QuotaTimeLeft"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Time left: (?:(?P<hourcount>[0-9]{1,2}) hours?(?:, )?)?(?:(?P<mincount>[0-9]{1,2}) minutes?(?:, )?)?(?:(?P<seccount>[0-9]{1,2}) seconds?)?\.$"
+   regexp="y"
+   script="B_QuotaTimeLeft"
+   name="B_QuotaTimeLeft"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Minimum Quota Needed -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^Minimum quota: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="V_QuotaMinAmount"
+   name="V_QuotaMinAmount"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Min quota: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="B_QuotaMinAmount"
+   name="B_QuotaMinAmount"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Maximum Quota Allowed -->
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^Maximum quota: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="V_QuotaMaxAmount"
+   name="V_QuotaMaxAmount"
+   sequence="15"
+  >
+  </trigger>
+  <trigger
+   enabled="n"
+   keep_evaluating="n"
+   match="^  Max quota: (?:A\$)?(?P<value>.+)\.$"
+   regexp="y"
+   script="B_QuotaMaxAmount"
+   name="B_QuotaMaxAmount"
+   sequence="15"
+  >
+  </trigger>
+  <!-- Artan Whispering Payment -->
+  <trigger
+   enabled="y"
+   match="^Artan whispers to you: Ok, looks like you've got enough to cover your debts for now\.$"
+   regexp="y"
+   script="QuotaReset"
+   sequence="100"
+  >
+  </trigger>  
+</triggers>
+<!-- A timer to auto update/auto-refresh the status bar, every second by default, auto-disabled if logging in as a non-thief -->
+<timers>
+  <timer 
+    script="RefreshStatusBar" 
+    name="RefreshStatusBar" 
+    enabled="n" 
+    second="1.00" 
+  >
+  </timer>
+</timers>
+</muclient>
