@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
@@ -66,7 +68,10 @@ public class RoomMapService {
             g2.setColor(new Color(12, 12, 18));
             g2.fillRect(0, 0, IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
             g2.setStroke(new BasicStroke(IMAGE_SCALE));
+
+            drawMapBackground(current.mapId, minX, minY, g2);
 
             for (RoomRecord room : rooms.values()) {
                 int px = (room.xpos - minX) * IMAGE_SCALE;
@@ -130,6 +135,35 @@ public class RoomMapService {
             }
         }
         return rooms;
+    }
+
+    private void drawMapBackground(int mapId, int minX, int minY, Graphics2D g2) throws IOException {
+        Optional<MapBackground> background = MapBackground.forMapId(mapId);
+        if (background.isEmpty()) {
+            return;
+        }
+        Path backgroundPath = Path.of("map-backgrounds", background.get().filename);
+        BufferedImage source = ImageIO.read(backgroundPath.toFile());
+        if (source == null) {
+            return;
+        }
+        int srcLeft = minX;
+        int srcTop = minY;
+        int srcRight = minX + IMAGE_SPAN;
+        int srcBottom = minY + IMAGE_SPAN;
+        int clippedLeft = Math.max(0, srcLeft);
+        int clippedTop = Math.max(0, srcTop);
+        int clippedRight = Math.min(source.getWidth(), srcRight);
+        int clippedBottom = Math.min(source.getHeight(), srcBottom);
+        if (clippedLeft >= clippedRight || clippedTop >= clippedBottom) {
+            return;
+        }
+        int destLeft = (clippedLeft - srcLeft) * IMAGE_SCALE;
+        int destTop = (clippedTop - srcTop) * IMAGE_SCALE;
+        int destRight = (clippedRight - srcLeft) * IMAGE_SCALE;
+        int destBottom = (clippedBottom - srcTop) * IMAGE_SCALE;
+        g2.drawImage(source, destLeft, destTop, destRight, destBottom,
+                clippedLeft, clippedTop, clippedRight, clippedBottom, null);
     }
 
     private void drawConnectionsImage(Connection conn, Map<String, RoomRecord> rooms, int minX, int minY, Graphics2D g2)
@@ -209,6 +243,94 @@ public class RoomMapService {
     public static class MapLookupException extends Exception {
         public MapLookupException(String message) {
             super(message);
+        }
+    }
+
+    private enum MapBackground {
+        ANKH_MORPORK(1, "am.png"),
+        AM_ASSASSINS(2, "am_assassins.png"),
+        AM_BUILDINGS(3, "am_buildings.png"),
+        AM_CRUETS(4, "am_cruets.png"),
+        AM_DOCKS(5, "am_docks.png"),
+        AM_GUILDS(6, "am_guilds.png"),
+        AM_ISLE_OF_GODS(7, "am_isle_gods.png"),
+        AM_SHADES(8, "am_shades.png"),
+        AM_SMALL_GODS(9, "am_smallgods.png"),
+        AM_TEMPLES(10, "am_temples.png"),
+        AM_THIEVES(11, "am_thieves.png"),
+        AM_UNSEEN_UNIVERSITY(12, "am_uu.png"),
+        AM_WARRIORS(13, "am_warriors.png"),
+        AM_WATCH_HOUSE(14, "am_watch_house.png"),
+        MAGPYR(15, "magpyr.png"),
+        BOIS(16, "bois.png"),
+        BES_PELARGIC(17, "bp.png"),
+        BP_BUILDINGS(18, "bp_buildings.png"),
+        BP_ESTATES(19, "bp_estates.png"),
+        BP_WIZARDS(20, "bp_wizards.png"),
+        BROWN_ISLANDS(21, "brown_islands.png"),
+        DEATHS_DOMAIN(22, "deaths_domain.png"),
+        DJELIBEYBI(23, "djb.png"),
+        DJB_WIZARDS(24, "djb_wizards.png"),
+        EPHEBE(25, "ephebe.png"),
+        EPHEBE_UNDERDOCKS(26, "ephebe_under.png"),
+        GENUA(27, "genua.png"),
+        GENUA_SEWERS(28, "genua_sewers.png"),
+        GRFLX(29, "grflx.png"),
+        HASHISHIM_CAVES(30, "hashishim_caves.png"),
+        KLATCH_REGION(31, "klatch.png"),
+        LANCRE_REGION(32, "lancre_castle.png"),
+        MANO_ROSSA(33, "mano_rossa.png"),
+        MONKS_OF_COOL(34, "monks_cool.png"),
+        NETHERWORLD(35, "netherworld.png"),
+        PUMPKIN_TOWN(37, "pumpkin_town.png"),
+        RAMTOPS(38, "ramtops.png"),
+        STO_LAT(39, "sl.png"),
+        ACADEMY_OF_ARTIFICERS(40, "sl_aoa.png"),
+        CABBAGE_WAREHOUSE(41, "sl_cabbages.png"),
+        AOA_LIBRARY(42, "sl_library.png"),
+        STO_LAT_SEWERS(43, "sl_sewers.png"),
+        SPRITE_CAVES(44, "sprite_caves.png"),
+        STO_PLAINS(45, "sto_plains.png"),
+        UBERWALD(46, "uberwald.png"),
+        UU_LIBRARY(47, "uu_library_full.png"),
+        KLATCHIAN_FARMSTEADS(48, "farmsteads.png"),
+        CTF_ARENA(49, "ctf_arena.png"),
+        PK_ARENA(50, "pk_arena.png"),
+        AM_POST_OFFICE(51, "am_postoffice.png"),
+        NINJA_GUILD(52, "bp_ninjas.png"),
+        TRAVELLING_SHOP(53, "tshop.png"),
+        SLIPPERY_HOLLOW(54, "slippery_hollow.png"),
+        HOUSE_OF_MAGIC_CREEL(55, "creel_guild.png"),
+        SPECIAL_AREAS(56, "quow_specials.png"),
+        SKUND_WOLF_TRAIL(57, "skund_wolftrails.png"),
+        MEDINA(58, "medina.png"),
+        COPPERHEAD(59, "copperhead.png"),
+        EPHEBE_CITADEL(60, "ephebe_citadel.png"),
+        AM_FOOLS_GUILD(61, "am_fools.png"),
+        THURSDAY_ISLAND(62, "thursday.png"),
+        SS_UNSINKABLE(63, "unsinkable.png"),
+        PASSAGE_ROOMS(64, "passages.png"),
+        SKUND_HEDGE_WIZZARDS(65, "sto_hedge.png"),
+        WHOLE_DISC(99, "discwhole.png");
+
+        private static final Map<Integer, MapBackground> BY_ID = new HashMap<>();
+
+        static {
+            for (MapBackground background : values()) {
+                BY_ID.put(background.mapId, background);
+            }
+        }
+
+        private final int mapId;
+        private final String filename;
+
+        MapBackground(int mapId, String filename) {
+            this.mapId = mapId;
+            this.filename = filename;
+        }
+
+        private static Optional<MapBackground> forMapId(int mapId) {
+            return Optional.ofNullable(BY_ID.get(mapId));
         }
     }
 }
