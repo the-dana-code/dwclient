@@ -91,6 +91,37 @@ public class RoomMapService {
         }
     }
 
+    public List<RoomSearchResult> searchRoomsByName(String term, int limit) throws SQLException, MapLookupException {
+        if (term == null || term.isBlank()) {
+            throw new MapLookupException("Search term cannot be blank.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String trimmed = term.trim().toLowerCase();
+        String sql = "select room_id, map_id, xpos, ypos, room_short, room_type " +
+                "from rooms where lower(room_short) like ? order by room_short, map_id, room_id limit ?";
+        List<RoomSearchResult> results = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + trimmed + "%");
+            stmt.setInt(2, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    results.add(new RoomSearchResult(
+                            rs.getString("room_id"),
+                            rs.getInt("map_id"),
+                            rs.getInt("xpos"),
+                            rs.getInt("ypos"),
+                            rs.getString("room_short"),
+                            rs.getString("room_type")
+                    ));
+                }
+            }
+        }
+        return results;
+    }
+
     private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -209,6 +240,9 @@ public class RoomMapService {
     }
 
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
+    }
+
+    public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
     }
 
     private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent) {
