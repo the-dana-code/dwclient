@@ -125,6 +125,43 @@ public class RoomMapService {
         return results;
     }
 
+    public List<NpcSearchResult> searchNpcsByName(String term, int limit) throws SQLException, MapLookupException {
+        if (term == null || term.isBlank()) {
+            throw new MapLookupException("Search term cannot be blank.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String trimmed = term.trim().toLowerCase();
+        String sql = "select npc_info.npc_id, npc_info.npc_name, rooms.room_id, rooms.map_id, " +
+                "rooms.xpos, rooms.ypos, rooms.room_short, rooms.room_type " +
+                "from npc_info join rooms on npc_info.room_id = rooms.room_id " +
+                "where lower(npc_info.npc_name) like ? " +
+                "order by lower(npc_info.npc_name), rooms.map_id, rooms.room_id " +
+                "limit ?";
+        List<NpcSearchResult> results = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + trimmed + "%");
+            stmt.setInt(2, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    results.add(new NpcSearchResult(
+                            rs.getString("npc_id"),
+                            rs.getString("npc_name"),
+                            rs.getString("room_id"),
+                            rs.getInt("map_id"),
+                            rs.getInt("xpos"),
+                            rs.getInt("ypos"),
+                            rs.getString("room_short"),
+                            rs.getString("room_type")
+                    ));
+                }
+            }
+        }
+        return results;
+    }
+
     public RouteResult findRoute(String startRoomId, String targetRoomId) throws SQLException, MapLookupException {
         if (startRoomId == null || startRoomId.isBlank()) {
             throw new MapLookupException("Start room not available.");
@@ -326,6 +363,10 @@ public class RoomMapService {
     }
 
     public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
+    }
+
+    public record NpcSearchResult(String npcId, String npcName, String roomId, int mapId, int xpos, int ypos,
+                                  String roomShort, String roomType) {
     }
 
     public record RouteStep(String exit, String roomId) {

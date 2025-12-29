@@ -68,6 +68,8 @@ public final class MatrixEventProcessor {
                 sender.sendText(roomId, "Ignored: only " + cfg.matrix.controllingUserId + " may control this relay.", false);
             }
             return;
+
+
         }
 
         String lower = body.toLowerCase();
@@ -91,6 +93,10 @@ public final class MatrixEventProcessor {
         }
         if (lower.equals("#map")) {
             handleMap();
+            return;
+        }
+        if (lower.startsWith("#searchnpc")) {
+            handleNpcSearch(body);
             return;
         }
         if (lower.startsWith("#search")) {
@@ -212,6 +218,54 @@ public final class MatrixEventProcessor {
         } catch (Exception e) {
             log.warn("room search failed err={}", e.toString());
             sender.sendText(roomId, "Error: Unable to search rooms.", false);
+        }
+    }
+
+    private void handleNpcSearch(String body) {
+        String query = body.length() > 10 ? body.substring(10).trim() : "";
+        if (query.isBlank()) {
+            sender.sendText(roomId, "Usage: #searchnpc <npc name fragment>", false);
+            return;
+        }
+        try {
+            List<RoomMapService.NpcSearchResult> results = mapService.searchNpcsByName(query, ROOM_SEARCH_LIMIT + 1);
+            boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
+            if (truncated) {
+                results = results.subList(0, ROOM_SEARCH_LIMIT);
+            }
+            lastRoomSearchResults = results.stream()
+                    .map(result -> new RoomMapService.RoomSearchResult(
+                            result.roomId(),
+                            result.mapId(),
+                            result.xpos(),
+                            result.ypos(),
+                            result.roomShort(),
+                            result.roomType()))
+                    .toList();
+            if (results.isEmpty()) {
+                sender.sendText(roomId, "No NPCs found matching \"" + query + "\".", false);
+                return;
+            }
+            StringBuilder out = new StringBuilder();
+            out.append("NPC search for \"").append(query).append("\":");
+            for (int i = 0; i < results.size(); i++) {
+                RoomMapService.NpcSearchResult result = results.get(i);
+                out.append("\n")
+                        .append(i + 1)
+                        .append(") ")
+                        .append(result.npcName())
+                        .append(" - ")
+                        .append(result.roomShort());
+            }
+            if (truncated) {
+                out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
+            }
+            sender.sendText(roomId, out.toString(), false);
+        } catch (RoomMapService.MapLookupException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+        } catch (Exception e) {
+            log.warn("npc search failed err={}", e.toString());
+            sender.sendText(roomId, "Error: Unable to search NPCs.", false);
         }
     }
 
