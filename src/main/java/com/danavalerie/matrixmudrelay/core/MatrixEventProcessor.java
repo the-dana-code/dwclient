@@ -216,6 +216,10 @@ public final class MatrixEventProcessor {
     }
 
     private void handleRoute(String body) {
+        if (!mud.isConnected()) {
+            sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.", false);
+            return;
+        }
         String[] parts = body.trim().split("\\s+");
         if (parts.length < 2) {
             sender.sendText(roomId, "Usage: #route <number>", false);
@@ -262,6 +266,10 @@ public final class MatrixEventProcessor {
             } else {
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
+                String aliasName = "MooMooQuowsRun";
+                String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
+                mud.sendLinesFromController(List.of(aliasCommand));
+                out.append("\nAlias: ").append(aliasName);
             }
             sender.sendText(roomId, out.toString(), false);
         } catch (RoomMapService.MapLookupException e) {
