@@ -117,6 +117,8 @@ public final class MatrixEventProcessor {
         // Alias expansion (exact match, reserved words excluded)
         Map<String, List<String>> aliases = cfg.aliases;
         try {
+
+
             if (aliases != null && aliases.containsKey(body)) {
                 List<String> lines = aliases.get(body);
                 if (lines == null || lines.isEmpty()) return;
@@ -304,6 +306,7 @@ public final class MatrixEventProcessor {
             sender.sendText(roomId, "Already in " + target.roomShort() + ".", false);
             return;
         }
+        boolean routeCalculated = false;
         try {
             RoomMapService.RouteResult route = mapService.findRoute(currentRoomId, target.roomId());
             List<String> exits = route.steps().stream()
@@ -326,11 +329,24 @@ public final class MatrixEventProcessor {
                 out.append("\nAlias: ").append(aliasName);
             }
             sender.sendText(roomId, out.toString(), false);
+            routeCalculated = true;
         } catch (RoomMapService.MapLookupException e) {
             sender.sendText(roomId, "Error: " + e.getMessage(), false);
         } catch (Exception e) {
             log.warn("route search failed err={}", e.toString());
             sender.sendText(roomId, "Error: Unable to calculate route.", false);
+        }
+        if (routeCalculated) {
+            try {
+                RoomMapService.MapImage mapImage = mapService.renderMapImage(target.roomId());
+                sender.sendImage(roomId, mapImage.body(), mapImage.data(), "mud-map.png", mapImage.mimeType(),
+                        mapImage.width(), mapImage.height(), false);
+            } catch (RoomMapService.MapLookupException e) {
+                sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            } catch (Exception e) {
+                log.warn("route map render failed err={}", e.toString());
+                sender.sendText(roomId, "Error: Unable to render map.", false);
+            }
         }
     }
 
