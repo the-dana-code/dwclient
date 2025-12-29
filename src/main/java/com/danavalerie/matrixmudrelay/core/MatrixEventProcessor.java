@@ -209,6 +209,8 @@ public final class MatrixEventProcessor {
                 out.append("\n")
                         .append(i + 1)
                         .append(") ")
+                        .append(mapService.getMapDisplayName(result.mapId()))
+                        .append(": ")
                         .append(result.roomShort());
             }
             if (truncated) {
@@ -255,6 +257,8 @@ public final class MatrixEventProcessor {
                 out.append("\n")
                         .append(i + 1)
                         .append(") ")
+                        .append(mapService.getMapDisplayName(result.mapId()))
+                        .append(": ")
                         .append(result.npcName())
                         .append(" - ")
                         .append(result.roomShort());

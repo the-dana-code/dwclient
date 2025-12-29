@@ -230,6 +230,10 @@ public class RoomMapService {
         throw new MapLookupException("No route found between rooms.");
     }
 
+    public String getMapDisplayName(int mapId) {
+        return MapBackground.displayNameFor(mapId);
+    }
+
     private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -552,6 +556,33 @@ public class RoomMapService {
 
         private static Optional<MapBackground> forMapId(int mapId) {
             return Optional.ofNullable(BY_ID.get(mapId));
+        }
+
+        private static String displayNameFor(int mapId) {
+            MapBackground background = BY_ID.get(mapId);
+            if (background == null) {
+                return "Map " + mapId;
+            }
+            return background.formatName();
+        }
+
+        private String formatName() {
+            String[] parts = name().toLowerCase().split("_");
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < parts.length; i++) {
+                if (i > 0) {
+                    builder.append(' ');
+                }
+                String part = parts[i];
+                if (part.isBlank()) {
+                    continue;
+                }
+                builder.append(Character.toUpperCase(part.charAt(0)));
+                if (part.length() > 1) {
+                    builder.append(part.substring(1));
+                }
+            }
+            return builder.toString();
         }
     }
 }
