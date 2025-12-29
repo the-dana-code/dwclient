@@ -97,6 +97,10 @@ public final class MatrixEventProcessor {
             handleSearch(body);
             return;
         }
+        if (lower.startsWith("#route")) {
+            handleRoute(body);
+            return;
+        }
 
         // Hard safety rule: never send controller text to MUD unless currently connected
         if (!mud.isConnected()) {
@@ -208,6 +212,63 @@ public final class MatrixEventProcessor {
         } catch (Exception e) {
             log.warn("room search failed err={}", e.toString());
             sender.sendText(roomId, "Error: Unable to search rooms.", false);
+        }
+    }
+
+    private void handleRoute(String body) {
+        String[] parts = body.trim().split("\\s+");
+        if (parts.length < 2) {
+            sender.sendText(roomId, "Usage: #route <number>", false);
+            return;
+        }
+        if (lastRoomSearchResults.isEmpty()) {
+            sender.sendText(roomId, "Error: No recent room search results. Use #search first.", false);
+            return;
+        }
+        int selection;
+        try {
+            selection = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            sender.sendText(roomId, "Usage: #route <number>", false);
+            return;
+        }
+        if (selection < 1 || selection > lastRoomSearchResults.size()) {
+            sender.sendText(roomId, "Error: Route selection must be between 1 and " + lastRoomSearchResults.size() + ".", false);
+            return;
+        }
+        RoomMapService.RoomSearchResult target = lastRoomSearchResults.get(selection - 1);
+        String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
+        if (currentRoomId == null || currentRoomId.isBlank()) {
+            sender.sendText(roomId, "Error: No room info available yet.", false);
+            return;
+        }
+        if (currentRoomId.equals(target.roomId())) {
+            sender.sendText(roomId, "Already in " + target.roomShort() + ".", false);
+            return;
+        }
+        try {
+            RoomMapService.RouteResult route = mapService.findRoute(currentRoomId, target.roomId());
+            List<String> exits = route.steps().stream()
+                    .map(RoomMapService.RouteStep::exit)
+                    .toList();
+            StringBuilder out = new StringBuilder();
+            out.append("Route to ")
+                    .append(target.roomShort())
+                    .append(" (")
+                    .append(target.roomId())
+                    .append("):");
+            if (exits.isEmpty()) {
+                out.append("\nAlready there.");
+            } else {
+                out.append("\n").append(String.join(" -> ", exits));
+                out.append("\nSteps: ").append(exits.size());
+            }
+            sender.sendText(roomId, out.toString(), false);
+        } catch (RoomMapService.MapLookupException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+        } catch (Exception e) {
+            log.warn("route search failed err={}", e.toString());
+            sender.sendText(roomId, "Error: Unable to calculate route.", false);
         }
     }
 

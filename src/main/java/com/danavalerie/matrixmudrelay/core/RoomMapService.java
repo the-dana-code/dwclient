@@ -13,11 +13,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 import javax.imageio.ImageIO;
 
@@ -122,6 +125,74 @@ public class RoomMapService {
         return results;
     }
 
+    public RouteResult findRoute(String startRoomId, String targetRoomId) throws SQLException, MapLookupException {
+        if (startRoomId == null || startRoomId.isBlank()) {
+            throw new MapLookupException("Start room not available.");
+        }
+        if (targetRoomId == null || targetRoomId.isBlank()) {
+            throw new MapLookupException("Target room not available.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
+            RoomRecord start = loadRoom(conn, startRoomId);
+            if (start == null) {
+                throw new MapLookupException("Start room not found in map database.");
+            }
+            RoomRecord target = loadRoom(conn, targetRoomId);
+            if (target == null) {
+                throw new MapLookupException("Target room not found in map database.");
+            }
+            if (start.roomId.equals(target.roomId)) {
+                return new RouteResult(List.of());
+            }
+            Map<String, RoomRecord> roomCache = new HashMap<>();
+            roomCache.put(start.roomId, start);
+            roomCache.put(target.roomId, target);
+
+            Map<String, Integer> gScore = new HashMap<>();
+            Map<String, PreviousStep> cameFrom = new HashMap<>();
+            PriorityQueue<RouteNode> open = new PriorityQueue<>(Comparator.comparingDouble(RouteNode::fScore));
+            gScore.put(start.roomId, 0);
+            open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
+
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    "select connect_id, exit from room_exits where room_id = ?")) {
+                while (!open.isEmpty()) {
+                    RouteNode current = open.poll();
+                    if (current.roomId.equals(target.roomId)) {
+                        return new RouteResult(reconstructRoute(cameFrom, target.roomId));
+                    }
+                    Integer currentScore = gScore.get(current.roomId);
+                    if (currentScore == null) {
+                        continue;
+                    }
+                    stmt.setString(1, current.roomId);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            String neighborId = rs.getString("connect_id");
+                            String exit = rs.getString("exit");
+                            RoomRecord neighbor = getRoomCached(conn, neighborId, roomCache);
+                            if (neighbor == null) {
+                                continue;
+                            }
+                            int tentativeScore = currentScore + 1;
+                            Integer bestScore = gScore.get(neighborId);
+                            if (bestScore == null || tentativeScore < bestScore) {
+                                cameFrom.put(neighborId, new PreviousStep(current.roomId, exit));
+                                gScore.put(neighborId, tentativeScore);
+                                double fScore = tentativeScore + estimateDistance(neighbor, target);
+                                open.add(new RouteNode(neighborId, fScore));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        throw new MapLookupException("No route found between rooms.");
+    }
+
     private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -168,6 +239,18 @@ public class RoomMapService {
             }
         }
         return rooms;
+    }
+
+    private RoomRecord getRoomCached(Connection conn, String roomId, Map<String, RoomRecord> cache) throws SQLException {
+        RoomRecord cached = cache.get(roomId);
+        if (cached != null) {
+            return cached;
+        }
+        RoomRecord loaded = loadRoom(conn, roomId);
+        if (loaded != null) {
+            cache.put(roomId, loaded);
+        }
+        return loaded;
     }
 
     private void drawMapBackground(int mapId, int minX, int minY, Graphics2D g2) throws IOException {
@@ -245,6 +328,15 @@ public class RoomMapService {
     public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
     }
 
+    public record RouteStep(String exit, String roomId) {
+    }
+
+    public record RouteResult(List<RouteStep> steps) {
+        public RouteResult {
+            steps = List.copyOf(steps);
+        }
+    }
+
     private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent) {
         if (isCurrent) {
             drawCurrentRoom(g2, px, py);
@@ -307,6 +399,31 @@ public class RoomMapService {
         public MapLookupException(String message) {
             super(message);
         }
+    }
+
+    private record RouteNode(String roomId, double fScore) {
+    }
+
+    private record PreviousStep(String fromRoomId, String exit) {
+    }
+
+    private static List<RouteStep> reconstructRoute(Map<String, PreviousStep> cameFrom, String targetRoomId) {
+        List<RouteStep> steps = new ArrayList<>();
+        String current = targetRoomId;
+        while (cameFrom.containsKey(current)) {
+            PreviousStep step = cameFrom.get(current);
+            steps.add(new RouteStep(step.exit, current));
+            current = step.fromRoomId;
+        }
+        Collections.reverse(steps);
+        return steps;
+    }
+
+    private static double estimateDistance(RoomRecord a, RoomRecord b) {
+        if (a.mapId != b.mapId) {
+            return 0;
+        }
+        return Math.abs(a.xpos - b.xpos) + Math.abs(a.ypos - b.ypos);
     }
 
     private enum MapBackground {
