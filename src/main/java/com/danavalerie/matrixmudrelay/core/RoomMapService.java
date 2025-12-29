@@ -162,6 +162,72 @@ public class RoomMapService {
         return results;
     }
 
+    public List<ItemSearchResult> searchItemsByName(String term, int limit) throws SQLException, MapLookupException {
+        if (term == null || term.isBlank()) {
+            throw new MapLookupException("Search term cannot be blank.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String trimmed = term.trim().toLowerCase();
+        String sql = "select item_name from items where lower(item_name) like ? order by lower(item_name) limit ?";
+        List<ItemSearchResult> results = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + trimmed + "%");
+            stmt.setInt(2, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    results.add(new ItemSearchResult(rs.getString("item_name")));
+                }
+            }
+        }
+        return results;
+    }
+
+    public List<RoomSearchResult> searchRoomsByItemName(String itemName, int limit) throws SQLException, MapLookupException {
+        if (itemName == null || itemName.isBlank()) {
+            throw new MapLookupException("Item name cannot be blank.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String sql = "select distinct rooms.room_id, rooms.map_id, rooms.xpos, rooms.ypos, rooms.room_short, rooms.room_type " +
+                "from rooms join ( " +
+                "select room_id from shop_items where lower(item_name) = ? " +
+                "union " +
+                "select npc_info.room_id from npc_items join npc_info on npc_items.npc_id = npc_info.npc_id " +
+                "where lower(npc_items.item_name) = ? " +
+                "union " +
+                "select special_find_note as room_id from items " +
+                "where lower(item_name) = ? and special_find_note <> ''" +
+                ") refs on rooms.room_id = refs.room_id " +
+                "order by rooms.map_id, rooms.room_short, rooms.room_id " +
+                "limit ?";
+        List<RoomSearchResult> results = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            String lowered = itemName.trim().toLowerCase();
+            stmt.setString(1, lowered);
+            stmt.setString(2, lowered);
+            stmt.setString(3, lowered);
+            stmt.setInt(4, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    results.add(new RoomSearchResult(
+                            rs.getString("room_id"),
+                            rs.getInt("map_id"),
+                            rs.getInt("xpos"),
+                            rs.getInt("ypos"),
+                            rs.getString("room_short"),
+                            rs.getString("room_type")
+                    ));
+                }
+            }
+        }
+        return results;
+    }
+
     public RouteResult findRoute(String startRoomId, String targetRoomId) throws SQLException, MapLookupException {
         if (startRoomId == null || startRoomId.isBlank()) {
             throw new MapLookupException("Start room not available.");
@@ -371,6 +437,9 @@ public class RoomMapService {
 
     public record NpcSearchResult(String npcId, String npcName, String roomId, int mapId, int xpos, int ypos,
                                   String roomShort, String roomType) {
+    }
+
+    public record ItemSearchResult(String itemName) {
     }
 
     public record RouteStep(String exit, String roomId) {

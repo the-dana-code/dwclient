@@ -24,6 +24,7 @@ public final class MatrixEventProcessor {
     private final TranscriptLogger transcript;
     private final RoomMapService mapService;
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
+    private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
 
     public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud, TranscriptLogger transcript) {
         this.cfg = cfg;
@@ -99,8 +100,16 @@ public final class MatrixEventProcessor {
             handleNpcSearch(body);
             return;
         }
+        if (lower.startsWith("#searchitem")) {
+            handleItemSearch(body);
+            return;
+        }
         if (lower.startsWith("#search")) {
             handleSearch(body);
+            return;
+        }
+        if (lower.startsWith("#item")) {
+            handleItemSelection(body);
             return;
         }
         if (lower.startsWith("#route")) {
@@ -243,6 +252,101 @@ public final class MatrixEventProcessor {
         } catch (Exception e) {
             log.warn("room search failed err={}", e.toString());
             sender.sendText(roomId, "Error: Unable to search rooms.", false);
+        }
+    }
+
+    private void handleItemSearch(String body) {
+        String query = body.length() > 11 ? body.substring(11).trim() : "";
+        if (query.isBlank()) {
+            sender.sendText(roomId, "Usage: #searchitem <item name fragment>", false);
+            return;
+        }
+        try {
+            List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByName(query, ROOM_SEARCH_LIMIT + 1);
+            boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
+            if (truncated) {
+                results = results.subList(0, ROOM_SEARCH_LIMIT);
+            }
+            lastItemSearchResults = List.copyOf(results);
+            if (results.isEmpty()) {
+                sender.sendText(roomId, "No items found matching \"" + query + "\".", false);
+                return;
+            }
+            StringBuilder out = new StringBuilder();
+            out.append("Item search for \"").append(query).append("\":");
+            for (int i = 0; i < results.size(); i++) {
+                RoomMapService.ItemSearchResult result = results.get(i);
+                out.append("\n")
+                        .append(i + 1)
+                        .append(") ")
+                        .append(result.itemName());
+            }
+            if (truncated) {
+                out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
+            }
+            out.append("\nUse #item <number> to view room locations.");
+            sender.sendText(roomId, out.toString(), false);
+        } catch (RoomMapService.MapLookupException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+        } catch (Exception e) {
+            log.warn("item search failed err={}", e.toString());
+            sender.sendText(roomId, "Error: Unable to search items.", false);
+        }
+    }
+
+    private void handleItemSelection(String body) {
+        String[] parts = body.trim().split("\\s+");
+        if (parts.length < 2) {
+            sender.sendText(roomId, "Usage: #item <number>", false);
+            return;
+        }
+        if (lastItemSearchResults.isEmpty()) {
+            sender.sendText(roomId, "Error: No recent item search results. Use #searchitem first.", false);
+            return;
+        }
+        int selection;
+        try {
+            selection = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            sender.sendText(roomId, "Usage: #item <number>", false);
+            return;
+        }
+        if (selection < 1 || selection > lastItemSearchResults.size()) {
+            sender.sendText(roomId, "Error: Item selection must be between 1 and " + lastItemSearchResults.size() + ".", false);
+            return;
+        }
+        String itemName = lastItemSearchResults.get(selection - 1).itemName();
+        try {
+            List<RoomMapService.RoomSearchResult> results = mapService.searchRoomsByItemName(itemName, ROOM_SEARCH_LIMIT + 1);
+            boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
+            if (truncated) {
+                results = results.subList(0, ROOM_SEARCH_LIMIT);
+            }
+            lastRoomSearchResults = List.copyOf(results);
+            if (results.isEmpty()) {
+                sender.sendText(roomId, "No rooms found for item \"" + itemName + "\".", false);
+                return;
+            }
+            StringBuilder out = new StringBuilder();
+            out.append("Item locations for \"").append(itemName).append("\":");
+            for (int i = 0; i < results.size(); i++) {
+                RoomMapService.RoomSearchResult result = results.get(i);
+                out.append("\n")
+                        .append(i + 1)
+                        .append(") ")
+                        .append(mapService.getMapDisplayName(result.mapId()))
+                        .append(": ")
+                        .append(result.roomShort());
+            }
+            if (truncated) {
+                out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
+            }
+            sender.sendText(roomId, out.toString(), false);
+        } catch (RoomMapService.MapLookupException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+        } catch (Exception e) {
+            log.warn("item room search failed err={}", e.toString());
+            sender.sendText(roomId, "Error: Unable to search item locations.", false);
         }
     }
 
