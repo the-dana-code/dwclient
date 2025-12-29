@@ -44,7 +44,8 @@ public class MudClient {
         Thread t = new Thread(r, "mud-write");
         t.setDaemon(true);
         return t;
-    });;
+    });
+    ;
 
     public MudClient(BotConfig.Mud cfg,
                      MudLineListener lineListener,
@@ -96,7 +97,7 @@ public class MudClient {
     private void readLoop() {
         Charset cs = Charset.forName(cfg.charset);
         TelnetDecoder decoder = new TelnetDecoder(out::get, (opt, data) -> {
-            if (opt == (byte)201) { // GMCP
+            if (opt == (byte) 201) { // GMCP
                 String msg = new String(data, cs);
                 // In the future, we can route this to specific handlers.
                 // For now, logging it is enough to show we receive it.
@@ -132,7 +133,7 @@ public class MudClient {
                 }
 
                 if (b == -1) {
-                    disconnect("eof");
+                    disconnect("eof", null);
                     return;
                 }
 
@@ -152,12 +153,14 @@ public class MudClient {
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
             if (connected.get()) {
-                disconnect("io_error: " + e.getMessage());
+                disconnect("io_error", e);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             if (connected.get()) {
-                disconnect("unexpected: " + e.getMessage());
+                disconnect("unexpected exception", e);
             }
         }
     }
@@ -202,24 +205,24 @@ public class MudClient {
         if (!connected.get() || currentOut == null) return;
         try {
             for (String raw : lines) {
-                System.out.println("Writing line: " + raw);
                 String line = raw == null ? "" : raw;
                 line = Sanitizer.sanitizeMudInput(line);
+
+                log.info("Writing line: " + raw);
+                transcript.logMatrixToMud(line);
 
                 // MUD line-oriented input; CRLF for telnet compatibility
                 currentOut.write(line.getBytes(Charset.forName(cfg.charset)));
 //                currentOut.write('\r');
                 currentOut.write('\n');
-
-                transcript.logMatrixToMud(line);
             }
             currentOut.flush();
         } catch (IOException e) {
-            disconnect("write_error: " + e.getMessage());
+            disconnect("write_error: " + e.getMessage(), e);
         }
     }
 
-    public void disconnect(String reason) {
+    public void disconnect(String reason, Exception e) {
         if (!connected.compareAndSet(true, false)) {
             return;
         }
@@ -232,14 +235,21 @@ public class MudClient {
         closeQuietly(o);
         closeQuietly(s);
 
-        log.info("mud disconnected reason={}", reason);
+        log.info("mud disconnected reason=" + reason, e);
         disconnectListener.onDisconnected(reason);
     }
 
     private static void closeQuietly(Closeable c) {
-        try { if (c != null) c.close(); } catch (Exception ignored) {}
+        try {
+            if (c != null) c.close();
+        } catch (Exception ignored) {
+        }
     }
+
     private static void closeQuietly(Socket s) {
-        try { if (s != null) s.close(); } catch (Exception ignored) {}
+        try {
+            if (s != null) s.close();
+        } catch (Exception ignored) {
+        }
     }
 }

@@ -90,7 +90,7 @@ public final class Main {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             log.info("shutdown requested");
             try { syncLoop.stop(); } catch (Exception ignored) {}
-            try { mud.disconnect("shutdown"); } catch (Exception ignored) {}
+            try { mud.disconnect("shutdown", null); } catch (Exception ignored) {}
             try { sender.shutdown(); } catch (Exception ignored) {}
             try { transcript.close(); } catch (Exception ignored) {}
         }, "shutdown-hook"));

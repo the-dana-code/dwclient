@@ -91,8 +91,8 @@ public final class MatrixEventProcessor {
             handleInfo();
             return;
         }
-        if (lower.equals("#map")) {
-            handleMap();
+        if (lower.startsWith("#map")) {
+            handleMap(body);
             return;
         }
         if (lower.startsWith("#searchnpc")) {
@@ -155,7 +155,7 @@ public final class MatrixEventProcessor {
             sender.sendText(roomId, "Already disconnected.", false);
             return;
         }
-        mud.disconnect("controller requested");
+        mud.disconnect("controller requested", null);
         sender.sendText(roomId, "Disconnected.", false);
     }
 
@@ -167,14 +167,35 @@ public final class MatrixEventProcessor {
         sender.sendText(roomId, mud.getCurrentRoomSnapshot().formatForDisplay(), false);
     }
 
-    private void handleMap() {
-        String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
-        if (currentRoomId == null || currentRoomId.isBlank()) {
-            sender.sendText(roomId, "Error: No room info available yet.", false);
-            return;
+    private void handleMap(String body) {
+        String[] parts = body.trim().split("\\s+");
+        String targetRoomId = null;
+        if (parts.length == 1) {
+            targetRoomId = mud.getCurrentRoomSnapshot().roomId();
+            if (targetRoomId == null || targetRoomId.isBlank()) {
+                sender.sendText(roomId, "Error: No room info available yet.", false);
+                return;
+            }
+        } else {
+            if (lastRoomSearchResults.isEmpty()) {
+                sender.sendText(roomId, "Error: No recent room search results. Use #search first.", false);
+                return;
+            }
+            int selection;
+            try {
+                selection = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException e) {
+                sender.sendText(roomId, "Usage: #map <number>", false);
+                return;
+            }
+            if (selection < 1 || selection > lastRoomSearchResults.size()) {
+                sender.sendText(roomId, "Error: Map selection must be between 1 and " + lastRoomSearchResults.size() + ".", false);
+                return;
+            }
+            targetRoomId = lastRoomSearchResults.get(selection - 1).roomId();
         }
         try {
-            RoomMapService.MapImage mapImage = mapService.renderMapImage(currentRoomId);
+            RoomMapService.MapImage mapImage = mapService.renderMapImage(targetRoomId);
             sender.sendImage(roomId, mapImage.body(), mapImage.data(), "mud-map.png", mapImage.mimeType(),
                     mapImage.width(), mapImage.height(), false);
         } catch (RoomMapService.MapLookupException e) {
@@ -310,7 +331,6 @@ public final class MatrixEventProcessor {
             sender.sendText(roomId, "Already in " + target.roomShort() + ".", false);
             return;
         }
-        boolean routeCalculated = false;
         try {
             RoomMapService.RouteResult route = mapService.findRoute(currentRoomId, target.roomId());
             List<String> exits = route.steps().stream()
@@ -324,6 +344,8 @@ public final class MatrixEventProcessor {
                     .append("):");
             if (exits.isEmpty()) {
                 out.append("\nAlready there.");
+            } else if (exits.size() > 150) {
+                out.append("\nRoute too long (" + exits.size() + " moves).");
             } else {
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
@@ -333,24 +355,11 @@ public final class MatrixEventProcessor {
                 out.append("\nAlias: ").append(aliasName);
             }
             sender.sendText(roomId, out.toString(), false);
-            routeCalculated = true;
         } catch (RoomMapService.MapLookupException e) {
             sender.sendText(roomId, "Error: " + e.getMessage(), false);
         } catch (Exception e) {
             log.warn("route search failed err={}", e.toString());
             sender.sendText(roomId, "Error: Unable to calculate route.", false);
-        }
-        if (routeCalculated) {
-            try {
-                RoomMapService.MapImage mapImage = mapService.renderMapImage(target.roomId());
-                sender.sendImage(roomId, mapImage.body(), mapImage.data(), "mud-map.png", mapImage.mimeType(),
-                        mapImage.width(), mapImage.height(), false);
-            } catch (RoomMapService.MapLookupException e) {
-                sender.sendText(roomId, "Error: " + e.getMessage(), false);
-            } catch (Exception e) {
-                log.warn("route map render failed err={}", e.toString());
-                sender.sendText(roomId, "Error: Unable to render map.", false);
-            }
         }
     }
 
