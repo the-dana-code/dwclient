@@ -96,24 +96,8 @@ public final class MatrixEventProcessor {
             handleMap(body);
             return;
         }
-        if (lower.startsWith("#searchnpc")) {
-            handleNpcSearch(body);
-            return;
-        }
-        if (lower.startsWith("#searchitem")) {
-            handleItemSearch(body);
-            return;
-        }
-        if (lower.startsWith("#search")) {
-            handleSearch(body);
-            return;
-        }
-        if (lower.startsWith("#item")) {
-            handleItemSelection(body);
-            return;
-        }
-        if (lower.startsWith("#route")) {
-            handleRoute(body);
+        if (lower.startsWith("mm")) {
+            handleMm(body);
             return;
         }
 
@@ -187,7 +171,7 @@ public final class MatrixEventProcessor {
             }
         } else {
             if (lastRoomSearchResults.isEmpty()) {
-                sender.sendText(roomId, "Error: No recent room search results. Use #search first.", false);
+                sender.sendText(roomId, "Error: No recent room search results. Use #mm first.", false);
                 return;
             }
             int selection;
@@ -215,10 +199,38 @@ public final class MatrixEventProcessor {
         }
     }
 
-    private void handleSearch(String body) {
-        String query = body.length() > 7 ? body.substring(7).trim() : "";
+    private void handleMm(String body) {
+        String remainder = body.length() > 3 ? body.substring(3).trim() : "";
+        if (remainder.isBlank()) {
+            handleRoomSearchQuery("");
+            return;
+        }
+        String[] parts = remainder.split("\\s+", 2);
+        String subcommand = parts[0].toLowerCase();
+        String query = parts.length > 1 ? parts[1].trim() : "";
+        if ("npc".equals(subcommand)) {
+            handleNpcSearchQuery(query);
+            return;
+        }
+        if ("item".equals(subcommand)) {
+            try {
+                int number = Integer.parseInt(query);
+                handleItemSelection(number);
+            } catch (NumberFormatException e) {
+                handleItemSearchQuery(query);
+            }
+            return;
+        }
+        if ("route".equals(subcommand)) {
+            handleRoute(query);
+            return;
+        }
+        handleRoomSearchQuery(remainder);
+    }
+
+    private void handleRoomSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #search <room name fragment>", false);
+            sender.sendText(roomId, "Usage: #mm <room name fragment>", false);
             return;
         }
         try {
@@ -255,10 +267,9 @@ public final class MatrixEventProcessor {
         }
     }
 
-    private void handleItemSearch(String body) {
-        String query = body.length() > 11 ? body.substring(11).trim() : "";
+    private void handleItemSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #searchitem <item name fragment>", false);
+            sender.sendText(roomId, "Usage: #mm item <item name fragment>", false);
             return;
         }
         try {
@@ -284,7 +295,7 @@ public final class MatrixEventProcessor {
             if (truncated) {
                 out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
             }
-            out.append("\nUse #item <number> to view room locations.");
+            out.append("\nUse 'mm item <number>' to view room locations.");
             sender.sendText(roomId, out.toString(), false);
         } catch (RoomMapService.MapLookupException e) {
             sender.sendText(roomId, "Error: " + e.getMessage(), false);
@@ -294,21 +305,9 @@ public final class MatrixEventProcessor {
         }
     }
 
-    private void handleItemSelection(String body) {
-        String[] parts = body.trim().split("\\s+");
-        if (parts.length < 2) {
-            sender.sendText(roomId, "Usage: #item <number>", false);
-            return;
-        }
+    private void handleItemSelection(int selection) {
         if (lastItemSearchResults.isEmpty()) {
-            sender.sendText(roomId, "Error: No recent item search results. Use #searchitem first.", false);
-            return;
-        }
-        int selection;
-        try {
-            selection = Integer.parseInt(parts[1]);
-        } catch (NumberFormatException e) {
-            sender.sendText(roomId, "Usage: #item <number>", false);
+            sender.sendText(roomId, "Error: No recent item search results. Use #mm item first.", false);
             return;
         }
         if (selection < 1 || selection > lastItemSearchResults.size()) {
@@ -350,10 +349,9 @@ public final class MatrixEventProcessor {
         }
     }
 
-    private void handleNpcSearch(String body) {
-        String query = body.length() > 10 ? body.substring(10).trim() : "";
+    private void handleNpcSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #searchnpc <npc name fragment>", false);
+            sender.sendText(roomId, "Usage: #mm npc <npc name fragment>", false);
             return;
         }
         try {
@@ -405,20 +403,15 @@ public final class MatrixEventProcessor {
             sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.", false);
             return;
         }
-        String[] parts = body.trim().split("\\s+");
-        if (parts.length < 2) {
-            sender.sendText(roomId, "Usage: #route <number>", false);
-            return;
-        }
         if (lastRoomSearchResults.isEmpty()) {
-            sender.sendText(roomId, "Error: No recent room search results. Use #search first.", false);
+            sender.sendText(roomId, "Error: No recent room search results.", false);
             return;
         }
         int selection;
         try {
-            selection = Integer.parseInt(parts[1]);
+            selection = Integer.parseInt(body);
         } catch (NumberFormatException e) {
-            sender.sendText(roomId, "Usage: #route <number>", false);
+            sender.sendText(roomId, "Usage: mm route <number>", false);
             return;
         }
         if (selection < 1 || selection > lastRoomSearchResults.size()) {
