@@ -195,6 +195,10 @@ public final class MatrixEventProcessor {
             handleInfo();
             return;
         }
+        if ("stats".equals(subcommand)) {
+            handleStats();
+            return;
+        }
         if ("map".startsWith(subcommand)) {
             handleMap(body);
             return;
@@ -235,6 +239,22 @@ public final class MatrixEventProcessor {
             return;
         }
         handleRoomSearchQuery(remainder);
+    }
+
+    private void handleStats() {
+        StatsHudRenderer.StatsHudData data = StatsHudRenderer.extract(mud.getCurrentRoomSnapshot());
+        if (data == null) {
+            sender.sendText(roomId, "Error: No character vitals available yet.", false);
+            return;
+        }
+        try {
+            StatsHudRenderer.StatsHudImage image = StatsHudRenderer.render(data);
+            sender.sendImage(roomId, image.body(), image.data(), "mud-stats.png", image.mimeType(),
+                    image.width(), image.height(), false);
+        } catch (Exception e) {
+            log.warn("stats render failed err={}", e.toString());
+            sender.sendText(roomId, "Error: Unable to render stats.", false);
+        }
     }
 
     private boolean tryAlias(String trigger) {
