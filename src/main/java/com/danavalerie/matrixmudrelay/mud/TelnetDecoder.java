@@ -159,7 +159,7 @@ public final class TelnetDecoder {
     private void sendGmcpHandshake(OutputStream out) throws IOException {
         // Send Core.Hello and Core.Supports.Set
         sendGmcp(out, "Core.Hello { \"client\": \"dwclient-lesa\", \"version\": \"1.0.0\" }");
-        sendGmcp(out, "Core.Supports.Set [ \"room.info 1\", \"room.map 1\", \"char.vitals 1\" ]");
+        sendGmcp(out, "Core.Supports.Set [ \"room.info 1\", \"room.map 1\", \"char.vitals 1\", \"char.info 1\" ]");
     }
 
     private void sendGmcp(OutputStream out, String json) throws IOException {

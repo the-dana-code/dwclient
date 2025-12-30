@@ -86,6 +86,10 @@ public final class CurrentRoomInfo {
                 return "No room info available yet.";
             }
             StringBuilder sb = new StringBuilder();
+            String capname = extractCapname(data.get("char.info"));
+            if (capname != null && !capname.isBlank()) {
+                sb.append("Character: ").append(capname).append("\n");
+            }
             if (roomId != null && !roomId.isBlank()) {
                 sb.append("Room ID: ").append(roomId);
             } else {
@@ -109,6 +113,17 @@ public final class CurrentRoomInfo {
                 }
             }
             return sb.toString();
+        }
+
+        private static String extractCapname(JsonElement element) {
+            if (element == null || !element.isJsonObject()) {
+                return null;
+            }
+            JsonElement capname = element.getAsJsonObject().get("capname");
+            if (capname == null || capname.isJsonNull() || !capname.isJsonPrimitive()) {
+                return null;
+            }
+            return capname.getAsString();
         }
     }
 }
