@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 
 public final class Main {
@@ -113,7 +114,8 @@ public final class Main {
         }
         String[] lines = plainText.split("\n", -1);
         for (String line : lines) {
-            if (line.contains("asks you") || line.contains("tells you")) {
+            String lower = line.toLowerCase();
+            if (lower.contains("<send href='tell ") || lower.contains("<send href=\"tell ")) {
                 try {
                     TellHighlightRenderer.HighlightImage image = TellHighlightRenderer.render(line);
                     sender.sendImage(roomId, image.body(), image.data(), "mud-tell.png", image.mimeType(),
