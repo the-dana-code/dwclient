@@ -82,15 +82,10 @@ public final class MatrixEventProcessor {
         }
 
         // Alias expansion (exact match, reserved words excluded)
-        Map<String, List<String>> aliases = cfg.aliases;
         try {
 
 
-            if (aliases != null && aliases.containsKey(body)) {
-                List<String> lines = aliases.get(body);
-                if (lines == null || lines.isEmpty()) return;
-                transcript.logMatrixToMud("[alias:" + body + "] " + String.join(" | ", lines));
-                mud.sendLinesFromController(lines);
+            if (tryAlias(body)) {
                 return;
             }
 
@@ -219,7 +214,29 @@ public final class MatrixEventProcessor {
             handleRoute(query);
             return;
         }
+        try {
+            if (tryAlias("#" + remainder)) {
+                return;
+            }
+        } catch (IllegalStateException e) {
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            return;
+        }
         handleRoomSearchQuery(remainder);
+    }
+
+    private boolean tryAlias(String trigger) {
+        Map<String, List<String>> aliases = cfg.aliases;
+        if (aliases == null || !aliases.containsKey(trigger)) {
+            return false;
+        }
+        List<String> lines = aliases.get(trigger);
+        if (lines == null || lines.isEmpty()) {
+            return true;
+        }
+        transcript.logMatrixToMud("[alias:" + trigger + "] " + String.join(" | ", lines));
+        mud.sendLinesFromController(lines);
+        return true;
     }
 
     private void handleRoomSearchQuery(String query) {
