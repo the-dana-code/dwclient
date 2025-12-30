@@ -296,6 +296,7 @@ public final class MatrixEventProcessor {
             sender.sendText(roomId, "Usage: #mm item <item name fragment>", false);
             return;
         }
+        lastRoomSearchResults = List.of();
         try {
             List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByName(query, ROOM_SEARCH_LIMIT + 1);
             boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
