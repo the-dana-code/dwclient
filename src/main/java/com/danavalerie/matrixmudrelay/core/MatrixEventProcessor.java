@@ -73,6 +73,7 @@ public final class MatrixEventProcessor {
 
         }
 
+        body = normalizeMatrixInput(body);
         String lower = body.toLowerCase();
 
         // Reserved words precedence
@@ -477,5 +478,20 @@ public final class MatrixEventProcessor {
     private static String text(JsonElement n) {
         if (n == null || n.isJsonNull()) return null;
         return n.getAsString();
+    }
+
+    private static String normalizeMatrixInput(String body) {
+        if (body.isEmpty()) {
+            return body;
+        }
+        int firstCodePoint = body.codePointAt(0);
+        if (!Character.isUpperCase(firstCodePoint)) {
+            return body;
+        }
+        int lowerFirst = Character.toLowerCase(firstCodePoint);
+        StringBuilder normalized = new StringBuilder(body.length());
+        normalized.appendCodePoint(lowerFirst);
+        normalized.append(body.substring(Character.charCount(firstCodePoint)));
+        return normalized.toString();
     }
 }
