@@ -245,6 +245,7 @@ public final class MatrixEventProcessor {
                 out.append("\n")
                         .append(i + 1)
                         .append(") ")
+                        .append(result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
                         .append(mapService.getMapDisplayName(result.mapId()))
                         .append(": ")
                         .append(result.roomShort());
@@ -327,6 +328,7 @@ public final class MatrixEventProcessor {
                 out.append("\n")
                         .append(i + 1)
                         .append(") ")
+                        .append(result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
                         .append(mapService.getMapDisplayName(result.mapId()))
                         .append(": ")
                         .append(result.roomShort());
@@ -361,7 +363,8 @@ public final class MatrixEventProcessor {
                             result.xpos(),
                             result.ypos(),
                             result.roomShort(),
-                            result.roomType()))
+                            result.roomType(),
+                            null))
                     .toList();
             if (results.isEmpty()) {
                 sender.sendText(roomId, "No NPCs found matching \"" + query + "\".", false);

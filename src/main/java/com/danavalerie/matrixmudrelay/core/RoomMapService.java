@@ -117,7 +117,8 @@ public class RoomMapService {
                             rs.getInt("xpos"),
                             rs.getInt("ypos"),
                             rs.getString("room_short"),
-                            rs.getString("room_type")
+                            rs.getString("room_type"),
+                            null
                     ));
                 }
             }
@@ -192,17 +193,17 @@ public class RoomMapService {
         if (!driverAvailable) {
             throw new MapLookupException("SQLite driver not available.");
         }
-        String sql = "select distinct rooms.room_id, rooms.map_id, rooms.xpos, rooms.ypos, rooms.room_short, rooms.room_type " +
+        String sql = "select rooms.room_id, rooms.map_id, rooms.xpos, rooms.ypos, rooms.room_short, rooms.room_type, refs.source_info " +
                 "from rooms join ( " +
-                "select room_id from shop_items where lower(item_name) = ? " +
-                "union " +
-                "select npc_info.room_id from npc_items join npc_info on npc_items.npc_id = npc_info.npc_id " +
-                "where lower(npc_items.item_name) = ? " +
-                "union " +
-                "select special_find_note as room_id from items " +
-                "where lower(item_name) = ? and special_find_note <> ''" +
+                "  select room_id, 'Shop' as source_info from shop_items where lower(item_name) = ? " +
+                "  union " +
+                "  select npc_info.room_id, 'NPC: ' || npc_info.npc_name as source_info from npc_items join npc_info on npc_items.npc_id = npc_info.npc_id " +
+                "  where lower(npc_items.item_name) = ? " +
+                "  union " +
+                "  select special_find_note as room_id, 'Special' as source_info from items " +
+                "  where lower(item_name) = ? and special_find_note <> ''" +
                 ") refs on rooms.room_id = refs.room_id " +
-                "order by rooms.map_id, rooms.room_short, rooms.room_id " +
+                "order by (case when refs.source_info = 'Shop' then 0 else 1 end), rooms.map_id, rooms.room_short, rooms.room_id " +
                 "limit ?";
         List<RoomSearchResult> results = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
@@ -220,7 +221,8 @@ public class RoomMapService {
                             rs.getInt("xpos"),
                             rs.getInt("ypos"),
                             rs.getString("room_short"),
-                            rs.getString("room_type")
+                            rs.getString("room_type"),
+                            rs.getString("source_info")
                     ));
                 }
             }
@@ -432,7 +434,7 @@ public class RoomMapService {
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
     }
 
-    public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
+    public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType, String sourceInfo) {
     }
 
     public record NpcSearchResult(String npcId, String npcName, String roomId, int mapId, int xpos, int ypos,
