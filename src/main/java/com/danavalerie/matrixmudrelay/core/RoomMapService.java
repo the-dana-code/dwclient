@@ -203,7 +203,12 @@ public class RoomMapService {
                 "  select special_find_note as room_id, 'Special' as source_info from items " +
                 "  where lower(item_name) = ? and special_find_note <> ''" +
                 ") refs on rooms.room_id = refs.room_id " +
-                "order by (case when refs.source_info = 'Shop' then 0 else 1 end), rooms.map_id, rooms.room_short, rooms.room_id " +
+                "order by (case " +
+                "  when refs.source_info like 'NPC:%' then 0 " +
+                "  when refs.source_info = 'Special' then 1 " +
+                "  when refs.source_info = 'Shop' then 2 " +
+                "  else 3 " +
+                "end), rooms.map_id, rooms.room_short, rooms.room_id " +
                 "limit ?";
         List<RoomSearchResult> results = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
