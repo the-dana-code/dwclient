@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay.core;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
+import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import com.google.gson.JsonElement;
@@ -26,6 +27,7 @@ public final class MatrixEventProcessor {
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
     private boolean useTeleports = true;
+    private volatile boolean pendingStatsHud = false;
 
     public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud, TranscriptLogger transcript) {
         this.cfg = cfg;
@@ -34,6 +36,7 @@ public final class MatrixEventProcessor {
         this.mud = mud;
         this.transcript = transcript;
         this.mapService = new RoomMapService("database.db");
+        this.mud.setGmcpListener(this::handleGmcp);
     }
 
     public void onMatrixEvent(JsonObject ev) {
@@ -242,6 +245,26 @@ public final class MatrixEventProcessor {
     }
 
     private void handleStats() {
+        pendingStatsHud = true;
+        try {
+            mud.sendLinesFromController(List.of("gp"));
+        } catch (IllegalStateException e) {
+            pendingStatsHud = false;
+            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+        }
+    }
+
+    private void handleGmcp(TelnetDecoder.GmcpMessage message) {
+        if (message == null) return;
+        String command = message.command();
+        if (command == null) return;
+        if (!"char.vitals".equalsIgnoreCase(command.trim())) {
+            return;
+        }
+        if (!pendingStatsHud) {
+            return;
+        }
+        pendingStatsHud = false;
         StatsHudRenderer.StatsHudData data = StatsHudRenderer.extract(mud.getCurrentRoomSnapshot());
         if (data == null) {
             sender.sendText(roomId, "Error: No character vitals available yet.", false);

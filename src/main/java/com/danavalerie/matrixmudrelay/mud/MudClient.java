@@ -24,6 +24,10 @@ public class MudClient {
         void onLine(String line);
     }
 
+    public interface MudGmcpListener {
+        void onGmcp(TelnetDecoder.GmcpMessage message);
+    }
+
     public interface MudDisconnectListener {
         void onDisconnected(String reason);
     }
@@ -32,6 +36,7 @@ public class MudClient {
     private final MudLineListener lineListener;
     private final MudDisconnectListener disconnectListener;
     private final TranscriptLogger transcript;
+    private volatile MudGmcpListener gmcpListener;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
@@ -59,6 +64,10 @@ public class MudClient {
 
     public boolean isConnected() {
         return connected.get();
+    }
+
+    public void setGmcpListener(MudGmcpListener gmcpListener) {
+        this.gmcpListener = gmcpListener;
     }
 
     public CurrentRoomInfo.Snapshot getCurrentRoomSnapshot() {
@@ -105,6 +114,10 @@ public class MudClient {
                 TelnetDecoder.GmcpMessage parsed = TelnetDecoder.parseGmcpMessage(msg);
                 if (parsed != null) {
                     currentRoomInfo.update(parsed.command(), parsed.payload());
+                    MudGmcpListener listener = gmcpListener;
+                    if (listener != null) {
+                        listener.onGmcp(parsed);
+                    }
                 }
             }
         });
