@@ -12,14 +12,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class CurrentRoomInfo {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final AtomicReference<Snapshot> snapshot = new AtomicReference<>(new Snapshot(null, Map.of()));
+    private final AtomicReference<Snapshot> snapshot = new AtomicReference<>(
+            new Snapshot(null, Map.of(), Map.of(), Map.of()));
 
     public Snapshot getSnapshot() {
         return snapshot.get();
     }
 
     public void clear() {
-        snapshot.set(new Snapshot(null, Map.of()));
+        snapshot.set(new Snapshot(null, Map.of(), Map.of(), Map.of()));
     }
 
     public void update(String command, JsonElement payload) {
@@ -38,14 +39,19 @@ public final class CurrentRoomInfo {
             }
         }
 
-        Map<String, JsonElement> data;
-        if (nextRoomId != null && (current.roomId == null || !current.roomId.equals(nextRoomId))) {
-            data = new LinkedHashMap<>();
+        Map<String, JsonElement> roomData = new LinkedHashMap<>(current.roomData);
+        Map<String, JsonElement> charData = new LinkedHashMap<>(current.charData);
+        Map<String, JsonElement> otherData = new LinkedHashMap<>(current.otherData);
+
+        if (lower.startsWith("room.")) {
+            roomData.put(lower, payload);
+        } else if (lower.startsWith("char.")) {
+            charData.put(lower, payload);
         } else {
-            data = new LinkedHashMap<>(current.data);
+            otherData.put(lower, payload);
         }
-        data.put(lower, payload);
-        snapshot.set(new Snapshot(nextRoomId, data));
+
+        snapshot.set(new Snapshot(nextRoomId, roomData, charData, otherData));
     }
 
     private static String extractRoomId(JsonObject obj) {
@@ -62,11 +68,24 @@ public final class CurrentRoomInfo {
 
     public static final class Snapshot {
         private final String roomId;
+        private final Map<String, JsonElement> roomData;
+        private final Map<String, JsonElement> charData;
+        private final Map<String, JsonElement> otherData;
         private final Map<String, JsonElement> data;
 
-        private Snapshot(String roomId, Map<String, JsonElement> data) {
+        private Snapshot(String roomId,
+                         Map<String, JsonElement> roomData,
+                         Map<String, JsonElement> charData,
+                         Map<String, JsonElement> otherData) {
             this.roomId = roomId;
-            this.data = Collections.unmodifiableMap(new LinkedHashMap<>(data));
+            this.roomData = Collections.unmodifiableMap(new LinkedHashMap<>(roomData));
+            this.charData = Collections.unmodifiableMap(new LinkedHashMap<>(charData));
+            this.otherData = Collections.unmodifiableMap(new LinkedHashMap<>(otherData));
+            Map<String, JsonElement> combined = new LinkedHashMap<>();
+            combined.putAll(this.roomData);
+            combined.putAll(this.charData);
+            combined.putAll(this.otherData);
+            this.data = Collections.unmodifiableMap(combined);
         }
 
         public String roomId() {
