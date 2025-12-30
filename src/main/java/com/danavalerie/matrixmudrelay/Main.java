@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.core.MatrixEventProcessor;
+import com.danavalerie.matrixmudrelay.core.TellHighlightRenderer;
 import com.danavalerie.matrixmudrelay.matrix.MatrixClient;
 import com.danavalerie.matrixmudrelay.matrix.MatrixSyncLoop;
 import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
@@ -47,6 +48,7 @@ public final class Main {
                     String sanitized = Sanitizer.sanitizeMudOutput(line);
                     Sanitizer.MxpResult res = Sanitizer.processMxp(sanitized);
                     sender.sendHtml(roomId, res.plain, res.html, line, shouldNotify(line));
+                    sendTellHighlight(sender, roomId, res.plain);
                 },
                 reason -> {
                     String msg = "* MUD disconnected: " + reason;
@@ -103,5 +105,23 @@ public final class Main {
     private static boolean shouldNotify(String line) {
         System.out.println("notify = false, line: " + line);
         return false;
+    }
+
+    private static void sendTellHighlight(RetryingMatrixSender sender, String roomId, String plainText) {
+        if (plainText == null || plainText.isEmpty()) {
+            return;
+        }
+        String[] lines = plainText.split("\n", -1);
+        for (String line : lines) {
+            if (line.contains("asks you") || line.contains("tells you")) {
+                try {
+                    TellHighlightRenderer.HighlightImage image = TellHighlightRenderer.render(line);
+                    sender.sendImage(roomId, image.body(), image.data(), "mud-tell.png", image.mimeType(),
+                            image.width(), image.height(), false);
+                } catch (Exception e) {
+                    log.warn("tell highlight render failed err={}", e.toString());
+                }
+            }
+        }
     }
 }
