@@ -25,6 +25,7 @@ import java.util.PriorityQueue;
 import javax.imageio.ImageIO;
 
 public class RoomMapService {
+    private static final int TELEPORT_START_COST = 8;
     private static final int IMAGE_SPAN = 250;
     private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private static final int IMAGE_SCALE = 2;
@@ -236,6 +237,11 @@ public class RoomMapService {
     }
 
     public RouteResult findRoute(String startRoomId, String targetRoomId) throws SQLException, MapLookupException {
+        return findRoute(startRoomId, targetRoomId, true);
+    }
+
+    public RouteResult findRoute(String startRoomId, String targetRoomId, boolean useTeleports)
+            throws SQLException, MapLookupException {
         if (startRoomId == null || startRoomId.isBlank()) {
             throw new MapLookupException("Start room not available.");
         }
@@ -266,6 +272,23 @@ public class RoomMapService {
             PriorityQueue<RouteNode> open = new PriorityQueue<>(Comparator.comparingDouble(RouteNode::fScore));
             gScore.put(start.roomId, 0);
             open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
+
+            if (useTeleports) {
+                List<ResolvedTeleport> teleports = resolveTeleports(conn, roomCache);
+                for (ResolvedTeleport teleport : teleports) {
+                    if (teleport.roomId.equals(start.roomId)) {
+                        continue;
+                    }
+                    int tentativeScore = TELEPORT_START_COST;
+                    Integer bestScore = gScore.get(teleport.roomId);
+                    if (bestScore == null || tentativeScore < bestScore) {
+                        cameFrom.put(teleport.roomId, new PreviousStep(start.roomId, teleport.command()));
+                        gScore.put(teleport.roomId, tentativeScore);
+                        double fScore = tentativeScore + estimateDistance(teleport.room, target);
+                        open.add(new RouteNode(teleport.roomId, fScore));
+                    }
+                }
+            }
 
             try (PreparedStatement stmt = conn.prepareStatement(
                     "select connect_id, exit from room_exits where room_id = ?")) {
@@ -365,6 +388,30 @@ public class RoomMapService {
             cache.put(roomId, loaded);
         }
         return loaded;
+    }
+
+    private List<ResolvedTeleport> resolveTeleports(Connection conn, Map<String, RoomRecord> cache) throws SQLException {
+        List<ResolvedTeleport> teleports = new ArrayList<>();
+        String sql = "select room_id from rooms where map_id = ? and xpos = ? and ypos = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (TeleportRegistry.TeleportLocation teleport : TeleportRegistry.TELEPORTS) {
+                stmt.setInt(1, teleport.mapId());
+                stmt.setInt(2, teleport.x());
+                stmt.setInt(3, teleport.y());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        continue;
+                    }
+                    String roomId = rs.getString("room_id");
+                    RoomRecord room = getRoomCached(conn, roomId, cache);
+                    if (room == null) {
+                        continue;
+                    }
+                    teleports.add(new ResolvedTeleport(teleport.name(), roomId, room));
+                }
+            }
+        }
+        return teleports;
     }
 
     private void drawMapBackground(int mapId, int minX, int minY, Graphics2D g2) throws IOException {
@@ -526,6 +573,12 @@ public class RoomMapService {
     }
 
     private record PreviousStep(String fromRoomId, String exit) {
+    }
+
+    private record ResolvedTeleport(String name, String roomId, RoomRecord room) {
+        private String command() {
+            return "tp " + name;
+        }
     }
 
     private static List<RouteStep> reconstructRoute(Map<String, PreviousStep> cameFrom, String targetRoomId) {

@@ -25,6 +25,7 @@ public final class MatrixEventProcessor {
     private final RoomMapService mapService;
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
+    private boolean useTeleports = true;
 
     public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud, TranscriptLogger transcript) {
         this.cfg = cfg;
@@ -213,6 +214,16 @@ public final class MatrixEventProcessor {
         }
         if ("route".equals(subcommand)) {
             handleRoute(query);
+            return;
+        }
+        if ("tp".equals(subcommand)) {
+            useTeleports = true;
+            sender.sendText(roomId, "Teleport-assisted routing enabled.", false);
+            return;
+        }
+        if ("notp".equals(subcommand)) {
+            useTeleports = false;
+            sender.sendText(roomId, "Teleport-assisted routing disabled.", false);
             return;
         }
         try {
@@ -444,7 +455,7 @@ public final class MatrixEventProcessor {
             return;
         }
         try {
-            RoomMapService.RouteResult route = mapService.findRoute(currentRoomId, target.roomId());
+            RoomMapService.RouteResult route = mapService.findRoute(currentRoomId, target.roomId(), useTeleports);
             List<String> exits = route.steps().stream()
                     .map(RoomMapService.RouteStep::exit)
                     .toList();
