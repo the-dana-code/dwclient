@@ -104,7 +104,7 @@ public final class MatrixClient {
 
         JsonObject content = new JsonObject();
         content.addProperty("msgtype", notify ? "m.text" : "m.notice");
-        content.addProperty("body", body.isEmpty() ? " " : body);
+        content.addProperty("body", body.isEmpty() ? "<Unknown>" : body);
 
         if (formattedBody != null) {
             content.addProperty("format", "org.matrix.custom.html");
