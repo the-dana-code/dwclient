@@ -76,34 +76,8 @@ public final class MatrixEventProcessor {
         String lower = body.toLowerCase();
 
         // Reserved words precedence
-        if (!mud.isConnected() && lower.equals("#connect")) {
-            handleConnect();
-            return;
-        }
-        if (mud.isConnected() && lower.equals("#disconnect")) {
-            handleDisconnect();
-            return;
-        }
-        if (lower.equals("#status")) {
-            handleStatus();
-            return;
-        }
-        if (lower.equals("#info")) {
-            handleInfo();
-            return;
-        }
-        if (lower.startsWith("#map")) {
-            handleMap(body);
-            return;
-        }
         if (lower.startsWith("mm")) {
             handleMm(body);
-            return;
-        }
-
-        // Hard safety rule: never send controller text to MUD unless currently connected
-        if (!mud.isConnected()) {
-            sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.", false);
             return;
         }
 
@@ -162,11 +136,11 @@ public final class MatrixEventProcessor {
 
     private void handleMap(String body) {
         String[] parts = body.trim().split("\\s+");
-        String targetRoomId = null;
-        if (parts.length == 1) {
+        String targetRoomId;
+        if (parts.length == 2) {
             targetRoomId = mud.getCurrentRoomSnapshot().roomId();
             if (targetRoomId == null || targetRoomId.isBlank()) {
-                sender.sendText(roomId, "Error: No room info available yet.", false);
+                sender.sendText(roomId, "Error: Can't determine your location.", false);
                 return;
             }
         } else {
@@ -176,7 +150,7 @@ public final class MatrixEventProcessor {
             }
             int selection;
             try {
-                selection = Integer.parseInt(parts[1]);
+                selection = Integer.parseInt(parts[2]);
             } catch (NumberFormatException e) {
                 sender.sendText(roomId, "Usage: #map <number>", false);
                 return;
@@ -208,6 +182,26 @@ public final class MatrixEventProcessor {
         String[] parts = remainder.split("\\s+", 2);
         String subcommand = parts[0].toLowerCase();
         String query = parts.length > 1 ? parts[1].trim() : "";
+        if ("connect".equals(subcommand)) {
+            handleConnect();
+            return;
+        }
+        if ("disconnect".equals(subcommand)) {
+            handleDisconnect();
+            return;
+        }
+        if ("status".equals(subcommand)) {
+            handleStatus();
+            return;
+        }
+        if ("info".equals(subcommand)) {
+            handleInfo();
+            return;
+        }
+        if ("map".startsWith(subcommand)) {
+            handleMap(body);
+            return;
+        }
         if ("npc".equals(subcommand)) {
             handleNpcSearchQuery(query);
             return;
