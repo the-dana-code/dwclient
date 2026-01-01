@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.config;
 
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ public final class BotConfig {
 
     // trigger -> list of lines to send to MUD (may include secrets)
     public Map<String, List<String>> aliases = new LinkedHashMap<>();
+
+    public List<TextImageTrigger> textImageTriggers = new ArrayList<>();
 
     public Transcript transcript = new Transcript();
     public Retry retry = new Retry();
@@ -48,5 +51,10 @@ public final class BotConfig {
 
         // 0 = infinite attempts
         public int maxAttempts = 0;
+    }
+
+    public static final class TextImageTrigger {
+        public String pattern;
+        public String color = "WHITE";
     }
 }

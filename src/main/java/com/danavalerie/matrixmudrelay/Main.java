@@ -4,18 +4,25 @@ import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.core.MatrixEventProcessor;
 import com.danavalerie.matrixmudrelay.core.TellHighlightRenderer;
+import com.danavalerie.matrixmudrelay.core.TextImageRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.matrix.MatrixClient;
 import com.danavalerie.matrixmudrelay.matrix.MatrixSyncLoop;
 import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
+import com.danavalerie.matrixmudrelay.util.ColorLookup;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.Color;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.concurrent.CountDownLatch;
 
 public final class Main {
@@ -42,6 +49,7 @@ public final class Main {
         TranscriptLogger transcript = TranscriptLogger.create(cfg.transcript);
 
         RetryingMatrixSender sender = new RetryingMatrixSender(matrix, cfg.retry);
+        List<TriggerPattern> triggerPatterns = compileTriggerPatterns(cfg);
 
         WritTracker writTracker = new WritTracker();
         MudClient mud = new MudClient(
@@ -53,6 +61,7 @@ public final class Main {
                     writTracker.ingest(res.plain);
                     sender.sendHtml(roomId, res.plain, res.html, line, shouldNotify(line));
                     sendTellHighlight(sender, roomId, res.plain);
+                    sendTriggerHighlights(sender, roomId, res.plain, line, triggerPatterns);
                 },
                 reason -> {
                     String msg = "* MUD disconnected: " + reason;
@@ -120,7 +129,7 @@ public final class Main {
             String lower = line.toLowerCase();
             if (lower.contains("<send href='tell ") || lower.contains("<send href=\"tell ")) {
                 try {
-                    TellHighlightRenderer.HighlightImage image = TellHighlightRenderer.render(line);
+                    TextImageRenderer.RenderedImage image = TellHighlightRenderer.render(line);
                     sender.sendImage(roomId, image.body(), image.data(), "mud-tell.png", image.mimeType(),
                             image.width(), image.height(), false);
                 } catch (Exception e) {
@@ -128,5 +137,57 @@ public final class Main {
                 }
             }
         }
+    }
+
+    private static void sendTriggerHighlights(RetryingMatrixSender sender, String roomId, String plainText, String rawText,
+                                              List<TriggerPattern> triggers) {
+        if (plainText == null || plainText.isEmpty() || triggers.isEmpty()) {
+            return;
+        }
+        String[] plainLines = plainText.split("\n", -1);
+        String[] rawLines = rawText == null ? new String[0] : rawText.split("\n", -1);
+        for (int i = 0; i < plainLines.length; i++) {
+            String plainLine = plainLines[i];
+            String rawLine = i < rawLines.length ? rawLines[i] : plainLine;
+            for (TriggerPattern trigger : triggers) {
+                if (!trigger.pattern.matcher(plainLine).find()) {
+                    continue;
+                }
+                try {
+                    TextImageRenderer.RenderedImage image = TextImageRenderer.render(
+                            plainLine,
+                            List.of(new TextImageRenderer.Segment(plainLine, trigger.color)),
+                            trigger.color
+                    );
+                    sender.sendImage(roomId, image.body(), image.data(), "mud-trigger.png", image.mimeType(),
+                            image.width(), image.height(), false);
+                    sender.sendText(roomId, rawLine, false);
+                } catch (Exception e) {
+                    log.warn("trigger highlight render failed err={}", e.toString());
+                }
+            }
+        }
+    }
+
+    private static List<TriggerPattern> compileTriggerPatterns(BotConfig cfg) {
+        if (cfg.textImageTriggers == null || cfg.textImageTriggers.isEmpty()) {
+            return List.of();
+        }
+        List<TriggerPattern> patterns = new ArrayList<>();
+        for (BotConfig.TextImageTrigger trigger : cfg.textImageTriggers) {
+            if (trigger == null || trigger.pattern == null || trigger.pattern.isBlank()) {
+                continue;
+            }
+            Color color = ColorLookup.fromName(trigger.color, Color.WHITE);
+            try {
+                patterns.add(new TriggerPattern(Pattern.compile(trigger.pattern), color));
+            } catch (PatternSyntaxException e) {
+                log.warn("trigger pattern invalid pattern={} err={}", trigger.pattern, e.toString());
+            }
+        }
+        return patterns;
+    }
+
+    private record TriggerPattern(Pattern pattern, Color color) {
     }
 }
