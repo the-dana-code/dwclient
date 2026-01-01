@@ -145,7 +145,7 @@ public final class MatrixEventProcessor {
             }
         } else {
             if (lastRoomSearchResults.isEmpty()) {
-                sender.sendText(roomId, "Error: No recent room search results. Use #mm first.", false);
+                sender.sendText(roomId, "Error: No recent room search results. Use #mm loc first.", false);
                 return;
             }
             int selection;
@@ -219,6 +219,10 @@ public final class MatrixEventProcessor {
             }
             return;
         }
+        if ("loc".equals(subcommand)) {
+            handleRoomSearchQuery(query);
+            return;
+        }
         if ("route".equals(subcommand)) {
             handleRoute(query);
             return;
@@ -241,7 +245,7 @@ public final class MatrixEventProcessor {
             sender.sendText(roomId, "Error: " + e.getMessage(), false);
             return;
         }
-        handleRoomSearchQuery(remainder);
+        sender.sendText(roomId, "Usage: #mm loc <room name fragment>", false);
     }
 
     private void handleStats() {
@@ -296,7 +300,7 @@ public final class MatrixEventProcessor {
 
     private void handleRoomSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #mm <room name fragment>", false);
+            sender.sendText(roomId, "Usage: #mm loc <room name fragment>", false);
             return;
         }
         try {
