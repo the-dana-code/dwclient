@@ -4,6 +4,7 @@ import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.core.MatrixEventProcessor;
 import com.danavalerie.matrixmudrelay.core.TellHighlightRenderer;
+import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.matrix.MatrixClient;
 import com.danavalerie.matrixmudrelay.matrix.MatrixSyncLoop;
 import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
@@ -42,12 +43,14 @@ public final class Main {
 
         RetryingMatrixSender sender = new RetryingMatrixSender(matrix, cfg.retry);
 
+        WritTracker writTracker = new WritTracker();
         MudClient mud = new MudClient(
                 cfg.mud,
                 line -> {
                     transcript.logMudToMatrix(line);
                     String sanitized = Sanitizer.sanitizeMudOutput(line);
                     Sanitizer.MxpResult res = Sanitizer.processMxp(sanitized);
+                    writTracker.ingest(res.plain);
                     sender.sendHtml(roomId, res.plain, res.html, line, shouldNotify(line));
                     sendTellHighlight(sender, roomId, res.plain);
                 },
@@ -59,7 +62,7 @@ public final class Main {
                 transcript
         );
 
-        MatrixEventProcessor processor = new MatrixEventProcessor(cfg, roomId, sender, mud, transcript);
+        MatrixEventProcessor processor = new MatrixEventProcessor(cfg, roomId, sender, mud, transcript, writTracker);
 
         String initialSince = null;
         if (cfg.matrix.ignoreInitialTimeline) {

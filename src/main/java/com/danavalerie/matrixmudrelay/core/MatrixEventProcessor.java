@@ -24,18 +24,21 @@ public final class MatrixEventProcessor {
     private final MudClient mud;
     private final TranscriptLogger transcript;
     private final RoomMapService mapService;
+    private final WritTracker writTracker;
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
     private boolean useTeleports = true;
     private volatile boolean pendingStatsHud = false;
 
-    public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud, TranscriptLogger transcript) {
+    public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud,
+                                TranscriptLogger transcript, WritTracker writTracker) {
         this.cfg = cfg;
         this.roomId = roomId;
         this.sender = sender;
         this.mud = mud;
         this.transcript = transcript;
         this.mapService = new RoomMapService("database.db");
+        this.writTracker = writTracker;
         this.mud.setGmcpListener(this::handleGmcp);
     }
 
@@ -223,6 +226,10 @@ public final class MatrixEventProcessor {
             handleRoomSearchQuery(query);
             return;
         }
+        if ("writ".equals(subcommand)) {
+            handleWrit(query);
+            return;
+        }
         if ("route".equals(subcommand)) {
             handleRoute(query);
             return;
@@ -246,6 +253,56 @@ public final class MatrixEventProcessor {
             return;
         }
         sender.sendText(roomId, "Usage: #mm loc <room name fragment>", false);
+    }
+
+    private void handleWrit(String query) {
+        List<WritTracker.WritRequirement> requirements = writTracker.getRequirements();
+        if (query.isBlank()) {
+            if (requirements.isEmpty()) {
+                sender.sendText(roomId, "No writ requirements tracked yet.", false);
+                return;
+            }
+            StringBuilder out = new StringBuilder("Current writ requirements:");
+            for (int i = 0; i < requirements.size(); i++) {
+                WritTracker.WritRequirement req = requirements.get(i);
+                out.append("\n")
+                        .append(i + 1)
+                        .append(") ")
+                        .append(req.quantity())
+                        .append("x ")
+                        .append(req.item())
+                        .append(" -> ")
+                        .append(req.npc())
+                        .append(" @ ")
+                        .append(req.location());
+            }
+            sender.sendText(roomId, out.toString(), false);
+            return;
+        }
+        String[] parts = query.split("\\s+");
+        if (parts.length != 2) {
+            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc]", false);
+            return;
+        }
+        int selection;
+        try {
+            selection = Integer.parseInt(parts[0]);
+        } catch (NumberFormatException e) {
+            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc]", false);
+            return;
+        }
+        String subcommand = parts[1].toLowerCase();
+        if (selection < 1 || selection > requirements.size()) {
+            sender.sendText(roomId, "Error: Writ selection must be between 1 and " + requirements.size() + ".", false);
+            return;
+        }
+        WritTracker.WritRequirement req = requirements.get(selection - 1);
+        switch (subcommand) {
+            case "item" -> handleItemSearchQuery(req.item());
+            case "npc" -> handleNpcSearchQuery(req.npc());
+            case "loc" -> handleRoomSearchQuery(req.location());
+            default -> sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc]", false);
+        }
     }
 
     private void handleStats() {
