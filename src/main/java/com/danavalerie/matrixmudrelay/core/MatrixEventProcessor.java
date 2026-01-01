@@ -281,14 +281,14 @@ public final class MatrixEventProcessor {
         }
         String[] parts = query.split("\\s+");
         if (parts.length != 2) {
-            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc]", false);
+            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc|deliver]", false);
             return;
         }
         int selection;
         try {
             selection = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
-            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc]", false);
+            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc|deliver]", false);
             return;
         }
         String subcommand = parts[1].toLowerCase();
@@ -301,7 +301,16 @@ public final class MatrixEventProcessor {
             case "item" -> handleItemSearchQuery(req.item());
             case "npc" -> handleNpcSearchQuery(req.npc());
             case "loc" -> handleRoomSearchQuery(req.location());
-            default -> sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc]", false);
+            case "deliver" -> {
+                String command = Sanitizer.sanitizeMudInput("deliver " + req.item() + " to " + req.npc());
+                transcript.logMatrixToMud(command);
+                try {
+                    mud.sendLinesFromController(List.of(command));
+                } catch (IllegalStateException e) {
+                    sender.sendText(roomId, "Error: " + e.getMessage(), false);
+                }
+            }
+            default -> sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc|deliver]", false);
         }
     }
 
