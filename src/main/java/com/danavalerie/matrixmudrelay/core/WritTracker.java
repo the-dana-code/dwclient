@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 public final class WritTracker {
     private static final Pattern REQUIREMENT_PATTERN = Pattern.compile("^\\[[ xX]?\\] (.+?) to (.+?) at (.+)$");
+    private static final Pattern REQUIREMENT_SENTENCE_PATTERN = Pattern.compile(
+            "^You are required to deliver (.+?) to (.+?) at (.+?)[.]?$");
     private static final Pattern NUMBER_PREFIX = Pattern.compile("^(\\d+)\\s+(.*)$");
 
     private final List<WritRequirement> requirements = new ArrayList<>();
@@ -50,7 +52,10 @@ public final class WritTracker {
         }
         Matcher matcher = REQUIREMENT_PATTERN.matcher(trimmed);
         if (!matcher.matches()) {
-            return;
+            matcher = REQUIREMENT_SENTENCE_PATTERN.matcher(trimmed);
+            if (!matcher.matches()) {
+                return;
+            }
         }
         String itemText = matcher.group(1).trim();
         String npc = matcher.group(2).trim();
