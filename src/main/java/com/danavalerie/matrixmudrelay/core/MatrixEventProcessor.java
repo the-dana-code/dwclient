@@ -11,6 +11,9 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -411,7 +414,8 @@ public final class MatrixEventProcessor {
         }
         lastRoomSearchResults = List.of();
         try {
-            List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByName(query, ROOM_SEARCH_LIMIT + 1);
+            ItemSearchResponse response = searchItemsWithFallback(query);
+            List<RoomMapService.ItemSearchResult> results = response.results();
             boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
             if (truncated) {
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
@@ -422,7 +426,10 @@ public final class MatrixEventProcessor {
                 return;
             }
             StringBuilder out = new StringBuilder();
-            out.append("Item search for \"").append(query).append("\":");
+            out.append("Item search for \"").append(response.termUsed()).append("\":");
+            if (!response.termUsed().equalsIgnoreCase(query.trim())) {
+                out.append(" (from \"").append(query.trim()).append("\")");
+            }
             for (int i = 0; i < results.size(); i++) {
                 RoomMapService.ItemSearchResult result = results.get(i);
                 out.append("\n")
@@ -441,6 +448,79 @@ public final class MatrixEventProcessor {
             log.warn("item search failed err={}", e.toString());
             sender.sendText(roomId, "Error: Unable to search items.", false);
         }
+    }
+
+    private ItemSearchResponse searchItemsWithFallback(String query) throws SQLException, RoomMapService.MapLookupException {
+        List<String> terms = buildItemSearchTerms(query);
+        for (String term : terms) {
+            List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByName(term, ROOM_SEARCH_LIMIT + 1);
+            if (!results.isEmpty()) {
+                return new ItemSearchResponse(term, results);
+            }
+        }
+        return new ItemSearchResponse(query.trim(), List.of());
+    }
+
+    private List<String> buildItemSearchTerms(String query) {
+        String trimmed = query.trim();
+        LinkedHashSet<String> terms = new LinkedHashSet<>();
+        if (!trimmed.isBlank()) {
+            terms.add(trimmed);
+            for (String singular : singularizePhrase(trimmed)) {
+                terms.add(singular);
+            }
+        }
+        return List.copyOf(terms);
+    }
+
+    private List<String> singularizePhrase(String phrase) {
+        String[] parts = phrase.trim().split("\\s+");
+        if (parts.length == 0) {
+            return List.of();
+        }
+        String last = parts[parts.length - 1];
+        List<String> singulars = singularizeWord(last);
+        if (singulars.isEmpty()) {
+            return List.of();
+        }
+        List<String> phrases = new ArrayList<>();
+        for (String singular : singulars) {
+            if (singular.equalsIgnoreCase(last)) {
+                continue;
+            }
+            parts[parts.length - 1] = singular;
+            phrases.add(String.join(" ", parts));
+        }
+        return phrases;
+    }
+
+    private List<String> singularizeWord(String word) {
+        String lower = word.toLowerCase();
+        LinkedHashSet<String> candidates = new LinkedHashSet<>();
+        if (lower.endsWith("ies") && lower.length() > 3) {
+            candidates.add(word.substring(0, word.length() - 1));
+            candidates.add(word.substring(0, word.length() - 3) + "y");
+        }
+        if (lower.endsWith("oes") && lower.length() > 3) {
+            candidates.add(word.substring(0, word.length() - 1));
+        }
+        if (lower.endsWith("ves") && lower.length() > 3) {
+            candidates.add(word.substring(0, word.length() - 3) + "f");
+            candidates.add(word.substring(0, word.length() - 3) + "fe");
+        }
+        if (lower.endsWith("men") && lower.length() > 3) {
+            candidates.add(word.substring(0, word.length() - 3) + "man");
+        }
+        if (lower.endsWith("es") && lower.length() > 2 && !lower.endsWith("ies") && !lower.endsWith("oes")) {
+            candidates.add(word.substring(0, word.length() - 2));
+        }
+        if (lower.endsWith("s") && lower.length() > 1) {
+            candidates.add(word.substring(0, word.length() - 1));
+        }
+        return new ArrayList<>(candidates);
+    }
+
+    private record ItemSearchResponse(String termUsed, List<RoomMapService.ItemSearchResult> results) {
     }
 
     private void handleItemSelection(int selection) {
