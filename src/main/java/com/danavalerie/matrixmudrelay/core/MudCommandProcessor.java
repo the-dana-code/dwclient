@@ -68,6 +68,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
+            try {
+                mud.sendLinesFromController(List.of(""));
+            } catch (IllegalStateException e) {
+                output.appendSystem("Error: " + e.getMessage());
+            }
             return;
         }
 
