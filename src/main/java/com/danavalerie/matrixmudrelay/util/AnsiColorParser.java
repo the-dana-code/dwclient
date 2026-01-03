@@ -53,6 +53,9 @@ public final class AnsiColorParser {
                     String lower = tag.toLowerCase().trim();
                     if (lower.equals("br")) {
                         buffer.append('\n');
+                        flush(buffer, segments, currentColor, bold);
+                        currentColor = DEFAULT_COLOR;
+                        bold = false;
                         i = end + 1;
                         continue;
                     }
@@ -86,6 +89,15 @@ public final class AnsiColorParser {
                 }
                 tail = input.substring(i);
                 break;
+            }
+
+            if (ch == '\n') {
+                buffer.append('\n');
+                flush(buffer, segments, currentColor, bold);
+                currentColor = DEFAULT_COLOR;
+                bold = false;
+                i++;
+                continue;
             }
 
             if (isPrintable(ch)) {
