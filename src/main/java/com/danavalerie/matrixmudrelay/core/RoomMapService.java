@@ -84,8 +84,6 @@ public class RoomMapService {
                 imageHeight = backgroundImage.getHeight() * IMAGE_SCALE;
             }
 
-            Map<String, RoomRecord> rooms = loadRoomsInArea(conn, current.mapId, minX, maxX, minY, maxY);
-
             BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = image.createGraphics();
             g2.setColor(new Color(12, 12, 18));
@@ -98,20 +96,15 @@ public class RoomMapService {
                 drawMapBackground(backgroundImage, g2);
             }
 
-            for (RoomRecord room : rooms.values()) {
-                int px = (room.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
-                int py = (room.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
-                drawRoomSquare(g2, px, py, room.roomId.equals(currentRoomId), imageWidth, imageHeight);
-            }
-            drawConnectionsImage(conn, rooms, minX, minY, g2);
+            int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
+            int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
+            drawCurrentRoom(g2, currentX, currentY, imageWidth, imageHeight);
 
             g2.dispose();
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "png", out);
             String body = "Map centered on " + current.roomId + " (" + current.xpos + ", " + current.ypos + ")";
-            int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
-            int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
             return new MapImage(out.toByteArray(), imageWidth, imageHeight, "image/png", body, currentX, currentY);
         }
     }
@@ -550,7 +543,7 @@ public class RoomMapService {
             return;
         }
         g2.setColor(new Color(220, 48, 48));
-        g2.fillRect(startX, startY, width, height);
+        g2.fillOval(startX, startY, width, height);
     }
 
     private static void drawConnectionLine(Graphics2D g2, int fromX, int fromY, int toX, int toY) {
