@@ -8,7 +8,7 @@ public final class Sanitizer {
     private static final Pattern ANSI_PATTERN = Pattern.compile("\\e\\[[\\d;]*[^\\d;]");
 
     /**
-     * Remove ANSI codes and other control chars from MUD output before posting to Matrix.
+     * Remove ANSI codes and other control chars from MUD output when plain text is required.
      * Keeps tabs; removes ASCII control range and DEL.
      */
     public static String sanitizeMudOutput(String s) {

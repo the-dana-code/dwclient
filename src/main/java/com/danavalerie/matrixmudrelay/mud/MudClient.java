@@ -222,7 +222,7 @@ public class MudClient {
                 line = Sanitizer.sanitizeMudInput(line);
 
                 log.info("Writing line: " + raw);
-                transcript.logMatrixToMud(line);
+                transcript.logClientToMud(line);
 
                 // MUD line-oriented input; CRLF for telnet compatibility
                 currentOut.write(line.getBytes(Charset.forName(cfg.charset)));

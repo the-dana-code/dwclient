@@ -1,182 +1,192 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
-import com.danavalerie.matrixmudrelay.matrix.RetryingMatrixSender;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public final class MatrixEventProcessor {
-    private static final Logger log = LoggerFactory.getLogger(MatrixEventProcessor.class);
+public final class MudCommandProcessor implements MudClient.MudGmcpListener {
+    private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
     private static final int ROOM_SEARCH_LIMIT = 100;
 
+    public interface ClientOutput {
+        void appendSystem(String text);
+
+        void updateMap(String roomId);
+    }
+
     private final BotConfig cfg;
-    private final String roomId;
-    private final RetryingMatrixSender sender;
     private final MudClient mud;
     private final TranscriptLogger transcript;
     private final RoomMapService mapService;
     private final WritTracker writTracker;
+    private final ClientOutput output;
+    private final ExecutorService background;
+
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
     private boolean useTeleports = true;
     private volatile boolean pendingStatsHud = false;
+    private volatile String lastRoomId = null;
 
-    public MatrixEventProcessor(BotConfig cfg, String roomId, RetryingMatrixSender sender, MudClient mud,
-                                TranscriptLogger transcript, WritTracker writTracker) {
+    public MudCommandProcessor(BotConfig cfg,
+                               MudClient mud,
+                               TranscriptLogger transcript,
+                               WritTracker writTracker,
+                               ClientOutput output) {
         this.cfg = cfg;
-        this.roomId = roomId;
-        this.sender = sender;
         this.mud = mud;
         this.transcript = transcript;
-        this.mapService = new RoomMapService("database.db");
         this.writTracker = writTracker;
-        this.mud.setGmcpListener(this::handleGmcp);
+        this.output = output;
+        this.mapService = new RoomMapService("database.db");
+        this.background = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "mud-command");
+            t.setDaemon(true);
+            return t;
+        });
     }
 
-    public void onMatrixEvent(JsonObject ev) {
-        log.debug("onMatrixEvent: {}", ev);
-        String type = text(ev.get("type"));
-        if (!"m.room.message".equals(type)) {
-            if ("m.room.encrypted".equals(type)) {
-                log.warn("RECEIVED ENCRYPTED EVENT. This bot does NOT support encryption. Please disable encryption in the Matrix room settings.");
-            }
+    public void shutdown() {
+        background.shutdownNow();
+    }
+
+    public void handleInput(String input) {
+        if (input == null) {
+            return;
+        }
+        String trimmed = input.trim();
+        if (trimmed.isEmpty()) {
             return;
         }
 
-        String senderId = text(ev.get("sender"));
-        if (senderId == null) return;
+        String normalized = normalizeInput(trimmed);
+        String lower = normalized.toLowerCase(Locale.ROOT);
 
-        // Ignore our own messages
-        if (senderId.equals(cfg.matrix.userId)) return;
-
-        JsonElement content = ev.get("content");
-        if (content == null || !content.isJsonObject()) return;
-
-        String msgtype = text(content.getAsJsonObject().get("msgtype"));
-        if (msgtype != null && !"m.text".equals(msgtype)) return;
-
-        String body = text(content.getAsJsonObject().get("body"));
-        if (body == null) return;
-
-        body = body.trim();
-        if (body.isEmpty()) return;
-
-        boolean isController = senderId.equals(cfg.matrix.controllingUserId);
-        if (!isController) {
-            if (cfg.matrix.respondToUnauthorized) {
-                sender.sendText(roomId, "Ignored: only " + cfg.matrix.controllingUserId + " may control this relay.", false);
-            }
+        if (lower.startsWith("#mm")) {
+            handleMm(normalized.substring(1));
             return;
-
-
         }
-
-        body = normalizeMatrixInput(body);
-        String lower = body.toLowerCase();
-
-        // Reserved words precedence
         if (lower.startsWith("mm")) {
-            handleMm(body);
+            handleMm(normalized);
             return;
         }
 
-        // Alias expansion (exact match, reserved words excluded)
         try {
-
-
-            if (tryAlias(body)) {
+            if (tryAlias(normalized)) {
                 return;
             }
-
-            String sanitized = Sanitizer.sanitizeMudInput(body);
-            transcript.logMatrixToMud(sanitized);
+            String sanitized = Sanitizer.sanitizeMudInput(normalized);
+            transcript.logClientToMud(sanitized);
             mud.sendLinesFromController(List.of(sanitized));
         } catch (IllegalStateException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void onGmcp(TelnetDecoder.GmcpMessage message) {
+        String roomId = mud.getCurrentRoomSnapshot().roomId();
+        if (roomId != null && !roomId.isBlank() && !roomId.equals(lastRoomId)) {
+            lastRoomId = roomId;
+            output.updateMap(roomId);
+        }
+        if (message == null) {
+            return;
+        }
+        String command = message.command();
+        if (command == null) {
+            return;
+        }
+        if (!"char.vitals".equalsIgnoreCase(command.trim())) {
+            return;
+        }
+        if (!pendingStatsHud) {
+            return;
+        }
+        pendingStatsHud = false;
+        StatsHudRenderer.StatsHudData data = StatsHudRenderer.extract(mud.getCurrentRoomSnapshot());
+        if (data == null) {
+            output.appendSystem("Error: No character vitals available yet.");
+            return;
+        }
+        output.appendSystem(formatStats(data));
     }
 
     private void handleConnect() {
         if (mud.isConnected()) {
-            sender.sendText(roomId, "Already connected.", false);
+            output.appendSystem("Already connected.");
             return;
         }
-        sender.sendText(roomId, "Connecting to MUD...", false);
-        try {
-            mud.connect();
-            sender.sendText(roomId, "Connected.", false);
-        } catch (Exception e) {
-            log.warn("connect failed err={}", e.toString());
-            sender.sendText(roomId, "Connect failed: " + e.getMessage(), false);
-        }
+        output.appendSystem("Connecting to MUD...");
+        background.submit(() -> {
+            try {
+                mud.connect();
+                output.appendSystem("Connected.");
+            } catch (Exception e) {
+                log.warn("connect failed err={}", e.toString());
+                output.appendSystem("Connect failed: " + e.getMessage());
+            }
+        });
     }
 
     private void handleDisconnect() {
         if (!mud.isConnected()) {
-            sender.sendText(roomId, "Already disconnected.", false);
+            output.appendSystem("Already disconnected.");
             return;
         }
         mud.disconnect("controller requested", null);
-        sender.sendText(roomId, "Disconnected.", false);
+        output.appendSystem("Disconnected.");
     }
 
     private void handleStatus() {
-        sender.sendText(roomId, "Status: " + (mud.isConnected() ? "CONNECTED" : "DISCONNECTED"), false);
+        output.appendSystem("Status: " + (mud.isConnected() ? "CONNECTED" : "DISCONNECTED"));
     }
 
     private void handleInfo() {
-        sender.sendText(roomId, mud.getCurrentRoomSnapshot().formatForDisplay(), false);
+        output.appendSystem(mud.getCurrentRoomSnapshot().formatForDisplay());
     }
 
     private void handleMap(String body) {
         String[] parts = body.trim().split("\\s+");
         String targetRoomId;
-        if (parts.length == 2) {
+        if (parts.length < 3) {
             targetRoomId = mud.getCurrentRoomSnapshot().roomId();
             if (targetRoomId == null || targetRoomId.isBlank()) {
-                sender.sendText(roomId, "Error: Can't determine your location.", false);
+                output.appendSystem("Error: Can't determine your location.");
                 return;
             }
         } else {
             if (lastRoomSearchResults.isEmpty()) {
-                sender.sendText(roomId, "Error: No recent room search results. Use #mm loc first.", false);
+                output.appendSystem("Error: No recent room search results. Use mm loc first.");
                 return;
             }
             int selection;
             try {
                 selection = Integer.parseInt(parts[2]);
             } catch (NumberFormatException e) {
-                sender.sendText(roomId, "Usage: #map <number>", false);
+                output.appendSystem("Usage: mm map <number>");
                 return;
             }
             if (selection < 1 || selection > lastRoomSearchResults.size()) {
-                sender.sendText(roomId, "Error: Map selection must be between 1 and " + lastRoomSearchResults.size() + ".", false);
+                output.appendSystem("Error: Map selection must be between 1 and " + lastRoomSearchResults.size() + ".");
                 return;
             }
             targetRoomId = lastRoomSearchResults.get(selection - 1).roomId();
         }
-        try {
-            RoomMapService.MapImage mapImage = mapService.renderMapImage(targetRoomId);
-            sender.sendImage(roomId, mapImage.body(), mapImage.data(), "mud-map.png", mapImage.mimeType(),
-                    mapImage.width(), mapImage.height(), false);
-        } catch (RoomMapService.MapLookupException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
-        } catch (Exception e) {
-            log.warn("map render failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to render map.", false);
-        }
+        output.updateMap(targetRoomId);
+        output.appendSystem("Map updated.");
     }
 
     private void handleMm(String body) {
@@ -186,7 +196,7 @@ public final class MatrixEventProcessor {
             return;
         }
         String[] parts = remainder.split("\\s+", 2);
-        String subcommand = parts[0].toLowerCase();
+        String subcommand = parts[0].toLowerCase(Locale.ROOT);
         String query = parts.length > 1 ? parts[1].trim() : "";
         if ("connect".equals(subcommand)) {
             handleConnect();
@@ -239,12 +249,12 @@ public final class MatrixEventProcessor {
         }
         if ("tp".equals(subcommand)) {
             useTeleports = true;
-            sender.sendText(roomId, "Teleport-assisted routing enabled.", false);
+            output.appendSystem("Teleport-assisted routing enabled.");
             return;
         }
         if ("notp".equals(subcommand)) {
             useTeleports = false;
-            sender.sendText(roomId, "Teleport-assisted routing disabled.", false);
+            output.appendSystem("Teleport-assisted routing disabled.");
             return;
         }
         try {
@@ -252,17 +262,17 @@ public final class MatrixEventProcessor {
                 return;
             }
         } catch (IllegalStateException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
             return;
         }
-        sender.sendText(roomId, "Usage: #mm loc <room name fragment>", false);
+        output.appendSystem("Usage: mm loc <room name fragment>");
     }
 
     private void handleWrit(String query) {
         List<WritTracker.WritRequirement> requirements = writTracker.getRequirements();
         if (query.isBlank()) {
             if (requirements.isEmpty()) {
-                sender.sendText(roomId, "No writ requirements tracked yet.", false);
+                output.appendSystem("No writ requirements tracked yet.");
                 return;
             }
             StringBuilder out = new StringBuilder("Current writ requirements:");
@@ -279,24 +289,24 @@ public final class MatrixEventProcessor {
                         .append(" @ ")
                         .append(req.location());
             }
-            sender.sendText(roomId, out.toString(), false);
+            output.appendSystem(out.toString());
             return;
         }
         String[] parts = query.split("\\s+");
         if (parts.length != 2) {
-            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc|deliver]", false);
+            output.appendSystem("Usage: mm writ <number> [item|npc|loc|deliver]");
             return;
         }
         int selection;
         try {
             selection = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
-            sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc|deliver]", false);
+            output.appendSystem("Usage: mm writ <number> [item|npc|loc|deliver]");
             return;
         }
-        String subcommand = parts[1].toLowerCase();
+        String subcommand = parts[1].toLowerCase(Locale.ROOT);
         if (selection < 1 || selection > requirements.size()) {
-            sender.sendText(roomId, "Error: Writ selection must be between 1 and " + requirements.size() + ".", false);
+            output.appendSystem("Error: Writ selection must be between 1 and " + requirements.size() + ".");
             return;
         }
         WritTracker.WritRequirement req = requirements.get(selection - 1);
@@ -306,14 +316,14 @@ public final class MatrixEventProcessor {
             case "loc" -> handleRoomSearchQuery(req.location());
             case "deliver" -> {
                 String command = Sanitizer.sanitizeMudInput("deliver " + req.item() + " to " + req.npc());
-                transcript.logMatrixToMud(command);
+                transcript.logClientToMud(command);
                 try {
                     mud.sendLinesFromController(List.of(command));
                 } catch (IllegalStateException e) {
-                    sender.sendText(roomId, "Error: " + e.getMessage(), false);
+                    output.appendSystem("Error: " + e.getMessage());
                 }
             }
-            default -> sender.sendText(roomId, "Usage: mm writ <number> [item|npc|loc|deliver]", false);
+            default -> output.appendSystem("Usage: mm writ <number> [item|npc|loc|deliver]");
         }
     }
 
@@ -323,33 +333,7 @@ public final class MatrixEventProcessor {
             mud.sendLinesFromController(List.of("gp"));
         } catch (IllegalStateException e) {
             pendingStatsHud = false;
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
-        }
-    }
-
-    private void handleGmcp(TelnetDecoder.GmcpMessage message) {
-        if (message == null) return;
-        String command = message.command();
-        if (command == null) return;
-        if (!"char.vitals".equalsIgnoreCase(command.trim())) {
-            return;
-        }
-        if (!pendingStatsHud) {
-            return;
-        }
-        pendingStatsHud = false;
-        StatsHudRenderer.StatsHudData data = StatsHudRenderer.extract(mud.getCurrentRoomSnapshot());
-        if (data == null) {
-            sender.sendText(roomId, "Error: No character vitals available yet.", false);
-            return;
-        }
-        try {
-            StatsHudRenderer.StatsHudImage image = StatsHudRenderer.render(data);
-            sender.sendImage(roomId, image.body(), image.data(), "mud-stats.png", image.mimeType(),
-                    image.width(), image.height(), false);
-        } catch (Exception e) {
-            log.warn("stats render failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to render stats.", false);
+            output.appendSystem("Error: " + e.getMessage());
         }
     }
 
@@ -362,14 +346,14 @@ public final class MatrixEventProcessor {
         if (lines == null || lines.isEmpty()) {
             return true;
         }
-        transcript.logMatrixToMud("[alias:" + trigger + "] " + String.join(" | ", lines));
+        transcript.logClientToMud("[alias:" + trigger + "] " + String.join(" | ", lines));
         mud.sendLinesFromController(lines);
         return true;
     }
 
     private void handleRoomSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #mm loc <room name fragment>", false);
+            output.appendSystem("Usage: mm loc <room name fragment>");
             return;
         }
         try {
@@ -380,7 +364,7 @@ public final class MatrixEventProcessor {
             }
             lastRoomSearchResults = List.copyOf(results);
             if (results.isEmpty()) {
-                sender.sendText(roomId, "No rooms found matching \"" + query + "\".", false);
+                output.appendSystem("No rooms found matching \"" + query + "\".");
                 return;
             }
             StringBuilder out = new StringBuilder();
@@ -398,18 +382,18 @@ public final class MatrixEventProcessor {
             if (truncated) {
                 out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
             }
-            sender.sendText(roomId, out.toString(), false);
+            output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
         } catch (Exception e) {
             log.warn("room search failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to search rooms.", false);
+            output.appendSystem("Error: Unable to search rooms.");
         }
     }
 
     private void handleItemSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #mm item <item name fragment>", false);
+            output.appendSystem("Usage: mm item <item name fragment>");
             return;
         }
         lastRoomSearchResults = List.of();
@@ -422,7 +406,7 @@ public final class MatrixEventProcessor {
             }
             lastItemSearchResults = List.copyOf(results);
             if (results.isEmpty()) {
-                sender.sendText(roomId, "No items found matching \"" + query + "\".", false);
+                output.appendSystem("No items found matching \"" + query + "\".");
                 return;
             }
             StringBuilder out = new StringBuilder();
@@ -441,16 +425,16 @@ public final class MatrixEventProcessor {
                 out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
             }
             out.append("\nUse 'mm item <number>' to view room locations.");
-            sender.sendText(roomId, out.toString(), false);
+            output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
         } catch (Exception e) {
             log.warn("item search failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to search items.", false);
+            output.appendSystem("Error: Unable to search items.");
         }
     }
 
-    private ItemSearchResponse searchItemsWithFallback(String query) throws SQLException, RoomMapService.MapLookupException {
+    private ItemSearchResponse searchItemsWithFallback(String query) throws Exception {
         List<String> terms = buildItemSearchTerms(query);
         for (String term : terms) {
             List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByName(term, ROOM_SEARCH_LIMIT + 1);
@@ -495,7 +479,7 @@ public final class MatrixEventProcessor {
     }
 
     private List<String> singularizeWord(String word) {
-        String lower = word.toLowerCase();
+        String lower = word.toLowerCase(Locale.ROOT);
         LinkedHashSet<String> candidates = new LinkedHashSet<>();
         if (lower.endsWith("ies") && lower.length() > 3) {
             candidates.add(word.substring(0, word.length() - 1));
@@ -525,11 +509,11 @@ public final class MatrixEventProcessor {
 
     private void handleItemSelection(int selection) {
         if (lastItemSearchResults.isEmpty()) {
-            sender.sendText(roomId, "Error: No recent item search results. Use #mm item first.", false);
+            output.appendSystem("Error: No recent item search results. Use mm item first.");
             return;
         }
         if (selection < 1 || selection > lastItemSearchResults.size()) {
-            sender.sendText(roomId, "Error: Item selection must be between 1 and " + lastItemSearchResults.size() + ".", false);
+            output.appendSystem("Error: Item selection must be between 1 and " + lastItemSearchResults.size() + ".");
             return;
         }
         String itemName = lastItemSearchResults.get(selection - 1).itemName();
@@ -541,7 +525,7 @@ public final class MatrixEventProcessor {
             }
             lastRoomSearchResults = List.copyOf(results);
             if (results.isEmpty()) {
-                sender.sendText(roomId, "No rooms found for item \"" + itemName + "\".", false);
+                output.appendSystem("No rooms found for item \"" + itemName + "\".");
                 return;
             }
             StringBuilder out = new StringBuilder();
@@ -559,18 +543,18 @@ public final class MatrixEventProcessor {
             if (truncated) {
                 out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
             }
-            sender.sendText(roomId, out.toString(), false);
+            output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
         } catch (Exception e) {
             log.warn("item room search failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to search item locations.", false);
+            output.appendSystem("Error: Unable to search item locations.");
         }
     }
 
     private void handleNpcSearchQuery(String query) {
         if (query.isBlank()) {
-            sender.sendText(roomId, "Usage: #mm npc <npc name fragment>", false);
+            output.appendSystem("Usage: mm npc <npc name fragment>");
             return;
         }
         try {
@@ -590,7 +574,7 @@ public final class MatrixEventProcessor {
                             null))
                     .toList();
             if (results.isEmpty()) {
-                sender.sendText(roomId, "No NPCs found matching \"" + query + "\".", false);
+                output.appendSystem("No NPCs found matching \"" + query + "\".");
                 return;
             }
             StringBuilder out = new StringBuilder();
@@ -609,43 +593,43 @@ public final class MatrixEventProcessor {
             if (truncated) {
                 out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
             }
-            sender.sendText(roomId, out.toString(), false);
+            output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
         } catch (Exception e) {
             log.warn("npc search failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to search NPCs.", false);
+            output.appendSystem("Error: Unable to search NPCs.");
         }
     }
 
     private void handleRoute(String body) {
         if (!mud.isConnected()) {
-            sender.sendText(roomId, "Error: MUD is disconnected. Send `#connect` first.", false);
+            output.appendSystem("Error: MUD is disconnected. Send `mm connect` first.");
             return;
         }
         if (lastRoomSearchResults.isEmpty()) {
-            sender.sendText(roomId, "Error: No recent room search results.", false);
+            output.appendSystem("Error: No recent room search results.");
             return;
         }
         int selection;
         try {
             selection = Integer.parseInt(body);
         } catch (NumberFormatException e) {
-            sender.sendText(roomId, "Usage: mm route <number>", false);
+            output.appendSystem("Usage: mm route <number>");
             return;
         }
         if (selection < 1 || selection > lastRoomSearchResults.size()) {
-            sender.sendText(roomId, "Error: Route selection must be between 1 and " + lastRoomSearchResults.size() + ".", false);
+            output.appendSystem("Error: Route selection must be between 1 and " + lastRoomSearchResults.size() + ".");
             return;
         }
         RoomMapService.RoomSearchResult target = lastRoomSearchResults.get(selection - 1);
         String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
         if (currentRoomId == null || currentRoomId.isBlank()) {
-            sender.sendText(roomId, "Error: No room info available yet.", false);
+            output.appendSystem("Error: No room info available yet.");
             return;
         }
         if (currentRoomId.equals(target.roomId())) {
-            sender.sendText(roomId, "Already in " + target.roomShort() + ".", false);
+            output.appendSystem("Already in " + target.roomShort() + ".");
             return;
         }
         try {
@@ -671,21 +655,16 @@ public final class MatrixEventProcessor {
                 mud.sendLinesFromController(List.of(aliasCommand));
                 out.append("\nAlias: ").append(aliasName);
             }
-            sender.sendText(roomId, out.toString(), false);
+            output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
-            sender.sendText(roomId, "Error: " + e.getMessage(), false);
+            output.appendSystem("Error: " + e.getMessage());
         } catch (Exception e) {
             log.warn("route search failed err={}", e.toString());
-            sender.sendText(roomId, "Error: Unable to calculate route.", false);
+            output.appendSystem("Error: Unable to calculate route.");
         }
     }
 
-    private static String text(JsonElement n) {
-        if (n == null || n.isJsonNull()) return null;
-        return n.getAsString();
-    }
-
-    private static String normalizeMatrixInput(String body) {
+    private static String normalizeInput(String body) {
         if (body.isEmpty()) {
             return body;
         }
@@ -698,5 +677,13 @@ public final class MatrixEventProcessor {
         normalized.appendCodePoint(lowerFirst);
         normalized.append(body.substring(Character.charCount(firstCodePoint)));
         return normalized.toString();
+    }
+
+    private static String formatStats(StatsHudRenderer.StatsHudData data) {
+        return "Stats for " + data.name()
+                + "\nHP: " + data.hp() + " / " + data.maxHp()
+                + "\nGP: " + data.gp() + " / " + data.maxGp()
+                + "\nBurden: " + data.burden() + "%"
+                + "\nXP: " + data.xp();
     }
 }

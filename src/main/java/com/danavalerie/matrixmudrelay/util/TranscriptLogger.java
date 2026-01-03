@@ -39,8 +39,8 @@ public final class TranscriptLogger implements AutoCloseable {
         return t;
     }
 
-    public void logMudToMatrix(String line) { log("MUD->MX", line); }
-    public void logMatrixToMud(String line) { log("MX->MUD", line); }
+    public void logMudToClient(String line) { log("MUD->CLIENT", line); }
+    public void logClientToMud(String line) { log("CLIENT->MUD", line); }
     public void logSystem(String line) { log("SYSTEM", line); }
 
     private synchronized void log(String dirTag, String line) {

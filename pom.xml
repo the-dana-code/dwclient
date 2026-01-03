@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.danavalerie</groupId>
-  <artifactId>matrix-mud-relay</artifactId>
+  <artifactId>mud-client</artifactId>
   <version>1.0.0</version>
-  <name>matrix-mud-relay</name>
+  <name>mud-client</name>
 
   <properties>
     <maven.compiler.release>17</maven.compiler.release>

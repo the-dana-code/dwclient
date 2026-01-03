@@ -1,14 +1,4 @@
 {
-  "matrix": {
-    "homeserverUrl": "https://myserver.danavalerie.com",
-    "accessToken": "YOUR_ACCESS_TOKEN_HERE",
-    "userId": "@mudbot:myserver.danavalerie.com",
-    "room": "!rjInTxYARfrsOGkivW:myserver.danavalerie.com",
-    "controllingUserId": "@dana:myserver.danavalerie.com",
-    "syncTimeoutMs": 30000,
-    "ignoreInitialTimeline": true,
-    "respondToUnauthorized": false
-  },
   "mud": {
     "host": "discworld.starturtle.net",
     "port": 4242,
@@ -18,21 +8,10 @@
   "aliases": {
     "#password": ["E9crNWzX"]
   },
-  "textImageTriggers": [
-    {
-      "pattern": "^Mr Werks selects a bit of chalk from the chalk tray and then scribbles noisily on the job board\\.$",
-      "color": "CYAN"
-    }
-  ],
   "transcript": {
     "enabled": true,
     "directory": "./transcripts",
     "maxBytes": 10485760,
     "maxFiles": 20
-  },
-  "retry": {
-    "initialBackoffMs": 500,
-    "maxBackoffMs": 5000,
-    "maxAttempts": 0
   }
 }
