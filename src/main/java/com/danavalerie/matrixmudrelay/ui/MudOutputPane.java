@@ -38,7 +38,7 @@ public final class MudOutputPane extends JTextPane {
         if (text == null || text.isEmpty()) {
             return;
         }
-        String normalized = ensureTrailingNewline(text.replace("\r", ""));
+        String normalized = ensureTrailingNewline(unescapeAmpersands(text).replace("\r", ""));
         String combined = pendingTail + normalized;
         AnsiColorParser.ParseResult result = parser.parseStreaming(combined);
         pendingTail = result.tail();
@@ -49,7 +49,7 @@ public final class MudOutputPane extends JTextPane {
         if (text == null || text.isBlank()) {
             return;
         }
-        String normalized = ensureTrailingNewline(text);
+        String normalized = ensureTrailingNewline(unescapeAmpersands(text));
         Runnable appendTask = () -> {
             try {
                 getDocument().insertString(getDocument().getLength(), normalized, systemAttributes);
@@ -97,5 +97,9 @@ public final class MudOutputPane extends JTextPane {
             return text;
         }
         return text + "\n";
+    }
+
+    private static String unescapeAmpersands(String text) {
+        return text.replace("&amp;", "&");
     }
 }
