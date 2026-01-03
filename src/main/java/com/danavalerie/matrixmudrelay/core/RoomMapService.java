@@ -26,13 +26,12 @@ import javax.imageio.ImageIO;
 
 public class RoomMapService {
     private static final int TELEPORT_START_COST = 8;
-    private static final int IMAGE_SPAN = 250;
-    private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private static final int IMAGE_SCALE = 2;
-    private static final int IMAGE_PIXEL_SPAN = IMAGE_SPAN * IMAGE_SCALE;
     private static final int ROOM_PIXEL_SIZE = 5 * IMAGE_SCALE;
     private static final int ROOM_PIXEL_OFFSET_X = IMAGE_SCALE;
     private static final int ROOM_PIXEL_OFFSET_Y = IMAGE_SCALE;
+    private static final int IMAGE_SPAN = 250;
+    private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private final String dbPath;
     private final boolean driverAvailable;
 
@@ -62,27 +61,47 @@ public class RoomMapService {
                 throw new MapLookupException("Current room not found in map database.");
             }
 
-            int minX = current.xpos - IMAGE_HALF_SPAN;
-            int maxX = minX + IMAGE_SPAN - 1;
-            int minY = current.ypos - IMAGE_HALF_SPAN;
-            int maxY = minY + IMAGE_SPAN - 1;
+            BufferedImage backgroundImage = loadMapBackground(current.mapId);
+            int minX;
+            int maxX;
+            int minY;
+            int maxY;
+            int imageWidth;
+            int imageHeight;
+            if (backgroundImage == null) {
+                minX = current.xpos - IMAGE_HALF_SPAN;
+                maxX = minX + IMAGE_SPAN - 1;
+                minY = current.ypos - IMAGE_HALF_SPAN;
+                maxY = minY + IMAGE_SPAN - 1;
+                imageWidth = IMAGE_SPAN * IMAGE_SCALE;
+                imageHeight = IMAGE_SPAN * IMAGE_SCALE;
+            } else {
+                minX = 0;
+                minY = 0;
+                maxX = backgroundImage.getWidth() - 1;
+                maxY = backgroundImage.getHeight() - 1;
+                imageWidth = backgroundImage.getWidth() * IMAGE_SCALE;
+                imageHeight = backgroundImage.getHeight() * IMAGE_SCALE;
+            }
 
             Map<String, RoomRecord> rooms = loadRoomsInArea(conn, current.mapId, minX, maxX, minY, maxY);
 
-            BufferedImage image = new BufferedImage(IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = image.createGraphics();
             g2.setColor(new Color(12, 12, 18));
-            g2.fillRect(0, 0, IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN);
+            g2.fillRect(0, 0, imageWidth, imageHeight);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
             g2.setStroke(new BasicStroke(IMAGE_SCALE));
 
-            drawMapBackground(current.mapId, minX, minY, g2);
+            if (backgroundImage != null) {
+                drawMapBackground(backgroundImage, g2);
+            }
 
             for (RoomRecord room : rooms.values()) {
                 int px = (room.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
                 int py = (room.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
-                drawRoomSquare(g2, px, py, room.roomId.equals(currentRoomId));
+                drawRoomSquare(g2, px, py, room.roomId.equals(currentRoomId), imageWidth, imageHeight);
             }
             drawConnectionsImage(conn, rooms, minX, minY, g2);
 
@@ -91,7 +110,9 @@ public class RoomMapService {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "png", out);
             String body = "Map centered on " + current.roomId + " (" + current.xpos + ", " + current.ypos + ")";
-            return new MapImage(out.toByteArray(), IMAGE_PIXEL_SPAN, IMAGE_PIXEL_SPAN, "image/png", body);
+            int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
+            int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
+            return new MapImage(out.toByteArray(), imageWidth, imageHeight, "image/png", body, currentX, currentY);
         }
     }
 
@@ -414,33 +435,22 @@ public class RoomMapService {
         return teleports;
     }
 
-    private void drawMapBackground(int mapId, int minX, int minY, Graphics2D g2) throws IOException {
+    private BufferedImage loadMapBackground(int mapId) throws IOException {
         Optional<MapBackground> background = MapBackground.forMapId(mapId);
         if (background.isEmpty()) {
-            return;
+            return null;
         }
         Path backgroundPath = Path.of("map-backgrounds", background.get().filename);
-        BufferedImage source = ImageIO.read(backgroundPath.toFile());
+        return ImageIO.read(backgroundPath.toFile());
+    }
+
+    private void drawMapBackground(BufferedImage source, Graphics2D g2) {
         if (source == null) {
             return;
         }
-        int srcLeft = minX;
-        int srcTop = minY;
-        int srcRight = minX + IMAGE_SPAN;
-        int srcBottom = minY + IMAGE_SPAN;
-        int clippedLeft = Math.max(0, srcLeft);
-        int clippedTop = Math.max(0, srcTop);
-        int clippedRight = Math.min(source.getWidth(), srcRight);
-        int clippedBottom = Math.min(source.getHeight(), srcBottom);
-        if (clippedLeft >= clippedRight || clippedTop >= clippedBottom) {
-            return;
-        }
-        int destLeft = (clippedLeft - srcLeft) * IMAGE_SCALE;
-        int destTop = (clippedTop - srcTop) * IMAGE_SCALE;
-        int destRight = (clippedRight - srcLeft) * IMAGE_SCALE;
-        int destBottom = (clippedBottom - srcTop) * IMAGE_SCALE;
-        g2.drawImage(source, destLeft, destTop, destRight, destBottom,
-                clippedLeft, clippedTop, clippedRight, clippedBottom, null);
+        int destRight = source.getWidth() * IMAGE_SCALE;
+        int destBottom = source.getHeight() * IMAGE_SCALE;
+        g2.drawImage(source, 0, 0, destRight, destBottom, 0, 0, source.getWidth(), source.getHeight(), null);
     }
 
     private void drawConnectionsImage(Connection conn, Map<String, RoomRecord> rooms, int minX, int minY, Graphics2D g2)
@@ -505,9 +515,9 @@ public class RoomMapService {
         }
     }
 
-    private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent) {
+    private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent, int imageWidth, int imageHeight) {
         if (isCurrent) {
-            drawCurrentRoom(g2, px, py);
+            drawCurrentRoom(g2, px, py, imageWidth, imageHeight);
             return;
         }
         int half = ROOM_PIXEL_SIZE / 2;
@@ -515,8 +525,8 @@ public class RoomMapService {
         int topLeftY = py - half;
         int startX = Math.max(0, topLeftX);
         int startY = Math.max(0, topLeftY);
-        int endX = Math.min(IMAGE_PIXEL_SPAN, topLeftX + ROOM_PIXEL_SIZE);
-        int endY = Math.min(IMAGE_PIXEL_SPAN, topLeftY + ROOM_PIXEL_SIZE);
+        int endX = Math.min(imageWidth, topLeftX + ROOM_PIXEL_SIZE);
+        int endY = Math.min(imageHeight, topLeftY + ROOM_PIXEL_SIZE);
         int width = endX - startX;
         int height = endY - startY;
         if (width <= 0 || height <= 0) {
@@ -526,14 +536,14 @@ public class RoomMapService {
         g2.fillRect(startX, startY, width, height);
     }
 
-    private static void drawCurrentRoom(Graphics2D g2, int px, int py) {
+    private static void drawCurrentRoom(Graphics2D g2, int px, int py, int imageWidth, int imageHeight) {
         int half = ROOM_PIXEL_SIZE / 2;
         int topLeftX = px - half;
         int topLeftY = py - half;
         int startX = Math.max(0, topLeftX);
         int startY = Math.max(0, topLeftY);
-        int endX = Math.min(IMAGE_PIXEL_SPAN, topLeftX + ROOM_PIXEL_SIZE);
-        int endY = Math.min(IMAGE_PIXEL_SPAN, topLeftY + ROOM_PIXEL_SIZE);
+        int endX = Math.min(imageWidth, topLeftX + ROOM_PIXEL_SIZE);
+        int endY = Math.min(imageHeight, topLeftY + ROOM_PIXEL_SIZE);
         int width = endX - startX;
         int height = endY - startY;
         if (width <= 0 || height <= 0) {
@@ -560,7 +570,7 @@ public class RoomMapService {
         g2.drawLine(startX, startY, endX, endY);
     }
 
-    public record MapImage(byte[] data, int width, int height, String mimeType, String body) {
+    public record MapImage(byte[] data, int width, int height, String mimeType, String body, int currentX, int currentY) {
     }
 
     public static class MapLookupException extends Exception {
