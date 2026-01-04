@@ -142,8 +142,9 @@ public final class MapPanel extends JPanel {
 
     private static final class AnimatedMapIcon implements javax.swing.Icon {
         private static final int ROTATION_PERIOD_MS = 3000;
-        private static final int MARKER_DIAMETER = 14;
-        private static final int ARC_SWEEP_DEGREES = 180;
+        private static final int MARKER_DIAMETER = 16;
+        private static final int PINWHEEL_SEGMENTS = 8;
+        private static final float PINWHEEL_ALPHA = 0.9f;
         private final BufferedImage image;
         private final Point focusPoint;
         private final long startTimeMs = System.currentTimeMillis();
@@ -169,9 +170,17 @@ public final class MapPanel extends JPanel {
             int diameter = MARKER_DIAMETER;
             int topLeftX = centerX - radius;
             int topLeftY = centerY - radius;
-            g2.setColor(new Color(255, 80, 80, 220));
-            g2.fillArc(topLeftX, topLeftY, diameter, diameter,
-                    Math.round(phase * 360), ARC_SWEEP_DEGREES);
+            float segmentSweep = 360f / PINWHEEL_SEGMENTS;
+            float rotation = phase * 360f;
+            for (int i = 0; i < PINWHEEL_SEGMENTS; i++) {
+                float hue = i / (float) PINWHEEL_SEGMENTS;
+                Color segment = Color.getHSBColor(hue, 0.85f, 1.0f);
+                Color segmentWithAlpha = new Color(segment.getRed(), segment.getGreen(), segment.getBlue(),
+                        Math.round(255 * PINWHEEL_ALPHA));
+                g2.setColor(segmentWithAlpha);
+                int startAngle = Math.round(rotation + i * segmentSweep);
+                g2.fillArc(topLeftX, topLeftY, diameter, diameter, startAngle, Math.round(segmentSweep));
+            }
             g2.dispose();
         }
 
