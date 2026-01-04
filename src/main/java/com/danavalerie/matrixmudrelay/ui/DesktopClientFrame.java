@@ -58,6 +58,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         addWindowListener(new WindowAdapter() {
             @Override
+            public void windowOpened(WindowEvent e) {
+                inputField.requestFocusInWindow();
+            }
+
+            @Override
             public void windowClosing(WindowEvent e) {
                 shutdown();
             }
