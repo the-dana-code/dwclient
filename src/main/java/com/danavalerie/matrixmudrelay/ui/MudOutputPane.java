@@ -20,6 +20,8 @@ public final class MudOutputPane extends JTextPane {
     private final AnsiColorParser parser = new AnsiColorParser();
     private final AttributeSet systemAttributes;
     private String pendingTail = "";
+    private Color currentColor = AnsiColorParser.defaultColor();
+    private boolean currentBold = false;
 
     public MudOutputPane() {
         setEditable(false);
@@ -38,10 +40,12 @@ public final class MudOutputPane extends JTextPane {
         if (text == null || text.isEmpty()) {
             return;
         }
-        String normalized = ensureTrailingNewline(unescapeAmpersands(text).replace("\r", ""));
+        String normalized = unescapeAmpersands(text).replace("\r", "");
         String combined = pendingTail + normalized;
-        AnsiColorParser.ParseResult result = parser.parseStreaming(combined);
+        AnsiColorParser.ParseResult result = parser.parseStreaming(combined, currentColor, currentBold);
         pendingTail = result.tail();
+        currentColor = result.color();
+        currentBold = result.bold();
         appendSegments(result.segments());
     }
 

@@ -10,7 +10,6 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -120,10 +119,6 @@ public class MudClient {
             }
         });
 
-        ByteArrayOutputStream lineBuf = new ByteArrayOutputStream(1024);
-        List<String> messageBuffer = new ArrayList<>();
-        long bufferStartTime = 0;
-
         try {
             InputStream currentIn = in.get();
             while (connected.get() && currentIn != null) {
@@ -131,15 +126,6 @@ public class MudClient {
                 try {
                     b = currentIn.read();
                 } catch (java.net.SocketTimeoutException e) {
-                    if (bufferStartTime > 0) {
-                        long now = System.currentTimeMillis();
-                        boolean maxTimeout = (now - bufferStartTime > 1000);
-                        boolean atLineBreak = (lineBuf.size() == 0);
-                        if (maxTimeout || atLineBreak) {
-                            flushBuffer(messageBuffer, lineBuf, cs);
-                            bufferStartTime = 0;
-                        }
-                    }
                     continue;
                 }
 
@@ -149,19 +135,7 @@ public class MudClient {
                 }
 
                 byte[] decoded = decoder.accept((byte) b);
-                for (byte db : decoded) {
-                    if (bufferStartTime == 0) bufferStartTime = System.currentTimeMillis();
-                    if (db == (byte) '\n') {
-                        appendToMessageBuffer(messageBuffer, lineBuf, cs);
-                    } else {
-                        lineBuf.write(db);
-                    }
-                }
-
-                if (bufferStartTime > 0 && System.currentTimeMillis() - bufferStartTime > 1000) {
-                    flushBuffer(messageBuffer, lineBuf, cs);
-                    bufferStartTime = 0;
-                }
+                appendDecoded(decoded, cs);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -176,27 +150,39 @@ public class MudClient {
         }
     }
 
-    private void flushBuffer(List<String> messageBuffer, ByteArrayOutputStream lineBuf, Charset cs) {
-        if (lineBuf.size() > 0) {
-            appendToMessageBuffer(messageBuffer, lineBuf, cs);
+    private void appendDecoded(byte[] decoded, Charset cs) {
+        if (decoded.length == 0) {
+            return;
         }
-        if (!messageBuffer.isEmpty()) {
-            String combined = String.join("\n", messageBuffer);
-            lineListener.onLine(combined);
-            messageBuffer.clear();
+        String text = decodeWithoutCarriageReturns(decoded, cs);
+        if (text.isEmpty()) {
+            return;
         }
+        lineListener.onLine(text);
     }
 
-    private void appendToMessageBuffer(List<String> messageBuffer, ByteArrayOutputStream lineBuf, Charset cs) {
-        String line = lineBuf.toString(cs);
-        lineBuf.reset();
-        line = stripTrailingCR(line);
-        messageBuffer.add(line);
-    }
-
-    private static String stripTrailingCR(String s) {
-        if (s.endsWith("\r")) return s.substring(0, s.length() - 1);
-        return s;
+    private static String decodeWithoutCarriageReturns(byte[] decoded, Charset cs) {
+        boolean hasCarriageReturn = false;
+        for (byte b : decoded) {
+            if (b == (byte) '\r') {
+                hasCarriageReturn = true;
+                break;
+            }
+        }
+        if (!hasCarriageReturn) {
+            return new String(decoded, cs);
+        }
+        ByteArrayOutputStream filtered = new ByteArrayOutputStream(decoded.length);
+        for (byte b : decoded) {
+            if (b != (byte) '\r') {
+                filtered.write(b);
+            }
+        }
+        try {
+            return filtered.toString(cs.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void sendLinesFromController(List<String> lines) {

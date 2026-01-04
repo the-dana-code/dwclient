@@ -16,33 +16,43 @@ public final class AnsiColorParser {
     }
 
     public ParseResult parseStreaming(String input) {
+        return parseStreaming(input, DEFAULT_COLOR, false);
+    }
+
+    public ParseResult parseStreaming(String input, Color startColor, boolean startBold) {
         List<Segment> segments = new ArrayList<>();
         if (input == null || input.isEmpty()) {
-            return new ParseResult(segments, "");
+            return new ParseResult(segments, "", startColor, startBold);
         }
 
         StringBuilder buffer = new StringBuilder();
-        Color currentColor = DEFAULT_COLOR;
-        boolean bold = false;
+        Color currentColor = startColor;
+        boolean bold = startBold;
 
         int length = input.length();
         int i = 0;
         String tail = "";
         while (i < length) {
             char ch = input.charAt(i);
-            if (ch == 0x1b && i + 1 < length && input.charAt(i + 1) == '[') {
-                int end = findAnsiEnd(input, i + 2);
-                if (end != -1) {
-                    flush(buffer, segments, currentColor, bold);
-                    String code = input.substring(i + 2, end);
-                    AnsiState state = applySgr(code, currentColor, bold);
-                    currentColor = state.color();
-                    bold = state.bold();
-                    i = end + 1;
-                    continue;
+            if (ch == 0x1b) {
+                if (i + 1 >= length) {
+                    tail = input.substring(i);
+                    break;
                 }
-                tail = input.substring(i);
-                break;
+                if (input.charAt(i + 1) == '[') {
+                    int end = findAnsiEnd(input, i + 2);
+                    if (end != -1) {
+                        flush(buffer, segments, currentColor, bold);
+                        String code = input.substring(i + 2, end);
+                        AnsiState state = applySgr(code, currentColor, bold);
+                        currentColor = state.color();
+                        bold = state.bold();
+                        i = end + 1;
+                        continue;
+                    }
+                    tail = input.substring(i);
+                    break;
+                }
             }
 
             if (ch == '<') {
@@ -107,7 +117,7 @@ public final class AnsiColorParser {
         }
 
         flush(buffer, segments, currentColor, bold);
-        return new ParseResult(segments, tail);
+        return new ParseResult(segments, tail, currentColor, bold);
     }
 
     private static boolean isPrintable(char ch) {
@@ -298,7 +308,11 @@ public final class AnsiColorParser {
     private record AnsiState(Color color, boolean bold) {
     }
 
-    public record ParseResult(List<Segment> segments, String tail) {
+    public record ParseResult(List<Segment> segments, String tail, Color color, boolean bold) {
+    }
+
+    public static Color defaultColor() {
+        return DEFAULT_COLOR;
     }
 
     private static int findTagEnd(String input, int start) {
