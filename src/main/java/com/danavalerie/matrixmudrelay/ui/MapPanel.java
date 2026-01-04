@@ -142,8 +142,8 @@ public final class MapPanel extends JPanel {
 
     private static final class AnimatedMapIcon implements javax.swing.Icon {
         private static final int ROTATION_PERIOD_MS = 3000;
-        private static final int MARKER_DIAMETER = 10;
-        private static final int ARC_SWEEP_DEGREES = 300;
+        private static final int MARKER_DIAMETER = 14;
+        private static final int ARC_SWEEP_DEGREES = 180;
         private final BufferedImage image;
         private final Point focusPoint;
         private final long startTimeMs = System.currentTimeMillis();
