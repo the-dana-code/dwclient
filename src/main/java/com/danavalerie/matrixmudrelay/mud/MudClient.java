@@ -108,9 +108,7 @@ public class MudClient {
         TelnetDecoder decoder = new TelnetDecoder(out::get, (opt, data) -> {
             if (opt == (byte) 201) { // GMCP
                 String msg = new String(data, cs);
-                // In the future, we can route this to specific handlers.
-                // For now, logging it is enough to show we receive it.
-                log.debug("Received GMCP: {}", msg);
+                //log.debug("Received GMCP: {}", msg);
                 TelnetDecoder.GmcpMessage parsed = TelnetDecoder.parseGmcpMessage(msg);
                 if (parsed != null) {
                     currentRoomInfo.update(parsed.command(), parsed.payload());
