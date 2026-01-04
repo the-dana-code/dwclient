@@ -17,15 +17,19 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private final MudOutputPane outputPane = new MudOutputPane();
     private final MapPanel mapPanel = new MapPanel();
+    private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
     private final TranscriptLogger transcript;
+    private boolean forwardingKey;
 
     public DesktopClientFrame(BotConfig cfg, TranscriptLogger transcript) {
         super("MUD Desktop Client");
@@ -50,6 +54,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         add(buildDesktop(), BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
+        installInputFocusForwarding();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -83,7 +88,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         outputScroll.setBorder(null);
 
         JPanel inputPanel = new JPanel(new BorderLayout(6, 6));
-        JTextField inputField = new JTextField();
         JButton sendButton = new JButton("Send");
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
@@ -101,6 +105,39 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
         return splitPane;
+    }
+
+    private void installInputFocusForwarding() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(event -> {
+            if (!isVisible() || inputField.isFocusOwner() || forwardingKey) {
+                return false;
+            }
+            if (event.getID() != KeyEvent.KEY_TYPED) {
+                return false;
+            }
+            char keyChar = event.getKeyChar();
+            if (keyChar == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(keyChar)) {
+                return false;
+            }
+            forwardingKey = true;
+            try {
+                inputField.requestFocusInWindow();
+                KeyEvent forwarded = new KeyEvent(
+                        inputField,
+                        event.getID(),
+                        event.getWhen(),
+                        event.getModifiersEx(),
+                        event.getKeyCode(),
+                        event.getKeyChar(),
+                        event.getKeyLocation()
+                );
+                inputField.dispatchEvent(forwarded);
+                event.consume();
+                return true;
+            } finally {
+                forwardingKey = false;
+            }
+        });
     }
 
     @Override
