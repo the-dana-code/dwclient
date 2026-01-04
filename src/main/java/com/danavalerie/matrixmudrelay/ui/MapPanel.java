@@ -141,7 +141,7 @@ public final class MapPanel extends JPanel {
     }
 
     private static final class AnimatedMapIcon implements javax.swing.Icon {
-        private static final int ROTATION_PERIOD_MS = 3000;
+        private static final int ROTATION_PERIOD_MS = 1000;
         private static final int MARKER_DIAMETER = 16;
         private static final int PINWHEEL_SEGMENTS = 8;
         private static final float PINWHEEL_ALPHA = 0.9f;
