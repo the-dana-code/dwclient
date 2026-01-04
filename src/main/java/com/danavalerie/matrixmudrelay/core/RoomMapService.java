@@ -530,20 +530,7 @@ public class RoomMapService {
     }
 
     private static void drawCurrentRoom(Graphics2D g2, int px, int py, int imageWidth, int imageHeight) {
-        int half = ROOM_PIXEL_SIZE / 2;
-        int topLeftX = px - half;
-        int topLeftY = py - half;
-        int startX = Math.max(0, topLeftX);
-        int startY = Math.max(0, topLeftY);
-        int endX = Math.min(imageWidth, topLeftX + ROOM_PIXEL_SIZE);
-        int endY = Math.min(imageHeight, topLeftY + ROOM_PIXEL_SIZE);
-        int width = endX - startX;
-        int height = endY - startY;
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-        g2.setColor(new Color(220, 48, 48));
-        g2.fillOval(startX, startY, width, height);
+        // Current room marker is drawn as an animated overlay in the UI.
     }
 
     private static void drawConnectionLine(Graphics2D g2, int fromX, int fromY, int toX, int toY) {

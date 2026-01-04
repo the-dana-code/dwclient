@@ -10,10 +10,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.Objects;
@@ -32,6 +36,7 @@ public final class MapPanel extends JPanel {
     private final JLabel mapLabel = new JLabel("Map will appear here", SwingConstants.CENTER);
     private final JScrollPane scrollPane;
     private final AtomicReference<String> lastRoomId = new AtomicReference<>();
+    private Timer animationTimer;
 
     public MapPanel() {
         setLayout(new BorderLayout());
@@ -73,10 +78,12 @@ public final class MapPanel extends JPanel {
 
     private void showImage(BufferedImage image, String title, Point focusPoint, Dimension imageSize) {
         SwingUtilities.invokeLater(() -> {
-            mapLabel.setIcon(image == null ? null : new ImageIcon(image));
+            AnimatedMapIcon icon = image == null ? null : new AnimatedMapIcon(image, focusPoint);
+            mapLabel.setIcon(icon);
             mapLabel.setText(title == null ? "" : title);
             mapLabel.setPreferredSize(image == null ? null : imageSize);
             mapLabel.revalidate();
+            configureAnimation(icon);
             if (image != null && focusPoint != null && imageSize != null) {
                 SwingUtilities.invokeLater(() -> centerViewOnPoint(focusPoint, imageSize));
             }
@@ -88,6 +95,7 @@ public final class MapPanel extends JPanel {
             mapLabel.setIcon(null);
             mapLabel.setText(message);
             mapLabel.setPreferredSize(null);
+            configureAnimation(null);
         });
     }
 
@@ -114,5 +122,67 @@ public final class MapPanel extends JPanel {
             viewY = 0;
         }
         scrollPane.getViewport().setViewPosition(new Point(viewX, viewY));
+    }
+
+    private void configureAnimation(AnimatedMapIcon icon) {
+        if (animationTimer != null) {
+            animationTimer.stop();
+            animationTimer = null;
+        }
+        if (icon == null) {
+            return;
+        }
+        animationTimer = new Timer(60, this::onAnimationTick);
+        animationTimer.start();
+    }
+
+    private void onAnimationTick(ActionEvent event) {
+        mapLabel.repaint();
+    }
+
+    private static final class AnimatedMapIcon implements javax.swing.Icon {
+        private static final int ROTATION_PERIOD_MS = 3000;
+        private static final int MARKER_DIAMETER = 10;
+        private static final int ARC_SWEEP_DEGREES = 300;
+        private final BufferedImage image;
+        private final Point focusPoint;
+        private final long startTimeMs = System.currentTimeMillis();
+
+        private AnimatedMapIcon(BufferedImage image, Point focusPoint) {
+            this.image = image;
+            this.focusPoint = focusPoint;
+        }
+
+        @Override
+        public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+            g.drawImage(image, x, y, null);
+            if (focusPoint == null) {
+                return;
+            }
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            float phase = (System.currentTimeMillis() - startTimeMs) % ROTATION_PERIOD_MS
+                    / (float) ROTATION_PERIOD_MS;
+            int centerX = x + focusPoint.x;
+            int centerY = y + focusPoint.y;
+            int radius = MARKER_DIAMETER / 2;
+            int diameter = MARKER_DIAMETER;
+            int topLeftX = centerX - radius;
+            int topLeftY = centerY - radius;
+            g2.setColor(new Color(255, 80, 80, 220));
+            g2.fillArc(topLeftX, topLeftY, diameter, diameter,
+                    Math.round(phase * 360), ARC_SWEEP_DEGREES);
+            g2.dispose();
+        }
+
+        @Override
+        public int getIconWidth() {
+            return image.getWidth();
+        }
+
+        @Override
+        public int getIconHeight() {
+            return image.getHeight();
+        }
     }
 }
