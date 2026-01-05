@@ -152,7 +152,7 @@ public final class TelnetDecoder {
                 subnegotiationListener.onSubnegotiation(opt, data);
             }
             String msg = new String(data);
-            System.out.println("[DEBUG_LOG] GMCP: " + msg);
+//            System.out.println("[DEBUG_LOG] GMCP: " + msg);
         }
     }
 
