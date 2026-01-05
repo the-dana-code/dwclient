@@ -7,9 +7,7 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -51,7 +49,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
         setLayout(new BorderLayout());
-        add(buildDesktop(), BorderLayout.CENTER);
+        add(buildSplitLayout(), BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
         installInputFocusForwarding();
@@ -69,23 +67,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
     }
 
-    private JDesktopPane buildDesktop() {
-        JDesktopPane desktop = new JDesktopPane();
-
-        JInternalFrame mudFrame = new JInternalFrame("MUD Console", false, false, false, true);
-        mudFrame.setContentPane(buildMudPanel());
-        mudFrame.setBounds(10, 10, 760, 740);
-        mudFrame.setVisible(true);
-
-        JInternalFrame mapFrame = new JInternalFrame("Map", false, false, false, true);
-        mapFrame.setContentPane(mapPanel);
-        mapFrame.setBounds(780, 10, 400, 740);
-        mapFrame.setVisible(true);
-
-        desktop.add(mudFrame);
-        desktop.add(mapFrame);
-
-        return desktop;
+    private JSplitPane buildSplitLayout() {
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildMudPanel(), mapPanel);
+        splitPane.setResizeWeight(0.7);
+        splitPane.setDividerSize(6);
+        splitPane.setBorder(null);
+        return splitPane;
     }
 
     private JSplitPane buildMudPanel() {
