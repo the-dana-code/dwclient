@@ -7,12 +7,17 @@ import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public final class StatsPanel extends JPanel {
     private static final Color BACKGROUND = new Color(10, 10, 15);
@@ -23,6 +28,8 @@ public final class StatsPanel extends JPanel {
     private static final Color BURDEN_COLOR = new Color(0, 130, 0);
     private static final Color XP_COLOR = new Color(200, 110, 0);
     private static final int XP_CAP = 1_000_000;
+    private static final int GP_RATE_SAMPLE_SIZE = 10;
+    private static final int GP_TIMER_DEFAULT_INTERVAL_MS = 1000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getIntegerInstance(Locale.US);
 
     private final JLabel nameLabel = new JLabel("Character: --");
@@ -30,11 +37,22 @@ public final class StatsPanel extends JPanel {
     private final JProgressBar gpBar = buildBar(GP_COLOR);
     private final JProgressBar burdenBar = buildBar(BURDEN_COLOR);
     private final JProgressBar xpBar = buildBar(XP_COLOR);
+    private final int[] gpRateSamples = new int[GP_RATE_SAMPLE_SIZE];
+    private final Timer gpTimer;
+    private int gpRateIndex = 0;
+    private int gpRateCount = 0;
+    private int gpRateMode = 0;
+    private Integer lastReportedGp = null;
+    private long lastGpUpdateTimeMs = 0L;
+    private int gpMillisPerPoint = 0;
+    private int currentGp = 0;
+    private int currentMaxGp = 1;
 
     public StatsPanel() {
         setLayout(new BorderLayout(0, 8));
         setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        Arrays.fill(gpRateSamples, -1);
 
         nameLabel.setForeground(TEXT_COLOR);
         nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD, 14f));
@@ -49,6 +67,8 @@ public final class StatsPanel extends JPanel {
         add(bars, BorderLayout.CENTER);
 
         setUnavailable();
+        gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
+        gpTimer.start();
     }
 
     public void updateStats(StatsHudRenderer.StatsHudData data) {
@@ -60,8 +80,7 @@ public final class StatsPanel extends JPanel {
             nameLabel.setText("Character: " + data.name());
             updateBar(hpBar, data.hp(), data.maxHp(),
                     "HP " + format(data.hp()) + " / " + format(data.maxHp()));
-            updateBar(gpBar, data.gp(), data.maxGp(),
-                    "GP " + format(data.gp()) + " / " + format(data.maxGp()));
+            updateGpFromVitals(data.gp(), data.maxGp());
 
             int burdenValue = clamp(data.burden(), 0, 100);
             updateBar(burdenBar, burdenValue, 100, "Burden " + burdenValue + "%");
@@ -78,6 +97,15 @@ public final class StatsPanel extends JPanel {
         updateBar(gpBar, 0, 1, "GP --");
         updateBar(burdenBar, 0, 100, "Burden --");
         updateBar(xpBar, 0, XP_CAP, "XP --");
+        lastReportedGp = null;
+        lastGpUpdateTimeMs = 0L;
+        gpMillisPerPoint = 0;
+        currentGp = 0;
+        currentMaxGp = 1;
+        gpRateIndex = 0;
+        gpRateCount = 0;
+        gpRateMode = 0;
+        Arrays.fill(gpRateSamples, -1);
     }
 
     private static JProgressBar buildBar(Color color) {
@@ -103,5 +131,80 @@ public final class StatsPanel extends JPanel {
 
     private static String format(long value) {
         return NUMBER_FORMAT.format(value);
+    }
+
+    private void updateGpFromVitals(int gp, int maxGp) {
+        long now = System.currentTimeMillis();
+        if (gp < maxGp && lastReportedGp != null && lastGpUpdateTimeMs > 0L) {
+            long elapsedMs = now - lastGpUpdateTimeMs;
+            if (elapsedMs > 0L) {
+                double seconds = elapsedMs / 1000.0;
+                if (seconds >= 6.0) {
+                    double perTwoSeconds = (gp - lastReportedGp) / seconds * 2.0;
+                    if (perTwoSeconds > 0) {
+                        int roundedRate = (int) Math.round(perTwoSeconds);
+                        if (roundedRate > 0) {
+                            recordGpRate(roundedRate);
+                        }
+                    }
+                }
+            }
+        }
+        lastReportedGp = gp;
+        lastGpUpdateTimeMs = now;
+        currentGp = gp;
+        currentMaxGp = Math.max(1, maxGp);
+        updateBar(gpBar, gp, currentMaxGp, "GP " + format(gp) + " / " + format(currentMaxGp));
+    }
+
+    private void recordGpRate(int rate) {
+        gpRateSamples[gpRateIndex] = rate;
+        gpRateIndex = (gpRateIndex + 1) % GP_RATE_SAMPLE_SIZE;
+        gpRateCount = Math.min(gpRateCount + 1, GP_RATE_SAMPLE_SIZE);
+        gpRateMode = calculateMode();
+        updateGpTimerInterval();
+    }
+
+    private int calculateMode() {
+        if (gpRateCount == 0) {
+            return 0;
+        }
+        Map<Integer, Integer> counts = new HashMap<>();
+        for (int i = 0; i < gpRateCount; i++) {
+            int value = gpRateSamples[i];
+            if (value < 0) {
+                continue;
+            }
+            counts.put(value, counts.getOrDefault(value, 0) + 1);
+        }
+        int mode = 0;
+        int bestCount = -1;
+        for (Map.Entry<Integer, Integer> entry : counts.entrySet()) {
+            int value = entry.getKey();
+            int count = entry.getValue();
+            if (count > bestCount) {
+                bestCount = count;
+                mode = value;
+            }
+        }
+        return mode;
+    }
+
+    private void onGpTick(ActionEvent event) {
+        if (gpRateMode <= 0 || gpMillisPerPoint <= 0 || currentGp >= currentMaxGp) {
+            return;
+        }
+        currentGp = Math.min(currentGp + 1, currentMaxGp);
+        updateBar(gpBar, currentGp, currentMaxGp, "GP " + format(currentGp) + " / " + format(currentMaxGp));
+    }
+
+    private void updateGpTimerInterval() {
+        if (gpRateMode <= 0) {
+            gpMillisPerPoint = 0;
+            return;
+        }
+        gpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / gpRateMode));
+        gpTimer.setDelay(gpMillisPerPoint);
+        gpTimer.setInitialDelay(gpMillisPerPoint);
     }
 }
