@@ -9,7 +9,11 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -104,6 +108,7 @@ public class MudClient {
 
     private void readLoop() {
         Charset cs = Charset.forName(cfg.charset);
+        DecodeState decodeState = new DecodeState(cs);
         TelnetDecoder decoder = new TelnetDecoder(out::get, (opt, data) -> {
             if (opt == (byte) 201) { // GMCP
                 String msg = new String(data, cs);
@@ -135,7 +140,10 @@ public class MudClient {
                 }
 
                 byte[] decoded = decoder.accept((byte) b);
-                appendDecoded(decoded, cs);
+                String text = decodeState.append(decoded);
+                if (!text.isEmpty()) {
+                    lineListener.onLine(text);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -150,38 +158,84 @@ public class MudClient {
         }
     }
 
-    private void appendDecoded(byte[] decoded, Charset cs) {
-        if (decoded.length == 0) {
-            return;
-        }
-        String text = decodeWithoutCarriageReturns(decoded, cs);
-        if (text.isEmpty()) {
-            return;
-        }
-        lineListener.onLine(text);
-    }
+    private static final int DECODE_BUFFER_SIZE = 8192;
 
-    private static String decodeWithoutCarriageReturns(byte[] decoded, Charset cs) {
-        boolean hasCarriageReturn = false;
-        for (byte b : decoded) {
-            if (b == (byte) '\r') {
-                hasCarriageReturn = true;
-                break;
+    private static final class DecodeState {
+        private final CharsetDecoder decoder;
+        private ByteBuffer pending;
+        private final CharBuffer chars;
+
+        private DecodeState(Charset cs) {
+            this.decoder = cs.newDecoder();
+            this.pending = ByteBuffer.allocate(DECODE_BUFFER_SIZE);
+            this.chars = CharBuffer.allocate(DECODE_BUFFER_SIZE);
+        }
+
+        private String append(byte[] decoded) {
+            if (decoded.length == 0) {
+                return "";
             }
-        }
-        if (!hasCarriageReturn) {
-            return new String(decoded, cs);
-        }
-        ByteArrayOutputStream filtered = new ByteArrayOutputStream(decoded.length);
-        for (byte b : decoded) {
-            if (b != (byte) '\r') {
-                filtered.write(b);
+            ensureCapacity(decoded.length);
+            pending.put(decoded);
+            pending.flip();
+
+            StringBuilder out = new StringBuilder();
+            while (true) {
+                chars.clear();
+                CoderResult result = decoder.decode(pending, chars, false);
+                chars.flip();
+                if (chars.hasRemaining()) {
+                    out.append(chars);
+                }
+                if (result.isOverflow()) {
+                    continue;
+                }
+                if (result.isUnderflow()) {
+                    break;
+                }
+                if (result.isError()) {
+                    throw new IllegalArgumentException("Failed to decode mud stream: " + result);
+                }
             }
+            pending.compact();
+            return stripCarriageReturns(out);
         }
-        try {
-            return filtered.toString(cs.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+
+        private void ensureCapacity(int incoming) {
+            if (pending.remaining() >= incoming) {
+                return;
+            }
+            int required = pending.position() + incoming;
+            int newSize = pending.capacity();
+            while (newSize < required) {
+                newSize *= 2;
+            }
+            ByteBuffer resized = ByteBuffer.allocate(newSize);
+            pending.flip();
+            resized.put(pending);
+            pending = resized;
+        }
+
+        private static String stripCarriageReturns(CharSequence input) {
+            int length = input.length();
+            boolean hasCarriageReturn = false;
+            for (int i = 0; i < length; i++) {
+                if (input.charAt(i) == '\r') {
+                    hasCarriageReturn = true;
+                    break;
+                }
+            }
+            if (!hasCarriageReturn) {
+                return input.toString();
+            }
+            StringBuilder filtered = new StringBuilder(length);
+            for (int i = 0; i < length; i++) {
+                char c = input.charAt(i);
+                if (c != '\r') {
+                    filtered.append(c);
+                }
+            }
+            return filtered.toString();
         }
     }
 
