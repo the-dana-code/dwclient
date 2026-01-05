@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
+import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -8,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -35,6 +37,7 @@ public final class MapPanel extends JPanel {
     });
     private final JLabel mapLabel = new JLabel("Map will appear here", SwingConstants.CENTER);
     private final JScrollPane scrollPane;
+    private final StatsPanel statsPanel = new StatsPanel();
     private final AtomicReference<String> lastRoomId = new AtomicReference<>();
     private Timer animationTimer;
 
@@ -46,7 +49,11 @@ public final class MapPanel extends JPanel {
         mapLabel.setForeground(new Color(220, 220, 220));
         mapLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         scrollPane = new JScrollPane(mapLabel);
-        add(scrollPane, BorderLayout.CENTER);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrollPane, statsPanel);
+        splitPane.setResizeWeight(0.85);
+        splitPane.setDividerSize(6);
+        splitPane.setBorder(null);
+        add(splitPane, BorderLayout.CENTER);
     }
 
     public void updateMap(String roomId) {
@@ -74,6 +81,10 @@ public final class MapPanel extends JPanel {
 
     public void shutdown() {
         executor.shutdownNow();
+    }
+
+    public void updateStats(StatsHudRenderer.StatsHudData data) {
+        statsPanel.updateStats(data);
     }
 
     private void showImage(BufferedImage image, String title, Point focusPoint, Dimension imageSize) {

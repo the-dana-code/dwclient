@@ -24,6 +24,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         void appendSystem(String text);
 
         void updateMap(String roomId);
+
+        void updateStats(StatsHudRenderer.StatsHudData data);
     }
 
     private final BotConfig cfg;
@@ -37,7 +39,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
     private boolean useTeleports = true;
-    private volatile boolean pendingStatsHud = false;
     private volatile String lastRoomId = null;
 
     public MudCommandProcessor(BotConfig cfg,
@@ -114,19 +115,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (command == null) {
             return;
         }
-        if (!"char.vitals".equalsIgnoreCase(command.trim())) {
-            return;
+        if ("char.vitals".equalsIgnoreCase(command.trim()) || "char.info".equalsIgnoreCase(command.trim())) {
+            StatsHudRenderer.StatsHudData data = StatsHudRenderer.extract(mud.getCurrentRoomSnapshot());
+            output.updateStats(data);
         }
-        if (!pendingStatsHud) {
-            return;
-        }
-        pendingStatsHud = false;
-        StatsHudRenderer.StatsHudData data = StatsHudRenderer.extract(mud.getCurrentRoomSnapshot());
-        if (data == null) {
-            output.appendSystem("Error: No character vitals available yet.");
-            return;
-        }
-        output.appendSystem(formatStats(data));
     }
 
     private void handleConnect() {
@@ -217,10 +209,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         if ("info".equals(subcommand)) {
             handleInfo();
-            return;
-        }
-        if ("stats".equals(subcommand)) {
-            handleStats();
             return;
         }
         if ("map".startsWith(subcommand)) {
@@ -332,15 +320,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
     }
 
-    private void handleStats() {
-        pendingStatsHud = true;
-        try {
-            mud.sendLinesFromController(List.of("gp"));
-        } catch (IllegalStateException e) {
-            pendingStatsHud = false;
-            output.appendSystem("Error: " + e.getMessage());
-        }
-    }
 
     private boolean tryAlias(String trigger) {
         Map<String, List<String>> aliases = cfg.aliases;
@@ -684,11 +663,4 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         return normalized.toString();
     }
 
-    private static String formatStats(StatsHudRenderer.StatsHudData data) {
-        return "Stats for " + data.name()
-                + "\nHP: " + data.hp() + " / " + data.maxHp()
-                + "\nGP: " + data.gp() + " / " + data.maxGp()
-                + "\nBurden: " + data.burden() + "%"
-                + "\nXP: " + data.xp();
-    }
 }

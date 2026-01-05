@@ -2,6 +2,7 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
+import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
@@ -140,6 +141,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     @Override
     public void updateMap(String roomId) {
         mapPanel.updateMap(roomId);
+    }
+
+    @Override
+    public void updateStats(StatsHudRenderer.StatsHudData data) {
+        mapPanel.updateStats(data);
     }
 
     private void shutdown() {
