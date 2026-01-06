@@ -16,18 +16,22 @@ import java.awt.Font;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public final class ContextualResultsPanel extends JPanel {
     private static final Color BACKGROUND = new Color(10, 10, 15);
     private static final Color TEXT_COLOR = new Color(220, 220, 220);
     private static final Color LINK_COLOR = new Color(110, 160, 255);
+    private static final Color VISITED_LINK_COLOR = new Color(170, 120, 255);
     private static final Color SUBTEXT_COLOR = new Color(170, 170, 190);
 
     private final JLabel titleLabel = new JLabel("Search Results");
     private final JEditorPane resultsPane = new JEditorPane();
     private final Consumer<String> commandSender;
+    private final Set<String> visitedLinks = new HashSet<>();
     private ContextualResultList currentResults = new ContextualResultList(
             "Search Results",
             java.util.List.of(),
@@ -65,6 +69,7 @@ public final class ContextualResultsPanel extends JPanel {
                 currentResults = results;
             }
             titleLabel.setText(currentResults.title() == null ? "Search Results" : currentResults.title());
+            visitedLinks.clear();
             resultsPane.setText(renderHtml());
         });
     }
@@ -76,6 +81,7 @@ public final class ContextualResultsPanel extends JPanel {
                 .append(toHex(TEXT_COLOR)).append(";background-color:")
                 .append(toHex(BACKGROUND)).append(";}")
                 .append("a{color:").append(toHex(LINK_COLOR)).append(";text-decoration:none;}")
+                .append("a.visited{color:").append(toHex(VISITED_LINK_COLOR)).append(";}")
                 .append(".muted{color:").append(toHex(SUBTEXT_COLOR)).append(";}")
                 .append("ol{margin:0;padding-left:18px;}")
                 .append("li{margin-bottom:4px;}")
@@ -88,7 +94,8 @@ public final class ContextualResultsPanel extends JPanel {
             html.append("<ol>");
             for (ContextualResultList.ContextualResult result : currentResults.results()) {
                 String href = "cmd:" + encode(result.command());
-                html.append("<li><a href=\"").append(href).append("\">")
+                html.append("<li><a href=\"").append(href).append("\"")
+                        .append(linkClass(href)).append(">")
                         .append(escape(result.label()))
                         .append("</a></li>");
             }
@@ -114,6 +121,8 @@ public final class ContextualResultsPanel extends JPanel {
         if (command.isBlank()) {
             return;
         }
+        visitedLinks.add(description);
+        resultsPane.setText(renderHtml());
         commandSender.accept(command);
     }
 
@@ -142,6 +151,10 @@ public final class ContextualResultsPanel extends JPanel {
         return text.replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;");
+    }
+
+    private String linkClass(String href) {
+        return visitedLinks.contains(href) ? " class=\"visited\"" : "";
     }
 
     private final class ResultsLinkListener implements HyperlinkListener {
