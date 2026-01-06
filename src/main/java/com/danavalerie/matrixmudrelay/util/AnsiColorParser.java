@@ -44,9 +44,15 @@ public final class AnsiColorParser {
                     if (end != -1) {
                         flush(buffer, segments, currentColor, bold);
                         String code = input.substring(i + 2, end);
-                        AnsiState state = applySgr(code, currentColor, bold);
-                        currentColor = state.color();
-                        bold = state.bold();
+                        if (input.charAt(end) == 'z') {
+                            AnsiState state = applyMxp(code, currentColor, bold);
+                            currentColor = state.color();
+                            bold = state.bold();
+                        } else {
+                            AnsiState state = applySgr(code, currentColor, bold);
+                            currentColor = state.color();
+                            bold = state.bold();
+                        }
                         i = end + 1;
                         continue;
                     }
@@ -179,6 +185,14 @@ public final class AnsiColorParser {
             idx++;
         }
         return new AnsiState(color, nextBold);
+    }
+
+    private static AnsiState applyMxp(String code, Color current, boolean bold) {
+        int value = parseInt(code, -1);
+        if (value == 3) {
+            return new AnsiState(DEFAULT_COLOR, false);
+        }
+        return new AnsiState(current, bold);
     }
 
     private static int parseInt(String value, int fallback) {
