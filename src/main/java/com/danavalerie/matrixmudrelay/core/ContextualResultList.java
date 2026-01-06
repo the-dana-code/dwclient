@@ -10,6 +10,6 @@ public record ContextualResultList(String title,
         results = results == null ? List.of() : List.copyOf(results);
     }
 
-    public record ContextualResult(String label, String command) {
+    public record ContextualResult(String label, String command, String mapCommand) {
     }
 }

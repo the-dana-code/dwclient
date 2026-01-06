@@ -697,7 +697,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                     + mapService.getMapDisplayName(result.mapId())
                     + ": "
                     + result.roomShort();
-            list.add(new ContextualResultList.ContextualResult(label, "mm route " + (i + 1)));
+            list.add(new ContextualResultList.ContextualResult(
+                    label,
+                    "mm route " + (i + 1),
+                    "mm map " + (i + 1)));
         }
         String title = "Room search for \"" + query + "\"";
         String empty = "No rooms found matching \"" + query + "\".";
@@ -713,7 +716,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         List<ContextualResultList.ContextualResult> list = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
             RoomMapService.ItemSearchResult result = results.get(i);
-            list.add(new ContextualResultList.ContextualResult(result.itemName(), "mm item " + (i + 1)));
+            list.add(new ContextualResultList.ContextualResult(
+                    result.itemName(),
+                    "mm item " + (i + 1),
+                    null));
         }
         String title = (exact ? "Item exact search for \"" : "Item search for \"") + termUsed + "\"";
         String empty = "No items found matching \"" + rawQuery + "\".";
@@ -743,7 +749,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                     + mapService.getMapDisplayName(result.mapId())
                     + ": "
                     + result.roomShort();
-            list.add(new ContextualResultList.ContextualResult(label, "mm route " + (i + 1)));
+            list.add(new ContextualResultList.ContextualResult(
+                    label,
+                    "mm route " + (i + 1),
+                    "mm map " + (i + 1)));
         }
         String title = "Item locations for \"" + itemName + "\"";
         String empty = "No rooms found for item \"" + itemName + "\".";
@@ -762,7 +771,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                     + result.npcName()
                     + " - "
                     + result.roomShort();
-            list.add(new ContextualResultList.ContextualResult(label, "mm route " + (i + 1)));
+            list.add(new ContextualResultList.ContextualResult(
+                    label,
+                    "mm route " + (i + 1),
+                    "mm map " + (i + 1)));
         }
         String title = "NPC search for \"" + query + "\"";
         String empty = "No NPCs found matching \"" + query + "\".";
