@@ -30,7 +30,7 @@ public final class MudOutputPane extends JTextPane {
         setEditable(false);
         setBackground(BACKGROUND);
         setForeground(DEFAULT_COLOR);
-        setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
 
         StyleContext context = StyleContext.getDefaultStyleContext();
         SimpleAttributeSet system = new SimpleAttributeSet();

@@ -9,19 +9,35 @@ import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
+import java.awt.image.BufferedImage;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
@@ -62,10 +78,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
+        inputField.setFont(outputPane.getFont());
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
         setLayout(new BorderLayout());
+        setJMenuBar(buildMenuBar());
         add(buildSplitLayout(), BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
@@ -82,6 +100,99 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 shutdown();
             }
         });
+    }
+
+    private JMenuBar buildMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu viewMenu = new JMenu("View");
+        JMenuItem fontItem = new JMenuItem("Output Font...");
+        fontItem.addActionListener(event -> showFontDialog());
+        viewMenu.add(fontItem);
+        menuBar.add(viewMenu);
+        return menuBar;
+    }
+
+    private void showFontDialog() {
+        Font current = outputPane.getFont();
+        String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getAvailableFontFamilyNames();
+        JComboBox<String> fontSelect = new JComboBox<>(filterMonospaceFonts(fonts));
+        fontSelect.setSelectedItem(current.getFamily());
+        JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(current.getSize(), 8, 72, 1));
+
+        Runnable applyFont = () -> {
+            String family = (String) fontSelect.getSelectedItem();
+            int size = (Integer) sizeSpinner.getValue();
+            if (family == null) {
+                return;
+            }
+            applyOutputFont(new Font(family, current.getStyle(), size));
+        };
+        fontSelect.addActionListener(event -> applyFont.run());
+        sizeSpinner.addChangeListener(event -> applyFont.run());
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(4, 4, 4, 4);
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        panel.add(new JLabel("Font:"), constraints);
+        constraints.gridx = 1;
+        panel.add(fontSelect, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        panel.add(new JLabel("Size:"), constraints);
+        constraints.gridx = 1;
+        panel.add(sizeSpinner, constraints);
+
+        JButton closeButton = new JButton("Close");
+        JDialog dialog = new JDialog(this, "Select Output Font", false);
+        dialog.setLayout(new BorderLayout(8, 8));
+        dialog.add(panel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(closeButton);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+        closeButton.addActionListener(event -> dialog.dispose());
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private void applyOutputFont(Font font) {
+        outputPane.setFont(font);
+        inputField.setFont(font);
+    }
+
+    private static String[] filterMonospaceFonts(String[] fonts) {
+        List<String> monospace = new ArrayList<>();
+        for (String fontName : fonts) {
+            if (isMonospaceFont(fontName)) {
+                monospace.add(fontName);
+            }
+        }
+        return monospace.toArray(new String[0]);
+    }
+
+    private static boolean isMonospaceFont(String fontName) {
+        Font font = new Font(fontName, Font.PLAIN, 12);
+        BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        int widthI;
+        int widthW;
+        try {
+            var graphics = image.createGraphics();
+            graphics.setFont(font);
+            var metrics = graphics.getFontMetrics();
+            widthI = metrics.charWidth('i');
+            widthW = metrics.charWidth('W');
+            graphics.dispose();
+        } catch (Exception ignored) {
+            return false;
+        }
+        return widthI == widthW;
     }
 
     private JSplitPane buildSplitLayout() {
