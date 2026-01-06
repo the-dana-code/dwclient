@@ -257,6 +257,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             output.appendSystem("Teleport-assisted routing disabled.");
             return;
         }
+        if ("reset".equals(subcommand)) {
+            handleReset();
+            return;
+        }
         try {
             if (tryAlias("#" + remainder)) {
                 return;
@@ -324,6 +328,21 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 }
             }
             default -> output.appendSystem("Usage: mm writ <number> [item|npc|loc|deliver]");
+        }
+    }
+
+    private void handleReset() {
+        List<String> lines = List.of(
+                "alias LesaClientReset options terminal encoding = UTF-8",
+                "LesaClientReset"
+        );
+        for (String line : lines) {
+            transcript.logClientToMud(line);
+        }
+        try {
+            mud.sendLinesFromController(lines);
+        } catch (IllegalStateException e) {
+            output.appendSystem("Error: " + e.getMessage());
         }
     }
 
