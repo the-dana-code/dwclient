@@ -16,45 +16,50 @@ public final class WritTracker {
     private final List<WritRequirement> requirements = new ArrayList<>();
     private boolean readingWrit = false;
 
-    public void ingest(String text) {
+    public boolean ingest(String text) {
         if (text == null || text.isEmpty()) {
-            return;
+            return false;
         }
         String[] lines = text.split("\\n", -1);
+        boolean updated = false;
         for (String line : lines) {
-            ingestLine(line);
+            updated |= ingestLine(line);
         }
+        return updated;
     }
 
     public List<WritRequirement> getRequirements() {
         return Collections.unmodifiableList(requirements);
     }
 
-    private void ingestLine(String line) {
+    private boolean ingestLine(String line) {
         if (line == null) {
-            return;
+            return false;
         }
         String trimmed = line.trim();
         if (trimmed.isEmpty()) {
-            return;
+            return false;
         }
         if (trimmed.startsWith("You read the official employment writ")) {
             readingWrit = true;
-            requirements.clear();
-            return;
+            if (!requirements.isEmpty()) {
+                requirements.clear();
+                return true;
+            }
+            return false;
         }
         if (trimmed.startsWith("You have until ")) {
             readingWrit = false;
-            return;
+            return false;
         }
         if (!readingWrit) {
-            return;
+            return false;
         }
         Matcher matcher = REQUIREMENT_PATTERN.matcher(trimmed);
         if (!matcher.matches()) {
             matcher = REQUIREMENT_SENTENCE_PATTERN.matcher(trimmed);
             if (!matcher.matches()) {
-                return;
+                return false;
             }
         }
         String itemText = matcher.group(1).trim();
@@ -62,6 +67,7 @@ public final class WritTracker {
         String location = matcher.group(3).trim();
         QuantityResult qtyResult = parseQuantity(itemText);
         requirements.add(new WritRequirement(qtyResult.quantity, qtyResult.item, npc, location));
+        return true;
     }
 
     private static QuantityResult parseQuantity(String itemText) {

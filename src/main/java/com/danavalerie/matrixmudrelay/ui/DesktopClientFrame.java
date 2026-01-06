@@ -349,21 +349,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         writLineBuffer.append(text);
         int start = 0;
-        boolean ingested = false;
+        boolean updated = false;
         while (true) {
             int newline = writLineBuffer.indexOf("\n", start);
             if (newline == -1) {
                 break;
             }
             String line = writLineBuffer.substring(start, newline);
-            writTracker.ingest(line);
-            ingested = true;
+            updated |= writTracker.ingest(line);
             start = newline + 1;
         }
         if (start > 0) {
             writLineBuffer.delete(0, start);
         }
-        if (ingested) {
+        if (updated) {
             writInfoPanel.updateWrit(writTracker.getRequirements());
         }
     }
