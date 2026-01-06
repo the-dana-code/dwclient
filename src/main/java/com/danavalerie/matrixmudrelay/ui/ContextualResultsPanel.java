@@ -30,6 +30,7 @@ public final class ContextualResultsPanel extends JPanel {
 
     private final JLabel titleLabel = new JLabel("Search Results");
     private final JEditorPane resultsPane = new JEditorPane();
+    private final JScrollPane scrollPane;
     private final Consumer<String> commandSender;
     private final Set<String> visitedLinks = new HashSet<>();
     private ContextualResultList currentResults = new ContextualResultList(
@@ -57,7 +58,7 @@ public final class ContextualResultsPanel extends JPanel {
         resultsPane.setText(renderHtml());
         resultsPane.addHyperlinkListener(new ResultsLinkListener());
 
-        JScrollPane scrollPane = new JScrollPane(resultsPane);
+        scrollPane = new JScrollPane(resultsPane);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(BACKGROUND);
         add(scrollPane, BorderLayout.CENTER);
@@ -122,7 +123,7 @@ public final class ContextualResultsPanel extends JPanel {
             return;
         }
         visitedLinks.add(description);
-        resultsPane.setText(renderHtml());
+        updatePanePreservingScroll();
         commandSender.accept(command);
     }
 
@@ -155,6 +156,12 @@ public final class ContextualResultsPanel extends JPanel {
 
     private String linkClass(String href) {
         return visitedLinks.contains(href) ? " class=\"visited\"" : "";
+    }
+
+    private void updatePanePreservingScroll() {
+        var viewPosition = scrollPane.getViewport().getViewPosition();
+        resultsPane.setText(renderHtml());
+        SwingUtilities.invokeLater(() -> scrollPane.getViewport().setViewPosition(viewPosition));
     }
 
     private final class ResultsLinkListener implements HyperlinkListener {

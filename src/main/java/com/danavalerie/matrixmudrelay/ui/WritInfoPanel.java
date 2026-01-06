@@ -29,6 +29,7 @@ public final class WritInfoPanel extends JPanel {
 
     private final JLabel titleLabel = new JLabel("Writ Info");
     private final JEditorPane writPane = new JEditorPane();
+    private final JScrollPane scrollPane;
     private final List<WritTracker.WritRequirement> requirements = new ArrayList<>();
     private final List<Boolean> finished = new ArrayList<>();
     private final Set<String> visitedLinks = new HashSet<>();
@@ -52,7 +53,7 @@ public final class WritInfoPanel extends JPanel {
         writPane.setText(renderHtml());
         writPane.addHyperlinkListener(new WritLinkListener());
 
-        JScrollPane scrollPane = new JScrollPane(writPane);
+        scrollPane = new JScrollPane(writPane);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(BACKGROUND);
         add(scrollPane, BorderLayout.CENTER);
@@ -157,7 +158,7 @@ public final class WritInfoPanel extends JPanel {
         if ("toggle".equals(action)) {
             finished.set(index, !finished.get(index));
             visitedLinks.add(description);
-            writPane.setText(renderHtml());
+            updatePanePreservingScroll();
             return;
         }
         int writNumber = index + 1;
@@ -172,7 +173,7 @@ public final class WritInfoPanel extends JPanel {
         if (command != null) {
             visitedLinks.add(description);
             commandSender.accept(command);
-            writPane.setText(renderHtml());
+            updatePanePreservingScroll();
         }
     }
 
@@ -191,6 +192,12 @@ public final class WritInfoPanel extends JPanel {
 
     private String linkClass(String href) {
         return visitedLinks.contains(href) ? " class=\"visited\"" : "";
+    }
+
+    private void updatePanePreservingScroll() {
+        var viewPosition = scrollPane.getViewport().getViewPosition();
+        writPane.setText(renderHtml());
+        SwingUtilities.invokeLater(() -> scrollPane.getViewport().setViewPosition(viewPosition));
     }
 
     private final class WritLinkListener implements HyperlinkListener {
