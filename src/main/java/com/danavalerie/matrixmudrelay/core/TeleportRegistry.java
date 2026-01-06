@@ -55,7 +55,6 @@ public final class TeleportRegistry {
             new TeleportLocation("sheepridge", 45, 618, 574),
             new TeleportLocation("slice", 38, 1979, 280),
             new TeleportLocation("slipperyhollow", 54, 159, 123),
-            new TeleportLocation("sss", 25, 533, 373),
             new TeleportLocation("stickenplace", 1, 172, 816),
             new TeleportLocation("stolat", 39, 367, 222),
             new TeleportLocation("tosg", 9, 221, 224)

@@ -95,17 +95,19 @@ public final class ContextualResultsPanel extends JPanel {
             html.append("<ol>");
             for (ContextualResultList.ContextualResult result : currentResults.results()) {
                 String href = "cmd:" + encode(result.command());
-                html.append("<li><a href=\"").append(href).append("\"")
+                if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
+                    String mapHref = "cmd:" + encode(result.mapCommand());
+                    html.append("<li><a href=\"").append(mapHref).append("\"")
+                            .append(linkClass(mapHref)).append(">")
+                            .append("[Map]")
+                            .append("</a> ");
+                } else {
+                    html.append("<li>");
+                }
+                html.append("<a href=\"").append(href).append("\"")
                         .append(linkClass(href)).append(">")
                         .append(escape(result.label()))
                         .append("</a>");
-                if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
-                    String mapHref = "cmd:" + encode(result.mapCommand());
-                    html.append(" <a href=\"").append(mapHref).append("\"")
-                            .append(linkClass(mapHref)).append(">")
-                            .append("[Map]")
-                            .append("</a>");
-                }
                 html.append("</li>");
             }
             html.append("</ol>");
