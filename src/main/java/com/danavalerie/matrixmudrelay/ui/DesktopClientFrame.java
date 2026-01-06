@@ -5,6 +5,7 @@ import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
+import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 
 import javax.swing.JButton;
@@ -15,11 +16,13 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private final MudOutputPane outputPane = new MudOutputPane();
@@ -28,23 +31,33 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
     private final TranscriptLogger transcript;
+    private final WritTracker writTracker;
+    private final StringBuilder writLineBuffer = new StringBuilder();
+    private final AnsiColorParser writParser = new AnsiColorParser();
+    private final StringBuilder writPendingEntity = new StringBuilder();
+    private String writPendingTail = "";
+    private Color writCurrentColor = AnsiColorParser.defaultColor();
+    private boolean writCurrentBold;
     private boolean forwardingKey;
 
     public DesktopClientFrame(BotConfig cfg, TranscriptLogger transcript) {
         super("MUD Desktop Client");
         this.transcript = transcript;
 
+        writTracker = new WritTracker();
+
         mud = new MudClient(
                 cfg.mud,
                 line -> {
                     this.transcript.logMudToClient(line);
+                    bufferWritLines(normalizeWritOutput(line));
                     outputPane.appendMudText(line);
                 },
                 reason -> outputPane.appendSystemText("* MUD disconnected: " + reason),
                 transcript
         );
 
-        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), this);
+        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
         mud.setGmcpListener(commandProcessor);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -161,6 +174,108 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
+    private void bufferWritLines(String text) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        writLineBuffer.append(text);
+        int start = 0;
+        while (true) {
+            int newline = writLineBuffer.indexOf("\n", start);
+            if (newline == -1) {
+                break;
+            }
+            String line = writLineBuffer.substring(start, newline);
+            writTracker.ingest(line);
+            start = newline + 1;
+        }
+        if (start > 0) {
+            writLineBuffer.delete(0, start);
+        }
+    }
+
+    private String normalizeWritOutput(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        String normalized = text.replace("\r", "");
+        String combined = writPendingTail + normalized;
+        AnsiColorParser.ParseResult result =
+                writParser.parseStreaming(combined, writCurrentColor, writCurrentBold);
+        writPendingTail = result.tail();
+        writCurrentColor = result.color();
+        writCurrentBold = result.bold();
+        return decodeEntitiesToPlain(result.segments());
+    }
+
+    private String decodeEntitiesToPlain(List<AnsiColorParser.Segment> segments) {
+        if (segments.isEmpty()) {
+            return "";
+        }
+        StringBuilder out = new StringBuilder();
+        StringBuilder literal = new StringBuilder();
+        for (AnsiColorParser.Segment segment : segments) {
+            String text = segment.text();
+            if (text.isEmpty()) {
+                continue;
+            }
+            for (int i = 0; i < text.length(); i++) {
+                char ch = text.charAt(i);
+                if (writPendingEntity.length() == 0) {
+                    if (ch == '&') {
+                        flushWritLiteral(out, literal);
+                        startWritEntity();
+                    } else {
+                        literal.append(ch);
+                    }
+                } else {
+                    if (ch == '&') {
+                        flushWritPendingEntity(out);
+                        startWritEntity();
+                    } else {
+                        writPendingEntity.append(ch);
+                        if (ch == ';') {
+                            out.append(decodeWritEntity(writPendingEntity.toString()));
+                            writPendingEntity.setLength(0);
+                        }
+                    }
+                }
+            }
+            flushWritLiteral(out, literal);
+        }
+        return out.toString();
+    }
+
+    private void startWritEntity() {
+        writPendingEntity.setLength(0);
+        writPendingEntity.append('&');
+    }
+
+    private void flushWritPendingEntity(StringBuilder out) {
+        if (writPendingEntity.length() == 0) {
+            return;
+        }
+        out.append(writPendingEntity);
+        writPendingEntity.setLength(0);
+    }
+
+    private static void flushWritLiteral(StringBuilder out, StringBuilder literal) {
+        if (literal.length() == 0) {
+            return;
+        }
+        out.append(literal);
+        literal.setLength(0);
+    }
+
+    private static String decodeWritEntity(String entity) {
+        return switch (entity) {
+            case "&lt;" -> "<";
+            case "&gt;" -> ">";
+            case "&amp;" -> "&";
+            default -> entity;
+        };
+    }
+
     public static void launch(BotConfig cfg, TranscriptLogger transcript) {
         SwingUtilities.invokeLater(() -> {
             DesktopClientFrame frame = new DesktopClientFrame(cfg, transcript);
@@ -168,3 +283,5 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
     }
 }
+
+
