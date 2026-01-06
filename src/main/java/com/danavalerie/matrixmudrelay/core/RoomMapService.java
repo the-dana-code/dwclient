@@ -224,6 +224,29 @@ public class RoomMapService {
         return results;
     }
 
+    public List<ItemSearchResult> searchItemsByExactName(String term, int limit) throws SQLException, MapLookupException {
+        if (term == null || term.isBlank()) {
+            throw new MapLookupException("Search term cannot be blank.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String trimmed = term.trim().toLowerCase();
+        String sql = "select item_name from items where lower(item_name) = ? order by lower(item_name) limit ?";
+        List<ItemSearchResult> results = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, trimmed);
+            stmt.setInt(2, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    results.add(new ItemSearchResult(rs.getString("item_name")));
+                }
+            }
+        }
+        return results;
+    }
+
     public List<RoomSearchResult> searchRoomsByItemName(String itemName, int limit) throws SQLException, MapLookupException {
         if (itemName == null || itemName.isBlank()) {
             throw new MapLookupException("Item name cannot be blank.");

@@ -165,7 +165,7 @@ public final class WritInfoPanel extends JPanel {
         String command = switch (action) {
             case "buy" -> "buy " + requirements.get(index).quantity() + " " + requirements.get(index).item();
             case "deliver" -> "mm writ " + writNumber + " deliver";
-            case "item" -> "mm writ " + writNumber + " item";
+            case "item" -> "mm item exact " + requirements.get(index).item();
             case "npc" -> "mm writ " + writNumber + " npc";
             case "loc" -> "mm writ " + writNumber + " loc";
             default -> null;

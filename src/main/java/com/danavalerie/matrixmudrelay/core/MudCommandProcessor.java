@@ -222,6 +222,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
         if ("item".equals(subcommand)) {
+            if ("exact".equalsIgnoreCase(query) || query.toLowerCase(Locale.ROOT).startsWith("exact ")) {
+                String exactQuery = query.length() > 5 ? query.substring(5).trim() : "";
+                handleItemSearchQueryExact(exactQuery);
+                return;
+            }
             try {
                 int number = Integer.parseInt(query);
                 handleItemSelection(number);
@@ -379,26 +384,39 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     }
 
     private void handleItemSearchQuery(String query) {
+        handleItemSearchQuery(query, false);
+    }
+
+    private void handleItemSearchQueryExact(String query) {
+        handleItemSearchQuery(query, true);
+    }
+
+    private void handleItemSearchQuery(String query, boolean exact) {
         if (query.isBlank()) {
-            output.appendSystem("Usage: mm item <item name fragment>");
+            output.appendSystem(exact
+                    ? "Usage: mm item exact <item name>"
+                    : "Usage: mm item <item name fragment>");
             return;
         }
         lastRoomSearchResults = List.of();
         try {
-            ItemSearchResponse response = searchItemsWithFallback(query);
+            ItemSearchResponse response = exact
+                    ? searchItemsExactWithFallback(query)
+                    : searchItemsWithFallback(query);
             List<RoomMapService.ItemSearchResult> results = response.results();
             boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
             if (truncated) {
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
             }
             lastItemSearchResults = List.copyOf(results);
-            updateContextualResults(buildItemResultsList(query, response.termUsed(), results, truncated));
+            updateContextualResults(buildItemResultsList(query, response.termUsed(), results, truncated, exact));
             if (results.isEmpty()) {
                 output.appendSystem("No items found matching \"" + query + "\".");
                 return;
             }
             StringBuilder out = new StringBuilder();
-            out.append("Item search for \"").append(response.termUsed()).append("\":");
+            out.append(exact ? "Item exact search for \"" : "Item search for \"")
+                    .append(response.termUsed()).append("\":");
             if (!response.termUsed().equalsIgnoreCase(query.trim())) {
                 out.append(" (from \"").append(query.trim()).append("\")");
             }
@@ -426,6 +444,17 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         List<String> terms = buildItemSearchTerms(query);
         for (String term : terms) {
             List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByName(term, ROOM_SEARCH_LIMIT + 1);
+            if (!results.isEmpty()) {
+                return new ItemSearchResponse(term, results);
+            }
+        }
+        return new ItemSearchResponse(query.trim(), List.of());
+    }
+
+    private ItemSearchResponse searchItemsExactWithFallback(String query) throws Exception {
+        List<String> terms = buildItemSearchTerms(query);
+        for (String term : terms) {
+            List<RoomMapService.ItemSearchResult> results = mapService.searchItemsByExactName(term, ROOM_SEARCH_LIMIT + 1);
             if (!results.isEmpty()) {
                 return new ItemSearchResponse(term, results);
             }
@@ -679,13 +708,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private ContextualResultList buildItemResultsList(String rawQuery,
                                                       String termUsed,
                                                       List<RoomMapService.ItemSearchResult> results,
-                                                      boolean truncated) {
+                                                      boolean truncated,
+                                                      boolean exact) {
         List<ContextualResultList.ContextualResult> list = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
             RoomMapService.ItemSearchResult result = results.get(i);
             list.add(new ContextualResultList.ContextualResult(result.itemName(), "mm item " + (i + 1)));
         }
-        String title = "Item search for \"" + termUsed + "\"";
+        String title = (exact ? "Item exact search for \"" : "Item search for \"") + termUsed + "\"";
         String empty = "No items found matching \"" + rawQuery + "\".";
         List<String> notes = new ArrayList<>();
         if (rawQuery != null && !rawQuery.isBlank()
