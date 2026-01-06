@@ -28,7 +28,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudOutputPane outputPane = new MudOutputPane();
     private final MapPanel mapPanel = new MapPanel();
     private final StatsPanel statsPanel = new StatsPanel();
-    private final WritInfoPanel writInfoPanel = new WritInfoPanel();
+    private final WritInfoPanel writInfoPanel;
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
@@ -61,6 +61,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
         mud.setGmcpListener(commandProcessor);
+        writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
