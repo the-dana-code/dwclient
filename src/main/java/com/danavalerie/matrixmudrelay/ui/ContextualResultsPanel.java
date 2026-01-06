@@ -1,0 +1,155 @@
+package com.danavalerie.matrixmudrelay.ui;
+
+import com.danavalerie.matrixmudrelay.core.ContextualResultList;
+
+import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.function.Consumer;
+
+public final class ContextualResultsPanel extends JPanel {
+    private static final Color BACKGROUND = new Color(10, 10, 15);
+    private static final Color TEXT_COLOR = new Color(220, 220, 220);
+    private static final Color LINK_COLOR = new Color(110, 160, 255);
+    private static final Color SUBTEXT_COLOR = new Color(170, 170, 190);
+
+    private final JLabel titleLabel = new JLabel("Search Results");
+    private final JEditorPane resultsPane = new JEditorPane();
+    private final Consumer<String> commandSender;
+    private ContextualResultList currentResults = new ContextualResultList(
+            "Search Results",
+            java.util.List.of(),
+            "No results yet.",
+            null
+    );
+
+    public ContextualResultsPanel(Consumer<String> commandSender) {
+        this.commandSender = Objects.requireNonNull(commandSender, "commandSender");
+        setLayout(new BorderLayout(0, 8));
+        setBackground(BACKGROUND);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        titleLabel.setForeground(TEXT_COLOR);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 14f));
+        add(titleLabel, BorderLayout.NORTH);
+
+        resultsPane.setContentType("text/html");
+        resultsPane.setEditable(false);
+        resultsPane.setBackground(BACKGROUND);
+        resultsPane.setForeground(TEXT_COLOR);
+        resultsPane.setFont(resultsPane.getFont().deriveFont(Font.PLAIN, 12f));
+        resultsPane.setText(renderHtml());
+        resultsPane.addHyperlinkListener(new ResultsLinkListener());
+
+        JScrollPane scrollPane = new JScrollPane(resultsPane);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(BACKGROUND);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    public void updateResults(ContextualResultList results) {
+        SwingUtilities.invokeLater(() -> {
+            if (results != null) {
+                currentResults = results;
+            }
+            titleLabel.setText(currentResults.title() == null ? "Search Results" : currentResults.title());
+            resultsPane.setText(renderHtml());
+        });
+    }
+
+    private String renderHtml() {
+        StringBuilder html = new StringBuilder();
+        html.append("<html><head><style>")
+                .append("body{font-family:sans-serif;font-size:12px;color:")
+                .append(toHex(TEXT_COLOR)).append(";background-color:")
+                .append(toHex(BACKGROUND)).append(";}")
+                .append("a{color:").append(toHex(LINK_COLOR)).append(";text-decoration:none;}")
+                .append(".muted{color:").append(toHex(SUBTEXT_COLOR)).append(";}")
+                .append("ol{margin:0;padding-left:18px;}")
+                .append("li{margin-bottom:4px;}")
+                .append("</style></head><body>");
+
+        if (currentResults.results().isEmpty()) {
+            String empty = currentResults.emptyMessage() == null ? "No results." : currentResults.emptyMessage();
+            html.append("<div class=\"muted\">").append(escape(empty)).append("</div>");
+        } else {
+            html.append("<ol>");
+            for (ContextualResultList.ContextualResult result : currentResults.results()) {
+                String href = "cmd:" + encode(result.command());
+                html.append("<li><a href=\"").append(href).append("\">")
+                        .append(escape(result.label()))
+                        .append("</a></li>");
+            }
+            html.append("</ol>");
+        }
+
+        if (currentResults.footer() != null && !currentResults.footer().isBlank()) {
+            html.append("<div class=\"muted\" style=\"margin-top:6px;\">")
+                    .append(escape(currentResults.footer()))
+                    .append("</div>");
+        }
+
+        html.append("</body></html>");
+        return html.toString();
+    }
+
+    private void handleLink(String description) {
+        if (description == null || !description.startsWith("cmd:")) {
+            return;
+        }
+        String encoded = description.substring(4);
+        String command = decode(encoded);
+        if (command.isBlank()) {
+            return;
+        }
+        commandSender.accept(command);
+    }
+
+    private static String encode(String value) {
+        if (value == null) {
+            return "";
+        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    private static String decode(String value) {
+        if (value == null) {
+            return "";
+        }
+        return URLDecoder.decode(value, StandardCharsets.UTF_8);
+    }
+
+    private static String toHex(Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    private static String escape(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
+    }
+
+    private final class ResultsLinkListener implements HyperlinkListener {
+        @Override
+        public void hyperlinkUpdate(HyperlinkEvent e) {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                handleLink(e.getDescription());
+            }
+        }
+    }
+}

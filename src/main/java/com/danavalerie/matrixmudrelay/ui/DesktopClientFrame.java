@@ -48,6 +48,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel = new MapPanel();
     private final StatsPanel statsPanel = new StatsPanel();
     private final WritInfoPanel writInfoPanel;
+    private final ContextualResultsPanel contextualResultsPanel;
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
@@ -85,6 +86,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
+        contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         applyConfiguredFont();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -228,8 +230,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JSplitPane buildSplitLayout() {
         statsPanel.setPreferredSize(new Dimension(0, 200));
-        JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writInfoPanel, statsPanel);
-        statsSplit.setResizeWeight(1.0);
+        JSplitPane writSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writInfoPanel, contextualResultsPanel);
+        writSplit.setResizeWeight(0.6);
+        writSplit.setDividerSize(6);
+        writSplit.setBorder(null);
+
+        JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writSplit, statsPanel);
+        statsSplit.setResizeWeight(0.8);
         statsSplit.setDividerSize(6);
         statsSplit.setBorder(null);
 
@@ -316,6 +323,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     @Override
     public void updateStats(StatsHudRenderer.StatsHudData data) {
         statsPanel.updateStats(data);
+    }
+
+    @Override
+    public void updateContextualResults(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
+        contextualResultsPanel.updateResults(results);
     }
 
     private void shutdown() {

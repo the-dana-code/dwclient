@@ -26,6 +26,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         void updateMap(String roomId);
 
         void updateStats(StatsHudRenderer.StatsHudData data);
+
+        void updateContextualResults(ContextualResultList results);
     }
 
     private final BotConfig cfg;
@@ -347,6 +349,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
             }
             lastRoomSearchResults = List.copyOf(results);
+            updateContextualResults(buildRoomResultsList(query, results, truncated));
             if (results.isEmpty()) {
                 output.appendSystem("No rooms found matching \"" + query + "\".");
                 return;
@@ -389,6 +392,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
             }
             lastItemSearchResults = List.copyOf(results);
+            updateContextualResults(buildItemResultsList(query, response.termUsed(), results, truncated));
             if (results.isEmpty()) {
                 output.appendSystem("No items found matching \"" + query + "\".");
                 return;
@@ -508,6 +512,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
             }
             lastRoomSearchResults = List.copyOf(results);
+            updateContextualResults(buildItemLocationResultsList(itemName, results, truncated));
             if (results.isEmpty()) {
                 output.appendSystem("No rooms found for item \"" + itemName + "\".");
                 return;
@@ -557,6 +562,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                             result.roomType(),
                             null))
                     .toList();
+            updateContextualResults(buildNpcResultsList(query, results, truncated));
             if (results.isEmpty()) {
                 output.appendSystem("No NPCs found matching \"" + query + "\".");
                 return;
@@ -646,6 +652,92 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             log.warn("route search failed err={}", e.toString());
             output.appendSystem("Error: Unable to calculate route.");
         }
+    }
+
+    private void updateContextualResults(ContextualResultList results) {
+        output.updateContextualResults(results);
+    }
+
+    private ContextualResultList buildRoomResultsList(String query,
+                                                      List<RoomMapService.RoomSearchResult> results,
+                                                      boolean truncated) {
+        List<ContextualResultList.ContextualResult> list = new ArrayList<>();
+        for (int i = 0; i < results.size(); i++) {
+            RoomMapService.RoomSearchResult result = results.get(i);
+            String label = (result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
+                    + mapService.getMapDisplayName(result.mapId())
+                    + ": "
+                    + result.roomShort();
+            list.add(new ContextualResultList.ContextualResult(label, "mm route " + (i + 1)));
+        }
+        String title = "Room search for \"" + query + "\"";
+        String empty = "No rooms found matching \"" + query + "\".";
+        String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
+        return new ContextualResultList(title, list, empty, footer);
+    }
+
+    private ContextualResultList buildItemResultsList(String rawQuery,
+                                                      String termUsed,
+                                                      List<RoomMapService.ItemSearchResult> results,
+                                                      boolean truncated) {
+        List<ContextualResultList.ContextualResult> list = new ArrayList<>();
+        for (int i = 0; i < results.size(); i++) {
+            RoomMapService.ItemSearchResult result = results.get(i);
+            list.add(new ContextualResultList.ContextualResult(result.itemName(), "mm item " + (i + 1)));
+        }
+        String title = "Item search for \"" + termUsed + "\"";
+        String empty = "No items found matching \"" + rawQuery + "\".";
+        List<String> notes = new ArrayList<>();
+        if (rawQuery != null && !rawQuery.isBlank()
+                && termUsed != null
+                && !termUsed.equalsIgnoreCase(rawQuery.trim())) {
+            notes.add("Showing results for \"" + termUsed + "\" (from \"" + rawQuery.trim() + "\").");
+        }
+        notes.add("Select an item to view locations.");
+        if (truncated) {
+            notes.add("Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search.");
+        }
+        String footer = notes.stream().filter(note -> note != null && !note.isBlank())
+                .reduce((a, b) -> a + " " + b)
+                .orElse(null);
+        return new ContextualResultList(title, list, empty, footer);
+    }
+
+    private ContextualResultList buildItemLocationResultsList(String itemName,
+                                                              List<RoomMapService.RoomSearchResult> results,
+                                                              boolean truncated) {
+        List<ContextualResultList.ContextualResult> list = new ArrayList<>();
+        for (int i = 0; i < results.size(); i++) {
+            RoomMapService.RoomSearchResult result = results.get(i);
+            String label = (result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
+                    + mapService.getMapDisplayName(result.mapId())
+                    + ": "
+                    + result.roomShort();
+            list.add(new ContextualResultList.ContextualResult(label, "mm route " + (i + 1)));
+        }
+        String title = "Item locations for \"" + itemName + "\"";
+        String empty = "No rooms found for item \"" + itemName + "\".";
+        String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
+        return new ContextualResultList(title, list, empty, footer);
+    }
+
+    private ContextualResultList buildNpcResultsList(String query,
+                                                     List<RoomMapService.NpcSearchResult> results,
+                                                     boolean truncated) {
+        List<ContextualResultList.ContextualResult> list = new ArrayList<>();
+        for (int i = 0; i < results.size(); i++) {
+            RoomMapService.NpcSearchResult result = results.get(i);
+            String label = mapService.getMapDisplayName(result.mapId())
+                    + ": "
+                    + result.npcName()
+                    + " - "
+                    + result.roomShort();
+            list.add(new ContextualResultList.ContextualResult(label, "mm route " + (i + 1)));
+        }
+        String title = "NPC search for \"" + query + "\"";
+        String empty = "No NPCs found matching \"" + query + "\".";
+        String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
+        return new ContextualResultList(title, list, empty, footer);
     }
 
     private static String normalizeInput(String body) {
