@@ -27,6 +27,8 @@ import java.util.List;
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private final MudOutputPane outputPane = new MudOutputPane();
     private final MapPanel mapPanel = new MapPanel();
+    private final StatsPanel statsPanel = new StatsPanel();
+    private final WritInfoPanel writInfoPanel = new WritInfoPanel();
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
@@ -82,7 +84,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JSplitPane buildSplitLayout() {
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildMudPanel(), mapPanel);
+        statsPanel.setPreferredSize(new Dimension(0, 200));
+        JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writInfoPanel, statsPanel);
+        statsSplit.setResizeWeight(1.0);
+        statsSplit.setDividerSize(6);
+        statsSplit.setBorder(null);
+
+        JSplitPane mudSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statsSplit, buildMudPanel());
+        mudSplit.setResizeWeight(0.0);
+        mudSplit.setDividerSize(6);
+        mudSplit.setBorder(null);
+        mudSplit.setDividerLocation(400);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapPanel);
         splitPane.setResizeWeight(0.7);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
@@ -158,7 +172,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void updateStats(StatsHudRenderer.StatsHudData data) {
-        mapPanel.updateStats(data);
+        statsPanel.updateStats(data);
     }
 
     private void shutdown() {
@@ -180,6 +194,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         writLineBuffer.append(text);
         int start = 0;
+        boolean ingested = false;
         while (true) {
             int newline = writLineBuffer.indexOf("\n", start);
             if (newline == -1) {
@@ -187,10 +202,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
             String line = writLineBuffer.substring(start, newline);
             writTracker.ingest(line);
+            ingested = true;
             start = newline + 1;
         }
         if (start > 0) {
             writLineBuffer.delete(0, start);
+        }
+        if (ingested) {
+            writInfoPanel.updateWrit(writTracker.getRequirements());
         }
     }
 
@@ -283,5 +302,3 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
     }
 }
-
-
