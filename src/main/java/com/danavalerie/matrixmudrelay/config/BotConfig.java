@@ -32,5 +32,6 @@ public final class BotConfig {
     public static final class Ui {
         public String fontFamily;
         public Integer fontSize;
+        public Integer mapZoomPercent;
     }
 }

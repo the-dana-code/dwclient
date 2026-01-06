@@ -16,6 +16,7 @@
   },
   "ui": {
     "fontFamily": "Monospaced",
-    "fontSize": 12
+    "fontSize": 12,
+    "mapZoomPercent": 100
   }
 }

@@ -45,7 +45,7 @@ import java.util.List;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private final MudOutputPane outputPane = new MudOutputPane();
-    private final MapPanel mapPanel = new MapPanel();
+    private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private final WritInfoPanel writInfoPanel;
     private final ContextualResultsPanel contextualResultsPanel;
@@ -69,6 +69,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.transcript = transcript;
         this.cfg = cfg;
         this.configPath = configPath;
+        this.mapPanel = new MapPanel(resolveMapZoomPercent(), this::persistMapZoomConfig);
 
         writTracker = new WritTracker();
 
@@ -221,6 +222,23 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void persistFontConfig(Font font) {
         cfg.ui.fontFamily = font.getFamily();
         cfg.ui.fontSize = font.getSize();
+        try {
+            ConfigLoader.save(configPath, cfg);
+        } catch (IOException e) {
+            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
+        }
+    }
+
+    private int resolveMapZoomPercent() {
+        Integer zoomPercent = cfg.ui.mapZoomPercent;
+        if (zoomPercent == null || zoomPercent <= 0) {
+            return 100;
+        }
+        return zoomPercent;
+    }
+
+    private void persistMapZoomConfig(int zoomPercent) {
+        cfg.ui.mapZoomPercent = zoomPercent;
         try {
             ConfigLoader.save(configPath, cfg);
         } catch (IOException e) {
