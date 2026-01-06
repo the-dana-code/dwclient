@@ -90,6 +90,8 @@ public final class WritInfoPanel extends JPanel {
                 String itemHref = "item:" + i;
                 String npcHref = "npc:" + i;
                 String locHref = "loc:" + i;
+                String buyHref = "buy:" + i;
+                String deliverHref = "deliver:" + i;
                 String checkbox = finished.get(i) ? "&#x2611;" : "&#x2610;";
                 html.append("<div class=\"card\">")
                         .append("<div>")
@@ -101,10 +103,14 @@ public final class WritInfoPanel extends JPanel {
                         .append("<a href=\"").append(itemHref).append("\">")
                         .append(req.quantity()).append(" ").append(escape(req.item()))
                         .append("</a>")
+                        .append(" ")
+                        .append("<a href=\"").append(buyHref).append("\">[Buy]</a>")
                         .append("</div>")
                         .append("<div class=\"row muted\">Deliver to ")
                         .append("<a href=\"").append(npcHref).append("\">")
                         .append(escape(req.npc())).append("</a>")
+                        .append(" ")
+                        .append("<a href=\"").append(deliverHref).append("\">[Deliver]</a>")
                         .append("</div>")
                         .append("<div class=\"row muted\">Location: ")
                         .append("<a href=\"").append(locHref).append("\">")
@@ -143,6 +149,8 @@ public final class WritInfoPanel extends JPanel {
         }
         int writNumber = index + 1;
         String command = switch (action) {
+            case "buy" -> "buy " + requirements.get(index).quantity() + " " + requirements.get(index).item();
+            case "deliver" -> "mm writ " + writNumber + " deliver";
             case "item" -> "mm writ " + writNumber + " item";
             case "npc" -> "mm writ " + writNumber + " npc";
             case "loc" -> "mm writ " + writNumber + " loc";
