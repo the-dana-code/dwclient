@@ -63,7 +63,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
         setLayout(new BorderLayout());
         add(buildSplitLayout(), BorderLayout.CENTER);
