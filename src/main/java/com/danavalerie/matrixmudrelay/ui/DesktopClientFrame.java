@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
@@ -37,6 +38,8 @@ import java.awt.image.BufferedImage;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +53,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudClient mud;
     private final TranscriptLogger transcript;
     private final WritTracker writTracker;
+    private final BotConfig cfg;
+    private final Path configPath;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private final AnsiColorParser writParser = new AnsiColorParser();
     private final StringBuilder writPendingEntity = new StringBuilder();
@@ -58,9 +63,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private boolean writCurrentBold;
     private boolean forwardingKey;
 
-    public DesktopClientFrame(BotConfig cfg, TranscriptLogger transcript) {
+    public DesktopClientFrame(BotConfig cfg, Path configPath, TranscriptLogger transcript) {
         super("MUD Desktop Client");
         this.transcript = transcript;
+        this.cfg = cfg;
+        this.configPath = configPath;
 
         writTracker = new WritTracker();
 
@@ -78,7 +85,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
-        inputField.setFont(outputPane.getFont());
+        applyConfiguredFont();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
@@ -126,7 +133,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             if (family == null) {
                 return;
             }
-            applyOutputFont(new Font(family, current.getStyle(), size));
+            applyOutputFont(new Font(family, current.getStyle(), size), true);
         };
         fontSelect.addActionListener(event -> applyFont.run());
         sizeSpinner.addChangeListener(event -> applyFont.run());
@@ -163,8 +170,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void applyOutputFont(Font font) {
+        applyOutputFont(font, false);
+    }
+
+    private void applyOutputFont(Font font, boolean persist) {
         outputPane.setFont(font);
         inputField.setFont(font);
+        if (persist) {
+            persistFontConfig(font);
+        }
     }
 
     private static String[] filterMonospaceFonts(String[] fonts) {
@@ -193,6 +207,23 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             return false;
         }
         return widthI == widthW;
+    }
+
+    private void applyConfiguredFont() {
+        Font base = outputPane.getFont();
+        String family = cfg.ui.fontFamily != null ? cfg.ui.fontFamily : base.getFamily();
+        int size = cfg.ui.fontSize != null && cfg.ui.fontSize > 0 ? cfg.ui.fontSize : base.getSize();
+        applyOutputFont(new Font(family, base.getStyle(), size));
+    }
+
+    private void persistFontConfig(Font font) {
+        cfg.ui.fontFamily = font.getFamily();
+        cfg.ui.fontSize = font.getSize();
+        try {
+            ConfigLoader.save(configPath, cfg);
+        } catch (IOException e) {
+            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
+        }
     }
 
     private JSplitPane buildSplitLayout() {
@@ -407,9 +438,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         };
     }
 
-    public static void launch(BotConfig cfg, TranscriptLogger transcript) {
+    public static void launch(BotConfig cfg, Path configPath, TranscriptLogger transcript) {
         SwingUtilities.invokeLater(() -> {
-            DesktopClientFrame frame = new DesktopClientFrame(cfg, transcript);
+            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, transcript);
             frame.setVisible(true);
         });
     }

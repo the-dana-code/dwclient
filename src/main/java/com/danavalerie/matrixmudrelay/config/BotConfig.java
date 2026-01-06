@@ -13,6 +13,8 @@ public final class BotConfig {
 
     public Transcript transcript = new Transcript();
 
+    public Ui ui = new Ui();
+
     public static final class Mud {
         public String host;
         public int port;
@@ -25,5 +27,10 @@ public final class BotConfig {
         public String directory = "./transcripts";
         public long maxBytes = 10 * 1024 * 1024;
         public int maxFiles = 20;
+    }
+
+    public static final class Ui {
+        public String fontFamily;
+        public Integer fontSize;
     }
 }

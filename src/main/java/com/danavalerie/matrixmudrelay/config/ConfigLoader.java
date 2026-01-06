@@ -8,7 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class ConfigLoader {
-    private static final Gson GSON = new GsonBuilder().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private ConfigLoader() {}
 
@@ -17,6 +17,11 @@ public final class ConfigLoader {
         BotConfig cfg = GSON.fromJson(json, BotConfig.class);
         validate(cfg);
         return cfg;
+    }
+
+    public static void save(Path path, BotConfig cfg) throws IOException {
+        String json = GSON.toJson(cfg);
+        Files.writeString(path, json);
     }
 
     private static void validate(BotConfig cfg) {

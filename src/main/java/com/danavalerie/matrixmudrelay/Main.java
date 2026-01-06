@@ -13,8 +13,9 @@ public final class Main {
             System.exit(2);
         }
 
-        BotConfig cfg = ConfigLoader.load(Path.of(args[0]));
+        Path configPath = Path.of(args[0]);
+        BotConfig cfg = ConfigLoader.load(configPath);
         TranscriptLogger transcript = TranscriptLogger.create(cfg.transcript);
-        DesktopClientFrame.launch(cfg, transcript);
+        DesktopClientFrame.launch(cfg, configPath, transcript);
     }
 }
