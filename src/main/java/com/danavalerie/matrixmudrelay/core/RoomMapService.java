@@ -34,6 +34,8 @@ public class RoomMapService {
     private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private final String dbPath;
     private final boolean driverAvailable;
+    private final Map<Integer, Optional<BufferedImage>> backgroundCache = new HashMap<>();
+    private BaseImageCache baseImageCache;
 
     public RoomMapService(String dbPath) {
         this.dbPath = dbPath;
@@ -60,6 +62,9 @@ public class RoomMapService {
             if (current == null) {
                 throw new MapLookupException("Current room not found in map database.");
             }
+            if (baseImageCache != null && baseImageCache.mapId != current.mapId) {
+                baseImageCache = null;
+            }
 
             BufferedImage backgroundImage = loadMapBackground(current.mapId);
             int minX;
@@ -69,12 +74,22 @@ public class RoomMapService {
             int imageWidth;
             int imageHeight;
             if (backgroundImage == null) {
-                minX = current.xpos - IMAGE_HALF_SPAN;
-                maxX = minX + IMAGE_SPAN - 1;
-                minY = current.ypos - IMAGE_HALF_SPAN;
-                maxY = minY + IMAGE_SPAN - 1;
-                imageWidth = IMAGE_SPAN * IMAGE_SCALE;
-                imageHeight = IMAGE_SPAN * IMAGE_SCALE;
+                BaseImageCache cached = baseImageCache;
+                if (cached != null && cached.mapId == current.mapId && cached.containsRoom(current)) {
+                    minX = cached.minX;
+                    maxX = cached.maxX;
+                    minY = cached.minY;
+                    maxY = cached.maxY;
+                    imageWidth = cached.imageWidth;
+                    imageHeight = cached.imageHeight;
+                } else {
+                    minX = current.xpos - IMAGE_HALF_SPAN;
+                    maxX = minX + IMAGE_SPAN - 1;
+                    minY = current.ypos - IMAGE_HALF_SPAN;
+                    maxY = minY + IMAGE_SPAN - 1;
+                    imageWidth = IMAGE_SPAN * IMAGE_SCALE;
+                    imageHeight = IMAGE_SPAN * IMAGE_SCALE;
+                }
             } else {
                 minX = 0;
                 minY = 0;
@@ -84,28 +99,36 @@ public class RoomMapService {
                 imageHeight = backgroundImage.getHeight() * IMAGE_SCALE;
             }
 
-            BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = image.createGraphics();
-            g2.setColor(new Color(12, 12, 18));
-            g2.fillRect(0, 0, imageWidth, imageHeight);
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-            g2.setStroke(new BasicStroke(IMAGE_SCALE));
+            BaseImageCache cachedBase = baseImageCache;
+            boolean reuseBase = cachedBase != null
+                    && cachedBase.matches(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight);
+            byte[] data = null;
+            if (!reuseBase) {
+                BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2 = image.createGraphics();
+                g2.setColor(new Color(12, 12, 18));
+                g2.fillRect(0, 0, imageWidth, imageHeight);
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                g2.setStroke(new BasicStroke(IMAGE_SCALE));
 
-            if (backgroundImage != null) {
-                drawMapBackground(backgroundImage, g2);
+                if (backgroundImage != null) {
+                    drawMapBackground(backgroundImage, g2);
+                }
+
+                g2.dispose();
+                baseImageCache = new BaseImageCache(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,
+                        image);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", out);
+                data = out.toByteArray();
             }
 
             int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
             int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
-            drawCurrentRoom(g2, currentX, currentY, imageWidth, imageHeight);
 
-            g2.dispose();
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", out);
             String body = "Map centered on " + current.roomId + " (" + current.xpos + ", " + current.ypos + ")";
-            return new MapImage(out.toByteArray(), imageWidth, imageHeight, "image/png", body, currentX, currentY);
+            return new MapImage(data, imageWidth, imageHeight, "image/png", body, currentX, currentY, reuseBase);
         }
     }
 
@@ -429,12 +452,19 @@ public class RoomMapService {
     }
 
     private BufferedImage loadMapBackground(int mapId) throws IOException {
+        Optional<BufferedImage> cached = backgroundCache.get(mapId);
+        if (cached != null) {
+            return cached.orElse(null);
+        }
         Optional<MapBackground> background = MapBackground.forMapId(mapId);
         if (background.isEmpty()) {
+            backgroundCache.put(mapId, Optional.empty());
             return null;
         }
         Path backgroundPath = Path.of("map-backgrounds", background.get().filename);
-        return ImageIO.read(backgroundPath.toFile());
+        BufferedImage loaded = ImageIO.read(backgroundPath.toFile());
+        backgroundCache.put(mapId, Optional.ofNullable(loaded));
+        return loaded;
     }
 
     private void drawMapBackground(BufferedImage source, Graphics2D g2) {
@@ -550,7 +580,45 @@ public class RoomMapService {
         g2.drawLine(startX, startY, endX, endY);
     }
 
-    public record MapImage(byte[] data, int width, int height, String mimeType, String body, int currentX, int currentY) {
+    public record MapImage(byte[] data, int width, int height, String mimeType, String body, int currentX, int currentY,
+                           boolean baseImageReused) {
+    }
+
+    private static final class BaseImageCache {
+        private final int mapId;
+        private final int minX;
+        private final int maxX;
+        private final int minY;
+        private final int maxY;
+        private final int imageWidth;
+        private final int imageHeight;
+        private final BufferedImage image;
+
+        private BaseImageCache(int mapId, int minX, int maxX, int minY, int maxY, int imageWidth, int imageHeight,
+                               BufferedImage image) {
+            this.mapId = mapId;
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.imageWidth = imageWidth;
+            this.imageHeight = imageHeight;
+            this.image = image;
+        }
+
+        private boolean matches(int mapId, int minX, int maxX, int minY, int maxY, int imageWidth, int imageHeight) {
+            return this.mapId == mapId
+                    && this.minX == minX
+                    && this.maxX == maxX
+                    && this.minY == minY
+                    && this.maxY == maxY
+                    && this.imageWidth == imageWidth
+                    && this.imageHeight == imageHeight;
+        }
+
+        private boolean containsRoom(RoomRecord room) {
+            return room.xpos >= minX && room.xpos <= maxX && room.ypos >= minY && room.ypos <= maxY;
+        }
     }
 
     public static class MapLookupException extends Exception {

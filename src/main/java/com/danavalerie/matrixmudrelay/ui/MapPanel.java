@@ -39,6 +39,7 @@ public final class MapPanel extends JPanel {
     private final JScrollPane scrollPane;
     private final StatsPanel statsPanel = new StatsPanel();
     private final AtomicReference<String> lastRoomId = new AtomicReference<>();
+    private final AtomicReference<BufferedImage> baseImageCache = new AtomicReference<>();
     private Timer animationTimer;
 
     public MapPanel() {
@@ -68,7 +69,7 @@ public final class MapPanel extends JPanel {
         executor.submit(() -> {
             try {
                 RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId);
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(mapImage.data()));
+                BufferedImage image = resolveBaseImage(mapImage);
                 showImage(image, mapImage.body(), new Point(mapImage.currentX(), mapImage.currentY()),
                         new Dimension(mapImage.width(), mapImage.height()));
             } catch (RoomMapService.MapLookupException e) {
@@ -108,6 +109,21 @@ public final class MapPanel extends JPanel {
             mapLabel.setPreferredSize(null);
             configureAnimation(null);
         });
+    }
+
+    private BufferedImage resolveBaseImage(RoomMapService.MapImage mapImage) throws Exception {
+        if (mapImage.baseImageReused()) {
+            BufferedImage cached = baseImageCache.get();
+            if (cached != null) {
+                return cached;
+            }
+        }
+        if (mapImage.data() == null) {
+            return null;
+        }
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(mapImage.data()));
+        baseImageCache.set(image);
+        return image;
     }
 
     private void centerViewOnPoint(Point point, Dimension imageSize) {
