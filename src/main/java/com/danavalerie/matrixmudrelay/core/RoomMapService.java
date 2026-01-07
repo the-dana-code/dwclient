@@ -127,7 +127,7 @@ public class RoomMapService {
             int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
             int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
 
-            String body = "Map centered on " + current.roomId + " (" + current.xpos + ", " + current.ypos + ")";
+            String body = ""; // not sure what this is for -- it can maybe be removed
             return new MapImage(data, imageWidth, imageHeight, "image/png", body, currentX, currentY, reuseBase);
         }
     }
