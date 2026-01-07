@@ -594,6 +594,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             output.appendSystem("Usage: mm npc <npc name fragment>");
             return;
         }
+        if (query.startsWith("the ")) {
+            query = query.substring(4);
+        }
         try {
             List<RoomMapService.NpcSearchResult> results = mapService.searchNpcsByName(query, ROOM_SEARCH_LIMIT + 1);
             boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
