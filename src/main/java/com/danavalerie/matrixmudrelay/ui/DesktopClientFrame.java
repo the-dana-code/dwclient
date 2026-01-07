@@ -334,6 +334,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     @Override
+    public void appendCommandEcho(String text) {
+        outputPane.appendCommandEcho(text);
+    }
+
+    @Override
     public void updateMap(String roomId) {
         mapPanel.updateMap(roomId);
     }

@@ -16,9 +16,11 @@ import java.util.List;
 public final class MudOutputPane extends JTextPane {
     private static final Color BACKGROUND = new Color(15, 15, 18);
     private static final Color SYSTEM_COLOR = new Color(120, 200, 255);
+    private static final Color COMMAND_COLOR = new Color(255, 215, 0);
     private static final Color DEFAULT_COLOR = new Color(220, 220, 220);
     private final AnsiColorParser parser = new AnsiColorParser();
     private final AttributeSet systemAttributes;
+    private final AttributeSet commandAttributes;
     private String pendingTail = "";
     private final StringBuilder pendingEntity = new StringBuilder();
     private Color pendingEntityColor;
@@ -37,6 +39,10 @@ public final class MudOutputPane extends JTextPane {
         StyleConstants.setForeground(system, SYSTEM_COLOR);
         StyleConstants.setBold(system, true);
         systemAttributes = context.addAttributes(SimpleAttributeSet.EMPTY, system);
+
+        SimpleAttributeSet command = new SimpleAttributeSet();
+        StyleConstants.setForeground(command, COMMAND_COLOR);
+        commandAttributes = context.addAttributes(SimpleAttributeSet.EMPTY, command);
     }
 
     public void appendMudText(String text) {
@@ -60,6 +66,21 @@ public final class MudOutputPane extends JTextPane {
         Runnable appendTask = () -> {
             try {
                 getDocument().insertString(getDocument().getLength(), normalized, systemAttributes);
+            } catch (BadLocationException ignored) {
+            }
+            setCaretPosition(getDocument().getLength());
+        };
+        runOnEdt(appendTask);
+    }
+
+    public void appendCommandEcho(String text) {
+        if (text == null || text.isBlank()) {
+            return;
+        }
+        String normalized = ensureTrailingNewline(decodeEntitiesOnce(text));
+        Runnable appendTask = () -> {
+            try {
+                getDocument().insertString(getDocument().getLength(), normalized, commandAttributes);
             } catch (BadLocationException ignored) {
             }
             setCaretPosition(getDocument().getLength());

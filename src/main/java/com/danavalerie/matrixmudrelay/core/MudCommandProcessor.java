@@ -23,6 +23,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     public interface ClientOutput {
         void appendSystem(String text);
 
+        void appendCommandEcho(String text);
+
         void updateMap(String roomId);
 
         void updateStats(StatsHudRenderer.StatsHudData data);
@@ -97,6 +99,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             }
             String sanitized = Sanitizer.sanitizeMudInput(normalized);
             transcript.logClientToMud(sanitized);
+            output.appendCommandEcho(sanitized);
             mud.sendLinesFromController(List.of(sanitized));
         } catch (IllegalStateException e) {
             output.appendSystem("Error: " + e.getMessage());
@@ -321,6 +324,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             case "deliver" -> {
                 String command = Sanitizer.sanitizeMudInput("deliver " + req.item() + " to " + req.npc());
                 transcript.logClientToMud(command);
+                output.appendCommandEcho(command);
                 try {
                     mud.sendLinesFromController(List.of(command));
                 } catch (IllegalStateException e) {
@@ -338,6 +342,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         );
         for (String line : lines) {
             transcript.logClientToMud(line);
+            output.appendCommandEcho(line);
         }
         try {
             mud.sendLinesFromController(lines);
@@ -356,7 +361,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (lines == null || lines.isEmpty()) {
             return true;
         }
+        boolean maskEcho = "#password".equalsIgnoreCase(trigger);
         transcript.logClientToMud("[alias:" + trigger + "] " + String.join(" | ", lines));
+        for (String line : lines) {
+            output.appendCommandEcho(maskEcho ? "(password)" : line);
+        }
         mud.sendLinesFromController(lines);
         return true;
     }
