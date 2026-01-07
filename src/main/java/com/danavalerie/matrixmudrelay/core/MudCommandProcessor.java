@@ -37,6 +37,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private final TranscriptLogger transcript;
     private final RoomMapService mapService;
     private final WritTracker writTracker;
+    private final StoreInventoryTracker storeInventoryTracker;
     private final ClientOutput output;
     private final ExecutorService background;
 
@@ -49,11 +50,13 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                                MudClient mud,
                                TranscriptLogger transcript,
                                WritTracker writTracker,
+                               StoreInventoryTracker storeInventoryTracker,
                                ClientOutput output) {
         this.cfg = cfg;
         this.mud = mud;
         this.transcript = transcript;
         this.writTracker = writTracker;
+        this.storeInventoryTracker = storeInventoryTracker;
         this.output = output;
         this.mapService = new RoomMapService("database.db");
         this.background = Executors.newSingleThreadExecutor(r -> {
@@ -112,6 +115,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (roomId != null && !roomId.isBlank() && !roomId.equals(lastRoomId)) {
             lastRoomId = roomId;
             output.updateMap(roomId);
+            storeInventoryTracker.clearInventory();
         }
         if (message == null) {
             return;

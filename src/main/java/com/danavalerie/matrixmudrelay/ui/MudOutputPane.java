@@ -20,6 +20,7 @@ public final class MudOutputPane extends JTextPane {
     private static final Color BACKGROUND = new Color(15, 15, 18);
     private static final Color SYSTEM_COLOR = new Color(120, 200, 255);
     private static final Color COMMAND_COLOR = new Color(255, 215, 0);
+    private static final Color ERROR_COLOR = new Color(255, 80, 80);
     private static final Color DEFAULT_COLOR = new Color(220, 220, 220);
     private static final Color ALERT_FOREGROUND = new Color(0, 0, 0);
     private static final Color ALERT_BACKGROUND = new Color(255, 255, 255);
@@ -72,6 +73,7 @@ public final class MudOutputPane extends JTextPane {
     private final AnsiColorParser parser = new AnsiColorParser();
     private final AttributeSet systemAttributes;
     private final AttributeSet commandAttributes;
+    private final AttributeSet errorAttributes;
     private String pendingTail = "";
     private final StringBuilder pendingEntity = new StringBuilder();
     private Color pendingEntityColor;
@@ -105,6 +107,11 @@ public final class MudOutputPane extends JTextPane {
         SimpleAttributeSet command = new SimpleAttributeSet();
         StyleConstants.setForeground(command, COMMAND_COLOR);
         commandAttributes = context.addAttributes(SimpleAttributeSet.EMPTY, command);
+
+        SimpleAttributeSet error = new SimpleAttributeSet();
+        StyleConstants.setForeground(error, ERROR_COLOR);
+        StyleConstants.setBold(error, true);
+        errorAttributes = context.addAttributes(SimpleAttributeSet.EMPTY, error);
     }
 
     public void appendMudText(String text) {
@@ -143,6 +150,21 @@ public final class MudOutputPane extends JTextPane {
         Runnable appendTask = () -> {
             try {
                 getDocument().insertString(getDocument().getLength(), normalized, commandAttributes);
+            } catch (BadLocationException ignored) {
+            }
+            setCaretPosition(getDocument().getLength());
+        };
+        runOnEdt(appendTask);
+    }
+
+    public void appendErrorText(String text) {
+        if (text == null || text.isBlank()) {
+            return;
+        }
+        String normalized = ensureTrailingNewline(decodeEntitiesOnce(text));
+        Runnable appendTask = () -> {
+            try {
+                getDocument().insertString(getDocument().getLength(), normalized, errorAttributes);
             } catch (BadLocationException ignored) {
             }
             setCaretPosition(getDocument().getLength());

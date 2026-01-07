@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay.ui;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
+import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
@@ -59,6 +60,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudClient mud;
     private final TranscriptLogger transcript;
     private final WritTracker writTracker;
+    private final StoreInventoryTracker storeInventoryTracker;
     private final BotConfig cfg;
     private final Path configPath;
     private final UiFontManager fontManager;
@@ -66,6 +68,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final AnsiColorParser writParser = new AnsiColorParser();
     private final StringBuilder writPendingEntity = new StringBuilder();
     private String writPendingTail = "";
+    private final StringBuilder storeLineBuffer = new StringBuilder();
     private Color writCurrentColor = AnsiColorParser.defaultColor();
     private boolean writCurrentBold;
     private boolean forwardingKey;
@@ -80,12 +83,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.mapPanel = new MapPanel(resolveMapZoomPercent(), this::persistMapZoomConfig);
 
         writTracker = new WritTracker();
+        storeInventoryTracker = new StoreInventoryTracker();
 
         mud = new MudClient(
                 cfg.mud,
                 line -> {
                     this.transcript.logMudToClient(line);
-                    bufferWritLines(normalizeWritOutput(line));
+                    String normalized = normalizeWritOutput(line);
+                    bufferWritLines(normalized);
+                    bufferStoreInventoryLines(normalized);
                     outputPane.appendMudText(line);
                 },
                 reason -> outputPane.appendSystemText("* MUD disconnected: " + reason),
@@ -93,9 +99,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         );
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
 
-        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
+        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
         mud.setGmcpListener(commandProcessor);
-        writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
+        writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker, outputPane::appendErrorText);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         quickLinksPanel = new QuickLinksPanel(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
@@ -471,6 +477,26 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         if (updated) {
             writInfoPanel.updateWrit(writTracker.getRequirements());
+        }
+    }
+
+    private void bufferStoreInventoryLines(String text) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        storeLineBuffer.append(text);
+        int start = 0;
+        while (true) {
+            int newline = storeLineBuffer.indexOf("\n", start);
+            if (newline == -1) {
+                break;
+            }
+            String line = storeLineBuffer.substring(start, newline);
+            storeInventoryTracker.ingest(line);
+            start = newline + 1;
+        }
+        if (start > 0) {
+            storeLineBuffer.delete(0, start);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 
 import javax.swing.BorderFactory;
@@ -34,10 +35,16 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
     private final List<Boolean> finished = new ArrayList<>();
     private final Set<String> visitedLinks = new HashSet<>();
     private final Consumer<String> commandSender;
+    private final StoreInventoryTracker storeInventoryTracker;
+    private final Consumer<String> errorSender;
     private Font baseFont;
 
-    public WritInfoPanel(Consumer<String> commandSender) {
+    public WritInfoPanel(Consumer<String> commandSender,
+                         StoreInventoryTracker storeInventoryTracker,
+                         Consumer<String> errorSender) {
         this.commandSender = Objects.requireNonNull(commandSender, "commandSender");
+        this.storeInventoryTracker = Objects.requireNonNull(storeInventoryTracker, "storeInventoryTracker");
+        this.errorSender = Objects.requireNonNull(errorSender, "errorSender");
         setLayout(new BorderLayout(0, 8));
         setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -131,23 +138,28 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                         .append(linkClass(itemHref)).append(">")
                         .append(req.quantity()).append(" ").append(escape(req.item()))
                         .append("</a>")
-                        .append(" ")
-                        .append("<a href=\"").append(buyHref).append("\"")
-                        .append(linkClass(buyHref)).append(">[Buy]</a>")
                         .append("</div>")
                         .append("<div class=\"row muted\">Deliver to ")
                         .append("<a href=\"").append(npcHref).append("\"")
                         .append(linkClass(npcHref)).append(">")
                         .append(escape(req.npc())).append("</a>")
                         .append(" ")
-                        .append("<a href=\"").append(deliverHref).append("\"")
-                        .append(linkClass(deliverHref)).append(">[Deliver]</a>")
                         .append("</div>")
                         .append("<div class=\"row muted\">Location: ")
                         .append("<a href=\"").append(locHref).append("\"")
                         .append(linkClass(locHref)).append(">")
                         .append(escape(req.locationName())).append("</a>")
                         .append(req.locationSuffix().isBlank() ? "" : " " + escape(req.locationSuffix()))
+                        .append("</div>")
+                        .append("<div class=\"row\">")
+                        .append("<a href=\"").append("list:").append(i).append("\"")
+                        .append(linkClass("list:" + i)).append(">[List]</a>")
+                        .append("  ")
+                        .append("<a href=\"").append(buyHref).append("\"")
+                        .append(linkClass(buyHref)).append(">[Buy]</a>")
+                        .append("  ")
+                        .append("<a href=\"").append(deliverHref).append("\"")
+                        .append(linkClass(deliverHref)).append(">[Deliver]</a>")
                         .append("</div>")
                         .append("</div>");
             }
@@ -191,20 +203,43 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
         }
         int writNumber = index + 1;
         String command = switch (action) {
-            case "buy" -> "buy " + requirements.get(index).quantity() + " " + requirements.get(index).item()
-                    // "bright and colourful kimono" -> "bright colourful kimono" -- the 'and' messes up the game's parser
-                    .replaceAll(" and ", " ");
+            case "list" -> "list";
             case "deliver" -> "mm writ " + writNumber + " deliver";
             case "item" -> "mm item exact " + requirements.get(index).item();
             case "npc" -> "mm writ " + writNumber + " npc";
             case "loc" -> "mm writ " + writNumber + " loc";
             default -> null;
         };
+        if ("buy".equals(action)) {
+            handleStoreBuy(index, description);
+            return;
+        }
         if (command != null) {
             visitedLinks.add(description);
             commandSender.accept(command);
             updatePanePreservingScroll();
         }
+    }
+
+    private void handleStoreBuy(int index, String description) {
+        if (!storeInventoryTracker.hasInventory()) {
+            errorSender.accept("Store inventory not cached yet. Use [List] first.");
+            return;
+        }
+        WritTracker.WritRequirement requirement = requirements.get(index);
+        if (storeInventoryTracker.isNameListed()) {
+            visitedLinks.add(description);
+            commandSender.accept("buy " + requirement.quantity() + " " + requirement.item());
+            updatePanePreservingScroll();
+            return;
+        }
+        storeInventoryTracker.findMatch(requirement.item()).ifPresentOrElse(item -> {
+            visitedLinks.add(description);
+            for (int i = 0; i < requirement.quantity(); i++) {
+                commandSender.accept("buy " + item.id());
+            }
+            updatePanePreservingScroll();
+        }, () -> errorSender.accept("Store inventory does not list \"" + requirement.item() + "\"."));
     }
 
     private static String toHex(Color color) {
