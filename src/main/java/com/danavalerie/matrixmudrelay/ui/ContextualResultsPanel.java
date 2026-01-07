@@ -75,12 +75,14 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
 
     public void updateResults(ContextualResultList results) {
         SwingUtilities.invokeLater(() -> {
+            var viewPosition = scrollPane.getViewport().getViewPosition();
             if (results != null) {
                 currentResults = results;
             }
             titleLabel.setText(currentResults.title() == null ? "Search Results" : currentResults.title());
             visitedLinks.clear();
             resultsPane.setText(renderHtml());
+            SwingUtilities.invokeLater(() -> scrollPane.getViewport().setViewPosition(viewPosition));
         });
     }
 

@@ -77,6 +77,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
 
     public void updateWrit(List<WritTracker.WritRequirement> requirements) {
         SwingUtilities.invokeLater(() -> {
+            var viewPosition = scrollPane.getViewport().getViewPosition();
             this.requirements.clear();
             this.finished.clear();
             this.visitedLinks.clear();
@@ -87,6 +88,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                 }
             }
             writPane.setText(renderHtml());
+            SwingUtilities.invokeLater(() -> scrollPane.getViewport().setViewPosition(viewPosition));
         });
     }
 
