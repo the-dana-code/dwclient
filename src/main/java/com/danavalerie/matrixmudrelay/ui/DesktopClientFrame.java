@@ -98,6 +98,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setJMenuBar(buildMenuBar());
         add(buildSplitLayout(), BorderLayout.CENTER);
         pack();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         installInputFocusForwarding();
 
@@ -105,6 +106,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             @Override
             public void windowOpened(WindowEvent e) {
                 inputField.requestFocusInWindow();
+                commandProcessor.handleInput("mm connect");
             }
 
             @Override
