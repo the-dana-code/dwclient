@@ -39,6 +39,7 @@ public final class MapPanel extends JPanel {
         t.setDaemon(true);
         return t;
     });
+    private final JLabel mapTitleLabel = new JLabel("", SwingConstants.CENTER);
     private final JLabel mapLabel = new JLabel("Map will appear here", SwingConstants.CENTER);
     private final JScrollPane scrollPane;
     private final AtomicReference<String> lastRoomId = new AtomicReference<>();
@@ -58,11 +59,14 @@ public final class MapPanel extends JPanel {
         this.zoomChangeListener = zoomChangeListener;
         setLayout(new BorderLayout());
         setBackground(BACKGROUND);
+        mapTitleLabel.setForeground(new Color(220, 220, 220));
+        mapTitleLabel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
         mapLabel.setOpaque(true);
         mapLabel.setBackground(BACKGROUND);
         mapLabel.setForeground(new Color(220, 220, 220));
         mapLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         scrollPane = new JScrollPane(mapLabel);
+        add(mapTitleLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, this.zoomPercent);
         zoomSlider.setPaintTicks(true);
@@ -90,7 +94,7 @@ public final class MapPanel extends JPanel {
             try {
                 RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId);
                 BufferedImage image = resolveBaseImage(mapImage);
-                showImage(image, mapImage.body(), new Point(mapImage.currentX(), mapImage.currentY()),
+                showImage(image, mapImage.mapName(), new Point(mapImage.currentX(), mapImage.currentY()),
                         new Dimension(mapImage.width(), mapImage.height()));
             } catch (RoomMapService.MapLookupException e) {
                 showMessage("Map error: " + e.getMessage());
@@ -119,9 +123,10 @@ public final class MapPanel extends JPanel {
         Point focusPoint = lastFocusPoint;
         Dimension imageSize = lastImageSize;
         SwingUtilities.invokeLater(() -> {
+            mapTitleLabel.setText(title == null ? "" : title);
             if (image == null || imageSize == null) {
                 mapLabel.setIcon(null);
-                mapLabel.setText(title == null ? "" : title);
+                mapLabel.setText("");
                 mapLabel.setPreferredSize(null);
                 mapLabel.revalidate();
                 configureAnimation(null);
@@ -133,7 +138,7 @@ public final class MapPanel extends JPanel {
             int markerDiameter = scaledMarkerDiameter(zoomPercent);
             AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter);
             mapLabel.setIcon(icon);
-            mapLabel.setText(title == null ? "" : title);
+            mapLabel.setText("");
             mapLabel.setPreferredSize(scaledSize);
             mapLabel.revalidate();
             configureAnimation(icon);
@@ -149,6 +154,7 @@ public final class MapPanel extends JPanel {
         lastFocusPoint = null;
         lastImageSize = null;
         SwingUtilities.invokeLater(() -> {
+            mapTitleLabel.setText("");
             mapLabel.setIcon(null);
             mapLabel.setText(message);
             mapLabel.setPreferredSize(null);

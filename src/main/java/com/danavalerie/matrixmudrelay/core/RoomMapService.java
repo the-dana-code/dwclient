@@ -127,8 +127,8 @@ public class RoomMapService {
             int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
             int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
 
-            String body = ""; // not sure what this is for -- it can maybe be removed
-            return new MapImage(data, imageWidth, imageHeight, "image/png", body, currentX, currentY, reuseBase);
+            String mapName = getMapDisplayName(current.mapId);
+            return new MapImage(data, imageWidth, imageHeight, "image/png", mapName, currentX, currentY, reuseBase);
         }
     }
 
@@ -680,7 +680,7 @@ public class RoomMapService {
         g2.drawLine(startX, startY, endX, endY);
     }
 
-    public record MapImage(byte[] data, int width, int height, String mimeType, String body, int currentX, int currentY,
+    public record MapImage(byte[] data, int width, int height, String mimeType, String mapName, int currentX, int currentY,
                            boolean baseImageReused) {
     }
 
