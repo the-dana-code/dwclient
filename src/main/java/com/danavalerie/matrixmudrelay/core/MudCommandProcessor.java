@@ -498,6 +498,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (phrase.startsWith("pairs of ")) {
             phrases.add("pair of " + phrase.substring(9));
         }
+        else if (phrase.startsWith("games of ")) {
+            phrases.add("game of " + phrase.substring(9));
+        }
         else {
             String[] parts = phrase.trim().split("\\s+");
             if (parts.length == 0) {
