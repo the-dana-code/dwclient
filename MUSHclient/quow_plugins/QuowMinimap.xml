@@ -4341,7 +4341,6 @@ local function GetCharacterTeleports()
         { name = "sheepridge", coords = {45, 618, 574} },
         { name = "slice", coords = {38, 1979, 280} },
         { name = "slipperyhollow", coords = {54, 159, 123} },
-        { name = "sss", coords = {25, 533, 373} },
         { name = "stickenplace", coords = {1, 172, 816} },
         { name = "stolat", coords = {39, 367, 222} },
         { name = "tosg", coords = {9, 221, 224} },
