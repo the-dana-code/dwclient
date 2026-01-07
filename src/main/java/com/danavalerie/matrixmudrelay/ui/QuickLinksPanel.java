@@ -69,8 +69,8 @@ public final class QuickLinksPanel extends JPanel implements FontChangeListener 
         html.append("<html><body style='font-family: \"")
                 .append(cssFontFamily(font))
                 .append("\"; font-size: ")
-                .append(font.getSize())
-                .append("px; padding: 5px;'>");
+                .append(font.getSize2D())
+                .append("pt; padding: 5px;'>");
         html.append("<b>Quick Links</b><br><br>");
         for (int i = 0; i < LINKS.length; i++) {
             html.append("<a href='").append(i).append("'>").append(LINKS[i].name()).append("</a><br><br>");

@@ -97,7 +97,7 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
         StringBuilder html = new StringBuilder();
         html.append("<html><head><style>")
                 .append("body{font-family:'").append(cssFontFamily(font))
-                .append("';font-size:").append(font.getSize()).append("px;color:")
+                .append("';font-size:").append(font.getSize2D()).append("pt;color:")
                 .append(toHex(TEXT_COLOR)).append(";background-color:")
                 .append(toHex(BACKGROUND)).append(";}")
                 .append("a{color:").append(toHex(LINK_COLOR)).append(";text-decoration:none;}")
