@@ -11,13 +11,31 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public final class MudOutputPane extends JTextPane {
     private static final Color BACKGROUND = new Color(15, 15, 18);
     private static final Color SYSTEM_COLOR = new Color(120, 200, 255);
     private static final Color COMMAND_COLOR = new Color(255, 215, 0);
     private static final Color DEFAULT_COLOR = new Color(220, 220, 220);
+    private static final Color ALERT_FOREGROUND = new Color(0, 0, 0);
+    private static final Color ALERT_BACKGROUND = new Color(255, 255, 255);
+    private static final List<AlertPattern> ALERT_PATTERNS = List.of(
+            new AlertPattern(
+                    Pattern.compile("^Your divine protection is weakening\\.$"),
+                    ALERT_FOREGROUND,
+                    ALERT_BACKGROUND,
+                    () -> Toolkit.getDefaultToolkit().beep()
+            ),
+            new AlertPattern(
+                    Pattern.compile("^Your divine protection expires\\.$"),
+                    ALERT_FOREGROUND,
+                    ALERT_BACKGROUND,
+                    () -> Toolkit.getDefaultToolkit().beep()
+            )
+    );
     private final AnsiColorParser parser = new AnsiColorParser();
     private final AttributeSet systemAttributes;
     private final AttributeSet commandAttributes;
@@ -27,6 +45,8 @@ public final class MudOutputPane extends JTextPane {
     private boolean pendingEntityBold;
     private Color currentColor = AnsiColorParser.defaultColor();
     private boolean currentBold = false;
+    private final StringBuilder lineBuffer = new StringBuilder();
+    private int lineStartOffset = 0;
 
     public MudOutputPane() {
         setEditable(false);
@@ -94,15 +114,83 @@ public final class MudOutputPane extends JTextPane {
         }
         Runnable appendTask = () -> {
             for (AnsiColorParser.Segment segment : segments) {
-                AttributeSet attributes = buildAttributes(segment.color(), segment.bold());
-                try {
-                    getDocument().insertString(getDocument().getLength(), segment.text(), attributes);
-                } catch (BadLocationException ignored) {
-                }
+                appendSegment(segment);
             }
             setCaretPosition(getDocument().getLength());
         };
         runOnEdt(appendTask);
+    }
+
+    private void appendSegment(AnsiColorParser.Segment segment) {
+        String text = segment.text();
+        if (text.isEmpty()) {
+            return;
+        }
+        AttributeSet attributes = buildAttributes(segment.color(), segment.bold());
+        int index = 0;
+        while (index < text.length()) {
+            int newlineIndex = text.indexOf('\n', index);
+            if (newlineIndex == -1) {
+                String chunk = text.substring(index);
+                insertChunk(chunk, attributes);
+                lineBuffer.append(chunk);
+                break;
+            }
+            String chunk = text.substring(index, newlineIndex + 1);
+            insertChunk(chunk, attributes);
+            lineBuffer.append(text, index, newlineIndex);
+            handleCompletedLine();
+            index = newlineIndex + 1;
+        }
+    }
+
+    private void insertChunk(String chunk, AttributeSet attributes) {
+        try {
+            getDocument().insertString(getDocument().getLength(), chunk, attributes);
+        } catch (BadLocationException ignored) {
+        }
+    }
+
+    private void handleCompletedLine() {
+        String fullLine = lineBuffer.toString();
+        lineBuffer.setLength(0);
+        String trimmed = fullLine.strip();
+        AlertPattern alertPattern = matchAlert(trimmed);
+        if (alertPattern != null) {
+            int lineEndOffset = getDocument().getLength();
+            try {
+                getDocument().remove(lineStartOffset, lineEndOffset - lineStartOffset);
+                AttributeSet attributes = buildAlertAttributes(alertPattern);
+                getDocument().insertString(lineStartOffset, fullLine + "\n", attributes);
+                if (alertPattern.sound() != null) {
+                    alertPattern.sound().run();
+                }
+            } catch (BadLocationException ignored) {
+            }
+        }
+        lineStartOffset = getDocument().getLength();
+    }
+
+    private AttributeSet buildAlertAttributes(AlertPattern alertPattern) {
+        SimpleAttributeSet alert = new SimpleAttributeSet();
+        Color foreground = alertPattern.foreground() != null ? alertPattern.foreground() : DEFAULT_COLOR;
+        StyleConstants.setForeground(alert, foreground);
+        if (alertPattern.background() != null) {
+            StyleConstants.setBackground(alert, alertPattern.background());
+        }
+        return alert;
+    }
+
+    private static AlertPattern matchAlert(String line) {
+        if (line.isEmpty()) {
+            return null;
+        }
+        for (AlertPattern alertPattern : ALERT_PATTERNS) {
+            if (alertPattern.pattern().matcher(line).matches()) {
+                return alertPattern;
+            }
+        }
+        return null;
     }
 
     private AttributeSet buildAttributes(Color color, boolean bold) {
@@ -239,5 +327,8 @@ public final class MudOutputPane extends JTextPane {
             i = end + 1;
         }
         return out.toString();
+    }
+
+    private record AlertPattern(Pattern pattern, Color foreground, Color background, Runnable sound) {
     }
 }
