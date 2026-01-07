@@ -353,11 +353,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             if (!isVisible() || inputField.isFocusOwner() || forwardingKey) {
                 return false;
             }
-            if (event.getID() != KeyEvent.KEY_TYPED) {
-                return false;
+            boolean shouldForward = false;
+            if (event.getID() == KeyEvent.KEY_TYPED) {
+                char keyChar = event.getKeyChar();
+                if (keyChar != KeyEvent.CHAR_UNDEFINED && !Character.isISOControl(keyChar)) {
+                    shouldForward = true;
+                }
+            } else if (event.getID() == KeyEvent.KEY_PRESSED) {
+                int keyCode = event.getKeyCode();
+                if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN) {
+                    shouldForward = true;
+                }
             }
-            char keyChar = event.getKeyChar();
-            if (keyChar == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(keyChar)) {
+
+            if (!shouldForward) {
                 return false;
             }
             forwardingKey = true;
