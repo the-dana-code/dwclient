@@ -55,6 +55,15 @@ public final class ContextualResultsPanel extends JPanel {
         resultsPane.setBackground(BACKGROUND);
         resultsPane.setForeground(TEXT_COLOR);
         resultsPane.setFont(resultsPane.getFont().deriveFont(Font.PLAIN, 12f));
+
+        // Hide the caret
+        resultsPane.setCaret(new javax.swing.text.DefaultCaret() {
+            @Override
+            public void paint(java.awt.Graphics g) {
+                // do nothing
+            }
+        });
+
         resultsPane.setText(renderHtml());
         resultsPane.addHyperlinkListener(new ResultsLinkListener());
 

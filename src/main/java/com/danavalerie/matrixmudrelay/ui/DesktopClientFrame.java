@@ -46,6 +46,7 @@ import java.util.List;
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private final MudOutputPane outputPane = new MudOutputPane();
     private final MapPanel mapPanel;
+    private final QuickLinksPanel quickLinksPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private final WritInfoPanel writInfoPanel;
     private final ContextualResultsPanel contextualResultsPanel;
@@ -88,6 +89,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
+        quickLinksPanel = new QuickLinksPanel(commandProcessor);
         applyConfiguredFont();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -264,7 +266,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mudSplit.setBorder(null);
         mudSplit.setDividerLocation(400);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapPanel);
+        JSplitPane mapSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, quickLinksPanel);
+        mapSplit.setResizeWeight(1.0);
+        mapSplit.setDividerSize(6);
+        mapSplit.setBorder(null);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapSplit);
         splitPane.setResizeWeight(0.7);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);

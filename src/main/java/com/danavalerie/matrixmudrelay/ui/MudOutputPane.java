@@ -54,6 +54,14 @@ public final class MudOutputPane extends JTextPane {
         setForeground(DEFAULT_COLOR);
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
 
+        // Hide the caret
+        setCaret(new javax.swing.text.DefaultCaret() {
+            @Override
+            public void paint(java.awt.Graphics g) {
+                // do nothing
+            }
+        });
+
         StyleContext context = StyleContext.getDefaultStyleContext();
         SimpleAttributeSet system = new SimpleAttributeSet();
         StyleConstants.setForeground(system, SYSTEM_COLOR);

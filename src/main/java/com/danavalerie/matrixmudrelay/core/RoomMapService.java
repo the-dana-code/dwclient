@@ -417,6 +417,25 @@ public class RoomMapService {
         }
     }
 
+    public String findRoomIdByCoordinates(int mapId, int x, int y) throws SQLException {
+        if (!driverAvailable) {
+            return null;
+        }
+        String sql = "select room_id from rooms where map_id = ? and xpos = ? and ypos = ?";
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, mapId);
+            stmt.setInt(2, x);
+            stmt.setInt(3, y);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("room_id");
+                }
+            }
+        }
+        return null;
+    }
+
     private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

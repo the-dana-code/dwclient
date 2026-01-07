@@ -50,6 +50,15 @@ public final class WritInfoPanel extends JPanel {
         writPane.setBackground(BACKGROUND);
         writPane.setForeground(TEXT_COLOR);
         writPane.setFont(writPane.getFont().deriveFont(Font.PLAIN, 12f));
+
+        // Hide the caret
+        writPane.setCaret(new javax.swing.text.DefaultCaret() {
+            @Override
+            public void paint(java.awt.Graphics g) {
+                // do nothing
+            }
+        });
+
         writPane.setText(renderHtml());
         writPane.addHyperlinkListener(new WritLinkListener());
 
