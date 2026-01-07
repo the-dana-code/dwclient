@@ -235,9 +235,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
         }
         storeInventoryTracker.findMatch(requirement.item()).ifPresentOrElse(item -> {
             visitedLinks.add(description);
-            for (int i = 0; i < requirement.quantity(); i++) {
-                commandSender.accept("buy " + item.id());
-            }
+            commandSender.accept("buy " + item.id());
             updatePanePreservingScroll();
         }, () -> errorSender.accept("Store inventory does not list \"" + requirement.item() + "\"."));
     }
