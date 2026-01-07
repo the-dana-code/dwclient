@@ -708,7 +708,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             } else {
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
-                String aliasName = "MooMooQuowsRun";
+                String aliasName = "LesaClientSpeedwalk";
                 String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
                 mud.sendLinesFromController(List.of(aliasCommand, aliasName));
                 out.append("\nAlias: ").append(aliasName);
