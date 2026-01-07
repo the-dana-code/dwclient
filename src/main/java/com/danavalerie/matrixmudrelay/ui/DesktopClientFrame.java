@@ -37,6 +37,7 @@ import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.image.BufferedImage;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -66,6 +67,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private Color writCurrentColor = AnsiColorParser.defaultColor();
     private boolean writCurrentBold;
     private boolean forwardingKey;
+    private final List<String> inputHistory = new ArrayList<>();
+    private int historyIndex = -1;
 
     public DesktopClientFrame(BotConfig cfg, Path configPath, TranscriptLogger transcript) {
         super("MUD Desktop Client");
@@ -299,9 +302,40 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             String text = inputField.getText();
             inputField.setText("");
             commandProcessor.handleInput(text);
+            if (!text.isBlank()) {
+                inputHistory.add(0, text);
+            }
+            historyIndex = -1;
         };
         inputField.addActionListener(e -> sendAction.run());
         sendButton.addActionListener(e -> sendAction.run());
+        inputField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent event) {
+                if (inputHistory.isEmpty()) {
+                    return;
+                }
+                if (event.getKeyCode() == KeyEvent.VK_UP) {
+                    if (historyIndex + 1 >= inputHistory.size()) {
+                        return;
+                    }
+                    historyIndex += 1;
+                    inputField.setText(inputHistory.get(historyIndex));
+                    event.consume();
+                } else if (event.getKeyCode() == KeyEvent.VK_DOWN) {
+                    if (historyIndex <= -1) {
+                        return;
+                    }
+                    historyIndex -= 1;
+                    if (historyIndex == -1) {
+                        inputField.setText("");
+                    } else {
+                        inputField.setText(inputHistory.get(historyIndex));
+                    }
+                    event.consume();
+                }
+            }
+        });
 
         JSplitPane outputSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chitchatScroll, outputScroll);
         outputSplit.setResizeWeight(0.2);
