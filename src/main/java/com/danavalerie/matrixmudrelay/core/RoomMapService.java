@@ -297,10 +297,15 @@ public class RoomMapService {
     }
 
     public RouteResult findRoute(String startRoomId, String targetRoomId) throws SQLException, MapLookupException {
-        return findRoute(startRoomId, targetRoomId, true);
+        return findRoute(startRoomId, targetRoomId, true, null);
     }
 
     public RouteResult findRoute(String startRoomId, String targetRoomId, boolean useTeleports)
+            throws SQLException, MapLookupException {
+        return findRoute(startRoomId, targetRoomId, useTeleports, null);
+    }
+
+    public RouteResult findRoute(String startRoomId, String targetRoomId, boolean useTeleports, String characterName)
             throws SQLException, MapLookupException {
         if (startRoomId == null || startRoomId.isBlank()) {
             throw new MapLookupException("Start room not available.");
@@ -332,9 +337,11 @@ public class RoomMapService {
             PriorityQueue<RouteNode> open = new PriorityQueue<>(Comparator.comparingDouble(RouteNode::fScore));
             gScore.put(start.roomId, 0);
             open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
+            TeleportRegistry.CharacterTeleports characterTeleports = TeleportRegistry.forCharacter(characterName);
+            boolean teleportsReliable = characterTeleports.reliable();
 
             if (useTeleports) {
-                List<ResolvedTeleport> teleports = resolveTeleports(conn, roomCache);
+                List<ResolvedTeleport> teleports = resolveTeleports(conn, roomCache, characterTeleports.teleports());
                 for (ResolvedTeleport teleport : teleports) {
                     if (teleport.roomId.equals(start.roomId)) {
                         continue;
@@ -355,7 +362,11 @@ public class RoomMapService {
                 while (!open.isEmpty()) {
                     RouteNode current = open.poll();
                     if (current.roomId.equals(target.roomId)) {
-                        return new RouteResult(reconstructRoute(cameFrom, target.roomId));
+                        List<RouteStep> steps = reconstructRoute(cameFrom, target.roomId);
+                        if (useTeleports && !teleportsReliable) {
+                            steps = applyUnreliableTeleportRule(steps);
+                        }
+                        return new RouteResult(steps);
                     }
                     Integer currentScore = gScore.get(current.roomId);
                     if (currentScore == null) {
@@ -450,11 +461,14 @@ public class RoomMapService {
         return loaded;
     }
 
-    private List<ResolvedTeleport> resolveTeleports(Connection conn, Map<String, RoomRecord> cache) throws SQLException {
+    private List<ResolvedTeleport> resolveTeleports(Connection conn,
+                                                    Map<String, RoomRecord> cache,
+                                                    List<TeleportRegistry.TeleportLocation> teleportsToResolve)
+            throws SQLException {
         List<ResolvedTeleport> teleports = new ArrayList<>();
         String sql = "select room_id from rooms where map_id = ? and xpos = ? and ypos = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (TeleportRegistry.TeleportLocation teleport : TeleportRegistry.TELEPORTS) {
+            for (TeleportRegistry.TeleportLocation teleport : teleportsToResolve) {
                 stmt.setInt(1, teleport.mapId());
                 stmt.setInt(2, teleport.x());
                 stmt.setInt(3, teleport.y());
@@ -472,6 +486,17 @@ public class RoomMapService {
             }
         }
         return teleports;
+    }
+
+    private static List<RouteStep> applyUnreliableTeleportRule(List<RouteStep> steps) {
+        if (steps.isEmpty()) {
+            return steps;
+        }
+        RouteStep first = steps.get(0);
+        if (first.exit().startsWith("tp ")) {
+            return List.of(first);
+        }
+        return steps;
     }
 
     private BufferedImage loadMapBackground(int mapId) throws IOException {

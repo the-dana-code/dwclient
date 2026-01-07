@@ -96,6 +96,10 @@ public final class CurrentRoomInfo {
             return data;
         }
 
+        public String characterName() {
+            return extractCapname(data.get("char.info"));
+        }
+
         public boolean isEmpty() {
             return (roomId == null || roomId.isBlank()) && data.isEmpty();
         }

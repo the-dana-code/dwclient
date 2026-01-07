@@ -1,9 +1,11 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public final class TeleportRegistry {
-    public static final List<TeleportLocation> TELEPORTS = List.of(
+    private static final List<TeleportLocation> LESA_TELEPORTS = List.of(
             new TeleportLocation("am-fiddleys-music", 1, 774, 323),
             new TeleportLocation("am-milords", 1, 1082, 298),
             new TeleportLocation("am-pishe", 1, 578, 480),
@@ -59,8 +61,24 @@ public final class TeleportRegistry {
             new TeleportLocation("stolat", 39, 367, 222),
             new TeleportLocation("tosg", 9, 221, 224)
     );
+    private static final CharacterTeleports DEFAULT = new CharacterTeleports(true, List.of());
+    private static final Map<String, CharacterTeleports> BY_CHARACTER = Map.of(
+            "lesa", new CharacterTeleports(true, LESA_TELEPORTS),
+            "maemot", new CharacterTeleports(false, List.of())
+    );
 
     private TeleportRegistry() {
+    }
+
+    public static CharacterTeleports forCharacter(String characterName) {
+        if (characterName == null || characterName.isBlank()) {
+            return DEFAULT;
+        }
+        String key = characterName.trim().toLowerCase(Locale.ROOT);
+        return BY_CHARACTER.getOrDefault(key, DEFAULT);
+    }
+
+    public record CharacterTeleports(boolean reliable, List<TeleportLocation> teleports) {
     }
 
     public record TeleportLocation(String name, int mapId, int x, int y) {

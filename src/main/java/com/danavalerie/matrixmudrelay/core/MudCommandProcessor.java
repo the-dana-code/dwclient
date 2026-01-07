@@ -677,12 +677,18 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             output.appendSystem("Error: No room info available yet.");
             return;
         }
+        String characterName = mud.getCurrentRoomSnapshot().characterName();
         if (currentRoomId.equals(target.roomId())) {
             output.appendSystem("Already in " + target.roomShort() + ".");
             return;
         }
         try {
-            RoomMapService.RouteResult route = mapService.findRoute(currentRoomId, target.roomId(), useTeleports);
+            RoomMapService.RouteResult route = mapService.findRoute(
+                    currentRoomId,
+                    target.roomId(),
+                    useTeleports,
+                    characterName
+            );
             List<String> exits = route.steps().stream()
                     .map(RoomMapService.RouteStep::exit)
                     .toList();
