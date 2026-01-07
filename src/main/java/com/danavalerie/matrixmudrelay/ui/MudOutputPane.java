@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 public final class MudOutputPane extends JTextPane {
@@ -22,18 +23,50 @@ public final class MudOutputPane extends JTextPane {
     private static final Color DEFAULT_COLOR = new Color(220, 220, 220);
     private static final Color ALERT_FOREGROUND = new Color(0, 0, 0);
     private static final Color ALERT_BACKGROUND = new Color(255, 255, 255);
+    private static final Color TELL_COLOR = new Color(255, 235, 80);
+    private static final Color TALKER_COLOR = new Color(180, 120, 255);
     private static final List<AlertPattern> ALERT_PATTERNS = List.of(
             new AlertPattern(
                     Pattern.compile("^Your divine protection is weakening\\.$"),
                     ALERT_FOREGROUND,
                     ALERT_BACKGROUND,
-                    () -> Toolkit.getDefaultToolkit().beep()
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    false
             ),
             new AlertPattern(
                     Pattern.compile("^Your divine protection expires\\.$"),
                     ALERT_FOREGROUND,
                     ALERT_BACKGROUND,
-                    () -> Toolkit.getDefaultToolkit().beep()
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    false
+            ),
+            new AlertPattern(
+                    Pattern.compile("^\\([^)]*\\) .*"),
+                    TALKER_COLOR,
+                    null,
+                    null,
+                    true
+            ),
+            new AlertPattern(
+                    Pattern.compile("^.+ asks you: .*$"),
+                    TELL_COLOR,
+                    null,
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    true
+            ),
+            new AlertPattern(
+                    Pattern.compile("^.+ tells you: .*$"),
+                    TELL_COLOR,
+                    null,
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    true
+            ),
+            new AlertPattern(
+                    Pattern.compile("^You .* tell .+: .*$"),
+                    TELL_COLOR,
+                    null,
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    true
             )
     );
     private final AnsiColorParser parser = new AnsiColorParser();
@@ -47,6 +80,7 @@ public final class MudOutputPane extends JTextPane {
     private boolean currentBold = false;
     private final StringBuilder lineBuffer = new StringBuilder();
     private int lineStartOffset = 0;
+    private BiConsumer<String, Color> chitchatListener;
 
     public MudOutputPane() {
         setEditable(false);
@@ -176,6 +210,10 @@ public final class MudOutputPane extends JTextPane {
             } catch (BadLocationException ignored) {
             }
         }
+        if (alertPattern != null && alertPattern.sendToChitchat() && chitchatListener != null) {
+            Color color = alertPattern.foreground() != null ? alertPattern.foreground() : DEFAULT_COLOR;
+            chitchatListener.accept(fullLine, color);
+        }
         lineStartOffset = getDocument().getLength();
     }
 
@@ -221,6 +259,10 @@ public final class MudOutputPane extends JTextPane {
             return text;
         }
         return text + "\n";
+    }
+
+    public void setChitchatListener(BiConsumer<String, Color> chitchatListener) {
+        this.chitchatListener = chitchatListener;
     }
 
     private List<AnsiColorParser.Segment> decodeEntities(List<AnsiColorParser.Segment> segments) {
@@ -337,6 +379,10 @@ public final class MudOutputPane extends JTextPane {
         return out.toString();
     }
 
-    private record AlertPattern(Pattern pattern, Color foreground, Color background, Runnable sound) {
+    private record AlertPattern(Pattern pattern,
+                                Color foreground,
+                                Color background,
+                                Runnable sound,
+                                boolean sendToChitchat) {
     }
 }

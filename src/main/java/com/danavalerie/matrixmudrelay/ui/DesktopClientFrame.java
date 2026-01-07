@@ -11,6 +11,7 @@ import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -45,6 +46,7 @@ import java.util.List;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private final MudOutputPane outputPane = new MudOutputPane();
+    private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
     private final QuickLinksPanel quickLinksPanel;
     private final StatsPanel statsPanel = new StatsPanel();
@@ -84,6 +86,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 reason -> outputPane.appendSystemText("* MUD disconnected: " + reason),
                 transcript
         );
+        outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, this);
         mud.setGmcpListener(commandProcessor);
@@ -182,6 +185,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void applyOutputFont(Font font, boolean persist) {
         outputPane.setFont(font);
+        chitchatPane.setFont(font);
         inputField.setFont(font);
         if (persist) {
             persistFontConfig(font);
@@ -280,7 +284,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return splitPane;
     }
 
-    private JSplitPane buildMudPanel() {
+    private JComponent buildMudPanel() {
+        JScrollPane chitchatScroll = new JScrollPane(chitchatPane);
+        chitchatScroll.setBorder(null);
         JScrollPane outputScroll = new JScrollPane(outputPane);
         outputScroll.setBorder(null);
 
@@ -297,11 +303,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         inputField.addActionListener(e -> sendAction.run());
         sendButton.addActionListener(e -> sendAction.run());
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, outputScroll, inputPanel);
-        splitPane.setResizeWeight(1.0);
-        splitPane.setDividerSize(6);
-        splitPane.setBorder(null);
-        return splitPane;
+        JSplitPane outputSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chitchatScroll, outputScroll);
+        outputSplit.setResizeWeight(0.2);
+        outputSplit.setDividerSize(6);
+        outputSplit.setBorder(null);
+
+        JPanel panel = new JPanel(new BorderLayout(6, 6));
+        panel.add(outputSplit, BorderLayout.CENTER);
+        panel.add(inputPanel, BorderLayout.SOUTH);
+        return panel;
     }
 
     private void installInputFocusForwarding() {
