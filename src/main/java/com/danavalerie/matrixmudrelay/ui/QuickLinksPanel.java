@@ -14,6 +14,7 @@ public final class QuickLinksPanel extends JPanel {
     private static final QuickLink[] LINKS = {
             new QuickLink("Mended Drum", 1, 718, 802),
             new QuickLink("Bologna shop", 1, 648, 897),
+            new QuickLink("Jobs Market", 1, 699, 905),
             new QuickLink("Wisdom Buff", 38, 838, 265),
             new QuickLink("Intelligence Buff", 25, 290, 200)
     };
