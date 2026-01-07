@@ -741,8 +741,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                     .append("):");
             if (exits.isEmpty()) {
                 out.append("\nAlready there.");
-            } else if (exits.size() > 150) {
-                out.append("\nRoute too long (" + exits.size() + " moves).");
             } else {
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
@@ -793,8 +791,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
                 if (exits.isEmpty()) {
                     output.appendSystem("Already there.");
-                } else if (exits.size() > 150) {
-                    output.appendSystem("Route too long (" + exits.size() + " moves).");
                 } else {
                     String aliasName = "LesaClientSpeedwalk";
                     String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
