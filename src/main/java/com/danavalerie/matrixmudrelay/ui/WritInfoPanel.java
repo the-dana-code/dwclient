@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public final class WritInfoPanel extends JPanel {
+public final class WritInfoPanel extends JPanel implements FontChangeListener {
     private static final Color BACKGROUND = new Color(10, 10, 15);
     private static final Color TEXT_COLOR = new Color(220, 220, 220);
     private static final Color LINK_COLOR = new Color(110, 160, 255);
@@ -34,6 +34,7 @@ public final class WritInfoPanel extends JPanel {
     private final List<Boolean> finished = new ArrayList<>();
     private final Set<String> visitedLinks = new HashSet<>();
     private final Consumer<String> commandSender;
+    private Font baseFont;
 
     public WritInfoPanel(Consumer<String> commandSender) {
         this.commandSender = Objects.requireNonNull(commandSender, "commandSender");
@@ -42,14 +43,13 @@ public final class WritInfoPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         titleLabel.setForeground(TEXT_COLOR);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 14f));
         add(titleLabel, BorderLayout.NORTH);
 
         writPane.setContentType("text/html");
         writPane.setEditable(false);
         writPane.setBackground(BACKGROUND);
         writPane.setForeground(TEXT_COLOR);
-        writPane.setFont(writPane.getFont().deriveFont(Font.PLAIN, 12f));
+        baseFont = writPane.getFont();
 
         // Hide the caret
         writPane.setCaret(new javax.swing.text.DefaultCaret() {
@@ -83,10 +83,20 @@ public final class WritInfoPanel extends JPanel {
         });
     }
 
+    @Override
+    public void onFontChange(Font font) {
+        baseFont = font;
+        titleLabel.setFont(font.deriveFont(Font.BOLD));
+        writPane.setFont(font);
+        updatePanePreservingScroll();
+    }
+
     private String renderHtml() {
+        Font font = resolveBaseFont();
         StringBuilder html = new StringBuilder();
         html.append("<html><head><style>")
-                .append("body{font-family:sans-serif;font-size:12px;color:")
+                .append("body{font-family:'").append(cssFontFamily(font))
+                .append("';font-size:").append(font.getSize()).append("px;color:")
                 .append(toHex(TEXT_COLOR)).append(";background-color:")
                 .append(toHex(BACKGROUND)).append(";}")
                 .append("a{color:").append(toHex(LINK_COLOR)).append(";text-decoration:none;}")
@@ -145,6 +155,14 @@ public final class WritInfoPanel extends JPanel {
 
         html.append("</body></html>");
         return html.toString();
+    }
+
+    private Font resolveBaseFont() {
+        return baseFont != null ? baseFont : getFont();
+    }
+
+    private static String cssFontFamily(Font font) {
+        return font.getFamily().replace("'", "\\'");
     }
 
     private void handleLink(String description) {

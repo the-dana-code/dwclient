@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public final class StatsPanel extends JPanel {
+public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final Color BACKGROUND = new Color(10, 10, 15);
     private static final Color TEXT_COLOR = new Color(220, 220, 220);
     private static final Color BAR_BG = new Color(26, 26, 26);
@@ -55,7 +55,6 @@ public final class StatsPanel extends JPanel {
         Arrays.fill(gpRateSamples, -1);
 
         nameLabel.setForeground(TEXT_COLOR);
-        nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD, 14f));
         add(nameLabel, BorderLayout.NORTH);
 
         JPanel bars = new JPanel(new GridLayout(4, 1, 0, 8));
@@ -69,6 +68,15 @@ public final class StatsPanel extends JPanel {
         setUnavailable();
         gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
         gpTimer.start();
+    }
+
+    @Override
+    public void onFontChange(Font font) {
+        nameLabel.setFont(font.deriveFont(Font.BOLD));
+        hpBar.setFont(font);
+        gpBar.setFont(font);
+        burdenBar.setFont(font);
+        xpBar.setFont(font);
     }
 
     public void updateStats(StatsHudRenderer.StatsHudData data) {

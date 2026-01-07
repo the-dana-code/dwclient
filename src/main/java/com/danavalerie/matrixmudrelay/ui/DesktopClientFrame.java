@@ -60,6 +60,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final WritTracker writTracker;
     private final BotConfig cfg;
     private final Path configPath;
+    private final UiFontManager fontManager;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private final AnsiColorParser writParser = new AnsiColorParser();
     private final StringBuilder writPendingEntity = new StringBuilder();
@@ -96,6 +97,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         quickLinksPanel = new QuickLinksPanel(commandProcessor);
+        fontManager = new UiFontManager(this, outputPane.getFont());
+        fontManager.registerListener(writInfoPanel);
+        fontManager.registerListener(contextualResultsPanel);
+        fontManager.registerListener(quickLinksPanel);
+        fontManager.registerListener(statsPanel);
         applyConfiguredFont();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -187,9 +193,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void applyOutputFont(Font font, boolean persist) {
-        outputPane.setFont(font);
-        chitchatPane.setFont(font);
-        inputField.setFont(font);
+        fontManager.setBaseFont(font);
         if (persist) {
             persistFontConfig(font);
         }
@@ -224,7 +228,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void applyConfiguredFont() {
-        Font base = outputPane.getFont();
+        Font base = fontManager.getBaseFont();
         String family = cfg.ui.fontFamily != null ? cfg.ui.fontFamily : base.getFamily();
         int size = cfg.ui.fontSize != null && cfg.ui.fontSize > 0 ? cfg.ui.fontSize : base.getSize();
         applyOutputFont(new Font(family, base.getStyle(), size));

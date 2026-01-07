@@ -6,8 +6,10 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 
-public final class QuickLinksPanel extends JPanel {
+public final class QuickLinksPanel extends JPanel implements FontChangeListener {
     private final MudCommandProcessor commandProcessor;
+    private final JEditorPane editorPane = new JEditorPane();
+    private Font baseFont;
 
     private record QuickLink(String name, int mapId, int x, int y) {}
 
@@ -23,9 +25,9 @@ public final class QuickLinksPanel extends JPanel {
         this.commandProcessor = commandProcessor;
         setLayout(new BorderLayout());
 
-        JEditorPane editorPane = new JEditorPane();
         editorPane.setEditable(false);
         editorPane.setContentType("text/html");
+        baseFont = editorPane.getFont();
 
         // Hide the caret
         editorPane.setCaret(new javax.swing.text.DefaultCaret() {
@@ -35,14 +37,7 @@ public final class QuickLinksPanel extends JPanel {
             }
         });
 
-        StringBuilder html = new StringBuilder("<html><body style='font-family: sans-serif; padding: 5px;'>");
-        html.append("<b>Quick Links</b><br><br>");
-        for (int i = 0; i < LINKS.length; i++) {
-            html.append("<a href='").append(i).append("'>").append(LINKS[i].name()).append("</a><br><br>");
-        }
-        html.append("</body></html>");
-
-        editorPane.setText(html.toString());
+        editorPane.setText(renderHtml());
         editorPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 try {
@@ -59,5 +54,36 @@ public final class QuickLinksPanel extends JPanel {
         scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
         setPreferredSize(new Dimension(150, 0));
+    }
+
+    @Override
+    public void onFontChange(Font font) {
+        baseFont = font;
+        editorPane.setFont(font);
+        editorPane.setText(renderHtml());
+    }
+
+    private String renderHtml() {
+        Font font = resolveBaseFont();
+        StringBuilder html = new StringBuilder();
+        html.append("<html><body style='font-family: \"")
+                .append(cssFontFamily(font))
+                .append("\"; font-size: ")
+                .append(font.getSize())
+                .append("px; padding: 5px;'>");
+        html.append("<b>Quick Links</b><br><br>");
+        for (int i = 0; i < LINKS.length; i++) {
+            html.append("<a href='").append(i).append("'>").append(LINKS[i].name()).append("</a><br><br>");
+        }
+        html.append("</body></html>");
+        return html.toString();
+    }
+
+    private Font resolveBaseFont() {
+        return baseFont != null ? baseFont : getFont();
+    }
+
+    private static String cssFontFamily(Font font) {
+        return font.getFamily().replace("\"", "\\\"");
     }
 }

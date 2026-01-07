@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public final class ContextualResultsPanel extends JPanel {
+public final class ContextualResultsPanel extends JPanel implements FontChangeListener {
     private static final Color BACKGROUND = new Color(10, 10, 15);
     private static final Color TEXT_COLOR = new Color(220, 220, 220);
     private static final Color LINK_COLOR = new Color(110, 160, 255);
@@ -33,6 +33,7 @@ public final class ContextualResultsPanel extends JPanel {
     private final JScrollPane scrollPane;
     private final Consumer<String> commandSender;
     private final Set<String> visitedLinks = new HashSet<>();
+    private Font baseFont;
     private ContextualResultList currentResults = new ContextualResultList(
             "Search Results",
             java.util.List.of(),
@@ -47,14 +48,13 @@ public final class ContextualResultsPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         titleLabel.setForeground(TEXT_COLOR);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 14f));
         add(titleLabel, BorderLayout.NORTH);
 
         resultsPane.setContentType("text/html");
         resultsPane.setEditable(false);
         resultsPane.setBackground(BACKGROUND);
         resultsPane.setForeground(TEXT_COLOR);
-        resultsPane.setFont(resultsPane.getFont().deriveFont(Font.PLAIN, 12f));
+        baseFont = resultsPane.getFont();
 
         // Hide the caret
         resultsPane.setCaret(new javax.swing.text.DefaultCaret() {
@@ -84,10 +84,20 @@ public final class ContextualResultsPanel extends JPanel {
         });
     }
 
+    @Override
+    public void onFontChange(Font font) {
+        baseFont = font;
+        titleLabel.setFont(font.deriveFont(Font.BOLD));
+        resultsPane.setFont(font);
+        updatePanePreservingScroll();
+    }
+
     private String renderHtml() {
+        Font font = resolveBaseFont();
         StringBuilder html = new StringBuilder();
         html.append("<html><head><style>")
-                .append("body{font-family:sans-serif;font-size:12px;color:")
+                .append("body{font-family:'").append(cssFontFamily(font))
+                .append("';font-size:").append(font.getSize()).append("px;color:")
                 .append(toHex(TEXT_COLOR)).append(";background-color:")
                 .append(toHex(BACKGROUND)).append(";}")
                 .append("a{color:").append(toHex(LINK_COLOR)).append(";text-decoration:none;}")
@@ -130,6 +140,14 @@ public final class ContextualResultsPanel extends JPanel {
 
         html.append("</body></html>");
         return html.toString();
+    }
+
+    private Font resolveBaseFont() {
+        return baseFont != null ? baseFont : getFont();
+    }
+
+    private static String cssFontFamily(Font font) {
+        return font.getFamily().replace("'", "\\'");
     }
 
     private void handleLink(String description) {
