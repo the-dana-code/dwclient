@@ -539,6 +539,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (lower.endsWith("men") && lower.length() > 3) {
             candidates.add(word.substring(0, word.length() - 3) + "man");
         }
+        if (lower.equals("auloi")) {
+            candidates.add("aulos");
+        }
         if (lower.endsWith("es") && lower.length() > 2 && !lower.endsWith("ies") && !lower.endsWith("oes")) {
             candidates.add(word.substring(0, word.length() - 2));
         }
