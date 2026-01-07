@@ -279,9 +279,9 @@ public class RoomMapService {
                 "  where lower(item_name) = ? and special_find_note <> ''" +
                 ") refs on rooms.room_id = refs.room_id " +
                 "order by (case " +
-                "  when refs.source_info like 'NPC:%' then 0 " +
+                "  when refs.source_info = 'Shop' then 0 " +
                 "  when refs.source_info = 'Special' then 1 " +
-                "  when refs.source_info = 'Shop' then 2 " +
+                "  when refs.source_info like 'NPC:%' then 2 " +
                 "  else 3 " +
                 "end), rooms.map_id, rooms.room_short, rooms.room_id " +
                 "limit ?";
