@@ -140,12 +140,16 @@ public class RoomMapService {
             throw new MapLookupException("SQLite driver not available.");
         }
         String trimmed = term.trim().toLowerCase();
+        String normalized = stripLeadingRoomArticle(trimmed);
+        if (normalized.isBlank()) {
+            throw new MapLookupException("Search term cannot be blank.");
+        }
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type " +
                 "from rooms where lower(room_short) like ? order by room_short, map_id, room_id limit ?";
         List<RoomSearchResult> results = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + trimmed + "%");
+            stmt.setString(1, "%" + normalized + "%");
             stmt.setInt(2, limit);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -162,6 +166,16 @@ public class RoomMapService {
             }
         }
         return results;
+    }
+
+    private static String stripLeadingRoomArticle(String term) {
+        if (term.startsWith("a ")) {
+            return term.substring(2).trim();
+        }
+        if (term.startsWith("the ")) {
+            return term.substring(4).trim();
+        }
+        return term;
     }
 
     public List<NpcSearchResult> searchNpcsByName(String term, int limit) throws SQLException, MapLookupException {
