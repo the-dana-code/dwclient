@@ -494,22 +494,27 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     }
 
     private List<String> singularizePhrase(String phrase) {
-        String[] parts = phrase.trim().split("\\s+");
-        if (parts.length == 0) {
-            return List.of();
-        }
-        String last = parts[parts.length - 1];
-        List<String> singulars = singularizeWord(last);
-        if (singulars.isEmpty()) {
-            return List.of();
-        }
         List<String> phrases = new ArrayList<>();
-        for (String singular : singulars) {
-            if (singular.equalsIgnoreCase(last)) {
-                continue;
+        if (phrase.startsWith("pairs of ")) {
+            phrases.add("pair of " + phrase.substring(9));
+        }
+        else {
+            String[] parts = phrase.trim().split("\\s+");
+            if (parts.length == 0) {
+                return List.of();
             }
-            parts[parts.length - 1] = singular;
-            phrases.add(String.join(" ", parts));
+            // try singularizing the last word -- red beach towels -> red beach towel
+            String last = parts[parts.length - 1];
+            List<String> singulars = singularizeWord(last);
+            if (!singulars.isEmpty()) {
+                for (String singular : singulars) {
+                    if (singular.equalsIgnoreCase(last)) {
+                        continue;
+                    }
+                    parts[parts.length - 1] = singular;
+                    phrases.add(String.join(" ", parts));
+                }
+            }
         }
         return phrases;
     }
