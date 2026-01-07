@@ -15,8 +15,7 @@
     "maxFiles": 20
   },
   "ui": {
-    "fontFamily": "Monospaced",
-    "fontSize": 12,
-    "mapZoomPercent": 100
+    "fontFamily": "Lucida Console",
+    "fontSize": 20
   }
 }
