@@ -103,13 +103,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         fontManager.registerListener(contextualResultsPanel);
         fontManager.registerListener(quickLinksPanel);
         fontManager.registerListener(statsPanel);
-        applyConfiguredFont();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
         setLayout(new BorderLayout());
         setJMenuBar(buildMenuBar());
         add(buildSplitLayout(), BorderLayout.CENTER);
+        applyConfiguredFont();
         pack();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
