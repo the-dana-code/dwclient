@@ -194,7 +194,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private void handleMm(String body) {
         String remainder = body.length() > 3 ? body.substring(3).trim() : "";
         if (remainder.isBlank()) {
-            handleRoomSearchQuery("");
+            handleCurrentRoomCoordinates();
             return;
         }
         String[] parts = remainder.split("\\s+", 2);
@@ -273,6 +273,35 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
         output.appendSystem("Usage: mm loc <room name fragment>");
+    }
+
+    private void handleCurrentRoomCoordinates() {
+        String roomId = mud.getCurrentRoomSnapshot().roomId();
+        if (roomId == null || roomId.isBlank()) {
+            output.appendSystem("Error: Can't determine your location.");
+            return;
+        }
+        try {
+            RoomMapService.RoomLocation location = mapService.lookupRoomLocation(roomId);
+            StringBuilder out = new StringBuilder("Current location: ");
+            if (location.roomShort() != null && !location.roomShort().isBlank()) {
+                out.append(location.roomShort()).append(" - ");
+            }
+            out.append(mapService.getMapDisplayName(location.mapId()))
+                    .append(" {")
+                    .append(location.mapId())
+                    .append(", ")
+                    .append(location.xpos())
+                    .append(", ")
+                    .append(location.ypos())
+                    .append("}");
+            output.appendSystem(out.toString());
+        } catch (RoomMapService.MapLookupException e) {
+            output.appendSystem("Error: " + e.getMessage());
+        } catch (Exception e) {
+            log.warn("current room lookup failed err={}", e.toString());
+            output.appendSystem("Error: Unable to lookup current room.");
+        }
     }
 
     private void handleWrit(String query) {

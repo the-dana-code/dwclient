@@ -401,6 +401,22 @@ public class RoomMapService {
         return MapBackground.displayNameFor(mapId);
     }
 
+    public RoomLocation lookupRoomLocation(String roomId) throws SQLException, MapLookupException {
+        if (roomId == null || roomId.isBlank()) {
+            throw new MapLookupException("No room info available yet.");
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
+            RoomRecord room = loadRoom(conn, roomId);
+            if (room == null) {
+                throw new MapLookupException("Current room not found in map database.");
+            }
+            return new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort);
+        }
+    }
+
     private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -565,6 +581,9 @@ public class RoomMapService {
     }
 
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
+    }
+
+    public record RoomLocation(String roomId, int mapId, int xpos, int ypos, String roomShort) {
     }
 
     public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType, String sourceInfo) {
