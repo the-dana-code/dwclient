@@ -173,7 +173,9 @@ public final class WritInfoPanel extends JPanel {
         }
         int writNumber = index + 1;
         String command = switch (action) {
-            case "buy" -> "buy " + requirements.get(index).quantity() + " " + requirements.get(index).item();
+            case "buy" -> "buy " + requirements.get(index).quantity() + " " + requirements.get(index).item()
+                    // "bright and colourful kimono" -> "bright colourful kimono" -- the 'and' messes up the game's parser
+                    .replaceAll(" and ", " ");
             case "deliver" -> "mm writ " + writNumber + " deliver";
             case "item" -> "mm item exact " + requirements.get(index).item();
             case "npc" -> "mm writ " + writNumber + " npc";

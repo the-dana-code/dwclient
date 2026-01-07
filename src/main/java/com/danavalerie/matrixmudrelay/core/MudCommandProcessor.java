@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 
 public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
-    private static final int ROOM_SEARCH_LIMIT = 100;
+    private static final int ROOM_SEARCH_LIMIT = 999;
 
     public interface ClientOutput {
         void appendSystem(String text);
@@ -351,7 +351,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             case "npc" -> handleNpcSearchQuery(req.npc());
             case "loc" -> handleRoomSearchQuery(req.locationName());
             case "deliver" -> {
-                String command = Sanitizer.sanitizeMudInput("deliver " + req.item() + " to " + req.npc());
+                String command = Sanitizer.sanitizeMudInput(
+                        "deliver "
+                                + req.item()
+                                // "bright and colourful kimono" -> "bright colourful kimono" -- the 'and' messes up the game's parser
+                                .replaceAll(" and ", " ")
+                                + " to "
+                                + req.npc()
+                );
                 transcript.logClientToMud(command);
                 output.appendCommandEcho(command);
                 try {
@@ -535,14 +542,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         List<String> phrases = new ArrayList<>();
         if (phrase.startsWith("pairs of ")) {
             phrases.add("pair of " + phrase.substring(9));
-        }
-        else if (phrase.startsWith("packets of ")) {
+        } else if (phrase.startsWith("packets of ")) {
             phrases.add("packet of " + phrase.substring(9));
-        }
-        else if (phrase.startsWith("games of ")) {
+        } else if (phrase.startsWith("games of ")) {
             phrases.add("game of " + phrase.substring(9));
-        }
-        else {
+        } else {
             String[] parts = phrase.trim().split("\\s+");
             if (parts.length == 0) {
                 return List.of();
