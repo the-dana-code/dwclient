@@ -323,7 +323,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                         .append(" -> ")
                         .append(req.npc())
                         .append(" @ ")
-                        .append(req.location());
+                        .append(req.locationDisplay());
             }
             output.appendSystem(out.toString());
             return;
@@ -349,7 +349,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         switch (subcommand) {
             case "item" -> handleItemSearchQuery(req.item());
             case "npc" -> handleNpcSearchQuery(req.npc());
-            case "loc" -> handleRoomSearchQuery(req.location());
+            case "loc" -> handleRoomSearchQuery(req.locationName());
             case "deliver" -> {
                 String command = Sanitizer.sanitizeMudInput("deliver " + req.item() + " to " + req.npc());
                 transcript.logClientToMud(command);

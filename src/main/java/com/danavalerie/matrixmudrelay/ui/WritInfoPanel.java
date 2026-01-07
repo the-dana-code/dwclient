@@ -136,7 +136,8 @@ public final class WritInfoPanel extends JPanel {
                         .append("<div class=\"row muted\">Location: ")
                         .append("<a href=\"").append(locHref).append("\"")
                         .append(linkClass(locHref)).append(">")
-                        .append(escape(req.location())).append("</a>")
+                        .append(escape(req.locationName())).append("</a>")
+                        .append(req.locationSuffix().isBlank() ? "" : " " + escape(req.locationSuffix()))
                         .append("</div>")
                         .append("</div>");
             }

@@ -12,6 +12,7 @@ public final class WritTracker {
     private static final Pattern REQUIREMENT_SENTENCE_PATTERN = Pattern.compile(
             "^You are required to deliver (.+?) to (.+?) at (.+?)[.]?$");
     private static final Pattern NUMBER_PREFIX = Pattern.compile("^(\\d+)\\s+(.*)$");
+    private static final String LOCATION_SEPARATOR = " on ";
 
     private final List<WritRequirement> requirements = new ArrayList<>();
     private boolean readingWrit = false;
@@ -66,7 +67,9 @@ public final class WritTracker {
         String npc = matcher.group(2).trim();
         String location = matcher.group(3).trim();
         QuantityResult qtyResult = parseQuantity(itemText);
-        requirements.add(new WritRequirement(qtyResult.quantity, qtyResult.item, npc, location));
+        LocationParts locationParts = parseLocationParts(location);
+        requirements.add(new WritRequirement(qtyResult.quantity, qtyResult.item, npc,
+                locationParts.locationName, locationParts.locationSuffix));
         return true;
     }
 
@@ -104,6 +107,34 @@ public final class WritTracker {
     private record QuantityResult(int quantity, String item) {
     }
 
-    public record WritRequirement(int quantity, String item, String npc, String location) {
+    private record LocationParts(String locationName, String locationSuffix) {
+    }
+
+    private static LocationParts parseLocationParts(String location) {
+        if (location == null || location.isBlank()) {
+            return new LocationParts("", "");
+        }
+        String trimmed = location.trim();
+        String lower = trimmed.toLowerCase(Locale.ROOT);
+        int separatorIndex = lower.indexOf(LOCATION_SEPARATOR);
+        if (separatorIndex <= 0 || separatorIndex >= trimmed.length() - LOCATION_SEPARATOR.length()) {
+            return new LocationParts(trimmed, "");
+        }
+        String locationName = trimmed.substring(0, separatorIndex).trim();
+        String locationSuffix = trimmed.substring(separatorIndex).trim();
+        if (locationName.isEmpty()) {
+            return new LocationParts(trimmed, "");
+        }
+        return new LocationParts(locationName, locationSuffix);
+    }
+
+    public record WritRequirement(int quantity, String item, String npc,
+                                  String locationName, String locationSuffix) {
+        public String locationDisplay() {
+            if (locationSuffix == null || locationSuffix.isBlank()) {
+                return locationName;
+            }
+            return locationName + " " + locationSuffix.trim();
+        }
     }
 }
