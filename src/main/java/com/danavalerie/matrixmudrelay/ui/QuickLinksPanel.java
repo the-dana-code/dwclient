@@ -53,7 +53,7 @@ public final class QuickLinksPanel extends JPanel implements FontChangeListener 
         JScrollPane scrollPane = new JScrollPane(editorPane);
         scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
-        setPreferredSize(new Dimension(150, 0));
+        setPreferredSize(new Dimension(300, 0));
     }
 
     @Override

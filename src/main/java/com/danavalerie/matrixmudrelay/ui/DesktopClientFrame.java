@@ -51,6 +51,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final QuickLinksPanel quickLinksPanel;
     private final StatsPanel statsPanel = new StatsPanel();
+    private JSplitPane mapSplit;
     private final WritInfoPanel writInfoPanel;
     private final ContextualResultsPanel contextualResultsPanel;
     private final JTextField inputField = new JTextField();
@@ -112,6 +113,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         pack();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
+        SwingUtilities.invokeLater(this::positionQuickLinksDivider);
         installInputFocusForwarding();
 
         addWindowListener(new WindowAdapter() {
@@ -279,7 +281,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mudSplit.setBorder(null);
         mudSplit.setDividerLocation(400);
 
-        JSplitPane mapSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, quickLinksPanel);
+        mapSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, quickLinksPanel);
         mapSplit.setResizeWeight(1.0);
         mapSplit.setDividerSize(6);
         mapSplit.setBorder(null);
@@ -289,6 +291,22 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
         return splitPane;
+    }
+
+    private void positionQuickLinksDivider() {
+        if (mapSplit == null) {
+            return;
+        }
+        int quickLinksWidth = quickLinksPanel.getPreferredSize().width;
+        int totalWidth = mapSplit.getWidth();
+        if (totalWidth <= 0) {
+            int fallbackWidth = mapSplit.getPreferredSize().width;
+            if (fallbackWidth > 0) {
+                mapSplit.setDividerLocation(Math.max(0, fallbackWidth - quickLinksWidth));
+            }
+            return;
+        }
+        mapSplit.setDividerLocation(Math.max(0, totalWidth - quickLinksWidth));
     }
 
     private JComponent buildMudPanel() {
