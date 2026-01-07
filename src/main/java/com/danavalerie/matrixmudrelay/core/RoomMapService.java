@@ -701,9 +701,9 @@ public class RoomMapService {
 
     private static double estimateDistance(RoomRecord a, RoomRecord b) {
         if (a.mapId != b.mapId) {
-            return 0;
+            return 1000;
         }
-        return Math.abs(a.xpos - b.xpos) + Math.abs(a.ypos - b.ypos);
+        return (Math.abs(a.xpos - b.xpos) + Math.abs(a.ypos - b.ypos)) / 10.0;
     }
 
     private enum MapBackground {
