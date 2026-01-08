@@ -2,11 +2,23 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Dimension;
 
 public final class QuickLinksPanel extends JPanel implements FontChangeListener {
+    private static final Color BACKGROUND = new Color(10, 10, 15);
+    private static final Color TEXT_COLOR = new Color(220, 220, 220);
+    private static final Color LINK_COLOR = new Color(110, 160, 255);
+    private static final Color SUBTEXT_COLOR = new Color(170, 170, 190);
+
     private final MudCommandProcessor commandProcessor;
     private final JEditorPane editorPane = new JEditorPane();
     private Font baseFont;
@@ -23,10 +35,14 @@ public final class QuickLinksPanel extends JPanel implements FontChangeListener 
 
     public QuickLinksPanel(MudCommandProcessor commandProcessor) {
         this.commandProcessor = commandProcessor;
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(0, 8));
+        setBackground(BACKGROUND);
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         editorPane.setEditable(false);
         editorPane.setContentType("text/html");
+        editorPane.setBackground(BACKGROUND);
+        editorPane.setForeground(TEXT_COLOR);
         baseFont = editorPane.getFont();
 
         // Hide the caret
@@ -52,6 +68,7 @@ public final class QuickLinksPanel extends JPanel implements FontChangeListener 
 
         JScrollPane scrollPane = new JScrollPane(editorPane);
         scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(BACKGROUND);
         add(scrollPane, BorderLayout.CENTER);
         setPreferredSize(new Dimension(300, 0));
     }
@@ -66,14 +83,22 @@ public final class QuickLinksPanel extends JPanel implements FontChangeListener 
     private String renderHtml() {
         Font font = resolveBaseFont();
         StringBuilder html = new StringBuilder();
-        html.append("<html><body style='font-family: \"")
-                .append(cssFontFamily(font))
-                .append("\"; font-size: ")
-                .append(font.getSize2D())
-                .append("pt; padding: 5px;'>");
-        html.append("<b>Quick Links</b><br><br>");
+        html.append("<html><head><style>")
+                .append("body{font-family:'").append(cssFontFamily(font))
+                .append("';font-size:").append(font.getSize2D()).append("pt;color:")
+                .append(toHex(TEXT_COLOR)).append(";background-color:")
+                .append(toHex(BACKGROUND)).append(";}")
+                .append("a{color:").append(toHex(LINK_COLOR)).append(";text-decoration:none;}")
+                .append(".muted{color:").append(toHex(SUBTEXT_COLOR)).append(";}")
+                .append(".row{margin-top:6px;}")
+                .append("</style></head><body>");
+        html.append("<div class=\"muted\"><strong>Quick Links</strong></div>");
         for (int i = 0; i < LINKS.length; i++) {
-            html.append("<a href='").append(i).append("'>").append(LINKS[i].name()).append("</a><br><br>");
+            html.append("<div class=\"row\"><a href=\"")
+                    .append(i)
+                    .append("\">")
+                    .append(LINKS[i].name())
+                    .append("</a></div>");
         }
         html.append("</body></html>");
         return html.toString();
@@ -85,5 +110,9 @@ public final class QuickLinksPanel extends JPanel implements FontChangeListener 
 
     private static String cssFontFamily(Font font) {
         return font.getFamily().replace("\"", "\\\"");
+    }
+
+    private static String toHex(Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 }

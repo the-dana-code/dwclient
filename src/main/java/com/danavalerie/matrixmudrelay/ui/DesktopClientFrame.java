@@ -8,7 +8,6 @@ import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
-import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 
 import javax.swing.JButton;
@@ -24,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
@@ -54,7 +54,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final QuickLinksPanel quickLinksPanel;
     private final StatsPanel statsPanel = new StatsPanel();
-    private JSplitPane mapSplit;
     private final WritInfoPanel writInfoPanel;
     private final ContextualResultsPanel contextualResultsPanel;
     private final JTextField inputField = new JTextField();
@@ -121,7 +120,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         pack();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
-        SwingUtilities.invokeLater(this::positionQuickLinksDivider);
         installInputFocusForwarding();
 
         addWindowListener(new WindowAdapter() {
@@ -273,7 +271,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JSplitPane buildSplitLayout() {
         statsPanel.setPreferredSize(new Dimension(0, 200));
-        JSplitPane writSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writInfoPanel, contextualResultsPanel);
+        JTabbedPane writTabs = new JTabbedPane();
+        writTabs.addTab("Writ Info", writInfoPanel);
+        writTabs.addTab("Quick Links", quickLinksPanel);
+
+        JSplitPane writSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writTabs, contextualResultsPanel);
         writSplit.setContinuousLayout(true);
         writSplit.setResizeWeight(0.6);
         writSplit.setDividerSize(6);
@@ -292,35 +294,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mudSplit.setBorder(null);
         mudSplit.setDividerLocation(400);
 
-        mapSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, quickLinksPanel);
-        mapSplit.setContinuousLayout(true);
-        mapSplit.setResizeWeight(1.0);
-        mapSplit.setDividerSize(6);
-        mapSplit.setBorder(null);
-
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapSplit);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapPanel);
         splitPane.setContinuousLayout(true);
         splitPane.setResizeWeight(0.7);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
         return splitPane;
-    }
-
-    private void positionQuickLinksDivider() {
-        ThreadUtils.checkEdt();
-        if (mapSplit == null) {
-            return;
-        }
-        int quickLinksWidth = quickLinksPanel.getPreferredSize().width;
-        int totalWidth = mapSplit.getWidth();
-        if (totalWidth <= 0) {
-            int fallbackWidth = mapSplit.getPreferredSize().width;
-            if (fallbackWidth > 0) {
-                mapSplit.setDividerLocation(Math.max(0, fallbackWidth - quickLinksWidth));
-            }
-            return;
-        }
-        mapSplit.setDividerLocation(Math.max(0, totalWidth - quickLinksWidth));
     }
 
     private JComponent buildMudPanel() {
