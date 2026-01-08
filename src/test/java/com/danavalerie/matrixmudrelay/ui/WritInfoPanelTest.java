@@ -54,7 +54,9 @@ class WritInfoPanelTest {
         StoreInventoryTracker storeInventoryTracker = new StoreInventoryTracker();
         List<String> commands = new ArrayList<>();
         List<String> errors = new ArrayList<>();
-        WritInfoPanel panel = new WritInfoPanel(commands::add, storeInventoryTracker, errors::add);
+        WritInfoPanel panel = new WritInfoPanel(commands::add, storeInventoryTracker, errors::add,
+                (mapId, x, y) -> {
+                });
         panel.updateWrit(requirements);
         SwingUtilities.invokeAndWait(() -> {
             // wait for updateWrit to populate requirements

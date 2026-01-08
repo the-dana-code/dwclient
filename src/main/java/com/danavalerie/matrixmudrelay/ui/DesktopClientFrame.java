@@ -102,7 +102,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
         mud.setGmcpListener(commandProcessor);
-        writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker, outputPane::appendErrorText);
+        writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker,
+                outputPane::appendErrorText, commandProcessor::speedwalkTo);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         quickLinksPanel = new QuickLinksPanel(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
