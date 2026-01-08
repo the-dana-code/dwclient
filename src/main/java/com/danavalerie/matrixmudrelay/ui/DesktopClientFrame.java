@@ -4,12 +4,16 @@ import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
+import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -48,8 +52,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
+    private static final Logger log = LoggerFactory.getLogger(DesktopClientFrame.class);
     private final MudOutputPane outputPane = new MudOutputPane();
     private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
@@ -61,11 +67,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
     private final TranscriptLogger transcript;
-    private final DeliveryRouteMappings routeMappings;
+    private DeliveryRouteMappings routeMappings;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
     private final BotConfig cfg;
     private final Path configPath;
+    private final Path routesPath;
+    private final RoomMapService routeMapService = new RoomMapService("database.db");
     private final UiFontManager fontManager;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private final AnsiColorParser writParser = new AnsiColorParser();
@@ -83,6 +91,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.transcript = transcript;
         this.cfg = cfg;
         this.configPath = configPath;
+        this.routesPath = configPath.resolveSibling("delivery-routes.json");
         this.routeMappings = routeMappings;
         this.mapPanel = new MapPanel(resolveMapZoomPercent(), this::persistMapZoomConfig);
 
@@ -106,7 +115,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker,
-                routeMappings, outputPane::appendErrorText, commandProcessor::speedwalkTo);
+                routeMappings, outputPane::appendErrorText, commandProcessor::speedwalkTo, this::addCurrentRoomRoute);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         quickLinksPanel = new QuickLinksPanel(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
@@ -198,6 +207,62 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
+    }
+
+    private void addCurrentRoomRoute(WritTracker.WritRequirement requirement,
+                                     Consumer<DeliveryRouteMappings> onSuccess,
+                                     Consumer<String> onError) {
+        Thread worker = new Thread(() -> {
+            ThreadUtils.checkNotEdt();
+            try {
+                String roomId = mud.getCurrentRoomSnapshot().roomId();
+                if (roomId == null || roomId.isBlank()) {
+                    SwingUtilities.invokeLater(() -> onError.accept("Error: No room info available yet."));
+                    return;
+                }
+                RoomMapService.RoomLocation location = routeMapService.lookupRoomLocation(roomId);
+                DeliveryRouteMappings updated = appendRouteMapping(requirement, location);
+                ConfigLoader.saveRoutes(routesPath, updated);
+                DeliveryRouteMappings reloaded = ConfigLoader.loadRoutes(routesPath);
+                SwingUtilities.invokeLater(() -> {
+                    routeMappings = reloaded;
+                    onSuccess.accept(reloaded);
+                    outputPane.appendSystemText("Saved delivery route for \"" + requirement.npc()
+                            + "\" at \"" + requirement.locationDisplay() + "\".");
+                });
+            } catch (RoomMapService.MapLookupException e) {
+                SwingUtilities.invokeLater(() -> onError.accept("Error: " + e.getMessage()));
+            } catch (IllegalStateException e) {
+                SwingUtilities.invokeLater(() -> onError.accept("Error: " + e.getMessage()));
+            } catch (Exception e) {
+                log.warn("route mapping save failed", e);
+                SwingUtilities.invokeLater(() -> onError.accept("Error: Unable to save delivery route."));
+            }
+        }, "delivery-route-save");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private DeliveryRouteMappings appendRouteMapping(WritTracker.WritRequirement requirement,
+                                                     RoomMapService.RoomLocation location) throws IOException {
+        DeliveryRouteMappings existing = ConfigLoader.loadRoutes(routesPath);
+        String locationDisplay = requirement.locationDisplay();
+        List<DeliveryRouteMappings.RouteEntry> existingRoutes =
+                existing.routes() == null ? List.of() : existing.routes();
+        boolean alreadyExists = existingRoutes.stream()
+                .anyMatch(entry -> requirement.npc().equals(entry.npc())
+                        && locationDisplay.equals(entry.location()));
+        if (alreadyExists) {
+            throw new IllegalStateException("Route mapping already exists for \"" + requirement.npc()
+                    + "\" at \"" + locationDisplay + "\".");
+        }
+        List<DeliveryRouteMappings.RouteEntry> updated = new ArrayList<>(existingRoutes);
+        updated.add(new DeliveryRouteMappings.RouteEntry(
+                requirement.npc(),
+                locationDisplay,
+                List.of(location.mapId(), location.xpos(), location.ypos())
+        ));
+        return new DeliveryRouteMappings(updated);
     }
 
     private void applyOutputFont(Font font) {

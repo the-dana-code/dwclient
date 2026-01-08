@@ -32,6 +32,11 @@ public final class ConfigLoader {
         return new DeliveryRouteMappings(entries);
     }
 
+    public static void saveRoutes(Path path, DeliveryRouteMappings routes) throws IOException {
+        String json = GSON.toJson(routes.routes());
+        Files.writeString(path, json);
+    }
+
     public static void save(Path path, BotConfig cfg) throws IOException {
         String json = GSON.toJson(cfg);
         Files.writeString(path, json);

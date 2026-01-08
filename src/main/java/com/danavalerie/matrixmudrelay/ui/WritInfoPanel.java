@@ -38,21 +38,24 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
     private final Set<String> visitedLinks = new HashSet<>();
     private final Consumer<String> commandSender;
     private final StoreInventoryTracker storeInventoryTracker;
-    private final DeliveryRouteMappings routeMappings;
+    private DeliveryRouteMappings routeMappings;
     private final Consumer<String> errorSender;
     private final RouteHandler routeHandler;
+    private final RouteAdder routeAdder;
     private Font baseFont;
 
     public WritInfoPanel(Consumer<String> commandSender,
                          StoreInventoryTracker storeInventoryTracker,
                          DeliveryRouteMappings routeMappings,
                          Consumer<String> errorSender,
-                         RouteHandler routeHandler) {
+                         RouteHandler routeHandler,
+                         RouteAdder routeAdder) {
         this.commandSender = Objects.requireNonNull(commandSender, "commandSender");
         this.storeInventoryTracker = Objects.requireNonNull(storeInventoryTracker, "storeInventoryTracker");
         this.routeMappings = Objects.requireNonNull(routeMappings, "routeMappings");
         this.errorSender = Objects.requireNonNull(errorSender, "errorSender");
         this.routeHandler = Objects.requireNonNull(routeHandler, "routeHandler");
+        this.routeAdder = Objects.requireNonNull(routeAdder, "routeAdder");
         setLayout(new BorderLayout(0, 8));
         setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -139,6 +142,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                 String buyHref = "buy:" + i;
                 String deliverHref = "deliver:" + i;
                 String routeHref = "route:" + i;
+                String addRouteHref = "addroute:" + i;
                 String checkbox = finished.get(i) ? "&#x2611;" : "&#x2610;";
                 boolean hasRoute = routeMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
                 html.append("<div class=\"card\">")
@@ -175,7 +179,9 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                         .append(req.locationSuffix().isBlank() ? "" : " " + escape(req.locationSuffix()))
                         .append("</div>")
                         .append("<div class=\"row\">")
-                        .append(hasRoute ? "<a href=\"" + routeHref + "\"" + linkClass(routeHref) + ">[Route]</a> " : "")
+                        .append(hasRoute
+                                ? "<a href=\"" + routeHref + "\"" + linkClass(routeHref) + ">[Route]</a> "
+                                : "<a href=\"" + addRouteHref + "\"" + linkClass(addRouteHref) + ">[Add Current Room]</a> ")
                         .append("<a href=\"").append(deliverHref).append("\"")
                         .append(linkClass(deliverHref)).append(">[Deliver]</a>")
                         .append("</div>")
@@ -221,6 +227,10 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
         }
         if ("route".equals(action)) {
             handleRoute(index, description);
+            return;
+        }
+        if ("addroute".equals(action)) {
+            handleAddRoute(index, description);
             return;
         }
         int writNumber = index + 1;
@@ -272,6 +282,15 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                 + "\" at \"" + requirement.locationDisplay() + "\"."));
     }
 
+    private void handleAddRoute(int index, String description) {
+        WritTracker.WritRequirement requirement = requirements.get(index);
+        routeAdder.addRoute(requirement, updated -> {
+            visitedLinks.add(description);
+            routeMappings = updated;
+            updatePanePreservingScroll();
+        }, errorSender);
+    }
+
     private static String toHex(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
@@ -298,6 +317,13 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
     @FunctionalInterface
     public interface RouteHandler {
         void routeTo(int mapId, int x, int y);
+    }
+
+    @FunctionalInterface
+    public interface RouteAdder {
+        void addRoute(WritTracker.WritRequirement requirement,
+                      Consumer<DeliveryRouteMappings> onSuccess,
+                      Consumer<String> onError);
     }
 
     private final class WritLinkListener implements HyperlinkListener {
