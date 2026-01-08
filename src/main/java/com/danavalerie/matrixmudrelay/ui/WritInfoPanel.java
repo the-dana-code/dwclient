@@ -2,6 +2,7 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -77,6 +78,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
 
     public void updateWrit(List<WritTracker.WritRequirement> requirements) {
         SwingUtilities.invokeLater(() -> {
+            ThreadUtils.checkEdt();
             var viewPosition = scrollPane.getViewport().getViewPosition();
             this.requirements.clear();
             this.finished.clear();

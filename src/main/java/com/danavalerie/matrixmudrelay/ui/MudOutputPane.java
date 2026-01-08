@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
@@ -177,6 +178,7 @@ public final class MudOutputPane extends JTextPane {
             return;
         }
         Runnable appendTask = () -> {
+            ThreadUtils.checkEdt();
             for (AnsiColorParser.Segment segment : segments) {
                 appendSegment(segment);
             }
@@ -209,6 +211,7 @@ public final class MudOutputPane extends JTextPane {
     }
 
     private void insertChunk(String chunk, AttributeSet attributes) {
+        ThreadUtils.checkEdt();
         try {
             getDocument().insertString(getDocument().getLength(), chunk, attributes);
         } catch (BadLocationException ignored) {

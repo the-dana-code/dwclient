@@ -8,6 +8,7 @@ import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 
 import javax.swing.JButton;
@@ -273,27 +274,32 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JSplitPane buildSplitLayout() {
         statsPanel.setPreferredSize(new Dimension(0, 200));
         JSplitPane writSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writInfoPanel, contextualResultsPanel);
+        writSplit.setContinuousLayout(true);
         writSplit.setResizeWeight(0.6);
         writSplit.setDividerSize(6);
         writSplit.setBorder(null);
 
         JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writSplit, statsPanel);
+        statsSplit.setContinuousLayout(true);
         statsSplit.setResizeWeight(0.8);
         statsSplit.setDividerSize(6);
         statsSplit.setBorder(null);
 
         JSplitPane mudSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statsSplit, buildMudPanel());
+        mudSplit.setContinuousLayout(true);
         mudSplit.setResizeWeight(0.0);
         mudSplit.setDividerSize(6);
         mudSplit.setBorder(null);
         mudSplit.setDividerLocation(400);
 
         mapSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, quickLinksPanel);
+        mapSplit.setContinuousLayout(true);
         mapSplit.setResizeWeight(1.0);
         mapSplit.setDividerSize(6);
         mapSplit.setBorder(null);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapSplit);
+        splitPane.setContinuousLayout(true);
         splitPane.setResizeWeight(0.7);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
@@ -301,6 +307,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void positionQuickLinksDivider() {
+        ThreadUtils.checkEdt();
         if (mapSplit == null) {
             return;
         }
@@ -367,6 +374,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
 
         JSplitPane outputSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chitchatScroll, outputScroll);
+        outputSplit.setContinuousLayout(true);
         outputSplit.setResizeWeight(0.2);
         outputSplit.setDividerSize(6);
         outputSplit.setBorder(null);
@@ -431,7 +439,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void updateMap(String roomId) {
-        mapPanel.updateMap(roomId);
+        SwingUtilities.invokeLater(() -> mapPanel.updateMap(roomId));
     }
 
     @Override
@@ -477,7 +485,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             writLineBuffer.delete(0, start);
         }
         if (updated) {
-            writInfoPanel.updateWrit(writTracker.getRequirements());
+            var requirements = writTracker.getRequirements();
+            SwingUtilities.invokeLater(() -> writInfoPanel.updateWrit(requirements));
         }
     }
 

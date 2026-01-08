@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.ContextualResultList;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -75,6 +76,7 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
 
     public void updateResults(ContextualResultList results) {
         SwingUtilities.invokeLater(() -> {
+            ThreadUtils.checkEdt();
             var viewPosition = scrollPane.getViewport().getViewPosition();
             if (results != null) {
                 currentResults = results;

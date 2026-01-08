@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;

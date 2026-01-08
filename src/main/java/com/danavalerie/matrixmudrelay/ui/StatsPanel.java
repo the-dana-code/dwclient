@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
+import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.JProgressBar;
@@ -126,6 +127,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     }
 
     private static void updateBar(JProgressBar bar, int value, int max, String label) {
+        ThreadUtils.checkEdt();
         int safeMax = Math.max(1, max);
         int safeValue = Math.max(0, Math.min(value, safeMax));
         bar.setMaximum(safeMax);
@@ -199,6 +201,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     }
 
     private void onGpTick(ActionEvent event) {
+        ThreadUtils.checkEdt();
         if (gpRateMode <= 0 || gpMillisPerPoint <= 0 || currentGp >= currentMaxGp) {
             return;
         }
