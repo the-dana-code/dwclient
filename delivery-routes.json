@@ -115,5 +115,41 @@
       404,
       167
     ]
+  },
+  {
+    "npc": "Mr. D\u0027abdry",
+    "location": "Mr. D\u0027abdry\u0027s towel shop on Nap Lane",
+    "target": [
+      1,
+      1233,
+      392
+    ]
+  },
+  {
+    "npc": "stallholder Bernie",
+    "location": "the colourful stall on Market Street",
+    "target": [
+      1,
+      1006,
+      891
+    ]
+  },
+  {
+    "npc": "Cynthia Potts",
+    "location": "Stop Losing Your Way on Losing Street",
+    "target": [
+      1,
+      242,
+      1071
+    ]
+  },
+  {
+    "npc": "the tall butler",
+    "location": "the Ankh Post Office on The Soake",
+    "target": [
+      1,
+      353,
+      321
+    ]
   }
 ]

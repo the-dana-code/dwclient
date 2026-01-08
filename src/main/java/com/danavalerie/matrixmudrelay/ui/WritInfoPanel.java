@@ -15,6 +15,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,6 +60,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
         setLayout(new BorderLayout(0, 8));
         setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setMinimumSize(new Dimension(0, 0));
 
         titleLabel.setForeground(TEXT_COLOR);
         add(titleLabel, BorderLayout.NORTH);
@@ -67,6 +69,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
         writPane.setEditable(false);
         writPane.setBackground(BACKGROUND);
         writPane.setForeground(TEXT_COLOR);
+        writPane.setMinimumSize(new Dimension(0, 0));
         baseFont = writPane.getFont();
 
         // Hide the caret
@@ -83,6 +86,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
         scrollPane = new JScrollPane(writPane);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(BACKGROUND);
+        scrollPane.setMinimumSize(new Dimension(0, 0));
         add(scrollPane, BorderLayout.CENTER);
     }
 

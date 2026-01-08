@@ -13,6 +13,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -47,6 +48,7 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
         setLayout(new BorderLayout(0, 8));
         setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setMinimumSize(new Dimension(0, 0));
 
         titleLabel.setForeground(TEXT_COLOR);
         add(titleLabel, BorderLayout.NORTH);
@@ -55,6 +57,7 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
         resultsPane.setEditable(false);
         resultsPane.setBackground(BACKGROUND);
         resultsPane.setForeground(TEXT_COLOR);
+        resultsPane.setMinimumSize(new Dimension(0, 0));
         baseFont = resultsPane.getFont();
 
         // Hide the caret
@@ -71,6 +74,7 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
         scrollPane = new JScrollPane(resultsPane);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(BACKGROUND);
+        scrollPane.setMinimumSize(new Dimension(0, 0));
         add(scrollPane, BorderLayout.CENTER);
     }
 
