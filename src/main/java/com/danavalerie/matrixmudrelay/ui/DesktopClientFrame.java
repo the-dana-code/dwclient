@@ -26,6 +26,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -583,6 +584,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     public static void launch(BotConfig cfg, Path configPath, TranscriptLogger transcript) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Unable to set cross-platform look and feel: " + e.getMessage());
+        }
         SwingUtilities.invokeLater(() -> {
             DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, transcript);
             frame.setVisible(true);
