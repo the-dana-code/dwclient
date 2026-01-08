@@ -1,0 +1,47 @@
+[
+  {
+    "npc": "Mardi",
+    "location": "Masqueparade on Phedre Road",
+    "target": [7, 328, 68]
+  },
+  {
+    "npc": "the shopkeeper",
+    "location": "the clothing shop on Ettercap Street",
+    "target": [1, 588, 1016]
+  },
+  {
+    "npc": "the young lady",
+    "location": "the Souvenir Shop on Prouts",
+    "target": [1, 603, 438]
+  },
+  {
+    "npc": "Jenny Tawdry",
+    "location": "Tawdry Things on the Maudlin Bridge",
+    "target": [1, 805, 480]
+  },
+  {
+    "npc": "the shopkeeper",
+    "location": "the weapon shop on Lower Broadway",
+    "target": [1, 749, 690]
+  },
+  {
+    "npc": "Ms Estible",
+    "location": "the Head of the Table on the Willows",
+    "target": [1, 886, 631]
+  },
+  {
+    "npc": "Kernab",
+    "location": "Kernab's Weaponry Store on Treacle Street",
+    "target": [1, 883, 1138]
+  },
+  {
+    "npc": "Brent Booz",
+    "location": "the King's Way Rathskeller",
+    "target": [1, 721, 228]
+  },
+  {
+    "npc": "Arlof",
+    "location": "Arlof Eetmmot's Bakery on Plaza of the Moons",
+    "target": [1, 1040, 785]
+  }
+]

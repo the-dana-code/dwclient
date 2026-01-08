@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import org.junit.jupiter.api.Test;
@@ -54,8 +55,9 @@ class WritInfoPanelTest {
         StoreInventoryTracker storeInventoryTracker = new StoreInventoryTracker();
         List<String> commands = new ArrayList<>();
         List<String> errors = new ArrayList<>();
-        WritInfoPanel panel = new WritInfoPanel(commands::add, storeInventoryTracker, errors::add,
-                (mapId, x, y) -> {
+        DeliveryRouteMappings routeMappings = new DeliveryRouteMappings(List.of());
+        WritInfoPanel panel = new WritInfoPanel(commands::add, storeInventoryTracker, routeMappings,
+                errors::add, (mapId, x, y) -> {
                 });
         panel.updateWrit(requirements);
         SwingUtilities.invokeAndWait(() -> {

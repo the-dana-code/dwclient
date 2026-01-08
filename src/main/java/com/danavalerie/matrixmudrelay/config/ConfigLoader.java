@@ -2,10 +2,13 @@ package com.danavalerie.matrixmudrelay.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public final class ConfigLoader {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -17,6 +20,16 @@ public final class ConfigLoader {
         BotConfig cfg = GSON.fromJson(json, BotConfig.class);
         validate(cfg);
         return cfg;
+    }
+
+    public static DeliveryRouteMappings loadRoutes(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            return new DeliveryRouteMappings(List.of());
+        }
+        String json = Files.readString(path);
+        Type type = new TypeToken<List<DeliveryRouteMappings.RouteEntry>>() {}.getType();
+        List<DeliveryRouteMappings.RouteEntry> entries = GSON.fromJson(json, type);
+        return new DeliveryRouteMappings(entries);
     }
 
     public static void save(Path path, BotConfig cfg) throws IOException {

@@ -2,6 +2,7 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
+import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
@@ -60,6 +61,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
     private final TranscriptLogger transcript;
+    private final DeliveryRouteMappings routeMappings;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
     private final BotConfig cfg;
@@ -76,11 +78,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
 
-    public DesktopClientFrame(BotConfig cfg, Path configPath, TranscriptLogger transcript) {
+    public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, TranscriptLogger transcript) {
         super("MUD Desktop Client");
         this.transcript = transcript;
         this.cfg = cfg;
         this.configPath = configPath;
+        this.routeMappings = routeMappings;
         this.mapPanel = new MapPanel(resolveMapZoomPercent(), this::persistMapZoomConfig);
 
         writTracker = new WritTracker();
@@ -103,7 +106,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
         mud.setGmcpListener(commandProcessor);
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker,
-                outputPane::appendErrorText, commandProcessor::speedwalkTo);
+                routeMappings, outputPane::appendErrorText, commandProcessor::speedwalkTo);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         quickLinksPanel = new QuickLinksPanel(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
@@ -572,14 +575,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         };
     }
 
-    public static void launch(BotConfig cfg, Path configPath, TranscriptLogger transcript) {
+    public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, TranscriptLogger transcript) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             System.err.println("Unable to set cross-platform look and feel: " + e.getMessage());
         }
         SwingUtilities.invokeLater(() -> {
-            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, transcript);
+            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, routes, transcript);
             frame.setVisible(true);
         });
     }

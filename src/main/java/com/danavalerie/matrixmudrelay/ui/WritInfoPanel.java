@@ -1,8 +1,8 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
-import com.danavalerie.matrixmudrelay.core.WritRouteMappings;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.swing.BorderFactory;
@@ -38,16 +38,19 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
     private final Set<String> visitedLinks = new HashSet<>();
     private final Consumer<String> commandSender;
     private final StoreInventoryTracker storeInventoryTracker;
+    private final DeliveryRouteMappings routeMappings;
     private final Consumer<String> errorSender;
     private final RouteHandler routeHandler;
     private Font baseFont;
 
     public WritInfoPanel(Consumer<String> commandSender,
                          StoreInventoryTracker storeInventoryTracker,
+                         DeliveryRouteMappings routeMappings,
                          Consumer<String> errorSender,
                          RouteHandler routeHandler) {
         this.commandSender = Objects.requireNonNull(commandSender, "commandSender");
         this.storeInventoryTracker = Objects.requireNonNull(storeInventoryTracker, "storeInventoryTracker");
+        this.routeMappings = Objects.requireNonNull(routeMappings, "routeMappings");
         this.errorSender = Objects.requireNonNull(errorSender, "errorSender");
         this.routeHandler = Objects.requireNonNull(routeHandler, "routeHandler");
         setLayout(new BorderLayout(0, 8));
@@ -137,7 +140,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                 String deliverHref = "deliver:" + i;
                 String routeHref = "route:" + i;
                 String checkbox = finished.get(i) ? "&#x2611;" : "&#x2610;";
-                boolean hasRoute = WritRouteMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
+                boolean hasRoute = routeMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
                 html.append("<div class=\"card\">")
                         .append("<div>")
                         .append("<a href=\"").append(toggleHref).append("\"")
@@ -261,7 +264,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
 
     private void handleRoute(int index, String description) {
         WritTracker.WritRequirement requirement = requirements.get(index);
-        WritRouteMappings.findRoute(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(target -> {
+        routeMappings.findRoute(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(target -> {
             visitedLinks.add(description);
             routeHandler.routeTo(target.mapId(), target.x(), target.y());
             updatePanePreservingScroll();
