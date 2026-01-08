@@ -52,6 +52,34 @@ public final class WritRouteMappings {
                 ),
                 new RouteTarget(1, 805, 480)
         );
+        routes.put(
+                new RouteKey(
+                        "the shopkeeper",
+                        "the weapon shop on Lower Broadway"
+                ),
+                new RouteTarget(1, 749, 690)
+        );
+        routes.put(
+                new RouteKey(
+                        "Ms Estible",
+                        "the Head of the Table on the Willows"
+                ),
+                new RouteTarget(1, 886, 631)
+        );
+        routes.put(
+                new RouteKey(
+                        "Kernab",
+                        "Kernab's Weaponry Store on Treacle Street"
+                ),
+                new RouteTarget(1, 883, 1138)
+        );
+        routes.put(
+                new RouteKey(
+                        "Arlof",
+                        "Arlof Eetmmot's Bakery on Plaza of the Moons"
+                ),
+                new RouteTarget(1, 1040, 785)
+        );
         return Collections.unmodifiableMap(routes);
     }
 }
