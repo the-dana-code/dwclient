@@ -88,5 +88,32 @@
       732,
       465
     ]
+  },
+  {
+    "npc": "Tzere",
+    "location": "the Warriors\u0027 Guild cafe",
+    "target": [
+      1,
+      677,
+      847
+    ]
+  },
+  {
+    "npc": "Goran",
+    "location": "Ankh Bridge Imports on Ankh Bridge",
+    "target": [
+      1,
+      287,
+      536
+    ]
+  },
+  {
+    "npc": "the salesperson",
+    "location": "the back section of the Stationery Warehouse on Edgeway Road",
+    "target": [
+      1,
+      404,
+      167
+    ]
   }
 ]
