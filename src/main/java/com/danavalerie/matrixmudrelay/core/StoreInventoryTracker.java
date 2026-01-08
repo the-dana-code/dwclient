@@ -41,8 +41,10 @@ public final class StoreInventoryTracker {
         if (normalized.isEmpty()) {
             return Optional.empty();
         }
+        List<String> variants = buildNormalizedVariants(normalized);
         for (StoreItem item : items) {
-            if (normalizeItemName(item.name()).equals(normalized)) {
+            String candidate = normalizeItemName(item.name());
+            if (variants.contains(candidate)) {
                 return Optional.of(item);
             }
         }
@@ -115,6 +117,52 @@ public final class StoreInventoryTracker {
             trimmed = trimmed.substring("pairs of ".length()).trim();
         }
         return trimmed.replaceAll("\\s+", " ");
+    }
+
+    private static List<String> buildNormalizedVariants(String normalized) {
+        List<String> variants = new ArrayList<>();
+        variants.add(normalized);
+        String[] parts = normalized.split(" ");
+        if (parts.length == 0) {
+            return variants;
+        }
+        String last = parts[parts.length - 1];
+        for (String singular : singularizeWord(last)) {
+            if (singular.equals(last)) {
+                continue;
+            }
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < parts.length - 1; i++) {
+                if (i > 0) {
+                    builder.append(' ');
+                }
+                builder.append(parts[i]);
+            }
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(singular);
+            variants.add(builder.toString());
+        }
+        return variants;
+    }
+
+    private static List<String> singularizeWord(String word) {
+        List<String> variants = new ArrayList<>();
+        variants.add(word);
+        if (word.endsWith("ies") && word.length() > 3) {
+            variants.add(word.substring(0, word.length() - 3) + "y");
+            return variants;
+        }
+        if (word.endsWith("ves") && word.length() > 3) {
+            variants.add(word.substring(0, word.length() - 3) + "f");
+            variants.add(word.substring(0, word.length() - 3) + "fe");
+            return variants;
+        }
+        if (word.endsWith("s") && !word.endsWith("ss") && word.length() > 1) {
+            variants.add(word.substring(0, word.length() - 1));
+        }
+        return variants;
     }
 
     private boolean ingestLetteredItem(String line) {
