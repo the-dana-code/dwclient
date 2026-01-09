@@ -355,13 +355,25 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             case "npc" -> handleNpcSearchQuery(req.npc());
             case "loc" -> handleRoomSearchQuery(req.locationName());
             case "deliver" -> {
+                String npcName = req.npc();
+                if (
+                        npcName.startsWith("Mr ")
+                                || npcName.startsWith("Mr. ")
+                                || npcName.startsWith("Ms ")
+                                || npcName.startsWith("Ms. ")
+                                || npcName.startsWith("Mrs ")
+                                || npcName.startsWith("Mrs. ")
+                ) {
+                    int idx = npcName.indexOf(' ');
+                    npcName = npcName.substring(idx + 1);
+                }
                 String command = Sanitizer.sanitizeMudInput(
                         "deliver "
                                 + req.item()
                                 // "bright and colourful kimono" -> "bright colourful kimono" -- the 'and' messes up the game's parser
                                 .replaceAll(" and ", " ")
                                 + " to "
-                                + req.npc()
+                                + npcName
                 );
                 transcript.logClientToMud(command);
                 output.appendCommandEcho(command);

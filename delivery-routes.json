@@ -241,5 +241,113 @@
       512,
       483
     ]
+  },
+  {
+    "npc": "the waiter",
+    "location": "the Golden Dragon on Merchants Street",
+    "target": [
+      1,
+      981,
+      1054
+    ]
+  },
+  {
+    "npc": "Tarquin Houlian",
+    "location": "Occult Harry\u0027s Arcane Boutique on Body Street",
+    "target": [
+      1,
+      737,
+      578
+    ]
+  },
+  {
+    "npc": "Al Sartorn",
+    "location": "Sartorn and Son Scabbard Store on Endless Street",
+    "target": [
+      1,
+      463,
+      1194
+    ]
+  },
+  {
+    "npc": "Flyn Skint",
+    "location": "the dockside shop on the waterfront",
+    "target": [
+      1,
+      158,
+      617
+    ]
+  },
+  {
+    "npc": "Nathan",
+    "location": "the Curio Shop on Artorollo Alley",
+    "target": [
+      1,
+      1124,
+      337
+    ]
+  },
+  {
+    "npc": "the salesgolem",
+    "location": "the lumberyard on Dimwell Street",
+    "target": [
+      1,
+      284,
+      326
+    ]
+  },
+  {
+    "npc": "the seamstress",
+    "location": "the backroom of Madame Dawning\u0027s Palliaments on Pseudopolis Yard",
+    "target": [
+      7,
+      137,
+      139
+    ]
+  },
+  {
+    "npc": "the sales assistant",
+    "location": "Small Gods Vestments on Street of Small Gods",
+    "target": [
+      1,
+      876,
+      918
+    ]
+  },
+  {
+    "npc": "Anita Hurpley",
+    "location": "the Battes Ande Cattes, the wytches stall on Gods\u0027 Collar",
+    "target": [
+      1,
+      782,
+      646
+    ]
+  },
+  {
+    "npc": "Miss Grangrid",
+    "location": "the backroom of Grangrid, Graves, and Descendants on Chrononhotonthologos Street",
+    "target": [
+      1,
+      875,
+      106
+    ]
+  },
+  {
+    "npc": "Bligh Earcrusher",
+    "location": "Bligh Earcrusher\u0027s exclusive shop",
+    "target": [
+      1,
+      508,
+      287
+    ]
+  },
+  {
+    "npc": "Felicity Hopkinson",
+    "location": "the foyer of the Dwarf Bread Museum",
+    "target": [
+      1,
+      592,
+      757
+    ]
   }
 ]
