@@ -151,5 +151,95 @@
       353,
       321
     ]
+  },
+  {
+    "npc": "Carnelia Palm",
+    "location": "Pinky\u0027s Lingerie and Big Top Circus Supply Emporium on Street of Cunning Artificers",
+    "target": [
+      1,
+      952,
+      994
+    ]
+  },
+  {
+    "npc": "Archemedies",
+    "location": "Georgio\u0027s pizza place on Artorollo Alley",
+    "target": [
+      1,
+      1166,
+      329
+    ]
+  },
+  {
+    "npc": "the elderly woman",
+    "location": "Little Agatea",
+    "target": [
+      1,
+      289,
+      986
+    ]
+  },
+  {
+    "npc": "Oliver Eliawan",
+    "location": "the Turn off the Crystal Ball shop on Gods\u0027 Collar",
+    "target": [
+      1,
+      644,
+      700
+    ]
+  },
+  {
+    "npc": "Jack Bank",
+    "location": "Starbanks on God\u0027s Collar",
+    "target": [
+      1,
+      735,
+      606
+    ]
+  },
+  {
+    "npc": "Alab Nad",
+    "location": "Alab\u0027s Leatherorama on Mollymog Street",
+    "target": [
+      1,
+      287,
+      438
+    ]
+  },
+  {
+    "npc": "the smart usher",
+    "location": "the Dysk ticket office",
+    "target": [
+      7,
+      652,
+      155
+    ]
+  },
+  {
+    "npc": "Bolly Manga",
+    "location": "Bolly\u0027s Boot Boutique on Upper Broadway",
+    "target": [
+      1,
+      994,
+      918
+    ]
+  },
+  {
+    "npc": "the maitre d\u0027",
+    "location": "the wine lounge at the Flaming Cabbage",
+    "target": [
+      1,
+      623,
+      844
+    ]
+  },
+  {
+    "npc": "Georg Festrunk",
+    "location": "Festrunk Brothers on Prouts",
+    "target": [
+      1,
+      512,
+      483
+    ]
   }
 ]
