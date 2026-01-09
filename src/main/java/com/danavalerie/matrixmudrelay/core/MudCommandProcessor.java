@@ -364,6 +364,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                                 || npcName.startsWith("Mrs ")
                                 || npcName.startsWith("Mrs. ")
                 ) {
+                    // usage of the dot is inconsistent, so
+                    // we'll just remove the title completely
+                    // for simplicity
                     int idx = npcName.indexOf(' ');
                     npcName = npcName.substring(idx + 1);
                 }
