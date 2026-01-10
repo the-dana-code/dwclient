@@ -457,5 +457,32 @@
       141,
       718
     ]
+  },
+  {
+    "npc": "Mr Graves",
+    "location": "the premises of Grangrid, Graves, and Descendants on Chrononhotonthologos Street",
+    "target": [
+      1,
+      875,
+      116
+    ]
+  },
+  {
+    "npc": "Coffin\u0027 Joe",
+    "location": "the coffin shop on Street of Cunning Artificers",
+    "target": [
+      1,
+      816,
+      1051
+    ]
+  },
+  {
+    "npc": "Mr Odie",
+    "location": "Odie\u0027s Antique\u0027s on The Soake",
+    "target": [
+      1,
+      396,
+      301
+    ]
   }
 ]
