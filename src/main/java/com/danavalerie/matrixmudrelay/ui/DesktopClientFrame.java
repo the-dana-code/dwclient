@@ -377,7 +377,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             WritTracker.WritRequirement req = writRequirements.get(i);
             boolean hasRoute = routeMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
             int index = i;
-            JMenu writMenu = new JMenu("Writ " + (i + 1));
+            JMenu writMenu = new JMenu("Writ" + (i + 1));
 
             JCheckBoxMenuItem completeItem = new JCheckBoxMenuItem("Completed", writFinished.get(i));
             completeItem.addActionListener(event -> writFinished.set(index, completeItem.isSelected()));
