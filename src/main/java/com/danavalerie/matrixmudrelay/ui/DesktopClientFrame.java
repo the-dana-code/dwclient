@@ -59,7 +59,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MudOutputPane outputPane = new MudOutputPane();
     private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
-    private final QuickLinksPanel quickLinksPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private final WritInfoPanel writInfoPanel;
     private final ContextualResultsPanel contextualResultsPanel;
@@ -76,6 +75,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomMapService routeMapService = new RoomMapService("database.db");
     private final UiFontManager fontManager;
     private final StringBuilder writLineBuffer = new StringBuilder();
+    private static final QuickLink[] QUICK_LINKS = {
+            new QuickLink("Mended Drum", 1, 718, 802),
+            new QuickLink("Bologna shop", 1, 648, 897),
+            new QuickLink("Jobs Market", 1, 699, 905),
+            new QuickLink("Wisdom Buff", 38, 838, 265),
+            new QuickLink("Intelligence Buff", 25, 290, 200)
+    };
     private final AnsiColorParser writParser = new AnsiColorParser();
     private final StringBuilder writPendingEntity = new StringBuilder();
     private String writPendingTail = "";
@@ -117,11 +123,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker,
                 routeMappings, outputPane::appendErrorText, commandProcessor::speedwalkTo, this::addCurrentRoomRoute);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
-        quickLinksPanel = new QuickLinksPanel(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
         fontManager.registerListener(writInfoPanel);
         fontManager.registerListener(contextualResultsPanel);
-        fontManager.registerListener(quickLinksPanel);
         fontManager.registerListener(statsPanel);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -156,6 +160,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         fontItem.addActionListener(event -> showFontDialog());
         viewMenu.add(fontItem);
         menuBar.add(viewMenu);
+
+        JMenu quickLinksMenu = new JMenu("Navigate");
+        for (QuickLink link : QUICK_LINKS) {
+            JMenuItem linkItem = new JMenuItem(link.name());
+            linkItem.addActionListener(event -> commandProcessor.speedwalkTo(link.mapId(), link.x(), link.y()));
+            quickLinksMenu.add(linkItem);
+        }
+        menuBar.add(quickLinksMenu);
         return menuBar;
     }
 
@@ -338,11 +350,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
+    private record QuickLink(String name, int mapId, int x, int y) {}
+
     private JSplitPane buildSplitLayout() {
         statsPanel.setPreferredSize(new Dimension(0, 200));
         JTabbedPane writTabs = new JTabbedPane();
         writTabs.addTab("Writ Info", writInfoPanel);
-        writTabs.addTab("Quick Links", quickLinksPanel);
 
         JSplitPane writSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writTabs, contextualResultsPanel);
         writSplit.setContinuousLayout(true);
