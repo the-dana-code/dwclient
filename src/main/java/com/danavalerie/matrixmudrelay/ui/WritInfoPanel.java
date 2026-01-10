@@ -169,6 +169,13 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                         .append("<a href=\"").append(buyHref).append("\"")
                         .append(linkClass(buyHref)).append(">[Buy]</a>")
                         .append("</div>")
+                        .append("<div class=\"row\">")
+                        .append(hasRoute
+                                ? "<a href=\"" + routeHref + "\"" + linkClass(routeHref) + ">[Route]</a> "
+                                : "<a href=\"" + addRouteHref + "\"" + linkClass(addRouteHref) + ">[Add Current Room]</a> ")
+                        .append("<a href=\"").append(deliverHref).append("\"")
+                        .append(linkClass(deliverHref)).append(">[Deliver]</a>")
+                        .append("</div>")
                         .append("<div class=\"spacer\"></div>")
                         .append("<div class=\"row muted\">Deliver to ")
                         .append("<a href=\"").append(npcHref).append("\"")
@@ -181,13 +188,6 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                         .append(linkClass(locHref)).append(">")
                         .append(escape(req.locationName())).append("</a>")
                         .append(req.locationSuffix().isBlank() ? "" : " " + escape(req.locationSuffix()))
-                        .append("</div>")
-                        .append("<div class=\"row\">")
-                        .append(hasRoute
-                                ? "<a href=\"" + routeHref + "\"" + linkClass(routeHref) + ">[Route]</a> "
-                                : "<a href=\"" + addRouteHref + "\"" + linkClass(addRouteHref) + ">[Add Current Room]</a> ")
-                        .append("<a href=\"").append(deliverHref).append("\"")
-                        .append(linkClass(deliverHref)).append(">[Deliver]</a>")
                         .append("</div>")
                         .append("</div>");
             }

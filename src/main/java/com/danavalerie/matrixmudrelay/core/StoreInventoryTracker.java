@@ -105,6 +105,7 @@ public final class StoreInventoryTracker {
         trimmed = removePrefix(trimmed, "a ", "an ", "one ");
         trimmed = removePrefix(trimmed, "pair of ", "pairs of ");
         trimmed = removePrefix(trimmed, "game of ", "games of ");
+        trimmed = removePrefix(trimmed, "tube of ", "tubes of ");
         return trimmed.replaceAll("\\s+", " ");
     }
 

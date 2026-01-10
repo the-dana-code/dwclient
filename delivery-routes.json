@@ -430,5 +430,32 @@
       986,
       967
     ]
+  },
+  {
+    "npc": "the salesperson",
+    "location": "the Stationery Warehouse on Edgeway Road",
+    "target": [
+      1,
+      413,
+      158
+    ]
+  },
+  {
+    "npc": "Mr. Stronginthearm",
+    "location": "the weapon shop on Lower Broadway",
+    "target": [
+      1,
+      749,
+      690
+    ]
+  },
+  {
+    "npc": "the young woman",
+    "location": "the clothing shop on Cockbill Street",
+    "target": [
+      1,
+      141,
+      718
+    ]
   }
 ]

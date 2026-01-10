@@ -563,6 +563,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             phrases.add("pair of " + phrase.substring(9));
         } else if (phrase.startsWith("packets of ")) {
             phrases.add("packet of " + phrase.substring(9));
+        } else if (phrase.startsWith("tubes of ")) {
+            phrases.add("tube of " + phrase.substring(9));
         } else if (phrase.startsWith("games of ")) {
             phrases.add("game of " + phrase.substring(9));
         } else {
