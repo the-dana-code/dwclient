@@ -58,6 +58,7 @@ class WritInfoPanelTest {
         DeliveryRouteMappings routeMappings = new DeliveryRouteMappings(List.of());
         WritInfoPanel panel = new WritInfoPanel(commands::add, storeInventoryTracker, routeMappings,
                 errors::add, (mapId, x, y) -> {
+                }, (req, onSuccess, onError) -> {
                 });
         panel.updateWrit(requirements);
         SwingUtilities.invokeAndWait(() -> {

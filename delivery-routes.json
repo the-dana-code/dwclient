@@ -349,5 +349,86 @@
       592,
       757
     ]
+  },
+  {
+    "npc": "Wozza",
+    "location": "the Ecksian Souvenir Shop on Cheapside",
+    "target": [
+      1,
+      651,
+      788
+    ]
+  },
+  {
+    "npc": "the cafe attendant",
+    "location": "Somethynge-or-Other Licenced Caffe on Endless Street",
+    "target": [
+      1,
+      224,
+      1086
+    ]
+  },
+  {
+    "npc": "Trioll Negurney",
+    "location": "Trioll Negurney\u0027s Cayke Shoppe on Sator Square",
+    "target": [
+      1,
+      1060,
+      672
+    ]
+  },
+  {
+    "npc": "Scheda Carte",
+    "location": "the card shop on Attic Bee Street",
+    "target": [
+      1,
+      676,
+      945
+    ]
+  },
+  {
+    "npc": "Master Nimbledrit",
+    "location": "Master Nimbledrit\u0027s Shop of Crafting Equipment on Ettercap Street",
+    "target": [
+      1,
+      634,
+      1071
+    ]
+  },
+  {
+    "npc": "Jabez Clamber",
+    "location": "the antique jewellery shop on Grunefair",
+    "target": [
+      1,
+      428,
+      238
+    ]
+  },
+  {
+    "npc": "William Cobbler",
+    "location": "the cobbler shop on The Soake",
+    "target": [
+      1,
+      312,
+      371
+    ]
+  },
+  {
+    "npc": "Fat Sandra",
+    "location": "Fat Sally\u0027s on Squeezebelly Alley",
+    "target": [
+      1,
+      701,
+      704
+    ]
+  },
+  {
+    "npc": "Harold the locksmith",
+    "location": "the locksmith\u0027s shop on Street of Cunning Artificers",
+    "target": [
+      1,
+      986,
+      967
+    ]
   }
 ]

@@ -101,22 +101,20 @@ public final class StoreInventoryTracker {
 
     private static String normalizeItemName(String name) {
         String trimmed = name.trim().toLowerCase(Locale.ROOT);
-        if (trimmed.startsWith("our very last ")) {
-            trimmed = trimmed.substring("our very last ".length()).trim();
-        }
-        if (trimmed.startsWith("a ")) {
-            trimmed = trimmed.substring(2).trim();
-        } else if (trimmed.startsWith("an ")) {
-            trimmed = trimmed.substring(3).trim();
-        } else if (trimmed.startsWith("one ")) {
-            trimmed = trimmed.substring(4).trim();
-        }
-        if (trimmed.startsWith("pair of ")) {
-            trimmed = trimmed.substring("pair of ".length()).trim();
-        } else if (trimmed.startsWith("pairs of ")) {
-            trimmed = trimmed.substring("pairs of ".length()).trim();
-        }
+        trimmed = removePrefix(trimmed, "our very last ");
+        trimmed = removePrefix(trimmed, "a ", "an ", "one ");
+        trimmed = removePrefix(trimmed, "pair of ", "pairs of ");
+        trimmed = removePrefix(trimmed, "game of ", "games of ");
         return trimmed.replaceAll("\\s+", " ");
+    }
+
+    private static String removePrefix(String text, String... prefixes) {
+        for (String prefix : prefixes) {
+            if (text.startsWith(prefix)) {
+                return text.substring(prefix.length()).trim();
+            }
+        }
+        return text;
     }
 
     private static List<String> buildNormalizedVariants(String normalized) {
