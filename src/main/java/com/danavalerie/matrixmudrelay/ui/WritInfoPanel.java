@@ -172,7 +172,7 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                         .append("<div class=\"row\">")
                         .append(hasRoute
                                 ? "<a href=\"" + routeHref + "\"" + linkClass(routeHref) + ">[Route]</a> "
-                                : "<a href=\"" + addRouteHref + "\"" + linkClass(addRouteHref) + ">[Add Current Room]</a> ")
+                                : "")
                         .append("<a href=\"").append(deliverHref).append("\"")
                         .append(linkClass(deliverHref)).append(">[Deliver]</a>")
                         .append("</div>")
@@ -189,6 +189,9 @@ public final class WritInfoPanel extends JPanel implements FontChangeListener {
                         .append(escape(req.locationName())).append("</a>")
                         .append(req.locationSuffix().isBlank() ? "" : " " + escape(req.locationSuffix()))
                         .append("</div>")
+                        .append(hasRoute
+                                ? ""
+                                : "<div class=\"row\"><a href=\"" + addRouteHref + "\"" + linkClass(addRouteHref) + ">[Add Current Room]</a></div>")
                         .append("</div>");
             }
         }
