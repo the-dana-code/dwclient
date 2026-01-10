@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -28,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
@@ -60,7 +60,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
-    private final WritInfoPanel writInfoPanel;
     private final ContextualResultsPanel contextualResultsPanel;
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
@@ -74,6 +73,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final Path routesPath;
     private final RoomMapService routeMapService = new RoomMapService("database.db");
     private final UiFontManager fontManager;
+    private final JMenuBar menuBar = new JMenuBar();
+    private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
+    private final List<Boolean> writFinished = new ArrayList<>();
+    private final List<JMenu> writMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
     private static final QuickLink[] QUICK_LINKS = {
             new QuickLink("Mended Drum", 1, 718, 802),
@@ -120,11 +123,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
         mud.setGmcpListener(commandProcessor);
-        writInfoPanel = new WritInfoPanel(commandProcessor::handleInput, storeInventoryTracker,
-                routeMappings, outputPane::appendErrorText, commandProcessor::speedwalkTo, this::addCurrentRoomRoute);
         contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         fontManager = new UiFontManager(this, outputPane.getFont());
-        fontManager.registerListener(writInfoPanel);
         fontManager.registerListener(contextualResultsPanel);
         fontManager.registerListener(statsPanel);
 
@@ -154,7 +154,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JMenuBar buildMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
         JMenu viewMenu = new JMenu("View");
         JMenuItem fontItem = new JMenuItem("Output Font...");
         fontItem.addActionListener(event -> showFontDialog());
@@ -352,18 +351,117 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private record QuickLink(String name, int mapId, int x, int y) {}
 
+    private void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
+        writRequirements.clear();
+        writFinished.clear();
+        if (requirements != null) {
+            writRequirements.addAll(requirements);
+            for (int i = 0; i < requirements.size(); i++) {
+                writFinished.add(false);
+            }
+        }
+        rebuildWritMenus();
+    }
+
+    private void rebuildWritMenus() {
+        for (JMenu menu : writMenus) {
+            menuBar.remove(menu);
+        }
+        writMenus.clear();
+        if (writRequirements.isEmpty()) {
+            menuBar.revalidate();
+            menuBar.repaint();
+            return;
+        }
+        for (int i = 0; i < writRequirements.size(); i++) {
+            WritTracker.WritRequirement req = writRequirements.get(i);
+            boolean hasRoute = routeMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
+            int index = i;
+            JMenu writMenu = new JMenu("Writ " + (i + 1));
+
+            JCheckBoxMenuItem completeItem = new JCheckBoxMenuItem("Completed", writFinished.get(i));
+            completeItem.addActionListener(event -> writFinished.set(index, completeItem.isSelected()));
+            writMenu.add(completeItem);
+            writMenu.addSeparator();
+
+            JMenuItem itemInfo = new JMenuItem("Item: " + req.quantity() + " " + req.item());
+            itemInfo.addActionListener(event -> commandProcessor.handleInput("mm item exact " + req.item()));
+            writMenu.add(itemInfo);
+
+            JMenuItem npcInfo = new JMenuItem("Deliver to: " + req.npc());
+            npcInfo.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " npc"));
+            writMenu.add(npcInfo);
+
+            String locationText = req.locationName()
+                    + (req.locationSuffix().isBlank() ? "" : " " + req.locationSuffix());
+            JMenuItem locInfo = new JMenuItem("Location: " + locationText);
+            locInfo.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " loc"));
+            writMenu.add(locInfo);
+            writMenu.addSeparator();
+
+            JMenuItem listItem = new JMenuItem("List Store");
+            listItem.addActionListener(event -> commandProcessor.handleInput("list"));
+            writMenu.add(listItem);
+
+            JMenuItem buyItem = new JMenuItem("Buy Item");
+            buyItem.addActionListener(event -> handleStoreBuy(index));
+            writMenu.add(buyItem);
+
+            JMenuItem routeItem = new JMenuItem("Route");
+            routeItem.addActionListener(event -> handleRoute(index));
+            routeItem.setEnabled(hasRoute);
+            writMenu.add(routeItem);
+
+            if (!hasRoute) {
+                JMenuItem addRouteItem = new JMenuItem("Add Current Room");
+                addRouteItem.addActionListener(event -> handleAddRoute(index));
+                writMenu.add(addRouteItem);
+            }
+
+            JMenuItem deliverItem = new JMenuItem("Deliver");
+            deliverItem.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver"));
+            writMenu.add(deliverItem);
+            writMenus.add(writMenu);
+            menuBar.add(writMenu);
+        }
+        menuBar.revalidate();
+        menuBar.repaint();
+    }
+
+    private void handleStoreBuy(int index) {
+        if (!storeInventoryTracker.hasInventory()) {
+            outputPane.appendErrorText("Store inventory not cached yet. Use List Store first.");
+            return;
+        }
+        WritTracker.WritRequirement requirement = writRequirements.get(index);
+        if (storeInventoryTracker.isNameListed()) {
+            commandProcessor.handleInput("buy " + requirement.quantity() + " " + requirement.item());
+            return;
+        }
+        storeInventoryTracker.findMatch(requirement.item()).ifPresentOrElse(item ->
+                        commandProcessor.handleInput("buy " + item.id()),
+                () -> outputPane.appendErrorText("Store inventory does not list \"" + requirement.item() + "\"."));
+    }
+
+    private void handleRoute(int index) {
+        WritTracker.WritRequirement requirement = writRequirements.get(index);
+        routeMappings.findRoute(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(target -> {
+            commandProcessor.speedwalkTo(target.mapId(), target.x(), target.y());
+        }, () -> outputPane.appendErrorText("No route mapping for \"" + requirement.npc()
+                + "\" at \"" + requirement.locationDisplay() + "\"."));
+    }
+
+    private void handleAddRoute(int index) {
+        WritTracker.WritRequirement requirement = writRequirements.get(index);
+        addCurrentRoomRoute(requirement, updated -> {
+            routeMappings = updated;
+            rebuildWritMenus();
+        }, outputPane::appendErrorText);
+    }
+
     private JSplitPane buildSplitLayout() {
         statsPanel.setPreferredSize(new Dimension(0, 200));
-        JTabbedPane writTabs = new JTabbedPane();
-        writTabs.addTab("Writ Info", writInfoPanel);
-
-        JSplitPane writSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writTabs, contextualResultsPanel);
-        writSplit.setContinuousLayout(true);
-        writSplit.setResizeWeight(0.6);
-        writSplit.setDividerSize(6);
-        writSplit.setBorder(null);
-
-        JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, writSplit, statsPanel);
+        JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, contextualResultsPanel, statsPanel);
         statsSplit.setContinuousLayout(true);
         statsSplit.setResizeWeight(0.8);
         statsSplit.setDividerSize(6);
@@ -547,7 +645,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         if (updated) {
             var requirements = writTracker.getRequirements();
-            SwingUtilities.invokeLater(() -> writInfoPanel.updateWrit(requirements));
+            SwingUtilities.invokeLater(() -> updateWritMenus(requirements));
         }
     }
 
