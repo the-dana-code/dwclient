@@ -484,5 +484,23 @@
       396,
       301
     ]
+  },
+  {
+    "npc": "Dhraz Shaftrubble",
+    "location": "the Iron Helmet on Welcome Soap",
+    "target": [
+      1,
+      564,
+      785
+    ]
+  },
+  {
+    "npc": "Pierre Grepe",
+    "location": "Vino pour la Femme et le Homme on God\u0027s Collar",
+    "target": [
+      1,
+      749,
+      620
+    ]
   }
 ]
