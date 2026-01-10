@@ -59,10 +59,14 @@ class StoreInventoryTrackerTest {
     void testSingularization() {
         StoreInventoryTracker tracker = new StoreInventoryTracker();
         String inventory = "The following items are for sale:\n" +
-                "  a: sword for 10 gold\n";
+                "  a: sword for 10 gold\n" +
+                "  b: potato for 1 gold\n";
         tracker.ingest(inventory);
         
         // "swords" singularized is "sword", matches "sword" in inventory
         assertTrue(tracker.findMatch("swords").isPresent());
+        
+        // "potatoes" singularized is "potato"
+        assertTrue(tracker.findMatch("potatoes").isPresent());
     }
 }

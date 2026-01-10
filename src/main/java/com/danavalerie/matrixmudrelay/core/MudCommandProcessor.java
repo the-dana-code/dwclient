@@ -545,7 +545,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         return new ItemSearchResponse(query.trim(), List.of());
     }
 
-    private List<String> buildItemSearchTerms(String query) {
+    private static List<String> buildItemSearchTerms(String query) {
         String trimmed = query.trim();
         LinkedHashSet<String> terms = new LinkedHashSet<>();
         if (!trimmed.isBlank()) {
@@ -557,16 +557,17 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         return List.copyOf(terms);
     }
 
-    private List<String> singularizePhrase(String phrase) {
+    private static List<String> singularizePhrase(String phrase) {
         List<String> phrases = new ArrayList<>();
-        if (phrase.startsWith("pairs of ")) {
-            phrases.add("pair of " + phrase.substring(9));
-        } else if (phrase.startsWith("packets of ")) {
-            phrases.add("packet of " + phrase.substring(9));
-        } else if (phrase.startsWith("tubes of ")) {
-            phrases.add("tube of " + phrase.substring(9));
-        } else if (phrase.startsWith("games of ")) {
-            phrases.add("game of " + phrase.substring(9));
+        String s;
+        if ((s = replacePrefix(phrase, "pairs of ", "pair of ")) != null) {
+            phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "packets of ", "packet of ")) != null) {
+            phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "tubes of ", "tube of ")) != null) {
+            phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "games of ", "game of ")) != null) {
+            phrases.add(s);
         } else {
             String[] parts = phrase.trim().split("\\s+");
             if (parts.length == 0) {
@@ -588,33 +589,40 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         return phrases;
     }
 
-    private List<String> singularizeWord(String word) {
+    private static String replacePrefix(String text, String prefix, String replacement) {
+        if (text.startsWith(prefix)) {
+            return replacement + text.substring(prefix.length());
+        }
+        return null;
+    }
+
+    private static List<String> singularizeWord(String word) {
         String lower = word.toLowerCase(Locale.ROOT);
         LinkedHashSet<String> candidates = new LinkedHashSet<>();
-        if (lower.endsWith("ies") && lower.length() > 3) {
-            candidates.add(word.substring(0, word.length() - 1));
-            candidates.add(word.substring(0, word.length() - 3) + "y");
-        }
-        if (lower.endsWith("oes") && lower.length() > 3) {
-            candidates.add(word.substring(0, word.length() - 1));
-        }
-        if (lower.endsWith("ves") && lower.length() > 3) {
-            candidates.add(word.substring(0, word.length() - 3) + "f");
-            candidates.add(word.substring(0, word.length() - 3) + "fe");
-        }
-        if (lower.endsWith("men") && lower.length() > 3) {
-            candidates.add(word.substring(0, word.length() - 3) + "man");
-        }
+        tryReplaceSuffix(word, lower, "ies", new String[]{"ie", "y"}, candidates);
+        tryReplaceSuffix(word, lower, "oes", new String[]{"oe", "o"}, candidates);
+        tryReplaceSuffix(word, lower, "ves", new String[]{"f", "fe"}, candidates);
+        tryReplaceSuffix(word, lower, "men", new String[]{"man"}, candidates);
+
         if (lower.equals("auloi")) {
             candidates.add("aulos");
         }
-        if (lower.endsWith("es") && lower.length() > 2 && !lower.endsWith("ies") && !lower.endsWith("oes")) {
-            candidates.add(word.substring(0, word.length() - 2));
+        if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
+            tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
         }
-        if (lower.endsWith("s") && lower.length() > 1) {
-            candidates.add(word.substring(0, word.length() - 1));
+        if (!lower.endsWith("ss")) {
+            tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
         }
         return new ArrayList<>(candidates);
+    }
+
+    private static void tryReplaceSuffix(String word, String lower, String suffix, String[] replacements, java.util.Collection<String> candidates) {
+        if (lower.endsWith(suffix) && lower.length() > suffix.length()) {
+            String base = word.substring(0, word.length() - suffix.length());
+            for (String r : replacements) {
+                candidates.add(base + r);
+            }
+        }
     }
 
     private record ItemSearchResponse(String termUsed, List<RoomMapService.ItemSearchResult> results) {
