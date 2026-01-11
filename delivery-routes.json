@@ -520,5 +520,23 @@
       732,
       133
     ]
+  },
+  {
+    "npc": "Daniel Blakehalloc",
+    "location": "the Emerald Necklace on Upper Broadway",
+    "target": [
+      1,
+      1109,
+      1096
+    ]
+  },
+  {
+    "npc": "Rosa Jollity",
+    "location": "Rosa\u0027s Chocolate Emporium on Pseudopolis Yard",
+    "target": [
+      1,
+      665,
+      592
+    ]
   }
 ]
