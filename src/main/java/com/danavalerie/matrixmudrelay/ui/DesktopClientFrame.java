@@ -60,7 +60,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
-    private final ContextualResultsPanel contextualResultsPanel;
+    private final JMenu resultsMenu = new JMenu("Results");
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
@@ -74,6 +74,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomMapService routeMapService = new RoomMapService("database.db");
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
+    private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults =
+            new com.danavalerie.matrixmudrelay.core.ContextualResultList(
+                    "Search Results",
+                    List.of(),
+                    "No results yet.",
+                    null
+            );
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
     private final List<JMenu> writMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
@@ -122,9 +129,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
         mud.setGmcpListener(commandProcessor);
-        contextualResultsPanel = new ContextualResultsPanel(commandProcessor::handleInput);
         fontManager = new UiFontManager(this, outputPane.getFont());
-        fontManager.registerListener(contextualResultsPanel);
         fontManager.registerListener(statsPanel);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -132,6 +137,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setLayout(new BorderLayout());
         setJMenuBar(buildMenuBar());
         add(buildSplitLayout(), BorderLayout.CENTER);
+        updateResultsMenu(currentResults);
         applyConfiguredFont();
         pack();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -166,6 +172,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             quickLinksMenu.add(linkItem);
         }
         menuBar.add(quickLinksMenu);
+
+        menuBar.add(resultsMenu);
         return menuBar;
     }
 
@@ -455,13 +463,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JSplitPane buildSplitLayout() {
         statsPanel.setPreferredSize(new Dimension(0, 200));
-        JSplitPane statsSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, contextualResultsPanel, statsPanel);
-        statsSplit.setContinuousLayout(true);
-        statsSplit.setResizeWeight(0.8);
-        statsSplit.setDividerSize(6);
-        statsSplit.setBorder(null);
-
-        JSplitPane mudSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statsSplit, buildMudPanel());
+        JSplitPane mudSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statsPanel, buildMudPanel());
         mudSplit.setContinuousLayout(true);
         mudSplit.setResizeWeight(0.0);
         mudSplit.setDividerSize(6);
@@ -602,7 +604,46 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void updateContextualResults(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
-        contextualResultsPanel.updateResults(results);
+        updateResultsMenu(results);
+    }
+
+    private void updateResultsMenu(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
+        SwingUtilities.invokeLater(() -> {
+            if (results != null) {
+                currentResults = results;
+            }
+            resultsMenu.removeAll();
+            String title = currentResults.title();
+            if (title != null && !title.isBlank()) {
+                JMenuItem header = new JMenuItem(title);
+                header.setEnabled(false);
+                resultsMenu.add(header);
+                resultsMenu.addSeparator();
+            }
+            if (currentResults.results().isEmpty()) {
+                String empty = currentResults.emptyMessage() == null
+                        ? "No results."
+                        : currentResults.emptyMessage();
+                JMenuItem emptyItem = new JMenuItem(empty);
+                emptyItem.setEnabled(false);
+                resultsMenu.add(emptyItem);
+            } else {
+                for (com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result
+                        : currentResults.results()) {
+                    JMenuItem item = new JMenuItem(result.label());
+                    item.addActionListener(event -> commandProcessor.handleInput(result.command()));
+                    resultsMenu.add(item);
+                }
+            }
+            if (currentResults.footer() != null && !currentResults.footer().isBlank()) {
+                resultsMenu.addSeparator();
+                JMenuItem footer = new JMenuItem(currentResults.footer());
+                footer.setEnabled(false);
+                resultsMenu.add(footer);
+            }
+            resultsMenu.revalidate();
+            resultsMenu.repaint();
+        });
     }
 
     private void shutdown() {
