@@ -797,47 +797,64 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     public void speedwalkTo(int mapId, int x, int y) {
         background.submit(() -> {
             try {
-                if (!mud.isConnected()) {
-                    output.appendSystem("Error: MUD is disconnected. Send `mm connect` first.");
-                    return;
-                }
-                String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
-                if (currentRoomId == null || currentRoomId.isBlank()) {
-                    output.appendSystem("Error: No room info available yet.");
-                    return;
-                }
-
-                String targetRoomId = mapService.findRoomIdByCoordinates(mapId, x, y);
-                if (targetRoomId == null) {
-                    output.appendSystem("Error: Target room not found at {" + mapId + ", " + x + ", " + y + "}");
-                    return;
-                }
-
-                String characterName = mud.getCurrentRoomSnapshot().characterName();
-                RoomMapService.RouteResult route = mapService.findRoute(
-                        currentRoomId,
-                        targetRoomId,
-                        useTeleports,
-                        characterName
-                );
-
-                List<String> exits = route.steps().stream()
-                        .map(RoomMapService.RouteStep::exit)
-                        .toList();
-
-                if (exits.isEmpty()) {
-                    output.appendSystem("Already there.");
-                } else {
-                    String aliasName = "LesaClientSpeedwalk";
-                    String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
-                    mud.sendLinesFromController(List.of(aliasCommand, aliasName));
-                    output.appendSystem("Speedwalking to room at {" + mapId + ", " + x + ", " + y + "} (" + exits.size() + " steps)");
-                }
+                performSpeedwalk(mapId, x, y);
             } catch (Exception e) {
                 log.warn("speedwalk failed", e);
                 output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
             }
         });
+    }
+
+    public void speedwalkToThenCommand(int mapId, int x, int y, String command) {
+        background.submit(() -> {
+            try {
+                performSpeedwalk(mapId, x, y);
+            } catch (Exception e) {
+                log.warn("speedwalk failed", e);
+                output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
+            } finally {
+                handleInput(command);
+            }
+        });
+    }
+
+    private void performSpeedwalk(int mapId, int x, int y) throws Exception {
+        if (!mud.isConnected()) {
+            output.appendSystem("Error: MUD is disconnected. Send `mm connect` first.");
+            return;
+        }
+        String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
+        if (currentRoomId == null || currentRoomId.isBlank()) {
+            output.appendSystem("Error: No room info available yet.");
+            return;
+        }
+
+        String targetRoomId = mapService.findRoomIdByCoordinates(mapId, x, y);
+        if (targetRoomId == null) {
+            output.appendSystem("Error: Target room not found at {" + mapId + ", " + x + ", " + y + "}");
+            return;
+        }
+
+        String characterName = mud.getCurrentRoomSnapshot().characterName();
+        RoomMapService.RouteResult route = mapService.findRoute(
+                currentRoomId,
+                targetRoomId,
+                useTeleports,
+                characterName
+        );
+
+        List<String> exits = route.steps().stream()
+                .map(RoomMapService.RouteStep::exit)
+                .toList();
+
+        if (exits.isEmpty()) {
+            output.appendSystem("Already there.");
+        } else {
+            String aliasName = "LesaClientSpeedwalk";
+            String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
+            mud.sendLinesFromController(List.of(aliasCommand, aliasName));
+            output.appendSystem("Speedwalking to room at {" + mapId + ", " + x + ", " + y + "} (" + exits.size() + " steps)");
+        }
     }
 
     private void updateContextualResults(ContextualResultList results) {

@@ -407,11 +407,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             buyItem.addActionListener(event -> handleStoreBuy(index));
             writMenu.add(buyItem);
 
-            JMenuItem routeItem = new JMenuItem("Route");
-            routeItem.addActionListener(event -> handleRoute(index));
-            routeItem.setEnabled(hasRoute);
-            writMenu.add(routeItem);
-
             if (!hasRoute) {
                 JMenuItem addRouteItem = new JMenuItem("Add Current Room");
                 addRouteItem.addActionListener(event -> handleAddRoute(index));
@@ -419,7 +414,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             JMenuItem deliverItem = new JMenuItem("Deliver");
-            deliverItem.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver"));
+            deliverItem.addActionListener(event -> {
+                routeMappings.findRoute(req.npc(), req.locationDisplay()).ifPresentOrElse(target -> {
+                    commandProcessor.speedwalkToThenCommand(
+                            target.mapId(),
+                            target.x(),
+                            target.y(),
+                            "mm writ " + (index + 1) + " deliver"
+                    );
+                }, () -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver"));
+            });
             writMenu.add(deliverItem);
             writMenus.add(writMenu);
             menuBar.add(writMenu);
