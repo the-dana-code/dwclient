@@ -459,7 +459,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
-                    "Deliver",
+                    "Route and Deliver",
                     () -> routeMappings.findRoute(req.npc(), req.locationDisplay()).ifPresentOrElse(target -> {
                         commandProcessor.speedwalkToThenCommand(
                                 target.mapId(),
