@@ -75,7 +75,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
-    private final List<Boolean> writFinished = new ArrayList<>();
     private final List<JMenu> writMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
     private static final QuickLink[] QUICK_LINKS = {
@@ -353,12 +352,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
         writRequirements.clear();
-        writFinished.clear();
         if (requirements != null) {
             writRequirements.addAll(requirements);
-            for (int i = 0; i < requirements.size(); i++) {
-                writFinished.add(false);
-            }
         }
         rebuildWritMenus();
     }
@@ -378,11 +373,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean hasRoute = routeMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
             int index = i;
             JMenu writMenu = new JMenu("Writ" + (i + 1));
-
-            JCheckBoxMenuItem completeItem = new JCheckBoxMenuItem("Completed", writFinished.get(i));
-            completeItem.addActionListener(event -> writFinished.set(index, completeItem.isSelected()));
-            writMenu.add(completeItem);
-            writMenu.addSeparator();
 
             JMenuItem itemInfo = new JMenuItem("Item: " + req.quantity() + " " + req.item());
             itemInfo.addActionListener(event -> commandProcessor.handleInput("mm item exact " + req.item()));
