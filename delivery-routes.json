@@ -502,5 +502,14 @@
       749,
       620
     ]
+  },
+  {
+    "npc": "Wynter Silverfyre",
+    "location": "the gothic clothing shop on Phedre Road",
+    "target": [
+      1,
+      855,
+      466
+    ]
   }
 ]
