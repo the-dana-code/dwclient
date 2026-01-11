@@ -465,7 +465,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JSplitPane buildSplitLayout() {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildMudPanel(), mapPanel);
         splitPane.setContinuousLayout(true);
-        splitPane.setResizeWeight(0.7);
+        splitPane.setResizeWeight(0.75);
+        splitPane.setDividerLocation(0.75);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
         return splitPane;
