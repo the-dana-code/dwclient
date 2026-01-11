@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -51,7 +50,11 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
@@ -82,6 +85,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     null
             );
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
+    private final Map<Integer, EnumSet<WritMenuAction>> writMenuVisits = new HashMap<>();
     private final List<JMenu> writMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
     private static final QuickLink[] QUICK_LINKS = {
@@ -102,6 +106,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private boolean suppressSplitPersist;
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
+
+    private enum WritMenuAction {
+        ITEM_INFO,
+        LIST_STORE,
+        BUY_ITEM,
+        NPC_INFO,
+        LOCATION_INFO,
+        ADD_ROUTE,
+        DELIVER
+    }
 
     public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, TranscriptLogger transcript) {
         super("MUD Desktop Client");
@@ -382,9 +396,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private record QuickLink(String name, int mapId, int x, int y) {}
 
     private void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
+        boolean resetVisits = !Objects.equals(writRequirements, requirements);
         writRequirements.clear();
         if (requirements != null) {
             writRequirements.addAll(requirements);
+        }
+        if (resetVisits) {
+            writMenuVisits.clear();
         }
         rebuildWritMenus();
     }
@@ -405,52 +423,81 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             int index = i;
             JMenu writMenu = new JMenu("Writ" + (i + 1));
 
-            JMenuItem itemInfo = new JMenuItem("Item: " + req.quantity() + " " + req.item());
-            itemInfo.addActionListener(event -> commandProcessor.handleInput("mm item exact " + req.item()));
+            JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
+                    "Item: " + req.quantity() + " " + req.item(),
+                    () -> commandProcessor.handleInput("mm item exact " + req.item()));
             writMenu.add(itemInfo);
 
-            JMenuItem listItem = new JMenuItem("List Store");
-            listItem.addActionListener(event -> commandProcessor.handleInput("list"));
+            JMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
+                    "List Store",
+                    () -> commandProcessor.handleInput("list"));
             writMenu.add(listItem);
 
-            JMenuItem buyItem = new JMenuItem("Buy Item");
-            buyItem.addActionListener(event -> handleStoreBuy(index));
+            JMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
+                    "Buy Item",
+                    () -> handleStoreBuy(index));
             writMenu.add(buyItem);
             writMenu.addSeparator();
 
-            JMenuItem npcInfo = new JMenuItem("Deliver to: " + req.npc());
-            npcInfo.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " npc"));
+            JMenuItem npcInfo = buildWritMenuItem(index, WritMenuAction.NPC_INFO,
+                    "Deliver to: " + req.npc(),
+                    () -> commandProcessor.handleInput("mm writ " + (index + 1) + " npc"));
             writMenu.add(npcInfo);
 
             String locationText = req.locationName()
                     + (req.locationSuffix().isBlank() ? "" : " " + req.locationSuffix());
-            JMenuItem locInfo = new JMenuItem("Location: " + locationText);
-            locInfo.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " loc"));
+            JMenuItem locInfo = buildWritMenuItem(index, WritMenuAction.LOCATION_INFO,
+                    "Location: " + locationText,
+                    () -> commandProcessor.handleInput("mm writ " + (index + 1) + " loc"));
             writMenu.add(locInfo);
 
             if (!hasRoute) {
-                JMenuItem addRouteItem = new JMenuItem("Add Current Room");
-                addRouteItem.addActionListener(event -> handleAddRoute(index));
+                JMenuItem addRouteItem = buildWritMenuItem(index, WritMenuAction.ADD_ROUTE,
+                        "Add Current Room",
+                        () -> handleAddRoute(index));
                 writMenu.add(addRouteItem);
             }
 
-            JMenuItem deliverItem = new JMenuItem("Deliver");
-            deliverItem.addActionListener(event -> {
-                routeMappings.findRoute(req.npc(), req.locationDisplay()).ifPresentOrElse(target -> {
-                    commandProcessor.speedwalkToThenCommand(
-                            target.mapId(),
-                            target.x(),
-                            target.y(),
-                            "mm writ " + (index + 1) + " deliver"
-                    );
-                }, () -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver"));
-            });
+            JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
+                    "Deliver",
+                    () -> routeMappings.findRoute(req.npc(), req.locationDisplay()).ifPresentOrElse(target -> {
+                        commandProcessor.speedwalkToThenCommand(
+                                target.mapId(),
+                                target.x(),
+                                target.y(),
+                                "mm writ " + (index + 1) + " deliver"
+                        );
+                    }, () -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver")));
             writMenu.add(deliverItem);
             writMenus.add(writMenu);
             menuBar.add(writMenu);
         }
         menuBar.revalidate();
         menuBar.repaint();
+    }
+
+    private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
+        boolean visited = isWritMenuVisited(index, action);
+        JMenuItem item = new JMenuItem(formatWritMenuLabel(visited, label));
+        item.addActionListener(event -> {
+            markWritMenuVisited(index, action);
+            item.setText(formatWritMenuLabel(true, label));
+            onSelect.run();
+        });
+        return item;
+    }
+
+    private String formatWritMenuLabel(boolean visited, String label) {
+        return (visited ? "✅ " : "❌ ") + label;
+    }
+
+    private boolean isWritMenuVisited(int index, WritMenuAction action) {
+        EnumSet<WritMenuAction> visited = writMenuVisits.get(index);
+        return visited != null && visited.contains(action);
+    }
+
+    private void markWritMenuVisited(int index, WritMenuAction action) {
+        writMenuVisits.computeIfAbsent(index, ignored -> EnumSet.noneOf(WritMenuAction.class)).add(action);
     }
 
     private void handleStoreBuy(int index) {
