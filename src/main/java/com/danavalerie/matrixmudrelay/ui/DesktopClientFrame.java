@@ -409,6 +409,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             itemInfo.addActionListener(event -> commandProcessor.handleInput("mm item exact " + req.item()));
             writMenu.add(itemInfo);
 
+            JMenuItem listItem = new JMenuItem("List Store");
+            listItem.addActionListener(event -> commandProcessor.handleInput("list"));
+            writMenu.add(listItem);
+
+            JMenuItem buyItem = new JMenuItem("Buy Item");
+            buyItem.addActionListener(event -> handleStoreBuy(index));
+            writMenu.add(buyItem);
+            writMenu.addSeparator();
+
             JMenuItem npcInfo = new JMenuItem("Deliver to: " + req.npc());
             npcInfo.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " npc"));
             writMenu.add(npcInfo);
@@ -418,15 +427,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             JMenuItem locInfo = new JMenuItem("Location: " + locationText);
             locInfo.addActionListener(event -> commandProcessor.handleInput("mm writ " + (index + 1) + " loc"));
             writMenu.add(locInfo);
-            writMenu.addSeparator();
-
-            JMenuItem listItem = new JMenuItem("List Store");
-            listItem.addActionListener(event -> commandProcessor.handleInput("list"));
-            writMenu.add(listItem);
-
-            JMenuItem buyItem = new JMenuItem("Buy Item");
-            buyItem.addActionListener(event -> handleStoreBuy(index));
-            writMenu.add(buyItem);
 
             if (!hasRoute) {
                 JMenuItem addRouteItem = new JMenuItem("Add Current Room");
