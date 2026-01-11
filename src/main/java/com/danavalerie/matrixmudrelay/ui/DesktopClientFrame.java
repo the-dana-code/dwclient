@@ -98,6 +98,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private Color writCurrentColor = AnsiColorParser.defaultColor();
     private boolean writCurrentBold;
     private boolean forwardingKey;
+    private boolean allowSplitPersist;
+    private boolean suppressSplitPersist;
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
 
@@ -357,6 +359,26 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
+    private double resolveMudMapSplitRatio() {
+        Double ratio = cfg.ui.mudMapSplitRatio;
+        if (ratio == null || ratio <= 0 || ratio >= 1) {
+            return 0.75;
+        }
+        return ratio;
+    }
+
+    private void persistMudMapSplitRatio(double ratio) {
+        if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
+            return;
+        }
+        cfg.ui.mudMapSplitRatio = ratio;
+        try {
+            ConfigLoader.save(configPath, cfg);
+        } catch (IOException e) {
+            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
+        }
+    }
+
     private record QuickLink(String name, int mapId, int x, int y) {}
 
     private void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
@@ -466,9 +488,34 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildMudPanel(), mapPanel);
         splitPane.setContinuousLayout(true);
         splitPane.setResizeWeight(0.75);
-        splitPane.setDividerLocation(0.75);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
+        double initialRatio = resolveMudMapSplitRatio();
+        splitPane.addHierarchyListener(event -> {
+            if ((event.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) == 0) {
+                return;
+            }
+            if (!splitPane.isShowing()) {
+                return;
+            }
+            SwingUtilities.invokeLater(() -> {
+                suppressSplitPersist = true;
+                splitPane.setDividerLocation(initialRatio);
+                suppressSplitPersist = false;
+                allowSplitPersist = true;
+            });
+        });
+        splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, event -> {
+            if (!allowSplitPersist || suppressSplitPersist || !splitPane.isShowing()) {
+                return;
+            }
+            int width = splitPane.getWidth();
+            if (width <= 0) {
+                return;
+            }
+            double ratio = splitPane.getDividerLocation() / (double) width;
+            persistMudMapSplitRatio(ratio);
+        });
         return splitPane;
     }
 
