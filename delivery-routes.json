@@ -574,5 +574,140 @@
       141,
       701
     ]
+  },
+  {
+    "npc": "Valerianne",
+    "location": "Valerianne\u0027s weapon and armour shop on Elm Street",
+    "target": [
+      1,
+      270,
+      827
+    ]
+  },
+  {
+    "npc": "Sandra",
+    "location": "the Dysk Playwrights Guild office",
+    "target": [
+      7,
+      680,
+      207
+    ]
+  },
+  {
+    "npc": "Gladys",
+    "location": "Bob\u0027s Fish Shoppe on Street of Cunning Artificers",
+    "target": [
+      1,
+      970,
+      967
+    ]
+  },
+  {
+    "npc": "Bonifacius Biddle",
+    "location": "the smithy on Street of Small Gods",
+    "target": [
+      1,
+      984,
+      872
+    ]
+  },
+  {
+    "npc": "Woo Hun Ling",
+    "location": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids on Heroes Street",
+    "target": [
+      1,
+      701,
+      872
+    ]
+  },
+  {
+    "npc": "Kurr Ency",
+    "location": "the Coin Corner on The Pitts",
+    "target": [
+      1,
+      357,
+      858
+    ]
+  },
+  {
+    "npc": "Mr Strumplott",
+    "location": "Strumplott\u0027s Talismans in the Magic Emporium",
+    "target": [
+      3,
+      475,
+      427
+    ]
+  },
+  {
+    "npc": "Argle Sween",
+    "location": "Argle\u0027s Bakery on Baker Street",
+    "target": [
+      1,
+      763,
+      914
+    ]
+  },
+  {
+    "npc": "Petra Protest",
+    "location": "the King\u0027s Way Rathskeller",
+    "target": [
+      1,
+      721,
+      228
+    ]
+  },
+  {
+    "npc": "the shop owner",
+    "location": "the run-down old shop on Vagabond Street",
+    "target": [
+      1,
+      1180,
+      777
+    ]
+  },
+  {
+    "npc": "Hobliet the Unnecessary",
+    "location": "Hobliet the Unnecessary\u0027s Linear Tools",
+    "target": [
+      3,
+      500,
+      402
+    ]
+  },
+  {
+    "npc": "Gore Batchev",
+    "location": "Batchev\u0027s World of Maps on Ankh Street",
+    "target": [
+      1,
+      144,
+      323
+    ]
+  },
+  {
+    "npc": "Lorst N\u0027Fund",
+    "location": "Ankh-Morpork Lost Property Office on Street of Cunning Artificers",
+    "target": [
+      1,
+      928,
+      973
+    ]
+  },
+  {
+    "npc": "Arthur",
+    "location": "the Royal Art Museum cafe",
+    "target": [
+      7,
+      389,
+      563
+    ]
+  },
+  {
+    "npc": "the starving artist",
+    "location": "the Dysk souvenir stall",
+    "target": [
+      7,
+      587,
+      143
+    ]
   }
 ]
