@@ -547,5 +547,32 @@
       834,
       70
     ]
+  },
+  {
+    "npc": "Ferris Clinkersson",
+    "location": "the iron furniture shop on Phedre Road",
+    "target": [
+      7,
+      392,
+      93
+    ]
+  },
+  {
+    "npc": "the proprietor",
+    "location": "Plaza Tobacconist\u0027s on Plaza of Broken Moons",
+    "target": [
+      1,
+      1054,
+      720
+    ]
+  },
+  {
+    "npc": "Madame Gumble",
+    "location": "Madame Gumble\u0027s Jewellery on Cockbill Street",
+    "target": [
+      1,
+      141,
+      701
+    ]
   }
 ]
