@@ -52,9 +52,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
@@ -84,6 +86,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     "No results yet.",
                     null
             );
+    private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
     private final Map<Integer, EnumSet<WritMenuAction>> writMenuVisits = new HashMap<>();
     private final List<JMenu> writMenus = new ArrayList<>();
@@ -697,8 +700,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void updateResultsMenu(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
         SwingUtilities.invokeLater(() -> {
+            boolean resetResultsVisits = results != null && !Objects.equals(currentResults, results);
             if (results != null) {
                 currentResults = results;
+            }
+            if (resetResultsVisits) {
+                resultsMenuVisits.clear();
             }
             resultsMenu.removeAll();
             String title = currentResults.title();
@@ -716,11 +723,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 emptyItem.setEnabled(false);
                 resultsMenu.add(emptyItem);
             } else {
+                int index = 0;
                 for (com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result
                         : currentResults.results()) {
-                    JMenuItem item = new JMenuItem(result.label());
-                    item.addActionListener(event -> commandProcessor.handleInput(result.command()));
+                    boolean visited = resultsMenuVisits.contains(index);
+                    JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
+                    int resultIndex = index;
+                    item.addActionListener(event -> {
+                        resultsMenuVisits.add(resultIndex);
+                        item.setText(formatResultsMenuLabel(true, result.label()));
+                        commandProcessor.handleInput(result.command());
+                    });
                     resultsMenu.add(item);
+                    index++;
                 }
             }
             if (currentResults.footer() != null && !currentResults.footer().isBlank()) {
@@ -732,6 +747,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             resultsMenu.revalidate();
             resultsMenu.repaint();
         });
+    }
+
+    private String formatResultsMenuLabel(boolean visited, String label) {
+        return (visited ? "✅ " : "❌ ") + label;
     }
 
     private void shutdown() {
