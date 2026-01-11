@@ -4,6 +4,8 @@ import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,7 +14,7 @@ import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -29,11 +31,21 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final Color BURDEN_COLOR = new Color(0, 130, 0);
     private static final Color XP_COLOR = new Color(200, 110, 0);
     private static final int XP_CAP = 1_000_000;
+    private static final int BAR_MIN_WIDTH = 80;
+    private static final int BAR_PREFERRED_WIDTH = 160;
+    private static final int BAR_MAX_WIDTH = 220;
+    private static final int LABEL_WIDTH = 60;
+    private static final int NAME_MIN_WIDTH = 140;
+    private static final int NAME_MAX_WIDTH = 260;
     private static final int GP_RATE_SAMPLE_SIZE = 10;
     private static final int GP_TIMER_DEFAULT_INTERVAL_MS = 1000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getIntegerInstance(Locale.US);
 
     private final JLabel nameLabel = new JLabel("Character: --");
+    private final JLabel hpLabel = new JLabel("HP");
+    private final JLabel gpLabel = new JLabel("GP");
+    private final JLabel burdenLabel = new JLabel("Burden");
+    private final JLabel xpLabel = new JLabel("XP");
     private final JProgressBar hpBar = buildBar(HP_COLOR);
     private final JProgressBar gpBar = buildBar(GP_COLOR);
     private final JProgressBar burdenBar = buildBar(BURDEN_COLOR);
@@ -50,21 +62,37 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private int currentMaxGp = 1;
 
     public StatsPanel() {
-        setLayout(new BorderLayout(0, 8));
+        setLayout(new BorderLayout());
         setBackground(BACKGROUND);
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, BAR_BG),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
         Arrays.fill(gpRateSamples, -1);
 
         nameLabel.setForeground(TEXT_COLOR);
-        add(nameLabel, BorderLayout.NORTH);
-
-        JPanel bars = new JPanel(new GridLayout(4, 1, 0, 8));
-        bars.setBackground(BACKGROUND);
-        bars.add(hpBar);
-        bars.add(gpBar);
-        bars.add(burdenBar);
-        bars.add(xpBar);
-        add(bars, BorderLayout.CENTER);
+        int namePreferredWidth = Math.max(NAME_MIN_WIDTH, nameLabel.getPreferredSize().width);
+        int nameMaxWidth = Math.max(NAME_MAX_WIDTH, namePreferredWidth);
+        Dimension nameMin = new Dimension(NAME_MIN_WIDTH, nameLabel.getPreferredSize().height);
+        Dimension namePref = new Dimension(namePreferredWidth, nameLabel.getPreferredSize().height);
+        Dimension nameMax = new Dimension(nameMaxWidth, nameLabel.getPreferredSize().height);
+        nameLabel.setMinimumSize(nameMin);
+        nameLabel.setPreferredSize(namePref);
+        nameLabel.setMaximumSize(nameMax);
+        JPanel statusBar = new JPanel();
+        statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
+        statusBar.setBackground(BACKGROUND);
+        statusBar.add(nameLabel);
+        statusBar.add(Box.createHorizontalStrut(12));
+        statusBar.add(buildStatGroup(hpLabel, hpBar));
+        statusBar.add(Box.createHorizontalStrut(10));
+        statusBar.add(buildStatGroup(gpLabel, gpBar));
+        statusBar.add(Box.createHorizontalStrut(10));
+        statusBar.add(buildStatGroup(burdenLabel, burdenBar));
+        statusBar.add(Box.createHorizontalStrut(10));
+        statusBar.add(buildStatGroup(xpLabel, xpBar));
+        statusBar.add(Box.createHorizontalGlue());
+        add(statusBar, BorderLayout.CENTER);
 
         setUnavailable();
         gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
@@ -74,6 +102,10 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     @Override
     public void onFontChange(Font font) {
         nameLabel.setFont(font.deriveFont(Font.BOLD));
+        hpLabel.setFont(font);
+        gpLabel.setFont(font);
+        burdenLabel.setFont(font);
+        xpLabel.setFont(font);
         hpBar.setFont(font);
         gpBar.setFont(font);
         burdenBar.setFont(font);
@@ -86,26 +118,26 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
                 setUnavailable();
                 return;
             }
-            nameLabel.setText("Character: " + data.name());
+            updateNameLabel("Character: " + data.name());
             updateBar(hpBar, data.hp(), data.maxHp(),
-                    "HP " + format(data.hp()) + " / " + format(data.maxHp()));
+                    format(data.hp()) + " / " + format(data.maxHp()));
             updateGpFromVitals(data.gp(), data.maxGp());
 
             int burdenValue = clamp(data.burden(), 0, 100);
-            updateBar(burdenBar, burdenValue, 100, "Burden " + burdenValue + "%");
+            updateBar(burdenBar, burdenValue, 100, burdenValue + "%");
 
             long xpValue = Math.max(0, data.xp());
             int xpBarValue = (int) Math.min(Integer.MAX_VALUE, xpValue);
-            updateBar(xpBar, Math.min(xpBarValue, XP_CAP), XP_CAP, "XP " + format(xpValue));
+            updateBar(xpBar, Math.min(xpBarValue, XP_CAP), XP_CAP, format(xpValue));
         });
     }
 
     private void setUnavailable() {
-        nameLabel.setText("Character: --");
-        updateBar(hpBar, 0, 1, "HP --");
-        updateBar(gpBar, 0, 1, "GP --");
-        updateBar(burdenBar, 0, 100, "Burden --");
-        updateBar(xpBar, 0, XP_CAP, "XP --");
+        updateNameLabel("Character: --");
+        updateBar(hpBar, 0, 1, "--");
+        updateBar(gpBar, 0, 1, "--");
+        updateBar(burdenBar, 0, 100, "--");
+        updateBar(xpBar, 0, XP_CAP, "--");
         lastReportedGp = null;
         lastGpUpdateTimeMs = 0L;
         gpMillisPerPoint = 0;
@@ -126,6 +158,29 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         return bar;
     }
 
+    private static JPanel buildStatGroup(JLabel label, JProgressBar bar) {
+        label.setForeground(TEXT_COLOR);
+        Dimension labelSize = new Dimension(LABEL_WIDTH, label.getPreferredSize().height);
+        label.setPreferredSize(labelSize);
+        label.setMinimumSize(labelSize);
+        JPanel panel = new JPanel(new BorderLayout(6, 0));
+        panel.setBackground(BACKGROUND);
+        panel.add(label, BorderLayout.WEST);
+
+        Dimension preferred = new Dimension(BAR_PREFERRED_WIDTH, bar.getPreferredSize().height);
+        Dimension minimum = new Dimension(BAR_MIN_WIDTH, bar.getPreferredSize().height);
+        Dimension maximum = new Dimension(BAR_MAX_WIDTH, bar.getPreferredSize().height);
+        bar.setPreferredSize(preferred);
+        bar.setMinimumSize(minimum);
+        bar.setMaximumSize(maximum);
+        panel.add(bar, BorderLayout.CENTER);
+
+        Dimension panelMax = new Dimension(LABEL_WIDTH + BAR_MAX_WIDTH + 6, bar.getPreferredSize().height);
+        panel.setMaximumSize(panelMax);
+        panel.setMinimumSize(new Dimension(LABEL_WIDTH + BAR_MIN_WIDTH + 6, bar.getPreferredSize().height));
+        return panel;
+    }
+
     private static void updateBar(JProgressBar bar, int value, int max, String label) {
         ThreadUtils.checkEdt();
         int safeMax = Math.max(1, max);
@@ -133,6 +188,18 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         bar.setMaximum(safeMax);
         bar.setValue(safeValue);
         bar.setString(label);
+    }
+
+    private void updateNameLabel(String text) {
+        ThreadUtils.checkEdt();
+        nameLabel.setText(text);
+        int textWidth = nameLabel.getFontMetrics(nameLabel.getFont()).stringWidth(text) + 10;
+        int targetWidth = Math.max(NAME_MIN_WIDTH, Math.min(NAME_MAX_WIDTH, textWidth));
+        Dimension target = new Dimension(targetWidth, nameLabel.getPreferredSize().height);
+        nameLabel.setMinimumSize(target);
+        nameLabel.setPreferredSize(target);
+        nameLabel.setMaximumSize(new Dimension(Math.max(NAME_MAX_WIDTH, targetWidth), target.height));
+        nameLabel.revalidate();
     }
 
     private static int clamp(int value, int min, int max) {
@@ -164,7 +231,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         lastGpUpdateTimeMs = now;
         currentGp = gp;
         currentMaxGp = Math.max(1, maxGp);
-        updateBar(gpBar, gp, currentMaxGp, "GP " + format(gp) + " / " + format(currentMaxGp));
+        updateBar(gpBar, gp, currentMaxGp, format(gp) + " / " + format(currentMaxGp));
     }
 
     private void recordGpRate(int rate) {
@@ -206,7 +273,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
             return;
         }
         currentGp = Math.min(currentGp + 1, currentMaxGp);
-        updateBar(gpBar, currentGp, currentMaxGp, "GP " + format(currentGp) + " / " + format(currentMaxGp));
+        updateBar(gpBar, currentGp, currentMaxGp, format(currentGp) + " / " + format(currentMaxGp));
     }
 
     private void updateGpTimerInterval() {

@@ -137,6 +137,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setLayout(new BorderLayout());
         setJMenuBar(buildMenuBar());
         add(buildSplitLayout(), BorderLayout.CENTER);
+        add(statsPanel, BorderLayout.SOUTH);
         updateResultsMenu(currentResults);
         applyConfiguredFont();
         pack();
@@ -462,15 +463,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JSplitPane buildSplitLayout() {
-        statsPanel.setPreferredSize(new Dimension(0, 200));
-        JSplitPane mudSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, statsPanel, buildMudPanel());
-        mudSplit.setContinuousLayout(true);
-        mudSplit.setResizeWeight(0.0);
-        mudSplit.setDividerSize(6);
-        mudSplit.setBorder(null);
-        mudSplit.setDividerLocation(400);
-
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mudSplit, mapPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildMudPanel(), mapPanel);
         splitPane.setContinuousLayout(true);
         splitPane.setResizeWeight(0.7);
         splitPane.setDividerSize(6);
