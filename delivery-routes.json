@@ -538,5 +538,14 @@
       665,
       592
     ]
+  },
+  {
+    "npc": "Portia Palm",
+    "location": "Queen P\u0027s Wholesale Enticing Furniture on Endless Street",
+    "target": [
+      1,
+      834,
+      70
+    ]
   }
 ]
