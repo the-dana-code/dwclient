@@ -231,6 +231,9 @@
       1,
       623,
       844
+    ],
+    "commands": [
+      "w"
     ]
   },
   {
@@ -339,6 +342,11 @@
       1,
       508,
       287
+    ],
+    "commands": [
+      "knock on door",
+      "say {character}",
+      "n"
     ]
   },
   {

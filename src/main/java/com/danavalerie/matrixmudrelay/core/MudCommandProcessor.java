@@ -806,6 +806,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     }
 
     public void speedwalkToThenCommand(int mapId, int x, int y, String command) {
+        speedwalkToThenCommands(mapId, x, y, List.of(command));
+    }
+
+    public void speedwalkToThenCommands(int mapId, int x, int y, List<String> commands) {
         background.submit(() -> {
             try {
                 performSpeedwalk(mapId, x, y);
@@ -813,9 +817,26 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 log.warn("speedwalk failed", e);
                 output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
             } finally {
-                handleInput(command);
+                runPostSpeedwalkCommands(commands);
             }
         });
+    }
+
+    private void runPostSpeedwalkCommands(List<String> commands) {
+        if (commands == null || commands.isEmpty()) {
+            return;
+        }
+        String characterName = mud.getCurrentRoomSnapshot().characterName();
+        for (String command : commands) {
+            if (command == null || command.isBlank()) {
+                continue;
+            }
+            String resolved = command;
+            if (characterName != null && !characterName.isBlank()) {
+                resolved = resolved.replace("{character}", characterName);
+            }
+            handleInput(resolved);
+        }
     }
 
     private void performSpeedwalk(int mapId, int x, int y) throws Exception {

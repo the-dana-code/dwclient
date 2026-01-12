@@ -5,8 +5,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigLoaderTest {
@@ -29,10 +27,10 @@ class ConfigLoaderTest {
         assertNotNull(mappings);
         assertEquals(1, mappings.routes().size());
         
-        var route = mappings.findRoute("Mardi", "Masqueparade on Phedre Road");
+        var route = mappings.findRoutePlan("Mardi", "Masqueparade on Phedre Road");
         assertTrue(route.isPresent());
-        assertEquals(7, route.get().mapId());
-        assertEquals(328, route.get().x());
-        assertEquals(68, route.get().y());
+        assertEquals(7, route.get().target().mapId());
+        assertEquals(328, route.get().target().x());
+        assertEquals(68, route.get().target().y());
     }
 }

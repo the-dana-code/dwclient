@@ -298,7 +298,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updated.add(new DeliveryRouteMappings.RouteEntry(
                 requirement.npc(),
                 locationDisplay,
-                List.of(location.mapId(), location.xpos(), location.ypos())
+                List.of(location.mapId(), location.xpos(), location.ypos()),
+                List.of()
         ));
         return new DeliveryRouteMappings(updated);
     }
@@ -422,7 +423,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         for (int i = 0; i < writRequirements.size(); i++) {
             WritTracker.WritRequirement req = writRequirements.get(i);
-            boolean hasRoute = routeMappings.findRoute(req.npc(), req.locationDisplay()).isPresent();
+            boolean hasRoute = routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).isPresent();
             int index = i;
             JMenu writMenu = new JMenu("Writ" + (i + 1));
 
@@ -463,12 +464,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
                     "Route and Deliver",
-                    () -> routeMappings.findRoute(req.npc(), req.locationDisplay()).ifPresentOrElse(target -> {
-                        commandProcessor.speedwalkToThenCommand(
-                                target.mapId(),
-                                target.x(),
-                                target.y(),
-                                "mm writ " + (index + 1) + " deliver"
+                    () -> routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).ifPresentOrElse(plan -> {
+                        List<String> commands = new ArrayList<>(plan.commands());
+                        commands.add("mm writ " + (index + 1) + " deliver");
+                        commandProcessor.speedwalkToThenCommands(
+                                plan.target().mapId(),
+                                plan.target().x(),
+                                plan.target().y(),
+                                commands
                         );
                     }, () -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver")));
             writMenu.add(deliverItem);
@@ -520,8 +523,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void handleRoute(int index) {
         WritTracker.WritRequirement requirement = writRequirements.get(index);
-        routeMappings.findRoute(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(target -> {
-            commandProcessor.speedwalkTo(target.mapId(), target.x(), target.y());
+        routeMappings.findRoutePlan(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(plan -> {
+            commandProcessor.speedwalkTo(plan.target().mapId(), plan.target().x(), plan.target().y());
         }, () -> outputPane.appendErrorText("No route mapping for \"" + requirement.npc()
                 + "\" at \"" + requirement.locationDisplay() + "\"."));
     }
