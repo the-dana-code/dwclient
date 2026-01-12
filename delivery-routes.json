@@ -709,5 +709,14 @@
       587,
       143
     ]
+  },
+  {
+    "npc": "the barmaid",
+    "location": "the Fishermen\u0027s Guild regional office in the underdocks",
+    "target": [
+      5,
+      329,
+      214
+    ]
   }
 ]
