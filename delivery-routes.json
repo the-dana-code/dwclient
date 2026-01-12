@@ -786,5 +786,15 @@
       442
     ],
     "commands": []
+  },
+  {
+    "npc": "the stall owner",
+    "location": "the magic stall on the rimbank on God\u0027s Collar",
+    "target": [
+      1,
+      795,
+      670
+    ],
+    "commands": []
   }
 ]
