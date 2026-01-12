@@ -568,6 +568,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             phrases.add(s);
         } else if ((s = replacePrefix(phrase, "games of ", "game of ")) != null) {
             phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "petits fours", "petit fours")) != null) {
+            phrases.add(s);
         } else {
             String[] parts = phrase.trim().split("\\s+");
             if (parts.length == 0) {

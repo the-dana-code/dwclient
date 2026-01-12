@@ -726,5 +726,25 @@
       329,
       214
     ]
+  },
+  {
+    "npc": "Cubert Eiche",
+    "location": "the shed on Goose Gate",
+    "target": [
+      1,
+      547,
+      998
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the grinning priest",
+    "location": "the chapel on Short Street",
+    "target": [
+      1,
+      693,
+      1180
+    ],
+    "commands": []
   }
 ]
