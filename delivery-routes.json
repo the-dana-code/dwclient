@@ -746,5 +746,15 @@
       1180
     ],
     "commands": []
+  },
+  {
+    "npc": "Lars",
+    "location": "the Traveller\u0027s Inn on Dimwell Street",
+    "target": [
+      1,
+      182,
+      218
+    ],
+    "commands": []
   }
 ]

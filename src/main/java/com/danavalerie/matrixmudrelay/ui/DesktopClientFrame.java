@@ -114,6 +114,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         ITEM_INFO,
         LIST_STORE,
         BUY_ITEM,
+        BUY_ONE_ITEM,
+        BUY_TWO_ITEMS,
         NPC_INFO,
         LOCATION_INFO,
         ADD_ROUTE,
@@ -437,10 +439,21 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     () -> commandProcessor.handleInput("list"));
             writMenu.add(listItem);
 
-            JMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
-                    "Buy Item",
-                    () -> handleStoreBuy(index));
-            writMenu.add(buyItem);
+            if (req.quantity() == 2) {
+                JMenuItem buyOneItem = buildWritMenuItem(index, WritMenuAction.BUY_ONE_ITEM,
+                        "Buy 1 Item",
+                        () -> handleStoreBuy(index, 1));
+                writMenu.add(buyOneItem);
+                JMenuItem buyTwoItems = buildWritMenuItem(index, WritMenuAction.BUY_TWO_ITEMS,
+                        "Buy 2 Items",
+                        () -> handleStoreBuy(index, 2));
+                writMenu.add(buyTwoItems);
+            } else {
+                JMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
+                        "Buy Item",
+                        () -> handleStoreBuy(index, req.quantity()));
+                writMenu.add(buyItem);
+            }
             writMenu.addSeparator();
 
             JMenuItem npcInfo = buildWritMenuItem(index, WritMenuAction.NPC_INFO,
@@ -506,19 +519,25 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         writMenuVisits.computeIfAbsent(index, ignored -> EnumSet.noneOf(WritMenuAction.class)).add(action);
     }
 
-    private void handleStoreBuy(int index) {
+    private void handleStoreBuy(int index, int quantity) {
         if (!storeInventoryTracker.hasInventory()) {
             outputPane.appendErrorText("Store inventory not cached yet. Use List Store first.");
             return;
         }
         WritTracker.WritRequirement requirement = writRequirements.get(index);
         if (storeInventoryTracker.isNameListed()) {
-            commandProcessor.handleInput("buy " + requirement.quantity() + " " + requirement.item());
+            commandProcessor.handleInput("buy " + quantity + " " + requirement.item());
             return;
         }
         storeInventoryTracker.findMatch(requirement.item()).ifPresentOrElse(item ->
-                        commandProcessor.handleInput("buy " + item.id()),
+                        buyItemById(item.id(), quantity),
                 () -> outputPane.appendErrorText("Store inventory does not list \"" + requirement.item() + "\"."));
+    }
+
+    private void buyItemById(String itemId, int quantity) {
+        for (int i = 0; i < quantity; i++) {
+            commandProcessor.handleInput("buy " + itemId);
+        }
     }
 
     private void handleRoute(int index) {
