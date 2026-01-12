@@ -796,5 +796,25 @@
       670
     ],
     "commands": []
+  },
+  {
+    "npc": "Warty Mick",
+    "location": "the underdocks general shop on the waterfront",
+    "target": [
+      5,
+      174,
+      227
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Renee Palm",
+    "location": "Djinn\u0027s Famous Flying Carpets on Scoone Avenue",
+    "target": [
+      1,
+      903,
+      466
+    ],
+    "commands": []
   }
 ]
