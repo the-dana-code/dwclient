@@ -756,5 +756,35 @@
       218
     ],
     "commands": []
+  },
+  {
+    "npc": "the small bell boy",
+    "location": "the Ankh Post Office entrance foyer on The Soake",
+    "target": [
+      1,
+      344,
+      330
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Baldwin the Disemboweler MacAvrik",
+    "location": "the smithy on Filigree Street",
+    "target": [
+      1,
+      690,
+      791
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the shopkeeper",
+    "location": "the Ankh-Morpork Apothecary on Prouts",
+    "target": [
+      1,
+      568,
+      442
+    ],
+    "commands": []
   }
 ]
