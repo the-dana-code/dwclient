@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -208,7 +209,12 @@ public final class MapPanel extends JPanel {
             AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter);
             mapLabel.setIcon(icon);
             mapLabel.setText("");
-            mapLabel.setPreferredSize(scaledSize);
+            Insets insets = mapLabel.getInsets();
+            Dimension preferredSize = new Dimension(
+                    scaledSize.width + insets.left + insets.right,
+                    scaledSize.height + insets.top + insets.bottom
+            );
+            mapLabel.setPreferredSize(preferredSize);
             mapLabel.revalidate();
             configureAnimation(icon);
             if (scaledFocus != null && scaledSize != null) {
@@ -329,12 +335,32 @@ public final class MapPanel extends JPanel {
         if (mapImage == null || lastImageSize == null) {
             return;
         }
+
+        javax.swing.Icon icon = mapLabel.getIcon();
+        if (icon == null) {
+            return;
+        }
+
+        Insets insets = mapLabel.getInsets();
+        int iconWidth = icon.getIconWidth();
+        int iconHeight = icon.getIconHeight();
+        int labelWidth = mapLabel.getWidth();
+        int labelHeight = mapLabel.getHeight();
+
+        // Calculate icon position within the label (centered)
+        int xOffset = insets.left + (labelWidth - insets.left - insets.right - iconWidth) / 2;
+        int yOffset = insets.top + (labelHeight - insets.top - insets.bottom - iconHeight) / 2;
+
         double scale = zoomPercent / 100.0;
         if (scale <= 0) {
             return;
         }
-        int baseX = (int) Math.round(clickPoint.x / scale);
-        int baseY = (int) Math.round(clickPoint.y / scale);
+
+        int relativeX = clickPoint.x - xOffset;
+        int relativeY = clickPoint.y - yOffset;
+
+        int baseX = (int) Math.round(relativeX / scale);
+        int baseY = (int) Math.round(relativeY / scale);
         int mapX = mapImage.minX()
                 + (int) Math.round((baseX - mapImage.roomPixelOffsetX()) / (double) mapImage.imageScale());
         int mapY = mapImage.minY()
@@ -399,13 +425,32 @@ public final class MapPanel extends JPanel {
         if (extent.width <= 0 || extent.height <= 0) {
             return;
         }
+
+        javax.swing.Icon icon = mapLabel.getIcon();
+        if (icon == null) {
+            return;
+        }
+
+        Insets insets = mapLabel.getInsets();
+        int iconWidth = icon.getIconWidth();
+        int iconHeight = icon.getIconHeight();
+        int labelWidth = mapLabel.getWidth();
+        int labelHeight = mapLabel.getHeight();
+
+        // Calculate icon position within the label (centered)
+        int xOffset = insets.left + (labelWidth - insets.left - insets.right - iconWidth) / 2;
+        int yOffset = insets.top + (labelHeight - insets.top - insets.bottom - iconHeight) / 2;
+
+        int componentX = point.x + xOffset;
+        int componentY = point.y + yOffset;
+
         Dimension effectiveSize = imageSize;
         Dimension labelSize = mapLabel.getSize();
         if (labelSize.width > 0 && labelSize.height > 0) {
             effectiveSize = labelSize;
         }
-        int viewX = point.x - extent.width / 2;
-        int viewY = point.y - extent.height / 2;
+        int viewX = componentX - extent.width / 2;
+        int viewY = componentY - extent.height / 2;
         if (effectiveSize.width > extent.width) {
             viewX = Math.max(0, Math.min(viewX, effectiveSize.width - extent.width));
         } else {
