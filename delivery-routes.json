@@ -928,5 +928,15 @@
       452
     ],
     "commands": []
+  },
+  {
+    "npc": "Nella",
+    "location": "Nella\u0027s vault",
+    "target": [
+      1,
+      978,
+      807
+    ],
+    "commands": []
   }
 ]
