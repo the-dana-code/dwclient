@@ -998,5 +998,65 @@
       975
     ],
     "commands": []
+  },
+  {
+    "npc": "the shopkeeper",
+    "location": "Little Seriph\u0027s on Short Street",
+    "target": [
+      1,
+      729,
+      1138
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Derek Wadley",
+    "location": "the musty cheese shop on Alguinna Alley",
+    "target": [
+      1,
+      115,
+      960
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Greldik Marlinslayer",
+    "location": "the O-fish-ial Fishermen\u0027s Guild Shoppe on the waterfront",
+    "target": [
+      5,
+      339,
+      214
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Baldwin\u0027s apprentice",
+    "location": "the smithy on Filigree Street",
+    "target": [
+      1,
+      690,
+      791
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mr Calleretti",
+    "location": "the Stab in the Back pub on Pseudopolis Yard",
+    "target": [
+      1,
+      679,
+      578
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Argule Wibbley",
+    "location": "Argule Wibbley\u0027s Pottery Shop on Cockbill Street",
+    "target": [
+      1,
+      119,
+      662
+    ],
+    "commands": []
   }
 ]
