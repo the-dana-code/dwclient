@@ -866,5 +866,37 @@
       315
     ],
     "commands": []
+  },
+  {
+    "npc": "Yortuk Festrunk",
+    "location": "Festrunk Brothers on Prouts",
+    "target": [
+      1,
+      512,
+      483
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Patrice Le Clair",
+    "location": "the market stall on Goose Gate",
+    "target": [
+      1,
+      536,
+      1012
+    ],
+    "commands": [
+      "enter stall"
+    ]
+  },
+  {
+    "npc": "Tim La Raude",
+    "location": "La Raude\u0027s Shelf shop on Street of Cunning Artificers",
+    "target": [
+      1,
+      760,
+      1051
+    ],
+    "commands": []
   }
 ]
