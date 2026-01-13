@@ -938,5 +938,35 @@
       807
     ],
     "commands": []
+  },
+  {
+    "npc": "Gervais",
+    "location": "Monsieur Rosset\u0027s Beauty Parlour on Pseudopolis Yard",
+    "target": [
+      7,
+      161,
+      175
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Lilith Z. Dharienne",
+    "location": "Karma \u0027R\u0027 Us on Body Street",
+    "target": [
+      1,
+      732,
+      572
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mrs Confectionairre",
+    "location": "Confections De Confectionairre on Salis Street",
+    "target": [
+      1,
+      672,
+      546
+    ],
+    "commands": []
   }
 ]

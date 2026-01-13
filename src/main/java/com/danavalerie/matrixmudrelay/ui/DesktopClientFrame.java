@@ -784,6 +784,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                                 resultsMenuVisits.add(resultIndex);
                                 item.setText(formatResultsMenuLabel(true, result.label()));
                                 commandProcessor.handleInput(result.mapCommand());
+                                showSpeedWalkPrompt(result.command());
                             });
                         } else {
                             item.addActionListener(event -> {
@@ -820,6 +821,26 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private String formatResultsMenuLabel(boolean visited, String label) {
         return (visited ? "✅ " : "❌ ") + label;
+    }
+
+    private void showSpeedWalkPrompt(String speedWalkCommand) {
+        if (speedWalkCommand == null || speedWalkCommand.isBlank()) {
+            return;
+        }
+        Object[] options = {"Cancel", "Speed Walk"};
+        int choice = javax.swing.JOptionPane.showOptionDialog(
+                this,
+                "Speed walk to this location?",
+                "Speed Walk",
+                javax.swing.JOptionPane.DEFAULT_OPTION,
+                javax.swing.JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]
+        );
+        if (choice == 1) {
+            commandProcessor.handleInput(speedWalkCommand);
+        }
     }
 
     private void shutdown() {
