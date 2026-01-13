@@ -968,5 +968,35 @@
       546
     ],
     "commands": []
+  },
+  {
+    "npc": "Jacinthe Bockxse",
+    "location": "Batchev\u0027s World of Maps on Ankh Street",
+    "target": [
+      1,
+      144,
+      323
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Hurple",
+    "location": "Hurple\u0027s towel shop on Cockbill Street",
+    "target": [
+      1,
+      143,
+      638
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Wun Phul Mouth",
+    "location": "Wun Phul Mouth\u0027s Hunghungese Restaurant",
+    "target": [
+      1,
+      300,
+      975
+    ],
+    "commands": []
   }
 ]
