@@ -898,5 +898,15 @@
       1051
     ],
     "commands": []
+  },
+  {
+    "npc": "the gallery assistant",
+    "location": "the art gallery on Butts Treat",
+    "target": [
+      1,
+      651,
+      648
+    ],
+    "commands": []
   }
 ]
