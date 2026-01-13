@@ -25,6 +25,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
         void appendCommandEcho(String text);
 
+        void updateCurrentRoom(String roomId);
+
         void updateMap(String roomId);
 
         void updateStats(StatsHudRenderer.StatsHudData data);
@@ -114,6 +116,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         String roomId = mud.getCurrentRoomSnapshot().roomId();
         if (roomId != null && !roomId.isBlank() && !roomId.equals(lastRoomId)) {
             lastRoomId = roomId;
+            output.updateCurrentRoom(roomId);
             output.updateMap(roomId);
             storeInventoryTracker.clearInventory();
         }

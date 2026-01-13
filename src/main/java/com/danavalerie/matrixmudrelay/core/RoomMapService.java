@@ -128,7 +128,26 @@ public class RoomMapService {
             int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
 
             String mapName = getMapDisplayName(current.mapId);
-            return new MapImage(data, imageWidth, imageHeight, "image/png", mapName, currentX, currentY, reuseBase);
+            return new MapImage(
+                    data,
+                    imageWidth,
+                    imageHeight,
+                    "image/png",
+                    mapName,
+                    currentX,
+                    currentY,
+                    reuseBase,
+                    current.mapId,
+                    minX,
+                    minY,
+                    IMAGE_SCALE,
+                    ROOM_PIXEL_OFFSET_X,
+                    ROOM_PIXEL_OFFSET_Y,
+                    current.roomId,
+                    current.xpos,
+                    current.ypos,
+                    current.roomShort
+            );
         }
     }
 
@@ -450,6 +469,35 @@ public class RoomMapService {
         return null;
     }
 
+    public RoomLocation findNearestRoom(int mapId, int x, int y) throws SQLException, MapLookupException {
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String sql = "select room_id, map_id, xpos, ypos, room_short " +
+                "from rooms where map_id = ? " +
+                "order by ((xpos - ?) * (xpos - ?) + (ypos - ?) * (ypos - ?)) asc limit 1";
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, mapId);
+            stmt.setInt(2, x);
+            stmt.setInt(3, x);
+            stmt.setInt(4, y);
+            stmt.setInt(5, y);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new RoomLocation(
+                            rs.getString("room_id"),
+                            rs.getInt("map_id"),
+                            rs.getInt("xpos"),
+                            rs.getInt("ypos"),
+                            rs.getString("room_short")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
     private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
         String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -680,8 +728,24 @@ public class RoomMapService {
         g2.drawLine(startX, startY, endX, endY);
     }
 
-    public record MapImage(byte[] data, int width, int height, String mimeType, String mapName, int currentX, int currentY,
-                           boolean baseImageReused) {
+    public record MapImage(byte[] data,
+                           int width,
+                           int height,
+                           String mimeType,
+                           String mapName,
+                           int currentX,
+                           int currentY,
+                           boolean baseImageReused,
+                           int mapId,
+                           int minX,
+                           int minY,
+                           int imageScale,
+                           int roomPixelOffsetX,
+                           int roomPixelOffsetY,
+                           String roomId,
+                           int roomX,
+                           int roomY,
+                           String roomShort) {
     }
 
     private static final class BaseImageCache {

@@ -124,7 +124,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.configPath = configPath;
         this.routesPath = configPath.resolveSibling("delivery-routes.json");
         this.routeMappings = routeMappings;
-        this.mapPanel = new MapPanel(resolveMapZoomPercent(), this::persistMapZoomConfig);
+        this.mapPanel = new MapPanel(
+                resolveMapZoomPercent(),
+                this::persistMapZoomConfig
+        );
 
         writTracker = new WritTracker();
         storeInventoryTracker = new StoreInventoryTracker();
@@ -144,6 +147,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
+        mapPanel.setSpeedwalkHandler(
+                location -> commandProcessor.speedwalkTo(location.mapId(), location.xpos(), location.ypos())
+        );
         mud.setGmcpListener(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
         fontManager.registerListener(statsPanel);
@@ -709,6 +715,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     @Override
+    public void updateCurrentRoom(String roomId) {
+        SwingUtilities.invokeLater(() -> mapPanel.updateCurrentRoom(roomId));
+    }
+
+    @Override
     public void updateStats(StatsHudRenderer.StatsHudData data) {
         statsPanel.updateStats(data);
     }
@@ -768,11 +779,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         boolean visited = resultsMenuVisits.contains(index);
                         JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
                         int resultIndex = index;
-                        item.addActionListener(event -> {
-                            resultsMenuVisits.add(resultIndex);
-                            item.setText(formatResultsMenuLabel(true, result.label()));
-                            commandProcessor.handleInput(result.command());
-                        });
+                        if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
+                            item.addActionListener(event -> commandProcessor.handleInput(result.mapCommand()));
+                        } else {
+                            item.addActionListener(event -> {
+                                resultsMenuVisits.add(resultIndex);
+                                item.setText(formatResultsMenuLabel(true, result.label()));
+                                commandProcessor.handleInput(result.command());
+                            });
+                        }
                         menu.add(item);
                     }
                 }

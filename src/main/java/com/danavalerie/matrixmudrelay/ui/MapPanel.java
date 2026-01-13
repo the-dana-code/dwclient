@@ -1,11 +1,10 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
-import com.danavalerie.matrixmudrelay.util.ThreadUtils;
-
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,12 +20,15 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 public final class MapPanel extends JPanel {
@@ -48,14 +50,20 @@ public final class MapPanel extends JPanel {
     private final JSlider zoomSlider;
     private final JLabel zoomLabel = new JLabel();
     private final IntConsumer zoomChangeListener;
+    private Consumer<RoomMapService.RoomLocation> speedwalkHandler;
+    private final JButton speedWalkButton = new JButton("Speed Walk");
     private int zoomPercent;
     private BufferedImage lastBaseImage;
     private String lastTitle;
     private Point lastFocusPoint;
     private Dimension lastImageSize;
+    private RoomMapService.MapImage lastMapImage;
+    private RoomMapService.RoomLocation selectedRoom;
+    private String currentRoomId;
     private Timer animationTimer;
 
-    public MapPanel(int initialZoomPercent, IntConsumer zoomChangeListener) {
+    public MapPanel(int initialZoomPercent,
+                    IntConsumer zoomChangeListener) {
         this.zoomPercent = sanitizeZoom(initialZoomPercent);
         this.zoomChangeListener = zoomChangeListener;
         setLayout(new BorderLayout());
@@ -66,8 +74,17 @@ public final class MapPanel extends JPanel {
         mapLabel.setBackground(BACKGROUND);
         mapLabel.setForeground(new Color(220, 220, 220));
         mapLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        speedWalkButton.setEnabled(false);
+        speedWalkButton.addActionListener(event -> handleSpeedWalk());
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(BACKGROUND);
+        JPanel titleActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 2));
+        titleActions.setOpaque(false);
+        titleActions.add(speedWalkButton);
+        titlePanel.add(mapTitleLabel, BorderLayout.CENTER);
+        titlePanel.add(titleActions, BorderLayout.EAST);
         scrollPane = new JScrollPane(mapLabel);
-        add(mapTitleLabel, BorderLayout.NORTH);
+        add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, this.zoomPercent);
         zoomSlider.setPaintTicks(true);
@@ -80,6 +97,12 @@ public final class MapPanel extends JPanel {
         zoomPanel.add(zoomSlider);
         zoomPanel.add(zoomLabel);
         add(zoomPanel, BorderLayout.SOUTH);
+        mapLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                handleMapClick(event.getPoint());
+            }
+        });
     }
 
     public void updateMap(String roomId) {
@@ -95,8 +118,14 @@ public final class MapPanel extends JPanel {
             try {
                 RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId);
                 BufferedImage image = resolveBaseImage(mapImage);
-                showImage(image, mapImage.mapName(), new Point(mapImage.currentX(), mapImage.currentY()),
-                        new Dimension(mapImage.width(), mapImage.height()));
+                RoomMapService.RoomLocation currentRoom = new RoomMapService.RoomLocation(
+                        mapImage.roomId(),
+                        mapImage.mapId(),
+                        mapImage.roomX(),
+                        mapImage.roomY(),
+                        mapImage.roomShort()
+                );
+                showImage(mapImage, image, currentRoom);
             } catch (RoomMapService.MapLookupException e) {
                 showMessage("Map error: " + e.getMessage());
             } catch (Exception e) {
@@ -105,17 +134,31 @@ public final class MapPanel extends JPanel {
         });
     }
 
+    public void updateCurrentRoom(String roomId) {
+        currentRoomId = roomId;
+        updateSpeedWalkState();
+    }
+
+    public void setSpeedwalkHandler(Consumer<RoomMapService.RoomLocation> speedwalkHandler) {
+        this.speedwalkHandler = speedwalkHandler;
+    }
+
     public void shutdown() {
         executor.shutdownNow();
     }
 
 
-    private void showImage(BufferedImage image, String title, Point focusPoint, Dimension imageSize) {
+    private void showImage(RoomMapService.MapImage mapImage,
+                           BufferedImage image,
+                           RoomMapService.RoomLocation currentRoom) {
+        lastMapImage = mapImage;
         lastBaseImage = image;
-        lastTitle = title;
-        lastFocusPoint = focusPoint;
-        lastImageSize = imageSize;
+        lastTitle = mapImage.mapName();
+        lastFocusPoint = new Point(mapImage.currentX(), mapImage.currentY());
+        lastImageSize = new Dimension(mapImage.width(), mapImage.height());
+        selectedRoom = currentRoom;
         updateDisplayedImage();
+        updateSpeedWalkState();
     }
 
     private void updateDisplayedImage() {
@@ -154,12 +197,15 @@ public final class MapPanel extends JPanel {
         lastTitle = null;
         lastFocusPoint = null;
         lastImageSize = null;
+        lastMapImage = null;
+        selectedRoom = null;
         SwingUtilities.invokeLater(() -> {
             mapTitleLabel.setText("");
             mapLabel.setIcon(null);
             mapLabel.setText(message);
             mapLabel.setPreferredSize(null);
             configureAnimation(null);
+            speedWalkButton.setEnabled(false);
         });
     }
 
@@ -247,6 +293,70 @@ public final class MapPanel extends JPanel {
         int x = (int) Math.round(point.x * scale);
         int y = (int) Math.round(point.y * scale);
         return new Point(x, y);
+    }
+
+    private void handleMapClick(Point clickPoint) {
+        RoomMapService.MapImage mapImage = lastMapImage;
+        if (mapImage == null || lastImageSize == null) {
+            return;
+        }
+        double scale = zoomPercent / 100.0;
+        if (scale <= 0) {
+            return;
+        }
+        int baseX = (int) Math.round(clickPoint.x / scale);
+        int baseY = (int) Math.round(clickPoint.y / scale);
+        int mapX = mapImage.minX()
+                + (int) Math.round((baseX - mapImage.roomPixelOffsetX()) / (double) mapImage.imageScale());
+        int mapY = mapImage.minY()
+                + (int) Math.round((baseY - mapImage.roomPixelOffsetY()) / (double) mapImage.imageScale());
+        executor.submit(() -> {
+            try {
+                RoomMapService.RoomLocation nearest = mapService.findNearestRoom(mapImage.mapId(), mapX, mapY);
+                if (nearest == null) {
+                    return;
+                }
+                updateSelectedRoom(nearest, mapImage);
+            } catch (RoomMapService.MapLookupException e) {
+                showMessage("Map error: " + e.getMessage());
+            } catch (Exception e) {
+                showMessage("Map error: Unable to update selection.");
+            }
+        });
+    }
+
+    private void updateSelectedRoom(RoomMapService.RoomLocation room, RoomMapService.MapImage mapImage) {
+        if (room == null || mapImage == null) {
+            return;
+        }
+        selectedRoom = room;
+        lastFocusPoint = mapToImagePoint(room, mapImage);
+        updateDisplayedImage();
+        updateSpeedWalkState();
+    }
+
+    private Point mapToImagePoint(RoomMapService.RoomLocation room, RoomMapService.MapImage mapImage) {
+        int px = (room.xpos() - mapImage.minX()) * mapImage.imageScale() + mapImage.roomPixelOffsetX();
+        int py = (room.ypos() - mapImage.minY()) * mapImage.imageScale() + mapImage.roomPixelOffsetY();
+        return new Point(px, py);
+    }
+
+    private void handleSpeedWalk() {
+        RoomMapService.RoomLocation room = selectedRoom;
+        if (room == null || speedwalkHandler == null) {
+            return;
+        }
+        speedwalkHandler.accept(room);
+    }
+
+    private void updateSpeedWalkState() {
+        RoomMapService.RoomLocation room = selectedRoom;
+        boolean enabled = room != null;
+        if (enabled && currentRoomId != null && room.roomId() != null) {
+            enabled = !currentRoomId.equals(room.roomId());
+        }
+        boolean finalEnabled = enabled;
+        SwingUtilities.invokeLater(() -> speedWalkButton.setEnabled(finalEnabled));
     }
 
     private static int scaledMarkerDiameter(int zoomPercent) {
