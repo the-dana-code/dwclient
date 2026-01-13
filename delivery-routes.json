@@ -908,5 +908,25 @@
       648
     ],
     "commands": []
+  },
+  {
+    "npc": "the drunken shopkeeper",
+    "location": "the Wine Shop on Washer Way",
+    "target": [
+      1,
+      1169,
+      662
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Sigsbee H. Waddington",
+    "location": "the Shelf Shock Shop on Pallant Street",
+    "target": [
+      1,
+      945,
+      452
+    ],
+    "commands": []
   }
 ]

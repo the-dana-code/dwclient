@@ -780,7 +780,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
                         int resultIndex = index;
                         if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
-                            item.addActionListener(event -> commandProcessor.handleInput(result.mapCommand()));
+                            item.addActionListener(event -> {
+                                resultsMenuVisits.add(resultIndex);
+                                item.setText(formatResultsMenuLabel(true, result.label()));
+                                commandProcessor.handleInput(result.mapCommand());
+                            });
                         } else {
                             item.addActionListener(event -> {
                                 resultsMenuVisits.add(resultIndex);
