@@ -65,7 +65,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
-    private final JMenu resultsMenu = new JMenu("Results");
+    private static final int RESULTS_MENU_PAGE_SIZE = 15;
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
@@ -79,17 +79,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomMapService routeMapService = new RoomMapService("database.db");
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
-    private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults =
-            new com.danavalerie.matrixmudrelay.core.ContextualResultList(
-                    "Search Results",
-                    List.of(),
-                    "No results yet.",
-                    null
-            );
+    private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults;
     private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
     private final Map<Integer, EnumSet<WritMenuAction>> writMenuVisits = new HashMap<>();
     private final List<JMenu> writMenus = new ArrayList<>();
+    private final List<JMenu> resultsMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
     private static final QuickLink[] QUICK_LINKS = {
             new QuickLink("Mended Drum", 1, 718, 802),
@@ -159,7 +154,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setJMenuBar(buildMenuBar());
         add(buildSplitLayout(), BorderLayout.CENTER);
         add(statsPanel, BorderLayout.SOUTH);
-        updateResultsMenu(currentResults);
         applyConfiguredFont();
         pack();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -195,7 +189,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         menuBar.add(quickLinksMenu);
 
-        menuBar.add(resultsMenu);
         return menuBar;
     }
 
@@ -414,11 +407,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void rebuildWritMenus() {
+        for (JMenu menu : resultsMenus) {
+            menuBar.remove(menu);
+        }
         for (JMenu menu : writMenus) {
             menuBar.remove(menu);
         }
         writMenus.clear();
         if (writRequirements.isEmpty()) {
+            reattachResultsMenus();
             menuBar.revalidate();
             menuBar.repaint();
             return;
@@ -427,7 +424,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             WritTracker.WritRequirement req = writRequirements.get(i);
             boolean hasRoute = routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).isPresent();
             int index = i;
-            JMenu writMenu = new JMenu("Writ" + (i + 1));
+            JMenu writMenu = new JMenu("W" + (i + 1));
 
             JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
                     "Item: " + req.quantity() + " " + req.item(),
@@ -491,6 +488,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             writMenus.add(writMenu);
             menuBar.add(writMenu);
         }
+        reattachResultsMenus();
         menuBar.revalidate();
         menuBar.repaint();
     }
@@ -729,46 +727,76 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             if (resetResultsVisits) {
                 resultsMenuVisits.clear();
             }
-            resultsMenu.removeAll();
+            for (JMenu menu : resultsMenus) {
+                menuBar.remove(menu);
+            }
+            resultsMenus.clear();
+            if (currentResults == null) {
+                menuBar.revalidate();
+                menuBar.repaint();
+                return;
+            }
+            List<com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult> resultsList =
+                    currentResults.results();
+            int totalResults = resultsList.size();
+            int totalMenus = Math.max(1, (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE));
             String title = currentResults.title();
-            if (title != null && !title.isBlank()) {
-                JMenuItem header = new JMenuItem(title);
-                header.setEnabled(false);
-                resultsMenu.add(header);
-                resultsMenu.addSeparator();
-            }
-            if (currentResults.results().isEmpty()) {
-                String empty = currentResults.emptyMessage() == null
-                        ? "No results."
-                        : currentResults.emptyMessage();
-                JMenuItem emptyItem = new JMenuItem(empty);
-                emptyItem.setEnabled(false);
-                resultsMenu.add(emptyItem);
-            } else {
-                int index = 0;
-                for (com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result
-                        : currentResults.results()) {
-                    boolean visited = resultsMenuVisits.contains(index);
-                    JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
-                    int resultIndex = index;
-                    item.addActionListener(event -> {
-                        resultsMenuVisits.add(resultIndex);
-                        item.setText(formatResultsMenuLabel(true, result.label()));
-                        commandProcessor.handleInput(result.command());
-                    });
-                    resultsMenu.add(item);
-                    index++;
+            String footerText = currentResults.footer();
+
+            for (int menuIndex = 0; menuIndex < totalMenus; menuIndex++) {
+                JMenu menu = new JMenu("R" + (menuIndex + 1));
+                if (menuIndex == 0 && title != null && !title.isBlank()) {
+                    JMenuItem header = new JMenuItem(title);
+                    header.setEnabled(false);
+                    menu.add(header);
+                    menu.addSeparator();
                 }
+
+                int start = menuIndex * RESULTS_MENU_PAGE_SIZE;
+                int end = Math.min(start + RESULTS_MENU_PAGE_SIZE, totalResults);
+                if (totalResults == 0) {
+                    String empty = currentResults.emptyMessage() == null
+                            ? "No results."
+                            : currentResults.emptyMessage();
+                    JMenuItem emptyItem = new JMenuItem(empty);
+                    emptyItem.setEnabled(false);
+                    menu.add(emptyItem);
+                } else {
+                    for (int index = start; index < end; index++) {
+                        com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result =
+                                resultsList.get(index);
+                        boolean visited = resultsMenuVisits.contains(index);
+                        JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
+                        int resultIndex = index;
+                        item.addActionListener(event -> {
+                            resultsMenuVisits.add(resultIndex);
+                            item.setText(formatResultsMenuLabel(true, result.label()));
+                            commandProcessor.handleInput(result.command());
+                        });
+                        menu.add(item);
+                    }
+                }
+
+                boolean isLastMenu = menuIndex == totalMenus - 1;
+                if (isLastMenu && footerText != null && !footerText.isBlank()) {
+                    menu.addSeparator();
+                    JMenuItem footer = new JMenuItem(footerText);
+                    footer.setEnabled(false);
+                    menu.add(footer);
+                }
+
+                resultsMenus.add(menu);
+                menuBar.add(menu);
             }
-            if (currentResults.footer() != null && !currentResults.footer().isBlank()) {
-                resultsMenu.addSeparator();
-                JMenuItem footer = new JMenuItem(currentResults.footer());
-                footer.setEnabled(false);
-                resultsMenu.add(footer);
-            }
-            resultsMenu.revalidate();
-            resultsMenu.repaint();
+            menuBar.revalidate();
+            menuBar.repaint();
         });
+    }
+
+    private void reattachResultsMenus() {
+        for (JMenu menu : resultsMenus) {
+            menuBar.add(menu);
+        }
     }
 
     private String formatResultsMenuLabel(boolean visited, String label) {
