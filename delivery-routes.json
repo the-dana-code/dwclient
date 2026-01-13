@@ -836,5 +836,35 @@
       708
     ],
     "commands": []
+  },
+  {
+    "npc": "Wilma",
+    "location": "Wilma\u0027s Worlde of Whigges on Merchants Street",
+    "target": [
+      1,
+      875,
+      1082
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the sales assistant",
+    "location": "the fur shop on God\u0027s Collar",
+    "target": [
+      1,
+      763,
+      634
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Tom Boit",
+    "location": "Tom Boit\u0027s Box and Barrel Shop on Ankh Street",
+    "target": [
+      1,
+      88,
+      315
+    ],
+    "commands": []
   }
 ]
