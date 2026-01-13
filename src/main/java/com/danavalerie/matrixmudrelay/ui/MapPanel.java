@@ -3,8 +3,9 @@ package com.danavalerie.matrixmudrelay.ui;
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,6 +25,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,13 +39,16 @@ public final class MapPanel extends JPanel {
     private static final int ZOOM_MIN = 50;
     private static final int ZOOM_MAX = 200;
     private static final int ZOOM_DEFAULT = 100;
+    private static final RoomMapService.MapArea NONE_AREA = new RoomMapService.MapArea(-1, "<None>");
     private final RoomMapService mapService = new RoomMapService("database.db");
     private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "map-render");
         t.setDaemon(true);
         return t;
     });
-    private final JLabel mapTitleLabel = new JLabel("", SwingConstants.CENTER);
+    private final JComboBox<RoomMapService.MapArea> areaComboBox;
+    private final DefaultComboBoxModel<RoomMapService.MapArea> areaComboBoxModel;
+    private final Map<Integer, RoomMapService.MapArea> areaOptions = new HashMap<>();
     private final JLabel mapLabel = new JLabel("Map will appear here", SwingConstants.CENTER);
     private final JScrollPane scrollPane;
     private final AtomicReference<String> lastRoomId = new AtomicReference<>();
@@ -55,12 +61,14 @@ public final class MapPanel extends JPanel {
     private int zoomPercent;
     private BufferedImage lastBaseImage;
     private String lastTitle;
+    private Integer lastMapId;
     private Point lastFocusPoint;
     private Dimension lastImageSize;
     private RoomMapService.MapImage lastMapImage;
     private RoomMapService.RoomLocation selectedRoom;
     private String currentRoomId;
     private Timer animationTimer;
+    private boolean updatingAreaSelection;
 
     public MapPanel(int initialZoomPercent,
                     IntConsumer zoomChangeListener) {
@@ -68,8 +76,18 @@ public final class MapPanel extends JPanel {
         this.zoomChangeListener = zoomChangeListener;
         setLayout(new BorderLayout());
         setBackground(BACKGROUND);
-        mapTitleLabel.setForeground(new Color(220, 220, 220));
-        mapTitleLabel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        areaComboBoxModel = new DefaultComboBoxModel<>();
+        areaComboBoxModel.addElement(NONE_AREA);
+        for (RoomMapService.MapArea area : mapService.listMapAreas()) {
+            areaOptions.put(area.mapId(), area);
+            areaComboBoxModel.addElement(area);
+        }
+        areaComboBox = new JComboBox<>(areaComboBoxModel);
+        areaComboBox.setSelectedItem(NONE_AREA);
+        areaComboBox.setForeground(new Color(220, 220, 220));
+        areaComboBox.setBackground(new Color(20, 20, 28));
+        areaComboBox.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
+        areaComboBox.addActionListener(event -> handleAreaSelection());
         mapLabel.setOpaque(true);
         mapLabel.setBackground(BACKGROUND);
         mapLabel.setForeground(new Color(220, 220, 220));
@@ -81,7 +99,7 @@ public final class MapPanel extends JPanel {
         JPanel titleActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 2));
         titleActions.setOpaque(false);
         titleActions.add(speedWalkButton);
-        titlePanel.add(mapTitleLabel, BorderLayout.CENTER);
+        titlePanel.add(areaComboBox, BorderLayout.CENTER);
         titlePanel.add(titleActions, BorderLayout.EAST);
         scrollPane = new JScrollPane(mapLabel);
         add(titlePanel, BorderLayout.NORTH);
@@ -154,6 +172,7 @@ public final class MapPanel extends JPanel {
         lastMapImage = mapImage;
         lastBaseImage = image;
         lastTitle = mapImage.mapName();
+        lastMapId = mapImage.mapId();
         lastFocusPoint = new Point(mapImage.currentX(), mapImage.currentY());
         lastImageSize = new Dimension(mapImage.width(), mapImage.height());
         selectedRoom = currentRoom;
@@ -164,10 +183,16 @@ public final class MapPanel extends JPanel {
     private void updateDisplayedImage() {
         BufferedImage image = lastBaseImage;
         String title = lastTitle;
+        Integer mapId = lastMapId;
         Point focusPoint = lastFocusPoint;
         Dimension imageSize = lastImageSize;
         SwingUtilities.invokeLater(() -> {
-            mapTitleLabel.setText(title == null ? "" : title);
+            if (mapId != null) {
+                updatingAreaSelection = true;
+                RoomMapService.MapArea area = ensureAreaOption(mapId, title);
+                areaComboBox.setSelectedItem(area);
+                updatingAreaSelection = false;
+            }
             if (image == null || imageSize == null) {
                 mapLabel.setIcon(null);
                 mapLabel.setText("");
@@ -195,12 +220,16 @@ public final class MapPanel extends JPanel {
     private void showMessage(String message) {
         lastBaseImage = null;
         lastTitle = null;
+        lastMapId = null;
         lastFocusPoint = null;
         lastImageSize = null;
         lastMapImage = null;
         selectedRoom = null;
+        lastRoomId.set(null);
         SwingUtilities.invokeLater(() -> {
-            mapTitleLabel.setText("");
+            updatingAreaSelection = true;
+            areaComboBox.setSelectedItem(NONE_AREA);
+            updatingAreaSelection = false;
             mapLabel.setIcon(null);
             mapLabel.setText(message);
             mapLabel.setPreferredSize(null);
@@ -404,6 +433,52 @@ public final class MapPanel extends JPanel {
 
     private void onAnimationTick(ActionEvent event) {
         mapLabel.repaint();
+    }
+
+    private void handleAreaSelection() {
+        if (updatingAreaSelection) {
+            return;
+        }
+        RoomMapService.MapArea area = (RoomMapService.MapArea) areaComboBox.getSelectedItem();
+        if (area == null) {
+            return;
+        }
+        if (area.mapId() < 0) {
+            showMessage("No map selected.");
+            return;
+        }
+        Integer currentMapId = lastMapId;
+        if (currentMapId != null && currentMapId == area.mapId()) {
+            return;
+        }
+        executor.submit(() -> {
+            try {
+                String roomId = mapService.findRepresentativeRoomId(area.mapId());
+                if (roomId == null || roomId.isBlank()) {
+                    showMessage("Map error: No rooms found for " + area.displayName() + ".");
+                    return;
+                }
+                updateMap(roomId);
+            } catch (RoomMapService.MapLookupException e) {
+                showMessage("Map error: " + e.getMessage());
+            } catch (Exception e) {
+                showMessage("Map error: Unable to load selected map.");
+            }
+        });
+    }
+
+    private RoomMapService.MapArea ensureAreaOption(int mapId, String title) {
+        RoomMapService.MapArea area = areaOptions.get(mapId);
+        if (area != null) {
+            return area;
+        }
+        String displayName = title == null || title.isBlank()
+                ? mapService.getMapDisplayName(mapId)
+                : title;
+        area = new RoomMapService.MapArea(mapId, displayName);
+        areaOptions.put(mapId, area);
+        areaComboBoxModel.addElement(area);
+        return area;
     }
 
     private static final class AnimatedMapIcon implements javax.swing.Icon {

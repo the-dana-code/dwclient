@@ -151,6 +151,32 @@ public class RoomMapService {
         }
     }
 
+    public List<MapArea> listMapAreas() {
+        List<MapArea> areas = new ArrayList<>();
+        for (MapBackground background : MapBackground.values()) {
+            areas.add(new MapArea(background.mapId, background.formatName()));
+        }
+        areas.sort(Comparator.comparing(MapArea::displayName));
+        return areas;
+    }
+
+    public String findRepresentativeRoomId(int mapId) throws SQLException, MapLookupException {
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        String sql = "select room_id from rooms where map_id = ? order by room_id limit 1";
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, mapId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("room_id");
+                }
+            }
+        }
+        return null;
+    }
+
     public List<RoomSearchResult> searchRoomsByName(String term, int limit) throws SQLException, MapLookupException {
         if (term == null || term.isBlank()) {
             throw new MapLookupException("Search term cannot be blank.");
@@ -672,6 +698,13 @@ public class RoomMapService {
 
     public record NpcSearchResult(String npcId, String npcName, String roomId, int mapId, int xpos, int ypos,
                                   String roomShort, String roomType) {
+    }
+
+    public record MapArea(int mapId, String displayName) {
+        @Override
+        public String toString() {
+            return displayName;
+        }
     }
 
     public record ItemSearchResult(String itemName) {
