@@ -816,5 +816,25 @@
       466
     ],
     "commands": []
+  },
+  {
+    "npc": "Danlin",
+    "location": "the Groaning Platter Tavern on Flood Walk",
+    "target": [
+      1,
+      785,
+      774
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the butcher",
+    "location": "the butcher\u0027s shop on God\u0027s Collar",
+    "target": [
+      1,
+      750,
+      708
+    ],
+    "commands": []
   }
 ]
