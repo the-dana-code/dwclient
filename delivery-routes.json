@@ -1108,5 +1108,65 @@
       438
     ],
     "commands": []
+  },
+  {
+    "npc": "Olson Shinbiter",
+    "location": "Olson\u0027s Iron Shop on Water Street",
+    "target": [
+      1,
+      1096,
+      427
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mr Scoonwinkle",
+    "location": "Scoonwinkle\u0027s Shoe Store on Hopper Street",
+    "target": [
+      1,
+      1124,
+      715
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mr Rendtnor",
+    "location": "Rendtnor\u0027s Jewellery Shop on Plaza of Broken Moons",
+    "target": [
+      1,
+      1040,
+      721
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Halley Toomer",
+    "location": "Toomer Stationers on Scoone Avenue",
+    "target": [
+      1,
+      746,
+      421
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mr Fiddley",
+    "location": "Fiddley\u0027s Music Shop on Seven Sleepers",
+    "target": [
+      1,
+      774,
+      323
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Jake Elwood",
+    "location": "Jake Elwood\u0027s T-shirt Shop on Sticken Place",
+    "target": [
+      1,
+      182,
+      806
+    ],
+    "commands": []
   }
 ]
