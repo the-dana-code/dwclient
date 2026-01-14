@@ -1068,5 +1068,25 @@
       998
     ],
     "commands": []
+  },
+  {
+    "npc": "the young wizard",
+    "location": "the wizard\u0027s tent on Street of Cunning Artificers",
+    "target": [
+      1,
+      777,
+      1048
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Dunstan Tichenor",
+    "location": "Dunstan Tichenor\u0027s Travel Agency on Street of Bookkeepers",
+    "target": [
+      1,
+      799,
+      970
+    ],
+    "commands": []
   }
 ]
