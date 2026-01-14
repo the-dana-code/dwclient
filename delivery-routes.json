@@ -1058,5 +1058,15 @@
       662
     ],
     "commands": []
+  },
+  {
+    "npc": "Mr Reedle",
+    "location": "the Happy Cabbage on Lobbin Clout",
+    "target": [
+      1,
+      1163,
+      998
+    ],
+    "commands": []
   }
 ]
