@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,7 +168,7 @@ public final class MapPanel extends JPanel {
     }
 
     public void setSpeedwalkPath(List<RoomMapService.RoomLocation> path) {
-        speedwalkPath = path == null ? List.of() : List.copyOf(path);
+        this.speedwalkPath = path == null ? List.of() : Collections.unmodifiableList(new ArrayList<>(path));
         updateDisplayedImage();
     }
 
@@ -258,7 +259,7 @@ public final class MapPanel extends JPanel {
             points.add(scalePoint(basePoint, zoomPercent));
             previousOnMap = true;
         }
-        return List.copyOf(points);
+        return Collections.unmodifiableList(points);
     }
 
     private void showMessage(String message) {
