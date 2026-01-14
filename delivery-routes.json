@@ -1088,5 +1088,25 @@
       970
     ],
     "commands": []
+  },
+  {
+    "npc": "William Morgan",
+    "location": "Somethynge-or-Other Licenced Caffe on Endless Street",
+    "target": [
+      1,
+      224,
+      1086
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the neat secretary",
+    "location": "the Dentist Office reception area in the Flintwick Building",
+    "target": [
+      3,
+      993,
+      438
+    ],
+    "commands": []
   }
 ]
