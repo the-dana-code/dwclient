@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -26,7 +27,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -59,6 +62,7 @@ public final class MapPanel extends JPanel {
     private final IntConsumer zoomChangeListener;
     private Consumer<RoomMapService.RoomLocation> speedwalkHandler;
     private final JButton speedWalkButton = new JButton("Speed Walk");
+    private List<RoomMapService.RoomLocation> speedwalkPath = List.of();
     private int zoomPercent;
     private BufferedImage lastBaseImage;
     private String lastTitle;
@@ -162,6 +166,11 @@ public final class MapPanel extends JPanel {
         this.speedwalkHandler = speedwalkHandler;
     }
 
+    public void setSpeedwalkPath(List<RoomMapService.RoomLocation> path) {
+        speedwalkPath = path == null ? List.of() : List.copyOf(path);
+        updateDisplayedImage();
+    }
+
     public void shutdown() {
         executor.shutdownNow();
     }
@@ -187,6 +196,7 @@ public final class MapPanel extends JPanel {
         Integer mapId = lastMapId;
         Point focusPoint = lastFocusPoint;
         Dimension imageSize = lastImageSize;
+        RoomMapService.MapImage mapImage = lastMapImage;
         SwingUtilities.invokeLater(() -> {
             if (mapId != null) {
                 updatingAreaSelection = true;
@@ -205,8 +215,9 @@ public final class MapPanel extends JPanel {
             BufferedImage scaled = scaleImage(image, zoomPercent);
             Dimension scaledSize = scaleDimension(imageSize, zoomPercent);
             Point scaledFocus = scalePoint(focusPoint, zoomPercent);
+            List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);
             int markerDiameter = scaledMarkerDiameter(zoomPercent);
-            AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter);
+            AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath);
             mapLabel.setIcon(icon);
             mapLabel.setText("");
             Insets insets = mapLabel.getInsets();
@@ -221,6 +232,33 @@ public final class MapPanel extends JPanel {
                 SwingUtilities.invokeLater(() -> centerViewOnPoint(scaledFocus, scaledSize));
             }
         });
+    }
+
+    private List<Point> buildScaledSpeedwalkPath(RoomMapService.MapImage mapImage, Integer mapId, int zoomPercent) {
+        if (mapImage == null || mapId == null) {
+            return List.of();
+        }
+        if (speedwalkPath.isEmpty()) {
+            return List.of();
+        }
+        List<Point> points = new ArrayList<>();
+        boolean previousOnMap = false;
+        for (RoomMapService.RoomLocation location : speedwalkPath) {
+            if (location == null || location.mapId() != mapId) {
+                if (previousOnMap) {
+                    points.add(null);
+                }
+                previousOnMap = false;
+                continue;
+            }
+            Point basePoint = mapToImagePoint(location, mapImage);
+            if (basePoint == null) {
+                continue;
+            }
+            points.add(scalePoint(basePoint, zoomPercent));
+            previousOnMap = true;
+        }
+        return List.copyOf(points);
     }
 
     private void showMessage(String message) {
@@ -531,20 +569,24 @@ public final class MapPanel extends JPanel {
         private static final int MARKER_DIAMETER_BASE = 16;
         private static final int PINWHEEL_SEGMENTS = 20;
         private static final float PINWHEEL_ALPHA = 0.9f;
+        private static final Color SPEEDWALK_COLOR = new Color(230, 70, 70);
         private final BufferedImage image;
         private final Point focusPoint;
         private final int markerDiameter;
+        private final List<Point> speedwalkPath;
         private final long startTimeMs = System.currentTimeMillis();
 
-        private AnimatedMapIcon(BufferedImage image, Point focusPoint, int markerDiameter) {
+        private AnimatedMapIcon(BufferedImage image, Point focusPoint, int markerDiameter, List<Point> speedwalkPath) {
             this.image = image;
             this.focusPoint = focusPoint;
             this.markerDiameter = markerDiameter;
+            this.speedwalkPath = speedwalkPath == null ? List.of() : speedwalkPath;
         }
 
         @Override
         public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
             g.drawImage(image, x, y, null);
+            drawSpeedwalkPath(g, x, y);
             if (focusPoint == null) {
                 return;
             }
@@ -568,6 +610,29 @@ public final class MapPanel extends JPanel {
                 g2.setColor(segmentWithAlpha);
                 int startAngle = Math.round(rotation + i * segmentSweep);
                 g2.fillArc(topLeftX, topLeftY, diameter, diameter, startAngle, Math.round(segmentSweep));
+            }
+            g2.dispose();
+        }
+
+        private void drawSpeedwalkPath(java.awt.Graphics g, int x, int y) {
+            if (speedwalkPath.size() < 2) {
+                return;
+            }
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(SPEEDWALK_COLOR);
+            float strokeWidth = Math.max(2f, markerDiameter / 6f);
+            g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            Point previous = null;
+            for (Point point : speedwalkPath) {
+                if (point == null) {
+                    previous = null;
+                    continue;
+                }
+                if (previous != null) {
+                    g2.drawLine(x + previous.x, y + previous.y, x + point.x, y + point.y);
+                }
+                previous = point;
             }
             g2.dispose();
         }

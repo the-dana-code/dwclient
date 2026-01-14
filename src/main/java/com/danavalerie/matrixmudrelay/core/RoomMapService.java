@@ -476,6 +476,29 @@ public class RoomMapService {
         }
     }
 
+    public List<RoomLocation> lookupRoomLocations(List<String> roomIds) throws SQLException, MapLookupException {
+        if (roomIds == null || roomIds.isEmpty()) {
+            return List.of();
+        }
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+        List<RoomLocation> results = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
+            for (String roomId : roomIds) {
+                if (roomId == null || roomId.isBlank()) {
+                    continue;
+                }
+                RoomRecord room = loadRoom(conn, roomId);
+                if (room == null) {
+                    continue;
+                }
+                results.add(new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort));
+            }
+        }
+        return results;
+    }
+
     public String findRoomIdByCoordinates(int mapId, int x, int y) throws SQLException {
         if (!driverAvailable) {
             return null;

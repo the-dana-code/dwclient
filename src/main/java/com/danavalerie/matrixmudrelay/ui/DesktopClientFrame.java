@@ -729,6 +729,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updateResultsMenu(results);
     }
 
+    @Override
+    public void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path) {
+        SwingUtilities.invokeLater(() -> mapPanel.setSpeedwalkPath(path));
+    }
+
     private void updateResultsMenu(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
         SwingUtilities.invokeLater(() -> {
             boolean resetResultsVisits = results != null && !Objects.equals(currentResults, results);

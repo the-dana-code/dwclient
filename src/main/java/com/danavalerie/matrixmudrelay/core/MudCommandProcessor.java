@@ -32,6 +32,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         void updateStats(StatsHudRenderer.StatsHudData data);
 
         void updateContextualResults(ContextualResultList results);
+
+        void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path);
     }
 
     private final BotConfig cfg;
@@ -765,12 +767,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
         try {
-            RoomMapService.RouteResult route = mapService.findRoute(
-                    currentRoomId,
-                    target.roomId(),
-                    useTeleports,
-                    characterName
-            );
+            RoomMapService.RouteResult route = calculateSpeedwalkRoute(currentRoomId, target.roomId(), characterName);
             List<String> exits = route.steps().stream()
                     .map(RoomMapService.RouteStep::exit)
                     .toList();
@@ -862,12 +859,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
 
         String characterName = mud.getCurrentRoomSnapshot().characterName();
-        RoomMapService.RouteResult route = mapService.findRoute(
-                currentRoomId,
-                targetRoomId,
-                useTeleports,
-                characterName
-        );
+        RoomMapService.RouteResult route = calculateSpeedwalkRoute(currentRoomId, targetRoomId, characterName);
 
         List<String> exits = route.steps().stream()
                 .map(RoomMapService.RouteStep::exit)
@@ -880,6 +872,47 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
             mud.sendLinesFromController(List.of(aliasCommand, aliasName));
             output.appendSystem("Speedwalking to room at {" + mapId + ", " + x + ", " + y + "} (" + exits.size() + " steps)");
+        }
+    }
+
+    private RoomMapService.RouteResult calculateSpeedwalkRoute(String currentRoomId,
+                                                               String targetRoomId,
+                                                               String characterName)
+            throws RoomMapService.MapLookupException, java.sql.SQLException {
+        RoomMapService.RouteResult route = mapService.findRoute(
+                currentRoomId,
+                targetRoomId,
+                useTeleports,
+                characterName
+        );
+        updateSpeedwalkPath(currentRoomId, route);
+        return route;
+    }
+
+    private void updateSpeedwalkPath(String currentRoomId, RoomMapService.RouteResult route) {
+        if (route == null) {
+            output.updateSpeedwalkPath(List.of());
+            return;
+        }
+        List<String> roomIds = new ArrayList<>();
+        if (currentRoomId != null && !currentRoomId.isBlank()) {
+            roomIds.add(currentRoomId);
+        }
+        for (RoomMapService.RouteStep step : route.steps()) {
+            if (step.roomId() != null && !step.roomId().isBlank()) {
+                roomIds.add(step.roomId());
+            }
+        }
+        if (roomIds.isEmpty()) {
+            output.updateSpeedwalkPath(List.of());
+            return;
+        }
+        try {
+            List<RoomMapService.RoomLocation> locations = mapService.lookupRoomLocations(roomIds);
+            output.updateSpeedwalkPath(locations);
+        } catch (RoomMapService.MapLookupException | java.sql.SQLException e) {
+            log.warn("speedwalk path lookup failed err={}", e.toString());
+            output.updateSpeedwalkPath(List.of());
         }
     }
 
