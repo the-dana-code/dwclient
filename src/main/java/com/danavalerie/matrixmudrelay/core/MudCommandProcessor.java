@@ -900,6 +900,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         for (RoomMapService.RouteStep step : route.steps()) {
             if (step.roomId() != null && !step.roomId().isBlank()) {
+                if (step.exit() != null && step.exit().startsWith("tp ")) {
+                    roomIds.add(null);
+                }
                 roomIds.add(step.roomId());
             }
         }

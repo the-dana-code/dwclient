@@ -487,10 +487,12 @@ public class RoomMapService {
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
             for (String roomId : roomIds) {
                 if (roomId == null || roomId.isBlank()) {
+                    results.add(null);
                     continue;
                 }
                 RoomRecord room = loadRoom(conn, roomId);
                 if (room == null) {
+                    results.add(null);
                     continue;
                 }
                 results.add(new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort));
