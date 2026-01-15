@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="com.danavalerie.matrixmudrelay.Main" />
-    <module name="mud-client" />
+    <module name="matrix-mud-relay" />
     <option name="PROGRAM_PARAMETERS" value="config.json" />
     <extension name="coverage">
       <pattern>

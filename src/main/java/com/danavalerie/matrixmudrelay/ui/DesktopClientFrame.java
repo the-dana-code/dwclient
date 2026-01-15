@@ -511,7 +511,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private String formatWritMenuLabel(boolean visited, String label) {
-        return (visited ? "✅ " : "❌ ") + label;
+        return (visited ? "✓ " : "  ") + label;
     }
 
     private boolean isWritMenuVisited(int index, WritMenuAction action) {
@@ -561,12 +561,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JSplitPane buildSplitLayout() {
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, buildMudPanel(), mapPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, buildMudPanel());
         splitPane.setContinuousLayout(true);
-        splitPane.setResizeWeight(0.75);
+        splitPane.setResizeWeight(0.25);
         splitPane.setDividerSize(6);
         splitPane.setBorder(null);
-        double initialRatio = resolveMudMapSplitRatio();
+        double initialRatio = 1.0 - resolveMudMapSplitRatio();
         splitPane.addHierarchyListener(event -> {
             if ((event.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) == 0) {
                 return;
@@ -590,7 +590,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 return;
             }
             double ratio = splitPane.getDividerLocation() / (double) width;
-            persistMudMapSplitRatio(ratio);
+            persistMudMapSplitRatio(1.0 - ratio);
         });
         return splitPane;
     }
@@ -825,7 +825,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private String formatResultsMenuLabel(boolean visited, String label) {
-        return (visited ? "✅ " : "❌ ") + label;
+        return (visited ? "✓ " : "  ") + label;
     }
 
     private void showSpeedWalkPrompt(String speedWalkCommand) {
