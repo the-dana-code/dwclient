@@ -13,6 +13,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -63,14 +65,8 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     public StatsPanel() {
         setLayout(new BorderLayout());
-        setBackground(BACKGROUND);
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(1, 0, 0, 0, BAR_BG),
-                BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
         Arrays.fill(gpRateSamples, -1);
 
-        nameLabel.setForeground(TEXT_COLOR);
         int namePreferredWidth = Math.max(NAME_MIN_WIDTH, nameLabel.getPreferredSize().width);
         int nameMaxWidth = Math.max(NAME_MAX_WIDTH, namePreferredWidth);
         Dimension nameMin = new Dimension(NAME_MIN_WIDTH, nameLabel.getPreferredSize().height);
@@ -81,7 +77,6 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         nameLabel.setMaximumSize(nameMax);
         JPanel statusBar = new JPanel();
         statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
-        statusBar.setBackground(BACKGROUND);
         statusBar.add(nameLabel);
         statusBar.add(Box.createHorizontalStrut(12));
         statusBar.add(buildStatGroup(hpLabel, hpBar));
@@ -94,9 +89,37 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         statusBar.add(Box.createHorizontalGlue());
         add(statusBar, BorderLayout.CENTER);
 
+        updateTheme(true);
         setUnavailable();
         gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
         gpTimer.start();
+    }
+
+    public void updateTheme(boolean inverted) {
+        Color bg = inverted ? MapPanel.BACKGROUND_DARK : MapPanel.BACKGROUND_LIGHT;
+        Color fg = inverted ? MapPanel.FOREGROUND_LIGHT : MapPanel.FOREGROUND_DARK;
+        Color barBg = inverted ? BAR_BG : new Color(220, 220, 215);
+
+        setBackground(bg);
+        setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, barBg),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
+
+        updateComponentTree(this, bg, fg, barBg);
+    }
+
+    private void updateComponentTree(Component c, Color bg, Color fg, Color barBg) {
+        if (c instanceof JPanel) {
+            c.setBackground(bg);
+            for (Component child : ((Container) c).getComponents()) {
+                updateComponentTree(child, bg, fg, barBg);
+            }
+        } else if (c instanceof JLabel) {
+            c.setForeground(fg);
+        } else if (c instanceof JProgressBar) {
+            c.setBackground(barBg);
+        }
     }
 
     @Override

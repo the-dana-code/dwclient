@@ -1228,5 +1228,25 @@
       897
     ],
     "commands": []
+  },
+  {
+    "npc": "Hibiscus Dunelm",
+    "location": "the bar of the Mended Drum",
+    "target": [
+      3,
+      1246,
+      90
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mrs Corduroy",
+    "location": "Mrs Corduroy\u0027s Stuffed Animals on Chrononhotonthologos Street",
+    "target": [
+      1,
+      868,
+      316
+    ],
+    "commands": []
   }
 ]

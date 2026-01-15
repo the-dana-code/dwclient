@@ -17,7 +17,7 @@ public final class WritTracker {
     private final List<WritRequirement> requirements = new ArrayList<>();
     private boolean readingWrit = false;
 
-    public boolean ingest(String text) {
+    public synchronized boolean ingest(String text) {
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -29,8 +29,8 @@ public final class WritTracker {
         return updated;
     }
 
-    public List<WritRequirement> getRequirements() {
-        return Collections.unmodifiableList(requirements);
+    public synchronized List<WritRequirement> getRequirements() {
+        return List.copyOf(requirements);
     }
 
     private boolean ingestLine(String line) {

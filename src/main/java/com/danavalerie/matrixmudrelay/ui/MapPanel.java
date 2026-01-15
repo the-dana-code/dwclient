@@ -42,10 +42,10 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 public final class MapPanel extends JPanel {
-    private static final Color BACKGROUND_LIGHT = new Color(245, 245, 240);
-    private static final Color FOREGROUND_DARK = new Color(35, 35, 35);
-    private static final Color BACKGROUND_DARK = new Color(12, 12, 18);
-    private static final Color FOREGROUND_LIGHT = new Color(220, 220, 220);
+    public static final Color BACKGROUND_LIGHT = new Color(245, 245, 240);
+    public static final Color FOREGROUND_DARK = new Color(35, 35, 35);
+    public static final Color BACKGROUND_DARK = new Color(12, 12, 18);
+    public static final Color FOREGROUND_LIGHT = new Color(220, 220, 220);
     private static final int ZOOM_MIN = 50;
     private static final int ZOOM_MAX = 200;
     private static final int ZOOM_DEFAULT = 100;
@@ -154,6 +154,10 @@ public final class MapPanel extends JPanel {
         if (invertChangeListener != null) {
             invertChangeListener.accept(invertMap);
         }
+    }
+
+    public boolean isInverted() {
+        return invertMap;
     }
 
     private void updateColors() {

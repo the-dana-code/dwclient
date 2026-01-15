@@ -18,7 +18,7 @@ public final class StoreInventoryTracker {
     private boolean hasInventory;
     private ListingMode listingMode = ListingMode.NONE;
 
-    public boolean ingest(String text) {
+    public synchronized boolean ingest(String text) {
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -30,11 +30,11 @@ public final class StoreInventoryTracker {
         return updated;
     }
 
-    public List<StoreItem> getItems() {
-        return Collections.unmodifiableList(items);
+    public synchronized List<StoreItem> getItems() {
+        return List.copyOf(items);
     }
 
-    public Optional<StoreItem> findMatch(String itemName) {
+    public synchronized Optional<StoreItem> findMatch(String itemName) {
         if (!hasInventory || itemName == null || itemName.isBlank()) {
             return Optional.empty();
         }
@@ -52,15 +52,15 @@ public final class StoreInventoryTracker {
         return Optional.empty();
     }
 
-    public boolean hasInventory() {
+    public synchronized boolean hasInventory() {
         return hasInventory;
     }
 
-    public boolean isNameListed() {
+    public synchronized boolean isNameListed() {
         return listingMode == ListingMode.NAME_LISTED;
     }
 
-    public void clearInventory() {
+    public synchronized void clearInventory() {
         items.clear();
         readingInventory = false;
         hasInventory = false;

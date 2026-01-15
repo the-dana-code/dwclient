@@ -11,14 +11,18 @@ import java.awt.Color;
 import java.awt.Font;
 
 public final class ChitchatPane extends JTextPane {
-    private static final Color BACKGROUND = new Color(15, 15, 18);
     private static final Color DEFAULT_COLOR = new Color(220, 220, 220);
 
     public ChitchatPane() {
         setEditable(false);
-        setBackground(BACKGROUND);
-        setForeground(DEFAULT_COLOR);
+        updateTheme(true);
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
+    }
+
+    public void updateTheme(boolean inverted) {
+        // ALWAYS use dark theme for chitchat/tells
+        setBackground(MapPanel.BACKGROUND_DARK);
+        setForeground(MapPanel.FOREGROUND_LIGHT);
     }
 
     public void appendChitchatLine(String text, Color color) {

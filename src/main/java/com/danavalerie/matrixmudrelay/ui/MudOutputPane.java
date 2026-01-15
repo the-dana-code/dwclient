@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 public final class MudOutputPane extends JTextPane {
-    private static final Color BACKGROUND = new Color(15, 15, 18);
     private static final Color SYSTEM_COLOR = new Color(120, 200, 255);
     private static final Color COMMAND_COLOR = new Color(255, 215, 0);
     private static final Color ERROR_COLOR = new Color(255, 80, 80);
@@ -72,9 +71,9 @@ public final class MudOutputPane extends JTextPane {
             )
     );
     private final AnsiColorParser parser = new AnsiColorParser();
-    private final AttributeSet systemAttributes;
-    private final AttributeSet commandAttributes;
-    private final AttributeSet errorAttributes;
+    private AttributeSet systemAttributes;
+    private AttributeSet commandAttributes;
+    private AttributeSet errorAttributes;
     private String pendingTail = "";
     private final StringBuilder pendingEntity = new StringBuilder();
     private Color pendingEntityColor;
@@ -87,8 +86,7 @@ public final class MudOutputPane extends JTextPane {
 
     public MudOutputPane() {
         setEditable(false);
-        setBackground(BACKGROUND);
-        setForeground(DEFAULT_COLOR);
+        updateTheme(true);
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
 
         // Hide the caret
@@ -98,8 +96,19 @@ public final class MudOutputPane extends JTextPane {
                 // do nothing
             }
         });
+    }
+
+    public void updateTheme(boolean inverted) {
+        // ALWAYS use dark theme for MUD output to preserve ANSI color readability
+        setBackground(MapPanel.BACKGROUND_DARK);
+        setForeground(MapPanel.FOREGROUND_LIGHT);
+
+        if (currentColor.equals(MapPanel.FOREGROUND_DARK)) {
+            currentColor = MapPanel.FOREGROUND_LIGHT;
+        }
 
         StyleContext context = StyleContext.getDefaultStyleContext();
+
         SimpleAttributeSet system = new SimpleAttributeSet();
         StyleConstants.setForeground(system, SYSTEM_COLOR);
         StyleConstants.setBold(system, true);

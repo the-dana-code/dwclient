@@ -34,6 +34,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FlowLayout;
@@ -167,6 +169,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         installInputFocusForwarding();
+        updateTheme(mapPanel.isInverted());
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -386,6 +389,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void persistMapInvertConfig(boolean invertMap) {
         cfg.ui.invertMap = invertMap;
+        updateTheme(invertMap);
         try {
             ConfigLoader.save(configPath, cfg);
         } catch (IOException e) {
@@ -510,8 +514,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             menuBar.add(writMenu);
         }
         reattachResultsMenus();
-        menuBar.revalidate();
-        menuBar.repaint();
+        updateTheme(mapPanel.isInverted());
     }
 
     private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
@@ -828,8 +831,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 resultsMenus.add(menu);
                 menuBar.add(menu);
             }
-            menuBar.revalidate();
-            menuBar.repaint();
+            updateTheme(mapPanel.isInverted());
         });
     }
 
@@ -1001,6 +1003,63 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             case "&amp;" -> "&";
             default -> entity;
         };
+    }
+
+    private void updateTheme(boolean inverted) {
+        Color bg = inverted ? MapPanel.BACKGROUND_DARK : MapPanel.BACKGROUND_LIGHT;
+        Color fg = inverted ? MapPanel.FOREGROUND_LIGHT : MapPanel.FOREGROUND_DARK;
+
+        outputPane.updateTheme(inverted);
+        chitchatPane.updateTheme(inverted);
+        statsPanel.updateTheme(inverted);
+
+        updateComponentTree(getContentPane(), bg, fg);
+        inputField.setCaretColor(fg);
+
+        menuBar.setBackground(bg);
+        menuBar.setForeground(fg);
+        for (int i = 0; i < menuBar.getMenuCount(); i++) {
+            JMenu menu = menuBar.getMenu(i);
+            if (menu != null) {
+                updateMenuTheme(menu, bg, fg);
+            }
+        }
+        menuBar.revalidate();
+        menuBar.repaint();
+
+        repaint();
+    }
+
+    private void updateComponentTree(Component c, Color bg, Color fg) {
+        if (c instanceof MapPanel || c instanceof MudOutputPane || c instanceof ChitchatPane || c instanceof StatsPanel) {
+            return;
+        }
+        if (c instanceof JPanel || c instanceof JSplitPane || c instanceof JScrollPane) {
+            c.setBackground(bg);
+        }
+        if (c instanceof JLabel || c instanceof JTextField || c instanceof JButton) {
+            c.setBackground(bg);
+            c.setForeground(fg);
+        }
+
+        if (c instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                updateComponentTree(child, bg, fg);
+            }
+        }
+    }
+
+    private void updateMenuTheme(JMenuItem item, Color bg, Color fg) {
+        item.setBackground(bg);
+        item.setForeground(fg);
+        if (item instanceof JMenu menu) {
+            for (int i = 0; i < menu.getItemCount(); i++) {
+                JMenuItem subItem = menu.getItem(i);
+                if (subItem != null) {
+                    updateMenuTheme(subItem, bg, fg);
+                }
+            }
+        }
     }
 
     public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, TranscriptLogger transcript) {

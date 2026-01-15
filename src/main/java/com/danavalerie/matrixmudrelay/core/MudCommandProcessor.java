@@ -616,6 +616,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (lower.equals("auloi")) {
             candidates.add("aulos");
         }
+        if (lower.equals("xiphoi")) {
+            candidates.add("xiphos");
+        }
         if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
             tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
         }
