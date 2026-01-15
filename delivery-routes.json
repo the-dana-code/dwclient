@@ -1268,5 +1268,25 @@
       970
     ],
     "commands": []
+  },
+  {
+    "npc": "Georgio",
+    "location": "Georgio\u0027s pizza place on Artorollo Alley",
+    "target": [
+      1,
+      1166,
+      329
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Miss Anna",
+    "location": "the colourful furniture shop on Phedre Road",
+    "target": [
+      1,
+      760,
+      455
+    ],
+    "commands": []
   }
 ]

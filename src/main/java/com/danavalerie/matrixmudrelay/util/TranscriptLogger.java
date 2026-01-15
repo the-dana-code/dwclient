@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-public final class TranscriptLogger implements AutoCloseable {
+public class TranscriptLogger implements AutoCloseable {
     private static final DateTimeFormatter DAY = DateTimeFormatter.ISO_LOCAL_DATE;
 
     private final boolean enabled;
@@ -23,7 +23,7 @@ public final class TranscriptLogger implements AutoCloseable {
     private BufferedWriter writer;
     private Path currentFile;
 
-    private TranscriptLogger(boolean enabled, Path dir, long maxBytes, int maxFiles) {
+    protected TranscriptLogger(boolean enabled, Path dir, long maxBytes, int maxFiles) {
         this.enabled = enabled;
         this.dir = dir;
         this.maxBytes = maxBytes;

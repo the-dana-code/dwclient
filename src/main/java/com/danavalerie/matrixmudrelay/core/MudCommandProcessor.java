@@ -100,6 +100,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             handleMm(normalized);
             return;
         }
+        if (lower.equals("pw")) {
+            handleMm("mm password");
+            return;
+        }
 
         try {
             if (tryAlias(normalized)) {
@@ -232,6 +236,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         if ("npc".equals(subcommand)) {
             handleNpcSearchQuery(query);
+            return;
+        }
+        if ("password".equals(subcommand) || "pw".equals(subcommand)) {
+            tryAlias("#password");
             return;
         }
         if ("item".equals(subcommand)) {
