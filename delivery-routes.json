@@ -1318,5 +1318,15 @@
       875
     ],
     "commands": []
+  },
+  {
+    "npc": "Jorodin",
+    "location": "Jorodin\u0027s small and rather friendly-looking shop on Short Street",
+    "target": [
+      1,
+      707,
+      914
+    ],
+    "commands": []
   }
 ]
