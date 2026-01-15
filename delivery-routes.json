@@ -1248,5 +1248,25 @@
       316
     ],
     "commands": []
+  },
+  {
+    "npc": "George",
+    "location": "the glassmaking shop on Street of Cunning Artificers",
+    "target": [
+      1,
+      676,
+      1043
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the whiny shop assistant",
+    "location": "W\u0026B Chocolatiers on Zephire Street",
+    "target": [
+      1,
+      1093,
+      970
+    ],
+    "commands": []
   }
 ]
