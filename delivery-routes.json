@@ -1288,5 +1288,25 @@
       455
     ],
     "commands": []
+  },
+  {
+    "npc": "Mrs Green",
+    "location": "the second hand shop on Zephire Street",
+    "target": [
+      1,
+      1082,
+      953
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the shop assistant",
+    "location": "the exclusive hat boutique on Cheesemongers Yard",
+    "target": [
+      1,
+      79,
+      921
+    ],
+    "commands": []
   }
 ]
