@@ -73,4 +73,25 @@ class StoreInventoryTrackerTest {
         // "steel xiphoi" singularized is "steel xiphos"
         assertTrue(tracker.findMatch("steel xiphoi").isPresent());
     }
+
+    @Test
+    void testPrepositionalPhraseMatching() {
+        StoreInventoryTracker tracker = new StoreInventoryTracker();
+        String inventory = "The following items are for sale:\n" +
+                "   A: a small blue flag with bolognas for A$2 (five left).\n" +
+                "   B: a bologna for A$1.50 (seventy left).\n";
+        tracker.ingest(inventory);
+
+        // This is what the writ has: "2 small blue flags with bolognas"
+        String itemFromWrit = "small blue flags with bolognas";
+
+        assertTrue(tracker.findMatch(itemFromWrit).isPresent(), "Should match plural form via variants");
+        assertTrue(tracker.findMatch("small blue flag with bolognas").isPresent(), "Should match singular form");
+        
+        // Test "of"
+        inventory = "The following items are for sale:\n" +
+                "  A: box of chocolates for 5 gold\n";
+        tracker.ingest(inventory);
+        assertTrue(tracker.findMatch("boxes of chocolates").isPresent());
+    }
 }

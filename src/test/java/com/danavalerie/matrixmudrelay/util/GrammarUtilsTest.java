@@ -15,6 +15,9 @@ class GrammarUtilsTest {
         assertEquals(List.of("red beach towel"), GrammarUtils.singularizePhrase("red beach towels"));
         assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphoi"));
         assertEquals(List.of("aulos"), GrammarUtils.singularizePhrase("auloi"));
+        assertEquals(List.of("small blue flag with bolognas"), GrammarUtils.singularizePhrase("small blue flags with bolognas"));
+        assertEquals(List.of("box of chocolates", "boxe of chocolates"), GrammarUtils.singularizePhrase("boxes of chocolates"));
+        assertEquals(List.of("key to the door"), GrammarUtils.singularizePhrase("keys to the door"));
     }
 
     @Test

@@ -28,6 +28,23 @@ public final class GrammarUtils {
         } else if ((s = replacePrefix(phrase, "petits fours", "petit fours")) != null) {
             phrases.add(s);
         } else {
+            String lower = phrase.toLowerCase(Locale.ROOT);
+            for (String prep : new String[]{" with ", " of ", " in ", " for ", " to "}) {
+                int idx = lower.indexOf(prep);
+                if (idx > 0) {
+                    String head = phrase.substring(0, idx);
+                    String tail = phrase.substring(idx);
+                    List<String> singularHeads = singularizePhrase(head);
+                    if (!singularHeads.isEmpty()) {
+                        for (String sHead : singularHeads) {
+                            phrases.add(sHead + tail);
+                        }
+                        return phrases;
+                    }
+                    return List.of();
+                }
+            }
+
             String[] parts = phrase.trim().split("\\s+");
             if (parts.length == 0) {
                 return List.of();

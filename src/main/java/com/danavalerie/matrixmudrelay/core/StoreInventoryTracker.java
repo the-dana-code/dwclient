@@ -122,31 +122,34 @@ public final class StoreInventoryTracker {
     }
 
     private static List<String> buildNormalizedVariants(String normalized) {
-        List<String> variants = new ArrayList<>();
+        LinkedHashSet<String> variants = new LinkedHashSet<>();
         variants.add(normalized);
-        String[] parts = normalized.split(" ");
-        if (parts.length == 0) {
-            return variants;
+        for (String singular : GrammarUtils.singularizePhrase(normalized)) {
+            variants.add(singular.toLowerCase(Locale.ROOT));
         }
-        String last = parts[parts.length - 1];
-        for (String singular : GrammarUtils.singularizeWord(last)) {
-            if (singular.equals(last)) {
-                continue;
-            }
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < parts.length - 1; i++) {
-                if (i > 0) {
+
+        String[] parts = normalized.split(" ");
+        if (parts.length > 0) {
+            String last = parts[parts.length - 1];
+            for (String singular : GrammarUtils.singularizeWord(last)) {
+                if (singular.equalsIgnoreCase(last)) {
+                    continue;
+                }
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < parts.length - 1; i++) {
+                    if (i > 0) {
+                        builder.append(' ');
+                    }
+                    builder.append(parts[i]);
+                }
+                if (builder.length() > 0) {
                     builder.append(' ');
                 }
-                builder.append(parts[i]);
+                builder.append(singular.toLowerCase(Locale.ROOT));
+                variants.add(builder.toString());
             }
-            if (builder.length() > 0) {
-                builder.append(' ');
-            }
-            builder.append(singular);
-            variants.add(builder.toString());
         }
-        return variants;
+        return List.copyOf(variants);
     }
 
     private boolean ingestLetteredItem(String line) {
