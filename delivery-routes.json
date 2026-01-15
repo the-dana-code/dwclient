@@ -1308,5 +1308,15 @@
       921
     ],
     "commands": []
+  },
+  {
+    "npc": "Sanguine Asphyxia",
+    "location": "the rat shop on Lobbin Clout",
+    "target": [
+      1,
+      1138,
+      875
+    ],
+    "commands": []
   }
 ]
