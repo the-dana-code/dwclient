@@ -10,6 +10,7 @@ import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
+import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
@@ -547,13 +548,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             return;
         }
         WritTracker.WritRequirement requirement = writRequirements.get(index);
+        String itemName = requirement.item();
+        List<String> singulars = GrammarUtils.singularizePhrase(itemName);
+        if (!singulars.isEmpty()) {
+            itemName = singulars.get(0);
+        }
+
         if (storeInventoryTracker.isNameListed()) {
-            commandProcessor.handleInput("buy " + quantity + " " + requirement.item());
+            commandProcessor.handleInput("buy " + quantity + " " + itemName);
             return;
         }
+        String finalItemName = itemName;
         storeInventoryTracker.findMatch(requirement.item()).ifPresentOrElse(item ->
                         buyItemById(item.id(), quantity),
-                () -> outputPane.appendErrorText("Store inventory does not list \"" + requirement.item() + "\"."));
+                () -> outputPane.appendErrorText("Store inventory does not list \"" + finalItemName + "\"."));
     }
 
     private void buyItemById(String itemId, int quantity) {

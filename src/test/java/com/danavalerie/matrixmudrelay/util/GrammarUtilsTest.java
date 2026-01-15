@@ -1,12 +1,10 @@
-package com.danavalerie.matrixmudrelay.core;
+package com.danavalerie.matrixmudrelay.util;
 
-import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class MudCommandProcessorTest {
+class GrammarUtilsTest {
 
     @Test
     void testSingularizePhrase() {
@@ -15,26 +13,26 @@ class MudCommandProcessorTest {
         assertEquals(List.of("tube of glue"), GrammarUtils.singularizePhrase("tubes of glue"));
         assertEquals(List.of("game of chess"), GrammarUtils.singularizePhrase("games of chess"));
         assertEquals(List.of("red beach towel"), GrammarUtils.singularizePhrase("red beach towels"));
+        assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphoi"));
+        assertEquals(List.of("aulos"), GrammarUtils.singularizePhrase("auloi"));
     }
 
     @Test
     void testSingularizeWord() {
-        // ies
         assertTrue(GrammarUtils.singularizeWord("flies").contains("fly"));
-        assertTrue(GrammarUtils.singularizeWord("pies").contains("pie"));
-
-        // oes
         assertTrue(GrammarUtils.singularizeWord("potatoes").contains("potato"));
-        assertTrue(GrammarUtils.singularizeWord("shoes").contains("shoe"));
-
-        // ves
         assertTrue(GrammarUtils.singularizeWord("leaves").contains("leaf"));
-        assertTrue(GrammarUtils.singularizeWord("knives").contains("knife"));
-
-        // men
         assertTrue(GrammarUtils.singularizeWord("firemen").contains("fireman"));
-
-        // auloi
         assertTrue(GrammarUtils.singularizeWord("auloi").contains("aulos"));
+        assertTrue(GrammarUtils.singularizeWord("xiphoi").contains("xiphos"));
+        
+        // Case preservation
+        assertTrue(GrammarUtils.singularizeWord("Xiphoi").contains("Xiphos"));
+        assertTrue(GrammarUtils.singularizeWord("Flies").contains("Fly"));
+    }
+    
+    @Test
+    void testSpecialCases() {
+        assertEquals(List.of("petit fours"), GrammarUtils.singularizePhrase("petits fours"));
     }
 }

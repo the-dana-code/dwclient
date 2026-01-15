@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
+import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -128,7 +129,7 @@ public final class StoreInventoryTracker {
             return variants;
         }
         String last = parts[parts.length - 1];
-        for (String singular : singularizeWord(last)) {
+        for (String singular : GrammarUtils.singularizeWord(last)) {
             if (singular.equals(last)) {
                 continue;
             }
@@ -146,36 +147,6 @@ public final class StoreInventoryTracker {
             variants.add(builder.toString());
         }
         return variants;
-    }
-
-    private static List<String> singularizeWord(String word) {
-        String lower = word.toLowerCase(Locale.ROOT);
-        LinkedHashSet<String> variants = new LinkedHashSet<>();
-        variants.add(word);
-        tryReplaceSuffix(word, lower, "ies", new String[]{"ie", "y"}, variants);
-        tryReplaceSuffix(word, lower, "oes", new String[]{"oe", "o"}, variants);
-        tryReplaceSuffix(word, lower, "ves", new String[]{"f", "fe"}, variants);
-        tryReplaceSuffix(word, lower, "men", new String[]{"man"}, variants);
-
-        if (lower.equals("auloi")) {
-            variants.add("aulos");
-        }
-        if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
-            tryReplaceSuffix(word, lower, "es", new String[]{""}, variants);
-        }
-        if (!lower.endsWith("ss")) {
-            tryReplaceSuffix(word, lower, "s", new String[]{""}, variants);
-        }
-        return new ArrayList<>(variants);
-    }
-
-    private static void tryReplaceSuffix(String word, String lower, String suffix, String[] replacements, java.util.Collection<String> candidates) {
-        if (lower.endsWith(suffix) && lower.length() > suffix.length()) {
-            String base = word.substring(0, word.length() - suffix.length());
-            for (String r : replacements) {
-                candidates.add(base + r);
-            }
-        }
     }
 
     private boolean ingestLetteredItem(String line) {

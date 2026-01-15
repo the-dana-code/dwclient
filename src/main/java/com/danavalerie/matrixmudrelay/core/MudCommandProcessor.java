@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay.core;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
+import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
@@ -555,86 +556,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         LinkedHashSet<String> terms = new LinkedHashSet<>();
         if (!trimmed.isBlank()) {
             terms.add(trimmed);
-            for (String singular : singularizePhrase(trimmed)) {
+            for (String singular : GrammarUtils.singularizePhrase(trimmed)) {
                 terms.add(singular);
             }
         }
         return List.copyOf(terms);
-    }
-
-    private static List<String> singularizePhrase(String phrase) {
-        List<String> phrases = new ArrayList<>();
-        String s;
-        if ((s = replacePrefix(phrase, "pairs of ", "pair of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "sets of ", "set of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "packets of ", "packet of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "tubes of ", "tube of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "games of ", "game of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "petits fours", "petit fours")) != null) {
-            phrases.add(s);
-        } else {
-            String[] parts = phrase.trim().split("\\s+");
-            if (parts.length == 0) {
-                return List.of();
-            }
-            // try singularizing the last word -- red beach towels -> red beach towel
-            String last = parts[parts.length - 1];
-            List<String> singulars = singularizeWord(last);
-            if (!singulars.isEmpty()) {
-                for (String singular : singulars) {
-                    if (singular.equalsIgnoreCase(last)) {
-                        continue;
-                    }
-                    parts[parts.length - 1] = singular;
-                    phrases.add(String.join(" ", parts));
-                }
-            }
-        }
-        return phrases;
-    }
-
-    private static String replacePrefix(String text, String prefix, String replacement) {
-        if (text.startsWith(prefix)) {
-            return replacement + text.substring(prefix.length());
-        }
-        return null;
-    }
-
-    private static List<String> singularizeWord(String word) {
-        String lower = word.toLowerCase(Locale.ROOT);
-        LinkedHashSet<String> candidates = new LinkedHashSet<>();
-        tryReplaceSuffix(word, lower, "ies", new String[]{"ie", "y"}, candidates);
-        tryReplaceSuffix(word, lower, "oes", new String[]{"oe", "o"}, candidates);
-        tryReplaceSuffix(word, lower, "ves", new String[]{"f", "fe"}, candidates);
-        tryReplaceSuffix(word, lower, "men", new String[]{"man"}, candidates);
-
-        if (lower.equals("auloi")) {
-            candidates.add("aulos");
-        }
-        if (lower.equals("xiphoi")) {
-            candidates.add("xiphos");
-        }
-        if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
-            tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
-        }
-        if (!lower.endsWith("ss")) {
-            tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
-        }
-        return new ArrayList<>(candidates);
-    }
-
-    private static void tryReplaceSuffix(String word, String lower, String suffix, String[] replacements, java.util.Collection<String> candidates) {
-        if (lower.endsWith(suffix) && lower.length() > suffix.length()) {
-            String base = word.substring(0, word.length() - suffix.length());
-            for (String r : replacements) {
-                candidates.add(base + r);
-            }
-        }
     }
 
     private record ItemSearchResponse(String termUsed, List<RoomMapService.ItemSearchResult> results) {
