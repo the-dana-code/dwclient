@@ -662,8 +662,7 @@ public final class MapPanel extends JPanel {
         private static final int MARKER_DIAMETER_BASE = 16;
         private static final int PINWHEEL_SEGMENTS = 20;
         private static final float PINWHEEL_ALPHA = 0.9f;
-        private static final Color SPEEDWALK_COLOR_ORIG = new Color(230, 70, 70);
-        private static final Color SPEEDWALK_COLOR_INV = new Color(25, 185, 185);
+        private static final Color SPEEDWALK_COLOR = new Color(230, 70, 70);
         private final BufferedImage image;
         private final Point focusPoint;
         private final int markerDiameter;
@@ -719,7 +718,7 @@ public final class MapPanel extends JPanel {
             }
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(invertMap ? SPEEDWALK_COLOR_INV : SPEEDWALK_COLOR_ORIG);
+            g2.setColor(SPEEDWALK_COLOR);
             float strokeWidth = Math.max(2f, markerDiameter / 6f);
             g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             Point previous = null;
