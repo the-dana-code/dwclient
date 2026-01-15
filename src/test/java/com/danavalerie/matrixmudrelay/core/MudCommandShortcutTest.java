@@ -19,6 +19,7 @@ class MudCommandShortcutTest {
 
         @Override public void appendSystem(String text) { systemMessages.add(text); }
         @Override public void appendCommandEcho(String text) { commandEchoes.add(text); }
+        @Override public void addToHistory(String command) {}
         @Override public void updateCurrentRoom(String roomId) {}
         @Override public void updateMap(String roomId) {}
         @Override public void updateStats(StatsHudRenderer.StatsHudData data) {}

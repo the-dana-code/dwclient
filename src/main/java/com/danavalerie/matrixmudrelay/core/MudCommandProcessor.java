@@ -26,6 +26,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
         void appendCommandEcho(String text);
 
+        void addToHistory(String command);
+
         void updateCurrentRoom(String roomId);
 
         void updateMap(String roomId);
@@ -81,13 +83,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
-            try {
-                mud.sendLinesFromController(List.of(""));
-            } catch (IllegalStateException e) {
-                output.appendSystem("Error: " + e.getMessage());
-            }
+            sendToMud("");
             return;
         }
+
+        output.addToHistory(trimmed);
 
         String normalized = normalizeInput(trimmed);
         String lower = normalized.toLowerCase(Locale.ROOT);
@@ -105,14 +105,31 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
 
-        try {
-            if (tryAlias(normalized)) {
-                return;
-            }
-            String sanitized = Sanitizer.sanitizeMudInput(normalized);
+        if (tryAlias(normalized)) {
+            return;
+        }
+        sendToMud(normalized);
+    }
+
+    private void sendToMud(String line) {
+        sendToMud(List.of(line), false);
+    }
+
+    private void sendToMud(List<String> lines) {
+        sendToMud(lines, false);
+    }
+
+    private void sendToMud(List<String> lines, boolean maskEcho) {
+        for (String line : lines) {
+            String sanitized = Sanitizer.sanitizeMudInput(line);
             transcript.logClientToMud(sanitized);
-            output.appendCommandEcho(sanitized);
-            mud.sendLinesFromController(List.of(sanitized));
+            output.appendCommandEcho(maskEcho ? "(password)" : sanitized);
+            if (!maskEcho) {
+                output.addToHistory(sanitized);
+            }
+        }
+        try {
+            mud.sendLinesFromController(lines);
         } catch (IllegalStateException e) {
             output.appendSystem("Error: " + e.getMessage());
         }
@@ -392,13 +409,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                                 + " to "
                                 + npcName
                 );
-                transcript.logClientToMud(command);
-                output.appendCommandEcho(command);
-                try {
-                    mud.sendLinesFromController(List.of(command));
-                } catch (IllegalStateException e) {
-                    output.appendSystem("Error: " + e.getMessage());
-                }
+                sendToMud(command);
             }
             default -> output.appendSystem("Usage: mm writ <number> [item|npc|loc|deliver]");
         }
@@ -409,15 +420,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 "alias LesaClientReset options terminal encoding = UTF-8",
                 "LesaClientReset"
         );
-        for (String line : lines) {
-            transcript.logClientToMud(line);
-            output.appendCommandEcho(line);
-        }
-        try {
-            mud.sendLinesFromController(lines);
-        } catch (IllegalStateException e) {
-            output.appendSystem("Error: " + e.getMessage());
-        }
+        sendToMud(lines);
     }
 
 
@@ -432,10 +435,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         boolean maskEcho = "#password".equalsIgnoreCase(trigger);
         transcript.logClientToMud("[alias:" + trigger + "] " + String.join(" | ", lines));
-        for (String line : lines) {
-            output.appendCommandEcho(maskEcho ? "(password)" : line);
-        }
-        mud.sendLinesFromController(lines);
+        sendToMud(lines, maskEcho);
         return true;
     }
 
@@ -723,7 +723,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 out.append("\nSteps: ").append(exits.size());
                 String aliasName = "LesaClientSpeedwalk";
                 String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
-                mud.sendLinesFromController(List.of(aliasCommand, aliasName));
+                sendToMud(List.of(aliasCommand, aliasName));
                 out.append("\nAlias: ").append(aliasName);
             }
             output.appendSystem(out.toString());
@@ -809,7 +809,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         } else {
             String aliasName = "LesaClientSpeedwalk";
             String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
-            mud.sendLinesFromController(List.of(aliasCommand, aliasName));
+            sendToMud(List.of(aliasCommand, aliasName));
             output.appendSystem("Speedwalking to room at {" + mapId + ", " + x + ", " + y + "} (" + exits.size() + " steps)");
         }
     }

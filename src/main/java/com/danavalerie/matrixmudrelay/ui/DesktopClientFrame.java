@@ -176,7 +176,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             @Override
             public void windowOpened(WindowEvent e) {
                 inputField.requestFocusInWindow();
-                commandProcessor.handleInput("mm connect");
+                submitCommand("mm connect");
             }
 
             @Override
@@ -196,7 +196,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         JMenu quickLinksMenu = new JMenu("Navigate");
         for (QuickLink link : QUICK_LINKS) {
             JMenuItem linkItem = new JMenuItem(link.name());
-            linkItem.addActionListener(event -> commandProcessor.speedwalkTo(link.mapId(), link.x(), link.y()));
+            linkItem.addActionListener(event -> {
+                commandProcessor.speedwalkTo(link.mapId(), link.x(), link.y());
+                submitCommand(null); // Just reset history index if we're not recording navigation
+            });
             quickLinksMenu.add(linkItem);
         }
         menuBar.add(quickLinksMenu);
@@ -454,12 +457,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
                     "Item: " + req.quantity() + " " + req.item(),
-                    () -> commandProcessor.handleInput("mm item exact " + req.item()));
+                    () -> submitCommand("mm item exact " + req.item()));
             writMenu.add(itemInfo);
 
             JMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
                     "List Store",
-                    () -> commandProcessor.handleInput("list"));
+                    () -> submitCommand("list"));
             writMenu.add(listItem);
 
             if (req.quantity() == 2) {
@@ -481,14 +484,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             JMenuItem npcInfo = buildWritMenuItem(index, WritMenuAction.NPC_INFO,
                     "Deliver to: " + req.npc(),
-                    () -> commandProcessor.handleInput("mm writ " + (index + 1) + " npc"));
+                    () -> submitCommand("mm writ " + (index + 1) + " npc"));
             writMenu.add(npcInfo);
 
             String locationText = req.locationName()
                     + (req.locationSuffix().isBlank() ? "" : " " + req.locationSuffix());
             JMenuItem locInfo = buildWritMenuItem(index, WritMenuAction.LOCATION_INFO,
                     "Location: " + locationText,
-                    () -> commandProcessor.handleInput("mm writ " + (index + 1) + " loc"));
+                    () -> submitCommand("mm writ " + (index + 1) + " loc"));
             writMenu.add(locInfo);
 
             if (!hasRoute) {
@@ -509,7 +512,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                                 plan.target().y(),
                                 commands
                         );
-                    }, () -> commandProcessor.handleInput("mm writ " + (index + 1) + " deliver")));
+                        // Add the top-level intent to history
+                        submitCommand("mm writ " + (index + 1) + " deliver");
+                    }, () -> submitCommand("mm writ " + (index + 1) + " deliver")));
             writMenu.add(deliverItem);
             writMenus.add(writMenu);
             menuBar.add(writMenu);
@@ -555,7 +560,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
 
         if (storeInventoryTracker.isNameListed()) {
-            commandProcessor.handleInput("buy " + quantity + " " + itemName);
+            submitCommand("buy " + quantity + " " + itemName);
             return;
         }
         String finalItemName = itemName;
@@ -566,7 +571,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void buyItemById(String itemId, int quantity) {
         for (int i = 0; i < quantity; i++) {
-            commandProcessor.handleInput("buy " + itemId);
+            submitCommand("buy " + itemId);
         }
     }
 
@@ -621,6 +626,29 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return splitPane;
     }
 
+    private void submitCommand(String text) {
+        if (text == null) {
+            historyIndex = -1;
+            return;
+        }
+        commandProcessor.handleInput(text);
+    }
+
+    @Override
+    public void addToHistory(String command) {
+        if (command == null || command.isBlank()) {
+            return;
+        }
+        SwingUtilities.invokeLater(() -> {
+            if (!inputHistory.isEmpty() && inputHistory.get(0).equals(command)) {
+                historyIndex = -1;
+                return;
+            }
+            inputHistory.add(0, command);
+            historyIndex = -1;
+        });
+    }
+
     private JComponent buildMudPanel() {
         JScrollPane chitchatScroll = new JScrollPane(chitchatPane);
         chitchatScroll.setBorder(null);
@@ -635,11 +663,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         Runnable sendAction = () -> {
             String text = inputField.getText();
             inputField.setText("");
-            commandProcessor.handleInput(text);
-            if (!text.isBlank()) {
-                inputHistory.add(0, text);
-            }
-            historyIndex = -1;
+            submitCommand(text);
         };
         inputField.addActionListener(e -> sendAction.run());
         sendButton.addActionListener(e -> sendAction.run());
@@ -814,14 +838,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                             item.addActionListener(event -> {
                                 resultsMenuVisits.add(resultIndex);
                                 item.setText(formatResultsMenuLabel(true, result.label()));
-                                commandProcessor.handleInput(result.mapCommand());
+                                submitCommand(result.mapCommand());
                                 showSpeedWalkPrompt(result.command());
                             });
                         } else {
                             item.addActionListener(event -> {
                                 resultsMenuVisits.add(resultIndex);
                                 item.setText(formatResultsMenuLabel(true, result.label()));
-                                commandProcessor.handleInput(result.command());
+                                submitCommand(result.command());
                             });
                         }
                         menu.add(item);
@@ -869,7 +893,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 options[1]
         );
         if (choice == 1) {
-            commandProcessor.handleInput(speedWalkCommand);
+            submitCommand(speedWalkCommand);
         }
     }
 
