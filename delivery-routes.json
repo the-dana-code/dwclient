@@ -1328,5 +1328,25 @@
       914
     ],
     "commands": []
+  },
+  {
+    "npc": "Mr Bommel",
+    "location": "Bommel\u0027s Livings on Rime Street",
+    "target": [
+      1,
+      568,
+      728
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the little old lady",
+    "location": "the sonky shop on Myrtle Street",
+    "target": [
+      1,
+      438,
+      455
+    ],
+    "commands": []
   }
 ]
