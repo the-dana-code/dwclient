@@ -16,6 +16,8 @@ import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -40,7 +42,10 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 public final class MapPanel extends JPanel {
-    private static final Color BACKGROUND = new Color(10, 10, 15);
+    private static final Color BACKGROUND_LIGHT = new Color(245, 245, 240);
+    private static final Color FOREGROUND_DARK = new Color(35, 35, 35);
+    private static final Color BACKGROUND_DARK = new Color(12, 12, 18);
+    private static final Color FOREGROUND_LIGHT = new Color(220, 220, 220);
     private static final int ZOOM_MIN = 50;
     private static final int ZOOM_MAX = 200;
     private static final int ZOOM_DEFAULT = 100;
@@ -61,27 +66,34 @@ public final class MapPanel extends JPanel {
     private final JSlider zoomSlider;
     private final JLabel zoomLabel = new JLabel();
     private final IntConsumer zoomChangeListener;
+    private final Consumer<Boolean> invertChangeListener;
+    private final JButton invertButton = new JButton("Invert");
+    private volatile boolean invertMap;
     private Consumer<RoomMapService.RoomLocation> speedwalkHandler;
     private final JButton speedWalkButton = new JButton("Speed Walk");
     private List<RoomMapService.RoomLocation> speedwalkPath = List.of();
     private int zoomPercent;
-    private BufferedImage lastBaseImage;
-    private String lastTitle;
-    private Integer lastMapId;
-    private Point lastFocusPoint;
-    private Dimension lastImageSize;
-    private RoomMapService.MapImage lastMapImage;
-    private RoomMapService.RoomLocation selectedRoom;
+    private volatile BufferedImage lastBaseImage;
+    private volatile String lastTitle;
+    private volatile Integer lastMapId;
+    private volatile Point lastFocusPoint;
+    private volatile Dimension lastImageSize;
+    private volatile RoomMapService.MapImage lastMapImage;
+    private volatile RoomMapService.RoomLocation selectedRoom;
     private String currentRoomId;
     private Timer animationTimer;
     private boolean updatingAreaSelection;
 
     public MapPanel(int initialZoomPercent,
-                    IntConsumer zoomChangeListener) {
+                    IntConsumer zoomChangeListener,
+                    boolean initialInvertMap,
+                    Consumer<Boolean> invertChangeListener) {
         this.zoomPercent = sanitizeZoom(initialZoomPercent);
         this.zoomChangeListener = zoomChangeListener;
+        this.invertMap = initialInvertMap;
+        this.invertChangeListener = invertChangeListener;
         setLayout(new BorderLayout());
-        setBackground(BACKGROUND);
+        setBackground(getMapBackground());
         areaComboBoxModel = new DefaultComboBoxModel<>();
         areaComboBoxModel.addElement(NONE_AREA);
         for (RoomMapService.MapArea area : mapService.listMapAreas()) {
@@ -90,18 +102,14 @@ public final class MapPanel extends JPanel {
         }
         areaComboBox = new JComboBox<>(areaComboBoxModel);
         areaComboBox.setSelectedItem(NONE_AREA);
-        areaComboBox.setForeground(new Color(220, 220, 220));
-        areaComboBox.setBackground(new Color(20, 20, 28));
         areaComboBox.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
         areaComboBox.addActionListener(event -> handleAreaSelection());
         mapLabel.setOpaque(true);
-        mapLabel.setBackground(BACKGROUND);
-        mapLabel.setForeground(new Color(220, 220, 220));
         mapLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         speedWalkButton.setEnabled(false);
         speedWalkButton.addActionListener(event -> handleSpeedWalk());
+        invertButton.addActionListener(event -> toggleInvert());
         JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setBackground(BACKGROUND);
         JPanel titleActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 2));
         titleActions.setOpaque(false);
         titleActions.add(speedWalkButton);
@@ -117,16 +125,73 @@ public final class MapPanel extends JPanel {
         zoomSlider.addChangeListener(event -> onZoomChanged());
         updateZoomLabel();
         JPanel zoomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
-        zoomPanel.add(new JLabel("Zoom:"));
+        JLabel zoomTitleLabel = new JLabel("Zoom:");
+        zoomPanel.add(zoomTitleLabel);
         zoomPanel.add(zoomSlider);
         zoomPanel.add(zoomLabel);
+        zoomPanel.add(invertButton);
         add(zoomPanel, BorderLayout.SOUTH);
+        updateColors();
         mapLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
                 handleMapClick(event.getPoint());
             }
         });
+    }
+
+    private void toggleInvert() {
+        invertMap = !invertMap;
+        updateColors();
+        BufferedImage cached = baseImageCache.get();
+        if (cached != null) {
+            invertImage(cached);
+        }
+        if (lastBaseImage != null && lastBaseImage != cached) {
+            invertImage(lastBaseImage);
+        }
+        updateDisplayedImage();
+        if (invertChangeListener != null) {
+            invertChangeListener.accept(invertMap);
+        }
+    }
+
+    private void updateColors() {
+        Color bg = getMapBackground();
+        Color fg = getMapForeground();
+        updateComponentTree(this, bg, fg);
+        
+        areaComboBox.setBackground(invertMap ? new Color(30, 30, 35) : new Color(235, 235, 227));
+        
+        Component parent = getParent();
+        if (parent instanceof JPanel) {
+            parent.setBackground(bg);
+        }
+    }
+
+    private void updateComponentTree(Component c, Color bg, Color fg) {
+        if (c instanceof JPanel) {
+            c.setBackground(bg);
+            for (Component child : ((Container) c).getComponents()) {
+                updateComponentTree(child, bg, fg);
+            }
+        } else if (c instanceof JLabel) {
+            c.setForeground(fg);
+            c.setBackground(bg);
+        } else if (c instanceof JComboBox) {
+            c.setForeground(fg);
+        } else if (c instanceof JSlider) {
+            c.setForeground(fg);
+            c.setBackground(bg);
+        }
+    }
+
+    private Color getMapBackground() {
+        return invertMap ? BACKGROUND_DARK : BACKGROUND_LIGHT;
+    }
+
+    private Color getMapForeground() {
+        return invertMap ? FOREGROUND_LIGHT : FOREGROUND_DARK;
     }
 
     public void updateMap(String roomId) {
@@ -218,7 +283,7 @@ public final class MapPanel extends JPanel {
             Point scaledFocus = scalePoint(focusPoint, zoomPercent);
             List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);
             int markerDiameter = scaledMarkerDiameter(zoomPercent);
-            AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath);
+            AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath, invertMap);
             mapLabel.setIcon(icon);
             mapLabel.setText("");
             Insets insets = mapLabel.getInsets();
@@ -294,6 +359,9 @@ public final class MapPanel extends JPanel {
             return null;
         }
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(mapImage.data()));
+        if (invertMap) {
+            invertImage(image);
+        }
         baseImageCache.set(image);
         return image;
     }
@@ -551,6 +619,26 @@ public final class MapPanel extends JPanel {
         });
     }
 
+    private static void invertImage(BufferedImage image) {
+        if (image == null) return;
+        int width = image.getWidth();
+        int height = image.getHeight();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int argb = image.getRGB(x, y);
+                int a = (argb >> 24) & 0xFF;
+                int r = (argb >> 16) & 0xFF;
+                int g = (argb >> 8) & 0xFF;
+                int b = argb & 0xFF;
+                image.setRGB(x, y, (a << 24) | ((255 - r) << 16) | ((255 - g) << 8) | (255 - b));
+            }
+        }
+    }
+
+    private static Color invertColor(Color c) {
+        return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue(), c.getAlpha());
+    }
+
     private RoomMapService.MapArea ensureAreaOption(int mapId, String title) {
         RoomMapService.MapArea area = areaOptions.get(mapId);
         if (area != null) {
@@ -570,18 +658,21 @@ public final class MapPanel extends JPanel {
         private static final int MARKER_DIAMETER_BASE = 16;
         private static final int PINWHEEL_SEGMENTS = 20;
         private static final float PINWHEEL_ALPHA = 0.9f;
-        private static final Color SPEEDWALK_COLOR = new Color(230, 70, 70);
+        private static final Color SPEEDWALK_COLOR_ORIG = new Color(230, 70, 70);
+        private static final Color SPEEDWALK_COLOR_INV = new Color(25, 185, 185);
         private final BufferedImage image;
         private final Point focusPoint;
         private final int markerDiameter;
         private final List<Point> speedwalkPath;
+        private final boolean invertMap;
         private final long startTimeMs = System.currentTimeMillis();
 
-        private AnimatedMapIcon(BufferedImage image, Point focusPoint, int markerDiameter, List<Point> speedwalkPath) {
+        private AnimatedMapIcon(BufferedImage image, Point focusPoint, int markerDiameter, List<Point> speedwalkPath, boolean invertMap) {
             this.image = image;
             this.focusPoint = focusPoint;
             this.markerDiameter = markerDiameter;
             this.speedwalkPath = speedwalkPath == null ? List.of() : speedwalkPath;
+            this.invertMap = invertMap;
         }
 
         @Override
@@ -606,6 +697,9 @@ public final class MapPanel extends JPanel {
             for (int i = 0; i < PINWHEEL_SEGMENTS; i++) {
                 float hue = i / (float) PINWHEEL_SEGMENTS;
                 Color segment = Color.getHSBColor(hue, 0.85f, 1.0f);
+                if (!invertMap) {
+                    segment = invertColor(segment);
+                }
                 Color segmentWithAlpha = new Color(segment.getRed(), segment.getGreen(), segment.getBlue(),
                         Math.round(255 * PINWHEEL_ALPHA));
                 g2.setColor(segmentWithAlpha);
@@ -621,7 +715,7 @@ public final class MapPanel extends JPanel {
             }
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(SPEEDWALK_COLOR);
+            g2.setColor(invertMap ? SPEEDWALK_COLOR_INV : SPEEDWALK_COLOR_ORIG);
             float strokeWidth = Math.max(2f, markerDiameter / 6f);
             g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             Point previous = null;

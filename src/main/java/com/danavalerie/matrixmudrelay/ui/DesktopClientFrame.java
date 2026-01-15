@@ -126,7 +126,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.routeMappings = routeMappings;
         this.mapPanel = new MapPanel(
                 resolveMapZoomPercent(),
-                this::persistMapZoomConfig
+                this::persistMapZoomConfig,
+                resolveMapInvert(),
+                this::persistMapInvertConfig
         );
 
         writTracker = new WritTracker();
@@ -371,6 +373,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void persistMapZoomConfig(int zoomPercent) {
         cfg.ui.mapZoomPercent = zoomPercent;
+        try {
+            ConfigLoader.save(configPath, cfg);
+        } catch (IOException e) {
+            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
+        }
+    }
+
+    private boolean resolveMapInvert() {
+        return cfg.ui.invertMap != null && cfg.ui.invertMap;
+    }
+
+    private void persistMapInvertConfig(boolean invertMap) {
+        cfg.ui.invertMap = invertMap;
         try {
             ConfigLoader.save(configPath, cfg);
         } catch (IOException e) {

@@ -33,6 +33,7 @@ public final class BotConfig {
         public String fontFamily;
         public Integer fontSize;
         public Integer mapZoomPercent;
+        public Boolean invertMap;
         public Double mudMapSplitRatio;
     }
 }
