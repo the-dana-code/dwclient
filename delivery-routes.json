@@ -1168,5 +1168,65 @@
       806
     ],
     "commands": []
+  },
+  {
+    "npc": "Nuhakme Icta",
+    "location": "the Laughing Falafel, Klatchian Takeaway",
+    "target": [
+      1,
+      340,
+      343
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Alfred Musqrat",
+    "location": "the paint shop on Sheer Street",
+    "target": [
+      1,
+      634,
+      595
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Victoria Grotle",
+    "location": "the Get \u0027em while we still got \u0027em shop on Plaza of Broken Moons",
+    "target": [
+      1,
+      1050,
+      756
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Stuck",
+    "location": "Stuck\u0027s Bar on Speedwell Street",
+    "target": [
+      1,
+      676,
+      337
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the shopkeeper",
+    "location": "the clothing stall on Plaza of Broken Moons",
+    "target": [
+      1,
+      989,
+      764
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Herbert",
+    "location": "Bologna Shop on God Street",
+    "target": [
+      1,
+      648,
+      897
+    ],
+    "commands": []
   }
 ]

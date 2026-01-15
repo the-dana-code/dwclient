@@ -567,6 +567,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         String s;
         if ((s = replacePrefix(phrase, "pairs of ", "pair of ")) != null) {
             phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "sets of ", "set of ")) != null) {
+            phrases.add(s);
         } else if ((s = replacePrefix(phrase, "packets of ", "packet of ")) != null) {
             phrases.add(s);
         } else if ((s = replacePrefix(phrase, "tubes of ", "tube of ")) != null) {
