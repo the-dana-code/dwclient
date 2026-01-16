@@ -1418,5 +1418,55 @@
       924
     ],
     "commands": []
+  },
+  {
+    "npc": "Bernita",
+    "location": "Bernita\u0027s Flower Shop on Treacle Street",
+    "target": [
+      1,
+      1026,
+      1079
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the owner",
+    "location": "Brookless Bakery",
+    "target": [
+      1,
+      1043,
+      312
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Ms Holbrook",
+    "location": "Holbrook\u0027s General Shop",
+    "target": [
+      1,
+      71,
+      858
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Frank Gnaby",
+    "location": "Gnaby Party Supplies",
+    "target": [
+      1,
+      707,
+      438
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the young lady",
+    "location": "the conch shop on Cockbill Street",
+    "target": [
+      1,
+      122,
+      718
+    ],
+    "commands": []
   }
 ]
