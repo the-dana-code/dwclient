@@ -1398,5 +1398,15 @@
       813
     ],
     "commands": []
+  },
+  {
+    "npc": "Mr or Ms Twonky",
+    "location": "Twonky\u0027s Clocks on Nonesuch Street",
+    "target": [
+      1,
+      421,
+      438
+    ],
+    "commands": []
   }
 ]

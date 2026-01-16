@@ -386,21 +386,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             case "npc" -> handleNpcSearchQuery(req.npc());
             case "loc" -> handleRoomSearchQuery(req.locationName());
             case "deliver" -> {
-                String npcName = req.npc();
-                if (
-                        npcName.startsWith("Mr ")
-                                || npcName.startsWith("Mr. ")
-                                || npcName.startsWith("Ms ")
-                                || npcName.startsWith("Ms. ")
-                                || npcName.startsWith("Mrs ")
-                                || npcName.startsWith("Mrs. ")
-                ) {
-                    // usage of the dot is inconsistent, so
-                    // we'll just remove the title completely
-                    // for simplicity
-                    int idx = npcName.indexOf(' ');
-                    npcName = npcName.substring(idx + 1);
-                }
+                String npcName = removeTitle(req);
                 String command = Sanitizer.sanitizeMudInput(
                         "deliver "
                                 + req.item()
@@ -413,6 +399,25 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             }
             default -> output.appendSystem("Usage: mm writ <number> [item|npc|loc|deliver]");
         }
+    }
+
+    private static String removeTitle(WritTracker.WritRequirement req) {
+        String npcName = req.npc();
+        npcName = removeLeading(npcName, "Mr or Ms ");
+        npcName = removeLeading(npcName, "Mr ");
+        npcName = removeLeading(npcName, "Mr. ");
+        npcName = removeLeading(npcName, "Ms ");
+        npcName = removeLeading(npcName, "Ms. ");
+        npcName = removeLeading(npcName, "Mrs ");
+        npcName = removeLeading(npcName, "Mrs. ");
+        return npcName;
+    }
+
+    private static String removeLeading(String npcName, String leadingString) {
+        if (npcName.startsWith(leadingString)) {
+            npcName = npcName.substring(leadingString.length());
+        }
+        return npcName;
     }
 
     private void handleReset() {
