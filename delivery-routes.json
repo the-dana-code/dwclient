@@ -1588,5 +1588,25 @@
       370
     ],
     "commands": []
+  },
+  {
+    "npc": "Jotu Icta",
+    "location": "the Laughing Falafel, All Nite Grocery",
+    "target": [
+      1,
+      330,
+      343
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Murgatroyd Listey",
+    "location": "the souvenir shop on Humble Street",
+    "target": [
+      1,
+      46,
+      813
+    ],
+    "commands": []
   }
 ]
