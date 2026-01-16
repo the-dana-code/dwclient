@@ -187,11 +187,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JMenuBar buildMenuBar() {
-        JMenu viewMenu = new JMenu("View");
+        JMenu mainMenu = new JMenu("Menu");
         JMenuItem fontItem = new JMenuItem("Output Font...");
         fontItem.addActionListener(event -> showFontDialog());
-        viewMenu.add(fontItem);
-        menuBar.add(viewMenu);
+        mainMenu.add(fontItem);
+
+        mainMenu.addSeparator();
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(event -> {
+            shutdown();
+            System.exit(0);
+        });
+        mainMenu.add(exitItem);
+
+        menuBar.add(mainMenu);
 
         JMenu quickLinksMenu = new JMenu("Navigate");
         for (QuickLink link : QUICK_LINKS) {
