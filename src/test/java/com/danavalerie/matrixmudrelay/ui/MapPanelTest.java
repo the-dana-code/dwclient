@@ -118,4 +118,29 @@ public class MapPanelTest {
         
         System.out.println("[DEBUG_LOG] testMapBackgroundColors passed");
     }
+
+    @Test
+    public void testMapLabelBackgroundMatchesTheme() throws Exception {
+        MapPanel mapPanel = new MapPanel(100, z -> {}, false, invert -> {});
+        
+        java.lang.reflect.Field mapLabelField = MapPanel.class.getDeclaredField("mapLabel");
+        mapLabelField.setAccessible(true);
+        javax.swing.JLabel mapLabel = (javax.swing.JLabel) mapLabelField.get(mapPanel);
+        
+        java.lang.reflect.Field scrollPaneField = MapPanel.class.getDeclaredField("scrollPane");
+        scrollPaneField.setAccessible(true);
+        javax.swing.JScrollPane scrollPane = (javax.swing.JScrollPane) scrollPaneField.get(mapPanel);
+
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, mapLabel.getBackground());
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, scrollPane.getBackground());
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, scrollPane.getViewport().getBackground());
+
+        java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
+        toggleMethod.setAccessible(true);
+        toggleMethod.invoke(mapPanel);
+
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, mapLabel.getBackground());
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, scrollPane.getBackground());
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, scrollPane.getViewport().getBackground());
+    }
 }

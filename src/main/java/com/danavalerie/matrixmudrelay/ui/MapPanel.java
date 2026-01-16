@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -174,7 +175,7 @@ public final class MapPanel extends JPanel {
     }
 
     private void updateComponentTree(Component c, Color bg, Color fg) {
-        if (c instanceof JPanel) {
+        if (c instanceof JPanel || c instanceof JScrollPane || c instanceof JViewport) {
             c.setBackground(bg);
             for (Component child : ((Container) c).getComponents()) {
                 updateComponentTree(child, bg, fg);
@@ -187,6 +188,8 @@ public final class MapPanel extends JPanel {
         } else if (c instanceof JSlider) {
             c.setForeground(fg);
             c.setBackground(bg);
+        } else if (c instanceof JButton) {
+            c.setForeground(fg);
         }
     }
 
