@@ -41,7 +41,6 @@ public final class GrammarUtils {
                         }
                         return phrases;
                     }
-                    return List.of();
                 }
             }
 
