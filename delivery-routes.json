@@ -1368,5 +1368,35 @@
       1044
     ],
     "commands": []
+  },
+  {
+    "npc": "Scott Dorf",
+    "location": "the dusty furniture shop in the underdocks",
+    "target": [
+      5,
+      230,
+      227
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Linny",
+    "location": "the Royal Art Museum gift shop",
+    "target": [
+      7,
+      365,
+      563
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Krazzander",
+    "location": "Krazzander\u0027s Magic Tricks on Filigree Street",
+    "target": [
+      1,
+      746,
+      813
+    ],
+    "commands": []
   }
 ]
