@@ -1468,5 +1468,15 @@
       718
     ],
     "commands": []
+  },
+  {
+    "npc": "Opp Donnderson",
+    "location": "the goldsmith on Grunefair",
+    "target": [
+      1,
+      354,
+      253
+    ],
+    "commands": []
   }
 ]

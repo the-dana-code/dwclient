@@ -51,6 +51,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -496,6 +497,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         for (int i = 0; i < writRequirements.size(); i++) {
             WritTracker.WritRequirement req = writRequirements.get(i);
             boolean hasRoute = routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).isPresent();
+            boolean canWriteRoutes = Files.isWritable(routesPath);
             int index = i;
             JMenu writMenu = new JMenu("W" + (i + 1));
 
@@ -538,7 +540,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     () -> submitCommand("mm writ " + (index + 1) + " loc"));
             writMenu.add(locInfo);
 
-            if (!hasRoute) {
+            if (!hasRoute && canWriteRoutes) {
                 JMenuItem addRouteItem = buildWritMenuItem(index, WritMenuAction.ADD_ROUTE,
                         "Add Current Room",
                         () -> handleAddRoute(index));
@@ -546,7 +548,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
-                    "Route and Deliver",
+                    hasRoute ? "Route and Deliver" : "Deliver",
                     () -> routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).ifPresentOrElse(plan -> {
                         List<String> commands = new ArrayList<>(plan.commands());
                         commands.add("mm writ " + (index + 1) + " deliver");
