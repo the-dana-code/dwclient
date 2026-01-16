@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,7 +35,7 @@ public class RoomMapService {
     private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private final String dbPath;
     private final boolean driverAvailable;
-    private final Map<Integer, Optional<BufferedImage>> backgroundCache = new HashMap<>();
+    private final Map<String, Optional<BufferedImage>> backgroundCache = new HashMap<>();
     private BaseImageCache baseImageCache;
 
     public RoomMapService(String dbPath) {
@@ -50,6 +51,10 @@ public class RoomMapService {
     }
 
     public MapImage renderMapImage(String currentRoomId) throws SQLException, MapLookupException, IOException {
+        return renderMapImage(currentRoomId, false);
+    }
+
+    public MapImage renderMapImage(String currentRoomId, boolean isDark) throws SQLException, MapLookupException, IOException {
         if (currentRoomId == null || currentRoomId.isBlank()) {
             throw new MapLookupException("No room info available yet.");
         }
@@ -62,11 +67,11 @@ public class RoomMapService {
             if (current == null) {
                 throw new MapLookupException("Current room not found in map database.");
             }
-            if (baseImageCache != null && baseImageCache.mapId != current.mapId) {
+            if (baseImageCache != null && (baseImageCache.mapId != current.mapId || baseImageCache.isDark != isDark)) {
                 baseImageCache = null;
             }
 
-            BufferedImage backgroundImage = loadMapBackground(current.mapId);
+            BufferedImage backgroundImage = loadMapBackground(current.mapId, isDark);
             int minX;
             int maxX;
             int minY;
@@ -75,7 +80,7 @@ public class RoomMapService {
             int imageHeight;
             if (backgroundImage == null) {
                 BaseImageCache cached = baseImageCache;
-                if (cached != null && cached.mapId == current.mapId && cached.containsRoom(current)) {
+                if (cached != null && cached.mapId == current.mapId && cached.isDark == isDark && cached.containsRoom(current)) {
                     minX = cached.minX;
                     maxX = cached.maxX;
                     minY = cached.minY;
@@ -101,12 +106,12 @@ public class RoomMapService {
 
             BaseImageCache cachedBase = baseImageCache;
             boolean reuseBase = cachedBase != null
-                    && cachedBase.matches(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight);
+                    && cachedBase.matches(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight, isDark);
             byte[] data = null;
             if (!reuseBase) {
                 BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g2 = image.createGraphics();
-                g2.setColor(new Color(12, 12, 18));
+                g2.setColor(isDark ? new Color(12, 12, 18) : new Color(240, 240, 245));
                 g2.fillRect(0, 0, imageWidth, imageHeight);
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                 g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
@@ -118,7 +123,7 @@ public class RoomMapService {
 
                 g2.dispose();
                 baseImageCache = new BaseImageCache(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,
-                        image);
+                        image, isDark);
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ImageIO.write(image, "png", out);
                 data = out.toByteArray();
@@ -146,7 +151,8 @@ public class RoomMapService {
                     current.roomId,
                     current.xpos,
                     current.ypos,
-                    current.roomShort
+                    current.roomShort,
+                    isDark
             );
         }
     }
@@ -647,19 +653,42 @@ public class RoomMapService {
         return steps;
     }
 
-    private BufferedImage loadMapBackground(int mapId) throws IOException {
-        Optional<BufferedImage> cached = backgroundCache.get(mapId);
+    private BufferedImage loadMapBackground(int mapId, boolean isDark) throws IOException {
+        String cacheKey = mapId + (isDark ? "_dark" : "");
+        Optional<BufferedImage> cached = backgroundCache.get(cacheKey);
         if (cached != null) {
             return cached.orElse(null);
         }
         Optional<MapBackground> background = MapBackground.forMapId(mapId);
         if (background.isEmpty()) {
-            backgroundCache.put(mapId, Optional.empty());
+            backgroundCache.put(cacheKey, Optional.empty());
             return null;
         }
-        Path backgroundPath = Path.of("map-backgrounds", background.get().filename);
+
+        String filename = background.get().filename;
+        if (isDark) {
+            int dot = filename.lastIndexOf('.');
+            String darkFilename = filename.substring(0, dot) + "_dark" + filename.substring(dot);
+            Path darkPath = Path.of("map-backgrounds", darkFilename);
+            if (Files.exists(darkPath)) {
+                BufferedImage loaded = ImageIO.read(darkPath.toFile());
+                backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
+                return loaded;
+            }
+            // Fallback: load light version and convert it
+            BufferedImage light = loadMapBackground(mapId, false);
+            if (light == null) {
+                backgroundCache.put(cacheKey, Optional.empty());
+                return null;
+            }
+            BufferedImage dark = com.danavalerie.matrixmudrelay.util.DarkThemeConverter.toDarkTheme(light);
+            backgroundCache.put(cacheKey, Optional.ofNullable(dark));
+            return dark;
+        }
+
+        Path backgroundPath = Path.of("map-backgrounds", filename);
         BufferedImage loaded = ImageIO.read(backgroundPath.toFile());
-        backgroundCache.put(mapId, Optional.ofNullable(loaded));
+        backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
         return loaded;
     }
 
@@ -803,7 +832,8 @@ public class RoomMapService {
                            String roomId,
                            int roomX,
                            int roomY,
-                           String roomShort) {
+                           String roomShort,
+                           boolean isDark) {
     }
 
     private static final class BaseImageCache {
@@ -815,9 +845,10 @@ public class RoomMapService {
         private final int imageWidth;
         private final int imageHeight;
         private final BufferedImage image;
+        private final boolean isDark;
 
         private BaseImageCache(int mapId, int minX, int maxX, int minY, int maxY, int imageWidth, int imageHeight,
-                               BufferedImage image) {
+                               BufferedImage image, boolean isDark) {
             this.mapId = mapId;
             this.minX = minX;
             this.maxX = maxX;
@@ -826,16 +857,18 @@ public class RoomMapService {
             this.imageWidth = imageWidth;
             this.imageHeight = imageHeight;
             this.image = image;
+            this.isDark = isDark;
         }
 
-        private boolean matches(int mapId, int minX, int maxX, int minY, int maxY, int imageWidth, int imageHeight) {
+        private boolean matches(int mapId, int minX, int maxX, int minY, int maxY, int imageWidth, int imageHeight, boolean isDark) {
             return this.mapId == mapId
                     && this.minX == minX
                     && this.maxX == maxX
                     && this.minY == minY
                     && this.maxY == maxY
                     && this.imageWidth == imageWidth
-                    && this.imageHeight == imageHeight;
+                    && this.imageHeight == imageHeight
+                    && this.isDark == isDark;
         }
 
         private boolean containsRoom(RoomRecord room) {

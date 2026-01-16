@@ -145,11 +145,37 @@ public final class MapPanel extends JPanel {
     private void toggleInvert() {
         invertMap = !invertMap;
         updateColors();
-        BufferedImage cached = baseImageCache.get();
-        if (cached != null) {
-            lastBaseImage = invertMap ? DarkThemeConverter.toDarkTheme(cached) : cached;
+
+        String roomId = lastRoomId.get();
+        if (roomId != null) {
+            executor.submit(() -> {
+                try {
+                    RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId, invertMap);
+                    BufferedImage image = resolveBaseImage(mapImage);
+                    RoomMapService.RoomLocation currentRoom = new RoomMapService.RoomLocation(
+                            mapImage.roomId(),
+                            mapImage.mapId(),
+                            mapImage.roomX(),
+                            mapImage.roomY(),
+                            mapImage.roomShort()
+                    );
+                    showImage(mapImage, image, currentRoom);
+                } catch (Exception e) {
+                    BufferedImage cached = baseImageCache.get();
+                    if (cached != null) {
+                        lastBaseImage = (invertMap) ? DarkThemeConverter.toDarkTheme(cached) : cached;
+                        updateDisplayedImage();
+                    }
+                }
+            });
+        } else {
+            BufferedImage cached = baseImageCache.get();
+            if (cached != null) {
+                lastBaseImage = (invertMap) ? DarkThemeConverter.toDarkTheme(cached) : cached;
+                updateDisplayedImage();
+            }
         }
-        updateDisplayedImage();
+
         if (invertChangeListener != null) {
             invertChangeListener.accept(invertMap);
         }
@@ -210,7 +236,7 @@ public final class MapPanel extends JPanel {
         }
         executor.submit(() -> {
             try {
-                RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId);
+                RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId, invertMap);
                 BufferedImage image = resolveBaseImage(mapImage);
                 RoomMapService.RoomLocation currentRoom = new RoomMapService.RoomLocation(
                         mapImage.roomId(),
@@ -357,7 +383,7 @@ public final class MapPanel extends JPanel {
         if (mapImage.baseImageReused()) {
             BufferedImage cached = baseImageCache.get();
             if (cached != null) {
-                return invertMap ? DarkThemeConverter.toDarkTheme(cached) : cached;
+                return (invertMap && !mapImage.isDark()) ? DarkThemeConverter.toDarkTheme(cached) : cached;
             }
         }
         if (mapImage.data() == null) {
@@ -365,7 +391,7 @@ public final class MapPanel extends JPanel {
         }
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(mapImage.data()));
         baseImageCache.set(image);
-        return invertMap ? DarkThemeConverter.toDarkTheme(image) : image;
+        return (invertMap && !mapImage.isDark()) ? DarkThemeConverter.toDarkTheme(image) : image;
     }
 
     private void onZoomChanged() {

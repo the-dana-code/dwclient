@@ -42,4 +42,20 @@ public class RoomMapServiceTest {
         // It should be a short walking route.
         assertTrue(result.steps().size() <= 3, "Route should be short (3 steps or less), but was " + result.steps().size());
     }
+    
+    @Test
+    public void testRenderDarkMap() throws Exception {
+        RoomMapService service = new RoomMapService("database.db");
+        // Drum teleport room ID
+        String roomInAm = "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"; 
+        
+        RoomMapService.MapImage lightImage = service.renderMapImage(roomInAm, false);
+        RoomMapService.MapImage darkImage = service.renderMapImage(roomInAm, true);
+        
+        assertNotNull(lightImage);
+        assertNotNull(darkImage);
+        assertTrue(darkImage.isDark());
+        assertFalse(lightImage.isDark());
+        assertNotEquals(lightImage.data().length, darkImage.data().length);
+    }
 }
