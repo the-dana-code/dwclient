@@ -82,6 +82,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomMapService routeMapService = new RoomMapService("database.db");
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
+    private JMenuItem connectionItem;
     private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults;
     private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
@@ -146,7 +147,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     bufferStoreInventoryLines(normalized);
                     outputPane.appendMudText(line);
                 },
-                reason -> outputPane.appendSystemText("* MUD disconnected: " + reason),
+                reason -> {
+                    outputPane.appendSystemText("* MUD disconnected: " + reason);
+                    SwingUtilities.invokeLater(() -> updateConnectionMenuItem(false));
+                },
                 transcript
         );
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
@@ -188,6 +192,33 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JMenuBar buildMenuBar() {
         JMenu mainMenu = new JMenu("Menu");
+        connectionItem = new JMenuItem();
+        connectionItem.addActionListener(event -> {
+            if (mud.isConnected()) {
+                submitCommand("mm disconnect");
+            } else {
+                submitCommand("mm connect");
+            }
+            updateConnectionMenuItem(mud.isConnected());
+        });
+        updateConnectionMenuItem(mud.isConnected());
+        mainMenu.addMenuListener(new javax.swing.event.MenuListener() {
+            @Override
+            public void menuSelected(javax.swing.event.MenuEvent e) {
+                updateConnectionMenuItem(mud.isConnected());
+            }
+
+            @Override
+            public void menuDeselected(javax.swing.event.MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(javax.swing.event.MenuEvent e) {
+            }
+        });
+        mainMenu.add(connectionItem);
+
+        mainMenu.addSeparator();
         JMenuItem fontItem = new JMenuItem("Output Font...");
         fontItem.addActionListener(event -> showFontDialog());
         mainMenu.add(fontItem);
@@ -1103,6 +1134,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
             }
         }
+    }
+
+    private void updateConnectionMenuItem(boolean connected) {
+        if (connectionItem == null) {
+            return;
+        }
+        connectionItem.setText(connected ? "Disconnect" : "Connect");
+    }
+
+    @Override
+    public void updateConnectionState(boolean connected) {
+        SwingUtilities.invokeLater(() -> updateConnectionMenuItem(connected));
     }
 
     public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, TranscriptLogger transcript) {

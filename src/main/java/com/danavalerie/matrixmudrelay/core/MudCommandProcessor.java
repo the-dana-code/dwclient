@@ -37,6 +37,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         void updateContextualResults(ContextualResultList results);
 
         void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path);
+
+        void updateConnectionState(boolean connected);
     }
 
     private final BotConfig cfg;
@@ -167,6 +169,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             try {
                 mud.connect();
                 output.appendSystem("Connected.");
+                output.updateConnectionState(true);
             } catch (Exception e) {
                 log.warn("connect failed err={}", e.toString());
                 output.appendSystem("Connect failed: " + e.getMessage());
@@ -181,6 +184,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         mud.disconnect("controller requested", null);
         output.appendSystem("Disconnected.");
+        output.updateConnectionState(false);
     }
 
     private void handleStatus() {
