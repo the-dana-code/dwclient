@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
+import com.danavalerie.matrixmudrelay.util.DarkThemeConverter;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -146,10 +147,7 @@ public final class MapPanel extends JPanel {
         updateColors();
         BufferedImage cached = baseImageCache.get();
         if (cached != null) {
-            invertImage(cached);
-        }
-        if (lastBaseImage != null && lastBaseImage != cached) {
-            invertImage(lastBaseImage);
+            lastBaseImage = invertMap ? DarkThemeConverter.toDarkTheme(cached) : cached;
         }
         updateDisplayedImage();
         if (invertChangeListener != null) {
@@ -359,18 +357,15 @@ public final class MapPanel extends JPanel {
         if (mapImage.baseImageReused()) {
             BufferedImage cached = baseImageCache.get();
             if (cached != null) {
-                return cached;
+                return invertMap ? DarkThemeConverter.toDarkTheme(cached) : cached;
             }
         }
         if (mapImage.data() == null) {
             return null;
         }
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(mapImage.data()));
-        if (invertMap) {
-            invertImage(image);
-        }
         baseImageCache.set(image);
-        return image;
+        return invertMap ? DarkThemeConverter.toDarkTheme(image) : image;
     }
 
     private void onZoomChanged() {
@@ -626,25 +621,7 @@ public final class MapPanel extends JPanel {
         });
     }
 
-    private static void invertImage(BufferedImage image) {
-        if (image == null) return;
-        int width = image.getWidth();
-        int height = image.getHeight();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int argb = image.getRGB(x, y);
-                int a = (argb >> 24) & 0xFF;
-                int r = (argb >> 16) & 0xFF;
-                int g = (argb >> 8) & 0xFF;
-                int b = argb & 0xFF;
-                image.setRGB(x, y, (a << 24) | ((255 - r) << 16) | ((255 - g) << 8) | (255 - b));
-            }
-        }
-    }
 
-    private static Color invertColor(Color c) {
-        return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue(), c.getAlpha());
-    }
 
     private RoomMapService.MapArea ensureAreaOption(int mapId, String title) {
         RoomMapService.MapArea area = areaOptions.get(mapId);
@@ -702,10 +679,7 @@ public final class MapPanel extends JPanel {
             float rotation = phase * 360f;
             for (int i = 0; i < PINWHEEL_SEGMENTS; i++) {
                 float hue = i / (float) PINWHEEL_SEGMENTS;
-                Color segment = Color.getHSBColor(hue, 0.85f, 1.0f);
-                if (!invertMap) {
-                    segment = invertColor(segment);
-                }
+                Color segment = Color.getHSBColor(hue, 0.85f, invertMap ? 1.0f : 0.7f);
                 Color segmentWithAlpha = new Color(segment.getRed(), segment.getGreen(), segment.getBlue(),
                         Math.round(255 * PINWHEEL_ALPHA));
                 g2.setColor(segmentWithAlpha);

@@ -43,41 +43,7 @@ public class MapPanelTest {
     }
 
     @Test
-    public void testToggleInvertInvertsImage() throws Exception {
-        MapPanel mapPanel = new MapPanel(100, zoom -> {}, false, invert -> {});
-        
-        // Create a simple test image
-        BufferedImage testImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
-        int originalColor = new Color(10, 20, 30, 255).getRGB();
-        testImage.setRGB(0, 0, originalColor);
-        
-        // Use reflection to set lastBaseImage
-        java.lang.reflect.Field field = MapPanel.class.getDeclaredField("lastBaseImage");
-        field.setAccessible(true);
-        field.set(mapPanel, testImage);
-        
-        // Initial state: not inverted
-        java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
-        toggleMethod.setAccessible(true);
-        
-        // Toggle once: should be inverted
-        toggleMethod.invoke(mapPanel);
-        
-        int invertedColor = testImage.getRGB(0, 0);
-        Color c = new Color(invertedColor);
-        org.junit.jupiter.api.Assertions.assertEquals(255 - 10, c.getRed());
-        org.junit.jupiter.api.Assertions.assertEquals(255 - 20, c.getGreen());
-        org.junit.jupiter.api.Assertions.assertEquals(255 - 30, c.getBlue());
-        
-        // Toggle again: should be back to original
-        toggleMethod.invoke(mapPanel);
-        org.junit.jupiter.api.Assertions.assertEquals(originalColor, testImage.getRGB(0, 0));
-        
-        System.out.println("[DEBUG_LOG] testToggleInvertInvertsImage passed");
-    }
-
-    @Test
-    public void testToggleInvertInvertsCache() throws Exception {
+    public void testToggleInvertChangesImage() throws Exception {
         MapPanel mapPanel = new MapPanel(100, zoom -> {}, false, invert -> {});
         
         // Create a simple test image
@@ -92,18 +58,34 @@ public class MapPanelTest {
             (java.util.concurrent.atomic.AtomicReference<BufferedImage>) cacheField.get(mapPanel);
         cache.set(testImage);
         
+        // Use reflection to set lastBaseImage
+        java.lang.reflect.Field field = MapPanel.class.getDeclaredField("lastBaseImage");
+        field.setAccessible(true);
+        field.set(mapPanel, testImage);
+        
         // Initial state: not inverted
         java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
         toggleMethod.setAccessible(true);
         
-        // Toggle once: should be inverted
+        // Toggle once: should be converted to dark theme
         toggleMethod.invoke(mapPanel);
         
-        int invertedColor = testImage.getRGB(0, 0);
-        Color c = new Color(invertedColor);
-        org.junit.jupiter.api.Assertions.assertEquals(255 - 10, c.getRed());
+        BufferedImage resultImage = (BufferedImage) field.get(mapPanel);
+        org.junit.jupiter.api.Assertions.assertNotSame(testImage, resultImage);
         
-        System.out.println("[DEBUG_LOG] testToggleInvertInvertsCache passed");
+        int convertedColor = resultImage.getRGB(0, 0);
+        int expectedColor = com.danavalerie.matrixmudrelay.util.DarkThemeConverter.convertPixel(originalColor);
+        org.junit.jupiter.api.Assertions.assertEquals(expectedColor, convertedColor);
+        
+        // Cache should still hold the ORIGINAL image
+        org.junit.jupiter.api.Assertions.assertSame(testImage, cache.get());
+        
+        // Toggle again: should be back to original
+        toggleMethod.invoke(mapPanel);
+        org.junit.jupiter.api.Assertions.assertSame(testImage, field.get(mapPanel));
+        org.junit.jupiter.api.Assertions.assertEquals(originalColor, ((BufferedImage)field.get(mapPanel)).getRGB(0, 0));
+        
+        System.out.println("[DEBUG_LOG] testToggleInvertChangesImage passed");
     }
 
     @Test
