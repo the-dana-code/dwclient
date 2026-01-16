@@ -512,8 +512,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                                 plan.target().y(),
                                 commands
                         );
-                        // Add the top-level intent to history
-                        submitCommand("mm writ " + (index + 1) + " deliver");
                     }, () -> submitCommand("mm writ " + (index + 1) + " deliver")));
             writMenu.add(deliverItem);
             writMenus.add(writMenu);

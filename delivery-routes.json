@@ -1348,5 +1348,25 @@
       455
     ],
     "commands": []
+  },
+  {
+    "npc": "Grog Ablewhyte",
+    "location": "Grog\u0027s Groceries on Fast Lane",
+    "target": [
+      1,
+      533,
+      130
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Brerand",
+    "location": "the well stocked armoury on Tenth Egg Street",
+    "target": [
+      1,
+      336,
+      1044
+    ],
+    "commands": []
   }
 ]
