@@ -1538,5 +1538,35 @@
       788
     ],
     "commands": []
+  },
+  {
+    "npc": "the shopkeeper",
+    "location": "the Light Under Glass store on Salis Street",
+    "target": [
+      1,
+      652,
+      560
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Cutankle Quaffpint",
+    "location": "Cutankle Quaffpint\u0027s Irone Shoppe on Cable Street",
+    "target": [
+      1,
+      531,
+      727
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Cecilia",
+    "location": "the musickal poster shop on Phedre Road",
+    "target": [
+      1,
+      659,
+      497
+    ],
+    "commands": []
   }
 ]
