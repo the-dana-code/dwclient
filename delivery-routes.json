@@ -1478,5 +1478,65 @@
       253
     ],
     "commands": []
+  },
+  {
+    "npc": "Tim Wemple",
+    "location": "Rainbow Homeopaths Incorporated on Body Street",
+    "target": [
+      1,
+      708,
+      546
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the salesman",
+    "location": "the coffee table shop on Salis Street",
+    "target": [
+      1,
+      631,
+      480
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Ulora Icta",
+    "location": "the Laughing Falafel, All Nite Grocery",
+    "target": [
+      1,
+      330,
+      343
+    ],
+    "commands": []
+  },
+  {
+    "npc": "real estate receptionist",
+    "location": "Ankh-Morpork foreign real estate agency",
+    "target": [
+      1,
+      732,
+      133
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Xillma",
+    "location": "the gem stall on Dock Road",
+    "target": [
+      1,
+      382,
+      575
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Chester Copperpot",
+    "location": "Chester Copperpot\u0027s Tattoo Parlour on Endless Street",
+    "target": [
+      1,
+      29,
+      788
+    ],
+    "commands": []
   }
 ]
