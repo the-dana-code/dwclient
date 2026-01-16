@@ -1408,5 +1408,15 @@
       438
     ],
     "commands": []
+  },
+  {
+    "npc": "Seymour Convecks",
+    "location": "the Optometrist\u0027s on Cheesemongers Yard",
+    "target": [
+      1,
+      126,
+      924
+    ],
+    "commands": []
   }
 ]

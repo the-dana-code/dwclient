@@ -192,6 +192,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         fontItem.addActionListener(event -> showFontDialog());
         mainMenu.add(fontItem);
 
+        JMenuItem sendPasswordItem = new JMenuItem("Send Password");
+        sendPasswordItem.addActionListener(event -> submitCommand("pw"));
+        mainMenu.add(sendPasswordItem);
+
         mainMenu.addSeparator();
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(event -> {
