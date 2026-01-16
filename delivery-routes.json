@@ -1568,5 +1568,25 @@
       497
     ],
     "commands": []
+  },
+  {
+    "npc": "the receptionist",
+    "location": "the AM Daily Reception Area on Rime Street",
+    "target": [
+      1,
+      623,
+      774
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Hatty Lillington",
+    "location": "the milliner\u0027s shop on Pallant Street",
+    "target": [
+      1,
+      1100,
+      370
+    ],
+    "commands": []
   }
 ]
