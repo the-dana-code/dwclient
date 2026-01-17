@@ -620,7 +620,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private String formatWritMenuLabel(boolean visited, String label) {
-        return (visited ? "âœ“ " : "  ") + label;
+        return (visited ? "\u2713 " : "  ") + label;
     }
 
     private boolean isWritMenuVisited(int index, WritMenuAction action) {
@@ -986,7 +986,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private String formatResultsMenuLabel(boolean visited, String label) {
-        return (visited ? "âœ“ " : "  ") + label;
+        return (visited ? "\u2713 " : "  ") + label;
     }
 
     private void showSpeedWalkPrompt(String speedWalkCommand) {
