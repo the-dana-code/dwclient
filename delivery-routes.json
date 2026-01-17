@@ -1668,5 +1668,15 @@
       881
     ],
     "commands": []
+  },
+  {
+    "npc": "the Ephebian teacher in the Ephebian Embassy",
+    "location": "the small classroom in The Ephebian Embassy",
+    "target": [
+      1,
+      834,
+      868
+    ],
+    "commands": []
   }
 ]
