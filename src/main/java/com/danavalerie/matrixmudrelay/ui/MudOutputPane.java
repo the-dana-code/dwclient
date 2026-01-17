@@ -83,6 +83,7 @@ public final class MudOutputPane extends JTextPane {
     private final StringBuilder lineBuffer = new StringBuilder();
     private int lineStartOffset = 0;
     private BiConsumer<String, Color> chitchatListener;
+    private boolean autoScroll = true;
 
     public MudOutputPane() {
         setEditable(false);
@@ -147,7 +148,9 @@ public final class MudOutputPane extends JTextPane {
                 getDocument().insertString(getDocument().getLength(), normalized, systemAttributes);
             } catch (BadLocationException ignored) {
             }
-            setCaretPosition(getDocument().getLength());
+            if (autoScroll) {
+                setCaretPosition(getDocument().getLength());
+            }
         };
         runOnEdt(appendTask);
     }
@@ -162,7 +165,9 @@ public final class MudOutputPane extends JTextPane {
                 getDocument().insertString(getDocument().getLength(), normalized, commandAttributes);
             } catch (BadLocationException ignored) {
             }
-            setCaretPosition(getDocument().getLength());
+            if (autoScroll) {
+                setCaretPosition(getDocument().getLength());
+            }
         };
         runOnEdt(appendTask);
     }
@@ -177,7 +182,9 @@ public final class MudOutputPane extends JTextPane {
                 getDocument().insertString(getDocument().getLength(), normalized, errorAttributes);
             } catch (BadLocationException ignored) {
             }
-            setCaretPosition(getDocument().getLength());
+            if (autoScroll) {
+                setCaretPosition(getDocument().getLength());
+            }
         };
         runOnEdt(appendTask);
     }
@@ -191,7 +198,9 @@ public final class MudOutputPane extends JTextPane {
             for (AnsiColorParser.Segment segment : segments) {
                 appendSegment(segment);
             }
-            setCaretPosition(getDocument().getLength());
+            if (autoScroll) {
+                setCaretPosition(getDocument().getLength());
+            }
         };
         runOnEdt(appendTask);
     }
@@ -297,6 +306,21 @@ public final class MudOutputPane extends JTextPane {
 
     public void setChitchatListener(BiConsumer<String, Color> chitchatListener) {
         this.chitchatListener = chitchatListener;
+    }
+
+    public void setAutoScroll(boolean autoScroll) {
+        this.autoScroll = autoScroll;
+    }
+
+    public boolean isAutoScroll() {
+        return autoScroll;
+    }
+
+    public void scrollToBottom() {
+        runOnEdt(() -> {
+            setCaretPosition(getDocument().getLength());
+            setAutoScroll(true);
+        });
     }
 
     private List<AnsiColorParser.Segment> decodeEntities(List<AnsiColorParser.Segment> segments) {

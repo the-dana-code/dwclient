@@ -664,6 +664,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void submitCommand(String text) {
+        outputPane.scrollToBottom();
         if (text == null) {
             historyIndex = -1;
             return;
@@ -691,6 +692,25 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         chitchatScroll.setBorder(null);
         JScrollPane outputScroll = new JScrollPane(outputPane);
         outputScroll.setBorder(null);
+
+        outputScroll.getVerticalScrollBar().addAdjustmentListener(e -> {
+            if (e.getValueIsAdjusting()) {
+                return;
+            }
+            int extent = outputScroll.getVerticalScrollBar().getModel().getExtent();
+            int maximum = outputScroll.getVerticalScrollBar().getModel().getMaximum();
+            int value = outputScroll.getVerticalScrollBar().getModel().getValue();
+
+            boolean atBottom = (value + extent) >= maximum;
+            if (atBottom) {
+                outputPane.setAutoScroll(true);
+            } else {
+                // If it was programmatic scroll, it might trigger this.
+                // But usually programmatic scroll to bottom makes atBottom true.
+                // If the user manually scrolls up, atBottom will be false.
+                outputPane.setAutoScroll(false);
+            }
+        });
 
         JPanel inputPanel = new JPanel(new BorderLayout(6, 6));
         JButton sendButton = new JButton("Send");
