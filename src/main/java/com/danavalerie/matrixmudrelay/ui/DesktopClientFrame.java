@@ -116,7 +116,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, TranscriptLogger transcript) {
-        super("MUD Desktop Client");
+        super("Lesa's Discworld MUD Client");
         this.transcript = transcript;
         this.cfg = cfg;
         com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.teleports);
