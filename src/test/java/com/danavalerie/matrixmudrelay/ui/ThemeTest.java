@@ -41,15 +41,17 @@ public class ThemeTest {
     }
 
     @Test
-    public void testStatsPanelTheme() {
-        StatsPanel panel = new StatsPanel();
-        
-        // Dark mode
-        panel.updateTheme(true);
-        assertEquals(MapPanel.BACKGROUND_DARK, panel.getBackground());
-        
-        // Light mode
-        panel.updateTheme(false);
-        assertEquals(MapPanel.BACKGROUND_LIGHT, panel.getBackground());
+    public void testStatsPanelTheme() throws Exception {
+        javax.swing.SwingUtilities.invokeAndWait(() -> {
+            StatsPanel panel = new StatsPanel();
+
+            // Dark mode
+            panel.updateTheme(true);
+            assertEquals(MapPanel.BACKGROUND_DARK, panel.getBackground());
+
+            // Light mode
+            panel.updateTheme(false);
+            assertEquals(MapPanel.BACKGROUND_LIGHT, panel.getBackground());
+        });
     }
 }

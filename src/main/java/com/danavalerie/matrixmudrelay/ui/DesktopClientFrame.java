@@ -753,7 +753,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void installInputFocusForwarding() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(event -> {
-            if (!isVisible() || inputField.isFocusOwner() || forwardingKey) {
+            if (!isVisible() || !isFocused() || inputField.isFocusOwner() || forwardingKey) {
                 return false;
             }
             boolean shouldForward = false;
@@ -764,7 +764,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
             } else if (event.getID() == KeyEvent.KEY_PRESSED) {
                 int keyCode = event.getKeyCode();
-                if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN) {
+                if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_ENTER) {
                     shouldForward = true;
                 }
             }
@@ -775,16 +775,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             forwardingKey = true;
             try {
                 inputField.requestFocusInWindow();
-                KeyEvent forwarded = new KeyEvent(
-                        inputField,
-                        event.getID(),
-                        event.getWhen(),
-                        event.getModifiersEx(),
-                        event.getKeyCode(),
-                        event.getKeyChar(),
-                        event.getKeyLocation()
-                );
-                inputField.dispatchEvent(forwarded);
+                if (event.getID() == KeyEvent.KEY_PRESSED && event.getKeyCode() == KeyEvent.VK_ENTER) {
+                    inputField.postActionEvent();
+                } else {
+                    KeyEvent forwarded = new KeyEvent(
+                            inputField,
+                            event.getID(),
+                            event.getWhen(),
+                            event.getModifiersEx(),
+                            event.getKeyCode(),
+                            event.getKeyChar(),
+                            event.getKeyLocation()
+                    );
+                    inputField.dispatchEvent(forwarded);
+                }
                 event.consume();
                 return true;
             } finally {

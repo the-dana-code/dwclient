@@ -1618,5 +1618,35 @@
       379
     ],
     "commands": []
+  },
+  {
+    "npc": "Tony Dorf",
+    "location": "the dark wood workshop below the waterfront",
+    "target": [
+      5,
+      230,
+      237
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Mrs Dimmles",
+    "location": "Mrs. Dimmles\u0027 Open-All-Hours Cafe on Dimwell Street",
+    "target": [
+      1,
+      312,
+      329
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Claro Cliff",
+    "location": "Claro Cliff\u0027s Pottery Shoppe on Clay Lane",
+    "target": [
+      1,
+      302,
+      862
+    ],
+    "commands": []
   }
 ]
