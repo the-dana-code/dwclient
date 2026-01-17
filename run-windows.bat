@@ -18,10 +18,10 @@ if not exist "%JAR_FILE%" if not exist "%FALLBACK_JAR%" (
 
 if exist "%JAR_FILE%" (
     echo Launching DWClient...
-    java -jar "%JAR_FILE%"
+    java -jar "%JAR_FILE%" "./config.json"
 ) else if exist "%FALLBACK_JAR%" (
     echo Launching DWClient from target...
-    java -jar "%FALLBACK_JAR%"
+    java -jar "%FALLBACK_JAR%" "./config.json"
 ) else (
     echo Error: Could not find or build JAR file.
 )

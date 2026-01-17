@@ -20,10 +20,10 @@ fi
 
 if [ -f "$JAR_FILE" ]; then
     echo "Launching DWClient..."
-    java -jar "$JAR_FILE"
+    java -jar "$JAR_FILE" "./config.json"
 elif [ -f "$FALLBACK_JAR" ]; then
     echo "Launching DWClient from target..."
-    java -jar "$FALLBACK_JAR"
+    java -jar "$FALLBACK_JAR" "./config.json"
 else
     echo "Error: Could not find or build JAR file."
     read -p "Press enter to exit..."

@@ -10,18 +10,21 @@ The easiest way to run the client is to use the launch scripts provided in the r
 
 1.  **Download the latest release**: Go to the "Releases" section on GitHub and download the `DWClient.zip` file.
 2.  **Unzip**: Extract the contents of the ZIP file to a folder.
-3.  **Run the script for your OS**:
+3.  **Configure**: Open the `config.json` file in a text editor to customize it with your character details, passwords, and other preferences.
+4.  **Run the script for your OS**:
     - **Windows**: Double-click `run-windows.bat`.
     - **macOS**: Double-click `run-mac.command`.
     - **Linux**: Run `./run-linux.sh`.
 
-These scripts will automatically build the application if needed (requires Maven and Java 17) and then launch it. If you are using the downloaded release ZIP, everything is already built and ready to go.
+These scripts will automatically launch the application using the local `config.json`. If you are building from source, the scripts will also attempt to build the application (requires Maven and Java 17).
 
 Alternatively, you can download IntelliJ IDEA (Free edition). Clone this Github repository from the splash screen, select the "Main" run config at the top right, and click the run or debug button.
 
-If config.json doesn't exist, it will be created on first run.
+### Configuration
 
-Edit the config.json to add your characters' password, and the password can be send by choosing
+The `config.json` file is included in the release ZIP. You should modify it to customize the client to your liking.
+
+Edit the `config.json` to add your characters' password, and the password can be sent by choosing
 Menu -> Send Password, or by typing the 'pw' command.
 
 You can also configure per-character teleports. These will be used automatically while speedwalking.
