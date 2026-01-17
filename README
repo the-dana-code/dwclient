@@ -1,0 +1,36 @@
+Welcome to Lesa's Discworld MUD client.
+
+The code has been carefully written to ensure that none of the MUD's rules are violated.
+i.e. there are no triggers or automatic actions, and commands are only sent to the mud
+in response to an action by the user.
+
+The easiest way to run the client is to download IntelliJ IDEA (Free edition). Clone this
+Github repository from the splash screen, select the "Main" run config at the top right, and
+click the run or debug button.
+
+If config.json doesn't exist, it will be created on first run.
+
+Edit the config.json to add your characters' password, and the password can be send by choosing
+Menu -> Send Password, or by typing the 'pw' command.
+
+You can also configure per-character teleports. These will be used automatically while speedwalking.
+You can temporarily disable use of teleports for speedwalking with the "mm notp" command. Re-enable
+them with the "mm tp" command.
+
+Delivery Writ helper is coded. Reading a writ from Mr. Werks will auto-generate some menus to help
+you complete the writ.
+
+Some commands:
+
+mm npc <npc name>
+mm item <item name>
+mm item <number> (to choose one of the matching items - or just navigate the R# menu)
+mm loc <room name>
+mm route <number> (or just navigate the R# menu)
+read writ (this will autocreate W# menus for delivery writs)
+
+Send feedback to Lesa via tell or mudmail
+
+Enjoy!
+
+Lesa, Priestess of Pishe
