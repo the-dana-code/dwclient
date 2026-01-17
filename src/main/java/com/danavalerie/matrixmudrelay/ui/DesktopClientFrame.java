@@ -71,8 +71,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private static final int RESULTS_MENU_PAGE_SIZE = 15;
-    private static final Border BLACK_BORDER = javax.swing.BorderFactory.createLineBorder(Color.BLACK, 1);
-    private static final Border RED_BORDER = javax.swing.BorderFactory.createLineBorder(Color.RED, 1);
+    private static final Border BLACK_BORDER = javax.swing.BorderFactory.createLineBorder(Color.BLACK, 2);
+    private static final Border RED_BORDER = javax.swing.BorderFactory.createLineBorder(Color.RED, 2);
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
