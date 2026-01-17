@@ -90,13 +90,15 @@ public final class MudOutputPane extends JTextPane {
         updateTheme(true);
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
 
-        // Hide the caret
-        setCaret(new javax.swing.text.DefaultCaret() {
+        // Hide the caret and prevent automatic scrolling on insertion
+        javax.swing.text.DefaultCaret caret = new javax.swing.text.DefaultCaret() {
             @Override
             public void paint(java.awt.Graphics g) {
                 // do nothing
             }
-        });
+        };
+        caret.setUpdatePolicy(javax.swing.text.DefaultCaret.NEVER_UPDATE);
+        setCaret(caret);
     }
 
     public void updateTheme(boolean inverted) {
