@@ -8,7 +8,7 @@ in response to an action by the user.
 
 The easiest way to run the client is to use the launch scripts provided in the root folder or download a pre-packaged release:
 
-1.  **Download the latest release**: Go to the "Releases" section on GitHub and download the `DWClient.zip` file.
+1.  **Download the latest release**: Go to the "Releases" section on GitHub and download the `DWClient-<version>.zip` file.
 2.  **Unzip**: Extract the contents of the ZIP file to a folder.
 3.  **Configure**: Open the `config.json` file in a text editor to customize it with your character details, passwords, and other preferences.
 4.  **Run the script for your OS**:
