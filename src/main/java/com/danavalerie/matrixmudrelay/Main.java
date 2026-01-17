@@ -27,12 +27,7 @@ import java.nio.file.Path;
 
 public final class Main {
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.err.println("Usage: java -jar mud-client-1.0.0-shaded.jar /path/to/config.json");
-            System.exit(2);
-        }
-
-        Path configPath = Path.of(args[0]);
+        Path configPath = Path.of("config.json");
         BotConfig cfg = ConfigLoader.load(configPath);
         Path routesPath = configPath.resolveSibling("delivery-routes.json");
         DeliveryRouteMappings routes = ConfigLoader.loadRoutes(routesPath);
