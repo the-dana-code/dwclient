@@ -15,8 +15,9 @@
     "maxFiles": 20
   },
   "ui": {
-    "fontFamily": "Lucida Console",
-    "fontSize": 20
+    "fontFamily": "Monospaced",
+    "fontSize": 20,
+    "invertMap": true
   },
   "bookmarks": [
     { "name": "Mended Drum", "target": [1, 718, 802] },
@@ -26,8 +27,438 @@
     "lesa": {
       "reliable": true,
       "locations": [
-        { "command": "tp am-fiddleys-music", "target": [1, 774, 323] },
-        { "command": "tp am-milords", "target": [1, 1082, 298] }
+        {
+          "command": "tp am-fiddleys-music",
+          "target": [
+            1,
+            774,
+            323
+          ]
+        },
+        {
+          "command": "tp am-milords",
+          "target": [
+            1,
+            1082,
+            298
+          ]
+        },
+        {
+          "command": "tp am-pishe",
+          "target": [
+            1,
+            578,
+            480
+          ]
+        },
+        {
+          "command": "tp am-rimwards-gate",
+          "target": [
+            1,
+            452,
+            200
+          ]
+        },
+        {
+          "command": "tp badass",
+          "target": [
+            38,
+            1423,
+            224
+          ]
+        },
+        {
+          "command": "tp balance",
+          "target": [
+            40,
+            269,
+            135
+          ]
+        },
+        {
+          "command": "tp banditcamp",
+          "target": [
+            38,
+            309,
+            237
+          ]
+        },
+        {
+          "command": "tp barbariancamp-summer",
+          "target": [
+            38,
+            2125,
+            103
+          ]
+        },
+        {
+          "command": "tp barbariancamp-winter",
+          "target": [
+            46,
+            1737,
+            1063
+          ]
+        },
+        {
+          "command": "tp bi",
+          "target": [
+            21,
+            105,
+            73
+          ]
+        },
+        {
+          "command": "tp blackglass",
+          "target": [
+            46,
+            374,
+            257
+          ]
+        },
+        {
+          "command": "tp bleak",
+          "target": [
+            45,
+            1213,
+            260
+          ]
+        },
+        {
+          "command": "tp bp",
+          "target": [
+            17,
+            580,
+            414
+          ]
+        },
+        {
+          "command": "tp bp-dojo",
+          "target": [
+            17,
+            272,
+            106
+          ]
+        },
+        {
+          "command": "tp bp-fish",
+          "target": [
+            17,
+            875,
+            901
+          ]
+        },
+        {
+          "command": "tp bp-ninja",
+          "target": [
+            17,
+            1168,
+            146
+          ]
+        },
+        {
+          "command": "tp bp-tunawalk",
+          "target": [
+            17,
+            1070,
+            748
+          ]
+        },
+        {
+          "command": "tp brassneck",
+          "target": [
+            38,
+            1327,
+            87
+          ]
+        },
+        {
+          "command": "tp chronides",
+          "target": [
+            48,
+            473,
+            199
+          ]
+        },
+        {
+          "command": "tp death",
+          "target": [
+            22,
+            42,
+            114
+          ]
+        },
+        {
+          "command": "tp dj",
+          "target": [
+            23,
+            438,
+            285
+          ]
+        },
+        {
+          "command": "tp doctor",
+          "target": [
+            3,
+            944,
+            316
+          ]
+        },
+        {
+          "command": "tp drum",
+          "target": [
+            1,
+            718,
+            802
+          ]
+        },
+        {
+          "command": "tp ephebe",
+          "target": [
+            25,
+            379,
+            349
+          ]
+        },
+        {
+          "command": "tp escrow",
+          "target": [
+            46,
+            688,
+            669
+          ]
+        },
+        {
+          "command": "tp forest-pishe",
+          "target": [
+            38,
+            1382,
+            395
+          ]
+        },
+        {
+          "command": "tp genua",
+          "target": [
+            27,
+            400,
+            284
+          ]
+        },
+        {
+          "command": "tp goosegate",
+          "target": [
+            1,
+            522,
+            998
+          ]
+        },
+        {
+          "command": "tp granny",
+          "target": [
+            38,
+            1340,
+            182
+          ]
+        },
+        {
+          "command": "tp hillshire",
+          "target": [
+            45,
+            1358,
+            467
+          ]
+        },
+        {
+          "command": "tp holywood",
+          "target": [
+            45,
+            98,
+            111
+          ]
+        },
+        {
+          "command": "tp horse",
+          "target": [
+            25,
+            290,
+            200
+          ]
+        },
+        {
+          "command": "tp jobs",
+          "target": [
+            1,
+            699,
+            905
+          ]
+        },
+        {
+          "command": "tp klatch-foreign-legion",
+          "target": [
+            31,
+            735,
+            515
+          ]
+        },
+        {
+          "command": "tp lancre",
+          "target": [
+            38,
+            1351,
+            589
+          ]
+        },
+        {
+          "command": "tp lanfear",
+          "target": [
+            1,
+            774,
+            578
+          ]
+        },
+        {
+          "command": "tp madstoat",
+          "target": [
+            38,
+            1229,
+            357
+          ]
+        },
+        {
+          "command": "tp madwolf",
+          "target": [
+            38,
+            1768,
+            667
+          ]
+        },
+        {
+          "command": "tp nowhere",
+          "target": [
+            45,
+            243,
+            760
+          ]
+        },
+        {
+          "command": "tp oasis",
+          "target": [
+            31,
+            621,
+            1011
+          ]
+        },
+        {
+          "command": "tp oc",
+          "target": [
+            38,
+            827,
+            223
+          ]
+        },
+        {
+          "command": "tp pekanford",
+          "target": [
+            45,
+            1416,
+            617
+          ]
+        },
+        {
+          "command": "tp pishe",
+          "target": [
+            45,
+            1416,
+            617
+          ]
+        },
+        {
+          "command": "tp postoffice",
+          "target": [
+            51,
+            99,
+            125
+          ]
+        },
+        {
+          "command": "tp razorback",
+          "target": [
+            38,
+            1769,
+            393
+          ]
+        },
+        {
+          "command": "tp satorsquare",
+          "target": [
+            1,
+            1040,
+            648
+          ]
+        },
+        {
+          "command": "tp scrogden",
+          "target": [
+            45,
+            1078,
+            305
+          ]
+        },
+        {
+          "command": "tp scry",
+          "target": [
+            1,
+            858,
+            1054
+          ]
+        },
+        {
+          "command": "tp sheepridge",
+          "target": [
+            45,
+            618,
+            574
+          ]
+        },
+        {
+          "command": "tp slice",
+          "target": [
+            38,
+            1979,
+            280
+          ]
+        },
+        {
+          "command": "tp slipperyhollow",
+          "target": [
+            54,
+            159,
+            123
+          ]
+        },
+        {
+          "command": "tp stickenplace",
+          "target": [
+            1,
+            172,
+            816
+          ]
+        },
+        {
+          "command": "tp stolat",
+          "target": [
+            39,
+            367,
+            222
+          ]
+        },
+        {
+          "command": "tp tosg",
+          "target": [
+            9,
+            221,
+            224
+          ]
+        }
       ]
     },
     "maemot": {

@@ -125,4 +125,22 @@ public class MapPanelTest {
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, scrollPane.getBackground());
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, scrollPane.getViewport().getBackground());
     }
+    @Test
+    public void testButtonBackgroundMatchesTheme() throws Exception {
+        MapPanel mapPanel = new MapPanel(100, z -> {}, false, invert -> {});
+        
+        java.lang.reflect.Field invertButtonField = MapPanel.class.getDeclaredField("invertButton");
+        invertButtonField.setAccessible(true);
+        javax.swing.JButton invertButton = (javax.swing.JButton) invertButtonField.get(mapPanel);
+
+        // Light mode
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, invertButton.getBackground());
+
+        // Toggle to dark mode
+        java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
+        toggleMethod.setAccessible(true);
+        toggleMethod.invoke(mapPanel);
+
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, invertButton.getBackground());
+    }
 }

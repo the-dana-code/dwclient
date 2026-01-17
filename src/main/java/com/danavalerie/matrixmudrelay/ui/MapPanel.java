@@ -214,6 +214,7 @@ public final class MapPanel extends JPanel {
             c.setBackground(bg);
         } else if (c instanceof JButton) {
             c.setForeground(fg);
+            c.setBackground(bg);
         }
     }
 
