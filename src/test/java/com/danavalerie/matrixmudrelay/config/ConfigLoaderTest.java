@@ -65,4 +65,30 @@ class ConfigLoaderTest {
         assertEquals(1, lesaTeleports.locations.size());
         assertArrayEquals(new int[]{1, 774, 323}, lesaTeleports.locations.get(0).target);
     }
+
+    @Test
+    void loadConfigAutomaticallyCopiesExampleIfMissing(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        Path examplePath = tempDir.resolve("config-example.json");
+        
+        String exampleJson = """
+            {
+              "mud": { "host": "example.com", "port": 4242 }
+            }
+            """;
+        Files.writeString(examplePath, exampleJson);
+        
+        // Ensure config.json does not exist
+        assertFalse(Files.exists(configPath));
+        
+        // We need to tell ConfigLoader where the example is, 
+        // OR ConfigLoader should look for it relative to the configPath.
+        // The requirement says: "if it doesn't exist, then make a copy of config-example.json as config.json automatically"
+        
+        BotConfig cfg = ConfigLoader.load(configPath);
+        
+        assertTrue(Files.exists(configPath), "config.json should have been created");
+        assertEquals("example.com", cfg.mud.host);
+        assertEquals(exampleJson, Files.readString(configPath));
+    }
 }

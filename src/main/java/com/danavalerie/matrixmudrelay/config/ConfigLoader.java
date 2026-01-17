@@ -16,6 +16,12 @@ public final class ConfigLoader {
     private ConfigLoader() {}
 
     public static BotConfig load(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            Path examplePath = path.resolveSibling("config-example.json");
+            if (Files.exists(examplePath)) {
+                Files.copy(examplePath, path);
+            }
+        }
         String json = Files.readString(path);
         BotConfig cfg = GSON.fromJson(json, BotConfig.class);
         validate(cfg);
