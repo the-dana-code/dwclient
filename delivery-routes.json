@@ -1678,5 +1678,25 @@
       868
     ],
     "commands": []
+  },
+  {
+    "npc": "Lolinda Lovelace",
+    "location": "Lolinda\u0027s Lovely Leather on Endless Street",
+    "target": [
+      1,
+      1087,
+      1115
+    ],
+    "commands": []
+  },
+  {
+    "npc": "the barman",
+    "location": "the Bunch Of Grapes on Easy Street",
+    "target": [
+      1,
+      494,
+      791
+    ],
+    "commands": []
   }
 ]
