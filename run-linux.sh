@@ -3,6 +3,14 @@
 # Change directory to the location of the script
 cd "$(dirname "$0")"
 
+# Check if Java is installed
+if ! command -v java &> /dev/null; then
+    echo "Java is not installed or not in your PATH."
+    echo "Please install Java 17 or later to run DWClient."
+    read -p "Press enter to exit..."
+    exit 1
+fi
+
 JAR_FILE="DWClient.jar"
 FALLBACK_JAR="target/mud-client-1.0.0-shaded.jar"
 

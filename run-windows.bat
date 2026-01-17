@@ -1,6 +1,15 @@
 @echo off
 setlocal
 
+REM Check if Java is installed
+java -version >nul 2>&1
+if errorlevel 1 (
+    echo Java is not installed or not in your PATH.
+    echo Please install Java 17 or later to run DWClient.
+    pause
+    exit /b 1
+)
+
 REM Let's find the JAR
 set JAR_FILE=DWClient.jar
 set FALLBACK_JAR=target\mud-client-1.0.0-shaded.jar
