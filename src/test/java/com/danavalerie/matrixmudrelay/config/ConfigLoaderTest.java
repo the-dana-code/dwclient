@@ -33,4 +33,36 @@ class ConfigLoaderTest {
         assertEquals(328, route.get().target().x());
         assertEquals(68, route.get().target().y());
     }
+
+    @Test
+    void loadConfigWithArrayTarget(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        String json = """
+            {
+              "mud": { "host": "localhost", "port": 4242 },
+              "bookmarks": [
+                { "name": "Mended Drum", "target": [1, 718, 802] }
+              ],
+              "teleports": {
+                "lesa": {
+                  "reliable": true,
+                  "locations": [
+                    { "command": "tp am-fiddleys", "target": [1, 774, 323] }
+                  ]
+                }
+              }
+            }
+            """;
+        Files.writeString(configPath, json);
+
+        BotConfig cfg = ConfigLoader.load(configPath);
+        assertNotNull(cfg);
+        assertEquals(1, cfg.bookmarks.size());
+        assertArrayEquals(new int[]{1, 718, 802}, cfg.bookmarks.get(0).target);
+        
+        var lesaTeleports = cfg.teleports.get("lesa");
+        assertNotNull(lesaTeleports);
+        assertEquals(1, lesaTeleports.locations.size());
+        assertArrayEquals(new int[]{1, 774, 323}, lesaTeleports.locations.get(0).target);
+    }
 }

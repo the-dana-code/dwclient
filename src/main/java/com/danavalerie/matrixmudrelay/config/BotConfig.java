@@ -41,16 +41,12 @@ public final class BotConfig {
 
     public static final class Bookmark {
         public String name;
-        public int mapId;
-        public int x;
-        public int y;
+        public int[] target;
 
         public Bookmark() {}
         public Bookmark(String name, int mapId, int x, int y) {
             this.name = name;
-            this.mapId = mapId;
-            this.x = x;
-            this.y = y;
+            this.target = new int[] { mapId, x, y };
         }
     }
 
@@ -61,16 +57,12 @@ public final class BotConfig {
 
     public static final class TeleportLocation {
         public String command;
-        public int mapId;
-        public int x;
-        public int y;
+        public int[] target;
 
         public TeleportLocation() {}
         public TeleportLocation(String command, int mapId, int x, int y) {
             this.command = command;
-            this.mapId = mapId;
-            this.x = x;
-            this.y = y;
+            this.target = new int[] { mapId, x, y };
         }
     }
 }

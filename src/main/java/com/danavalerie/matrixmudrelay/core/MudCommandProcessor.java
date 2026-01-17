@@ -327,13 +327,13 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 out.append(location.roomShort()).append(" - ");
             }
             out.append(mapService.getMapDisplayName(location.mapId()))
-                    .append(" {")
+                    .append(" [")
                     .append(location.mapId())
                     .append(", ")
                     .append(location.xpos())
                     .append(", ")
                     .append(location.ypos())
-                    .append("}");
+                    .append("]");
             output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
             output.appendSystem("Error: " + e.getMessage());
@@ -802,7 +802,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
         String targetRoomId = mapService.findRoomIdByCoordinates(mapId, x, y);
         if (targetRoomId == null) {
-            output.appendSystem("Error: Target room not found at {" + mapId + ", " + x + ", " + y + "}");
+            output.appendSystem("Error: Target room not found at [" + mapId + ", " + x + ", " + y + "]");
             return;
         }
 
@@ -819,7 +819,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             String aliasName = "LesaClientSpeedwalk";
             String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
             sendToMud(List.of(aliasCommand, aliasName));
-            output.appendSystem("Speedwalking to room at {" + mapId + ", " + x + ", " + y + "} (" + exits.size() + " steps)");
+            output.appendSystem("Speedwalking to room at [" + mapId + ", " + x + ", " + y + "] (" + exits.size() + " steps)");
         }
     }
 

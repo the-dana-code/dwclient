@@ -236,7 +236,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         for (BotConfig.Bookmark link : cfg.bookmarks) {
             JMenuItem linkItem = new JMenuItem(link.name);
             linkItem.addActionListener(event -> {
-                commandProcessor.speedwalkTo(link.mapId, link.x, link.y);
+                commandProcessor.speedwalkTo(link.target[0], link.target[1], link.target[2]);
                 submitCommand(null); // Just reset history index if we're not recording navigation
             });
             quickLinksMenu.add(linkItem);
