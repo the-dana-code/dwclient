@@ -1608,5 +1608,15 @@
       813
     ],
     "commands": []
+  },
+  {
+    "npc": "Salter Rhogain",
+    "location": "Salter Rhogain\u0027s Legibles in the Magic Emporium",
+    "target": [
+      3,
+      475,
+      379
+    ],
+    "commands": []
   }
 ]
