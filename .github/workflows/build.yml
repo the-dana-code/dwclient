@@ -32,6 +32,7 @@ jobs:
         cp run-windows.bat dist/
         cp run-mac.command dist/
         cp run-linux.sh dist/
+        cp config-example.json dist/config.json
         RELEASE_NAME="DWClient"
         cd dist && zip -r "../$RELEASE_NAME.zip" .
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
