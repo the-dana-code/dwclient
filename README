@@ -26,6 +26,7 @@ you complete the writ.
 
 Some commands:
 
+mm reset (If you're experiencing crashes, it may be due to not running this)
 mm npc <npc name>
 mm item <item name>
 mm item <number> (to choose one of the matching items - or just navigate the R# menu)
