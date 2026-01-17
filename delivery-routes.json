@@ -1648,5 +1648,15 @@
       862
     ],
     "commands": []
+  },
+  {
+    "npc": "Elsie Flurb",
+    "location": "Elsie\u0027s Clothing Shop in the Under Docks",
+    "target": [
+      5,
+      297,
+      214
+    ],
+    "commands": []
   }
 ]

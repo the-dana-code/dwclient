@@ -635,7 +635,7 @@ public class RoomMapService {
                     if (room == null) {
                         continue;
                     }
-                    teleports.add(new ResolvedTeleport(teleport.name(), roomId, room));
+                    teleports.add(new ResolvedTeleport(teleport.command(), roomId, room));
                 }
             }
         }
@@ -888,10 +888,7 @@ public class RoomMapService {
     private record PreviousStep(String fromRoomId, String exit) {
     }
 
-    private record ResolvedTeleport(String name, String roomId, RoomRecord room) {
-        private String command() {
-            return "tp " + name;
-        }
+    private record ResolvedTeleport(String command, String roomId, RoomRecord room) {
     }
 
     private static List<RouteStep> reconstructRoute(Map<String, PreviousStep> cameFrom, String targetRoomId) {

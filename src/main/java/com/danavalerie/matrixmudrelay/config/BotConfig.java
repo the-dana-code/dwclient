@@ -14,6 +14,8 @@ public final class BotConfig {
     public Transcript transcript = new Transcript();
 
     public Ui ui = new Ui();
+    public List<Bookmark> bookmarks = new ArrayList<>();
+    public Map<String, CharacterTeleports> teleports = new LinkedHashMap<>();
 
     public static final class Mud {
         public String host;
@@ -35,5 +37,40 @@ public final class BotConfig {
         public Integer mapZoomPercent;
         public Boolean invertMap;
         public Double mudMapSplitRatio;
+    }
+
+    public static final class Bookmark {
+        public String name;
+        public int mapId;
+        public int x;
+        public int y;
+
+        public Bookmark() {}
+        public Bookmark(String name, int mapId, int x, int y) {
+            this.name = name;
+            this.mapId = mapId;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static final class CharacterTeleports {
+        public boolean reliable = true;
+        public List<TeleportLocation> locations = new ArrayList<>();
+    }
+
+    public static final class TeleportLocation {
+        public String command;
+        public int mapId;
+        public int x;
+        public int y;
+
+        public TeleportLocation() {}
+        public TeleportLocation(String command, int mapId, int x, int y) {
+            this.command = command;
+            this.mapId = mapId;
+            this.x = x;
+            this.y = y;
+        }
     }
 }

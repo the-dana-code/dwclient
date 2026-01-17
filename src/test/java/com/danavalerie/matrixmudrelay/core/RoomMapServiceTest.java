@@ -1,9 +1,25 @@
 package com.danavalerie.matrixmudrelay.core;
 
+import com.danavalerie.matrixmudrelay.config.BotConfig;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomMapServiceTest {
+    @BeforeAll
+    public static void setup() {
+        BotConfig.CharacterTeleports lesa = new BotConfig.CharacterTeleports();
+        lesa.reliable = true;
+        lesa.locations = List.of(
+                new BotConfig.TeleportLocation("tp blackglass", 46, 374, 257)
+        );
+        TeleportRegistry.initialize(Map.of("lesa", lesa));
+    }
+
     @Test
     public void testReproduction() throws Exception {
         RoomMapService service = new RoomMapService("database.db");

@@ -17,5 +17,22 @@
   "ui": {
     "fontFamily": "Lucida Console",
     "fontSize": 20
+  },
+  "bookmarks": [
+    { "name": "Mended Drum", "mapId": 1, "x": 718, "y": 802 },
+    { "name": "Bologna shop", "mapId": 1, "x": 648, "y": 897 }
+  ],
+  "teleports": {
+    "lesa": {
+      "reliable": true,
+      "locations": [
+        { "command": "tp am-fiddleys-music", "mapId": 1, "x": 774, "y": 323 },
+        { "command": "tp am-milords", "mapId": 1, "x": 1082, "y": 298 }
+      ]
+    },
+    "maemot": {
+      "reliable": false,
+      "locations": []
+    }
   }
 }

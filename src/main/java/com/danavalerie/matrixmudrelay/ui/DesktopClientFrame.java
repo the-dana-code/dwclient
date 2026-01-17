@@ -91,13 +91,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<JMenu> writMenus = new ArrayList<>();
     private final List<JMenu> resultsMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
-    private static final QuickLink[] QUICK_LINKS = {
-            new QuickLink("Mended Drum", 1, 718, 802),
-            new QuickLink("Bologna shop", 1, 648, 897),
-            new QuickLink("Jobs Market", 1, 699, 905),
-            new QuickLink("Wisdom Buff", 38, 838, 265),
-            new QuickLink("Intelligence Buff", 25, 290, 200)
-    };
     private final AnsiColorParser writParser = new AnsiColorParser();
     private final StringBuilder writPendingEntity = new StringBuilder();
     private String writPendingTail = "";
@@ -126,6 +119,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         super("MUD Desktop Client");
         this.transcript = transcript;
         this.cfg = cfg;
+        com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.teleports);
         this.configPath = configPath;
         this.routesPath = configPath.resolveSibling("delivery-routes.json");
         this.routeMappings = routeMappings;
@@ -239,10 +233,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         menuBar.add(mainMenu);
 
         JMenu quickLinksMenu = new JMenu("Navigate");
-        for (QuickLink link : QUICK_LINKS) {
-            JMenuItem linkItem = new JMenuItem(link.name());
+        for (BotConfig.Bookmark link : cfg.bookmarks) {
+            JMenuItem linkItem = new JMenuItem(link.name);
             linkItem.addActionListener(event -> {
-                commandProcessor.speedwalkTo(link.mapId(), link.x(), link.y());
+                commandProcessor.speedwalkTo(link.mapId, link.x, link.y);
                 submitCommand(null); // Just reset history index if we're not recording navigation
             });
             quickLinksMenu.add(linkItem);
@@ -466,7 +460,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
-    private record QuickLink(String name, int mapId, int x, int y) {}
 
     private void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
         boolean resetVisits = !Objects.equals(writRequirements, requirements);
