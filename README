@@ -4,7 +4,11 @@ The code has been carefully written to ensure that none of the MUD's rules are v
 i.e. there are no triggers or automatic actions, and commands are only sent to the mud
 in response to an action by the user.
 
-The easiest way to run the client is to download IntelliJ IDEA (Free edition). Clone this
+The easiest way to run the client is to use the provided run scripts:
+- On Windows: double-click `run.bat` or run it from the command line.
+- On Linux/macOS: run `./run.sh` from the terminal (you may need to run `chmod +x run.sh` first).
+
+You can also download IntelliJ IDEA (Free edition). Clone this
 Github repository from the splash screen, select the "Main" run config at the top right, and
 click the run or debug button.
 

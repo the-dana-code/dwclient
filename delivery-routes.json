@@ -1658,5 +1658,15 @@
       214
     ],
     "commands": []
+  },
+  {
+    "npc": "Mr Lumiere",
+    "location": "the shabby stall on Market Street",
+    "target": [
+      1,
+      1030,
+      881
+    ],
+    "commands": []
   }
 ]
