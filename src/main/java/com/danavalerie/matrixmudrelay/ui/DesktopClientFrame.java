@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -70,6 +71,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private static final int RESULTS_MENU_PAGE_SIZE = 15;
+    private static final Border BLACK_BORDER = javax.swing.BorderFactory.createLineBorder(Color.BLACK, 1);
+    private static final Border RED_BORDER = javax.swing.BorderFactory.createLineBorder(Color.RED, 1);
     private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
@@ -84,6 +87,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
     private JMenuItem connectionItem;
+    private JScrollPane outputScroll;
     private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults;
     private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
@@ -102,6 +106,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private boolean suppressSplitPersist;
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
+    private int lastScrollValue = -1;
 
     private enum WritMenuAction {
         ITEM_INFO,
@@ -665,6 +670,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void submitCommand(String text) {
         outputPane.scrollToBottom();
+        outputScroll.setBorder(BLACK_BORDER);
         if (text == null) {
             historyIndex = -1;
             return;
@@ -690,26 +696,28 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JComponent buildMudPanel() {
         JScrollPane chitchatScroll = new JScrollPane(chitchatPane);
         chitchatScroll.setBorder(null);
-        JScrollPane outputScroll = new JScrollPane(outputPane);
-        outputScroll.setBorder(null);
+        outputScroll = new JScrollPane(outputPane);
+        // Initially bottomed out, so no red border.
+        outputScroll.setBorder(BLACK_BORDER);
 
         outputScroll.getVerticalScrollBar().addAdjustmentListener(e -> {
-            if (e.getValueIsAdjusting()) {
-                return;
-            }
             int extent = outputScroll.getVerticalScrollBar().getModel().getExtent();
             int maximum = outputScroll.getVerticalScrollBar().getModel().getMaximum();
-            int value = outputScroll.getVerticalScrollBar().getModel().getValue();
+            int value = e.getValue();
 
             boolean atBottom = (value + extent) >= maximum;
             if (atBottom) {
-                outputPane.setAutoScroll(true);
+                if (!outputPane.isAutoScroll() || outputScroll.getBorder() != BLACK_BORDER) {
+                    outputPane.setAutoScroll(true);
+                    outputScroll.setBorder(BLACK_BORDER);
+                }
             } else {
-                // If it was programmatic scroll, it might trigger this.
-                // But usually programmatic scroll to bottom makes atBottom true.
-                // If the user manually scrolls up, atBottom will be false.
-                outputPane.setAutoScroll(false);
+                if (outputPane.isAutoScroll() && value < lastScrollValue) {
+                    outputPane.setAutoScroll(false);
+                    outputScroll.setBorder(RED_BORDER);
+                }
             }
+            lastScrollValue = value;
         });
 
         JPanel inputPanel = new JPanel(new BorderLayout(6, 6));
