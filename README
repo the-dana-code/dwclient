@@ -1,12 +1,23 @@
-Welcome to Lesa's Discworld MUD client.
+Welcome to Lesa's DWClient (Discworld MUD client).
 
 The code has been carefully written to ensure that none of the MUD's rules are violated.
 i.e. there are no triggers or automatic actions, and commands are only sent to the mud
 in response to an action by the user.
 
-The easiest way to run the client is to download IntelliJ IDEA (Free edition). Clone this
-Github repository from the splash screen, select the "Main" run config at the top right, and
-click the run or debug button.
+### How to Run
+
+The easiest way to run the client is to use the launch scripts provided in the root folder or download a pre-packaged release:
+
+1.  **Download the latest release**: Go to the "Releases" section on GitHub and download the `DWClient.zip` file.
+2.  **Unzip**: Extract the contents of the ZIP file to a folder.
+3.  **Run the script for your OS**:
+    - **Windows**: Double-click `run-windows.bat`.
+    - **macOS**: Double-click `run-mac.command`.
+    - **Linux**: Run `./run-linux.sh`.
+
+These scripts will automatically build the application if needed (requires Maven and Java 17) and then launch it. If you are using the downloaded release ZIP, everything is already built and ready to go.
+
+Alternatively, you can download IntelliJ IDEA (Free edition). Clone this Github repository from the splash screen, select the "Main" run config at the top right, and click the run or debug button.
 
 If config.json doesn't exist, it will be created on first run.
 
