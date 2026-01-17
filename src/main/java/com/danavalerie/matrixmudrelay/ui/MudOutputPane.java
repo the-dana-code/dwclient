@@ -158,7 +158,7 @@ public final class MudOutputPane extends JTextPane {
     }
 
     public void appendCommandEcho(String text) {
-        if (text == null || text.isBlank()) {
+        if (text == null) {
             return;
         }
         String normalized = ensureTrailingNewline(decodeEntitiesOnce(text));
