@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
@@ -32,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,7 +48,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
         void addToHistory(String command);
 
-        void updateCurrentRoom(String roomId);
+        void updateCurrentRoom(String roomId, String roomName);
 
         void updateMap(String roomId);
 
@@ -73,6 +75,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
     private boolean useTeleports = true;
     private volatile String lastRoomId = null;
+    private volatile String lastRoomName = null;
 
     public MudCommandProcessor(BotConfig cfg,
                                MudClient mud,
@@ -162,12 +165,30 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
     @Override
     public void onGmcp(TelnetDecoder.GmcpMessage message) {
-        String roomId = mud.getCurrentRoomSnapshot().roomId();
-        if (roomId != null && !roomId.isBlank() && !roomId.equals(lastRoomId)) {
-            lastRoomId = roomId;
-            output.updateCurrentRoom(roomId);
-            output.updateMap(roomId);
-            storeInventoryTracker.clearInventory();
+        CurrentRoomInfo.Snapshot snapshot = mud.getCurrentRoomSnapshot();
+        String roomId = snapshot.roomId();
+        String roomName = snapshot.roomName();
+
+        if (roomName == null && roomId != null && !roomId.isBlank()) {
+            try {
+                RoomMapService.RoomLocation loc = mapService.lookupRoomLocation(roomId);
+                if (loc != null) {
+                    roomName = loc.roomShort();
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (roomId != null && !roomId.isBlank()) {
+            if (!roomId.equals(lastRoomId) || !Objects.equals(roomName, lastRoomName)) {
+                boolean roomChanged = !roomId.equals(lastRoomId);
+                lastRoomId = roomId;
+                lastRoomName = roomName;
+                output.updateCurrentRoom(roomId, roomName);
+                if (roomChanged) {
+                    output.updateMap(roomId);
+                    storeInventoryTracker.clearInventory();
+                }
+            }
         }
         if (message == null) {
             return;

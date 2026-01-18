@@ -26,6 +26,7 @@ import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.TimerService;
+import com.danavalerie.matrixmudrelay.core.RoomButtonService;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import java.util.regex.Pattern;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
@@ -128,6 +129,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private boolean suppressSplitPersist;
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
+    private final RoomButtonBarPanel roomButtonBarPanel;
+    private final RoomButtonService roomButtonService;
     private int lastScrollValue = -1;
 
     private enum WritMenuAction {
@@ -150,6 +153,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.configPath = configPath;
         this.routesPath = configPath.resolveSibling("delivery-routes.json");
         this.routeMappings = routeMappings;
+        this.roomButtonService = new RoomButtonService(configPath.resolveSibling("room-buttons.json"));
+        this.roomButtonService.populateMissingNames(this.routeMapService);
+        this.roomButtonBarPanel = new RoomButtonBarPanel(roomButtonService, this::submitCommand);
         this.mapPanel = new MapPanel(
                 resolveMapZoomPercent(),
                 this::persistMapZoomConfig,
@@ -246,7 +252,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(fontItem);
 
         JMenuItem sendPasswordItem = new JMenuItem("Send Password");
-        sendPasswordItem.addActionListener(event -> submitCommand("pw"));
+        sendPasswordItem.addActionListener(event -> submitCommand("/pw"));
         mainMenu.add(sendPasswordItem);
 
         mainMenu.addSeparator();
@@ -822,7 +828,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         JPanel panel = new JPanel(new BorderLayout(6, 6));
         panel.add(outputSplit, BorderLayout.CENTER);
-        panel.add(inputPanel, BorderLayout.SOUTH);
+        
+        JPanel bottomMudPanel = new JPanel(new BorderLayout(6, 0));
+        bottomMudPanel.add(inputPanel, BorderLayout.NORTH);
+        bottomMudPanel.add(roomButtonBarPanel, BorderLayout.SOUTH);
+        
+        panel.add(bottomMudPanel, BorderLayout.SOUTH);
         return panel;
     }
 
@@ -888,8 +899,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     @Override
-    public void updateCurrentRoom(String roomId) {
-        SwingUtilities.invokeLater(() -> mapPanel.updateCurrentRoom(roomId));
+    public void updateCurrentRoom(String roomId, String roomName) {
+        SwingUtilities.invokeLater(() -> {
+            mapPanel.updateCurrentRoom(roomId);
+            roomButtonBarPanel.updateRoom(roomId, roomName);
+        });
     }
 
     @Override
@@ -1169,6 +1183,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         statsPanel.updateTheme(inverted);
 
         updateComponentTree(getContentPane(), bg, fg);
+        roomButtonBarPanel.updateTheme(bg, fg);
         inputField.setCaretColor(fg);
 
         menuBar.setBackground(bg);

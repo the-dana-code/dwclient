@@ -73,7 +73,7 @@ public final class CurrentRoomInfo {
     }
 
     private static String extractRoomId(JsonObject obj) {
-        String[] keys = {"id", "num", "vnum", "roomid", "identifier"};
+        String[] keys = {"identifier", "id", "num", "vnum", "roomid"};
         for (String key : keys) {
             JsonElement val = obj.get(key);
             if (val == null || val.isJsonNull()) continue;
@@ -108,6 +108,17 @@ public final class CurrentRoomInfo {
 
         public String roomId() {
             return roomId;
+        }
+
+        public String roomName() {
+            JsonElement roomInfo = roomData.get("room.info");
+            if (roomInfo != null && roomInfo.isJsonObject()) {
+                JsonObject obj = roomInfo.getAsJsonObject();
+                if (obj.has("short")) {
+                    return obj.get("short").getAsString();
+                }
+            }
+            return null;
         }
 
         public Map<String, JsonElement> data() {
