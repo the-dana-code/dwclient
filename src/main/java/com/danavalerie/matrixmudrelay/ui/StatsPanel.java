@@ -24,6 +24,7 @@ import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,10 +38,13 @@ import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final Color BACKGROUND = new Color(10, 10, 15);
@@ -61,7 +65,11 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final int GP_TIMER_DEFAULT_INTERVAL_MS = 1000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getIntegerInstance(Locale.US);
 
-    private final JLabel nameLabel = new JLabel("Character: --");
+    private final JComboBox<String> nameComboBox = new JComboBox<>();
+    private final JLabel characterLabel = new JLabel("Character: ");
+    private Consumer<String> characterSelector;
+    private boolean isUpdatingName = false;
+    private final List<String> configCharacters = new ArrayList<>();
     private final JLabel hpLabel = new JLabel("HP");
     private final JLabel gpLabel = new JLabel("GP");
     private final JLabel burdenLabel = new JLabel("Burden");
@@ -85,17 +93,28 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         setLayout(new BorderLayout());
         Arrays.fill(gpRateSamples, -1);
 
-        int namePreferredWidth = Math.max(NAME_MIN_WIDTH, nameLabel.getPreferredSize().width);
-        int nameMaxWidth = Math.max(NAME_MAX_WIDTH, namePreferredWidth);
-        Dimension nameMin = new Dimension(NAME_MIN_WIDTH, nameLabel.getPreferredSize().height);
-        Dimension namePref = new Dimension(namePreferredWidth, nameLabel.getPreferredSize().height);
-        Dimension nameMax = new Dimension(nameMaxWidth, nameLabel.getPreferredSize().height);
-        nameLabel.setMinimumSize(nameMin);
-        nameLabel.setPreferredSize(namePref);
-        nameLabel.setMaximumSize(nameMax);
+        nameComboBox.setEditable(false);
+        nameComboBox.addActionListener(e -> {
+            if (!isUpdatingName) {
+                String selected = (String) nameComboBox.getSelectedItem();
+                if (selected != null && !selected.equals("--") && characterSelector != null) {
+                    characterSelector.accept(selected);
+                }
+            }
+        });
+
+        int namePreferredWidth = NAME_MIN_WIDTH;
+        int nameMaxWidth = NAME_MAX_WIDTH;
+        Dimension nameMin = new Dimension(NAME_MIN_WIDTH, nameComboBox.getPreferredSize().height);
+        Dimension namePref = new Dimension(namePreferredWidth, nameComboBox.getPreferredSize().height);
+        Dimension nameMax = new Dimension(nameMaxWidth, nameComboBox.getPreferredSize().height);
+        nameComboBox.setMinimumSize(nameMin);
+        nameComboBox.setPreferredSize(namePref);
+        nameComboBox.setMaximumSize(nameMax);
         JPanel statusBar = new JPanel();
         statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
-        statusBar.add(nameLabel);
+        statusBar.add(characterLabel);
+        statusBar.add(nameComboBox);
         statusBar.add(Box.createHorizontalStrut(12));
         statusBar.add(buildStatGroup(hpLabel, hpBar));
         statusBar.add(Box.createHorizontalStrut(10));
@@ -111,6 +130,40 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         setUnavailable();
         gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
         gpTimer.start();
+    }
+
+    public void setCharacterSelector(Consumer<String> selector) {
+        this.characterSelector = selector;
+    }
+
+    public void setConfigCharacters(List<String> characters) {
+        ThreadUtils.checkEdt();
+        this.configCharacters.clear();
+        this.configCharacters.addAll(characters);
+        refreshComboBox();
+    }
+
+    private void refreshComboBox() {
+        isUpdatingName = true;
+        try {
+            String current = (String) nameComboBox.getSelectedItem();
+            nameComboBox.removeAllItems();
+            if (current != null) {
+                nameComboBox.addItem(current);
+            }
+            for (String configChar : configCharacters) {
+                if (current == null || !configChar.equalsIgnoreCase(current)) {
+                    nameComboBox.addItem(configChar);
+                }
+            }
+            if (current != null) {
+                nameComboBox.setSelectedItem(current);
+            } else if (nameComboBox.getItemCount() > 0) {
+                nameComboBox.setSelectedIndex(0);
+            }
+        } finally {
+            isUpdatingName = false;
+        }
     }
 
     public void updateTheme(boolean inverted) {
@@ -137,12 +190,16 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
             c.setForeground(fg);
         } else if (c instanceof JProgressBar) {
             c.setBackground(barBg);
+        } else if (c instanceof JComboBox) {
+            c.setBackground(bg);
+            c.setForeground(fg);
         }
     }
 
     @Override
     public void onFontChange(Font font) {
-        nameLabel.setFont(font.deriveFont(Font.BOLD));
+        characterLabel.setFont(font);
+        nameComboBox.setFont(font.deriveFont(Font.BOLD));
         hpLabel.setFont(font);
         gpLabel.setFont(font);
         burdenLabel.setFont(font);
@@ -159,7 +216,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
                 setUnavailable();
                 return;
             }
-            updateNameLabel("Character: " + data.name());
+            updateNameLabel(data.name());
             updateBar(hpBar, data.hp(), data.maxHp(),
                     format(data.hp()) + " / " + format(data.maxHp()));
             updateGpFromVitals(data.gp(), data.maxGp());
@@ -174,7 +231,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     }
 
     private void setUnavailable() {
-        updateNameLabel("Character: --");
+        updateNameLabel("--");
         updateBar(hpBar, 0, 1, "--");
         updateBar(gpBar, 0, 1, "--");
         updateBar(burdenBar, 0, 100, "--");
@@ -231,16 +288,37 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         bar.setString(label);
     }
 
-    private void updateNameLabel(String text) {
+    private void updateNameLabel(String name) {
         ThreadUtils.checkEdt();
-        nameLabel.setText(text);
-        int textWidth = nameLabel.getFontMetrics(nameLabel.getFont()).stringWidth(text) + 10;
+        if (name == null || name.isBlank()) {
+            return;
+        }
+
+        isUpdatingName = true;
+        try {
+            boolean found = false;
+            for (int i = 0; i < nameComboBox.getItemCount(); i++) {
+                if (name.equalsIgnoreCase(nameComboBox.getItemAt(i))) {
+                    nameComboBox.setSelectedIndex(i);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                nameComboBox.insertItemAt(name, 0);
+                nameComboBox.setSelectedIndex(0);
+            }
+        } finally {
+            isUpdatingName = false;
+        }
+
+        int textWidth = nameComboBox.getFontMetrics(nameComboBox.getFont()).stringWidth(name) + 40;
         int targetWidth = Math.max(NAME_MIN_WIDTH, Math.min(NAME_MAX_WIDTH, textWidth));
-        Dimension target = new Dimension(targetWidth, nameLabel.getPreferredSize().height);
-        nameLabel.setMinimumSize(target);
-        nameLabel.setPreferredSize(target);
-        nameLabel.setMaximumSize(new Dimension(Math.max(NAME_MAX_WIDTH, targetWidth), target.height));
-        nameLabel.revalidate();
+        Dimension target = new Dimension(targetWidth, nameComboBox.getPreferredSize().height);
+        nameComboBox.setMinimumSize(target);
+        nameComboBox.setPreferredSize(target);
+        nameComboBox.setMaximumSize(new Dimension(Math.max(NAME_MAX_WIDTH, targetWidth), target.height));
+        nameComboBox.revalidate();
     }
 
     private static int clamp(int value, int min, int max) {

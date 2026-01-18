@@ -44,7 +44,7 @@
     }
   ],
   "characters": {
-    "lesa": {
+    "Lesa": {
       "teleports": {
         "reliable": true,
         "locations": [
@@ -267,11 +267,17 @@
         ]
       }
     },
-    "maemot": {
+    "Maemot": {
       "teleports": {
         "reliable": false,
         "locations": []
       }
-    }
+    },
+    "Ngao": {
+      "teleports": {
+        "reliable": false,
+        "locations": []
+      }
+    },
   }
 }

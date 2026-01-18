@@ -180,6 +180,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         fontManager = new UiFontManager(this, outputPane.getFont());
         fontManager.registerListener(statsPanel);
 
+        statsPanel.setCharacterSelector(name -> submitCommand("su " + name));
+        if (cfg.characters != null) {
+            statsPanel.setConfigCharacters(new ArrayList<>(cfg.characters.keySet()));
+        }
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1200, 800));
         setLayout(new BorderLayout());
