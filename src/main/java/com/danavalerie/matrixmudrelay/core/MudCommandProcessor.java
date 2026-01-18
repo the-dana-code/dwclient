@@ -65,6 +65,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private final RoomMapService mapService;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
+    private final TimerService timerService;
     private final ClientOutput output;
     private final ExecutorService background;
 
@@ -78,12 +79,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                                TranscriptLogger transcript,
                                WritTracker writTracker,
                                StoreInventoryTracker storeInventoryTracker,
+                               TimerService timerService,
                                ClientOutput output) {
         this.cfg = cfg;
         this.mud = mud;
         this.transcript = transcript;
         this.writTracker = writTracker;
         this.storeInventoryTracker = storeInventoryTracker;
+        this.timerService = timerService;
         this.output = output;
         this.mapService = new RoomMapService("database.db");
         this.background = Executors.newSingleThreadExecutor(r -> {
@@ -307,6 +310,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             handleRoute(query);
             return;
         }
+        if ("timers".equals(subcommand)) {
+            handleTimers();
+            return;
+        }
         if ("tp".equals(subcommand)) {
             useTeleports = true;
             output.appendSystem("Teleport-assisted routing enabled.");
@@ -330,6 +337,37 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
         output.appendSystem("Unknown command.");
+    }
+
+    private void handleTimers() {
+        String charName = mud.getCurrentRoomSnapshot().characterName();
+        if (charName == null || charName.isBlank()) {
+            output.appendSystem("Error: No character logged in. Can't show timers.");
+            return;
+        }
+
+        Map<String, Long> timers = timerService.getTimers(charName);
+        if (timers.isEmpty()) {
+            output.appendSystem("No active timers for " + charName + ".");
+            return;
+        }
+
+        StringBuilder out = new StringBuilder("Timers for ").append(charName).append(":\n");
+        long now = System.currentTimeMillis();
+
+        // Find max timer name length for padding
+        int maxNameLen = timers.keySet().stream().mapToInt(String::length).max().orElse(0);
+
+        for (Map.Entry<String, Long> entry : timers.entrySet()) {
+            String name = entry.getKey();
+            long expiration = entry.getValue();
+            long remaining = expiration - now;
+
+            out.append(String.format("%-" + (maxNameLen + 2) + "s", name + ":"))
+                    .append(timerService.formatRemainingTime(remaining))
+                    .append("\n");
+        }
+        output.appendSystem(out.toString().trim());
     }
 
     private void handleCurrentLocation() {

@@ -76,6 +76,7 @@ public final class BotConfig {
 
     public static final class CharacterConfig {
         public CharacterTeleports teleports = new CharacterTeleports();
+        public Map<String, Long> timers = new LinkedHashMap<>();
     }
 
     public static final class CharacterTeleports {

@@ -25,7 +25,9 @@ import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
+import com.danavalerie.matrixmudrelay.core.TimerService;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
+import java.util.regex.Pattern;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
@@ -84,6 +86,7 @@ import java.util.function.Consumer;
 
 public final class DesktopClientFrame extends JFrame implements MudCommandProcessor.ClientOutput {
     private static final Logger log = LoggerFactory.getLogger(DesktopClientFrame.class);
+    private static final Pattern JOB_AWARD_PATTERN = Pattern.compile("^You have been awarded .*");
     private final MudOutputPane outputPane = new MudOutputPane();
     private final ChitchatPane chitchatPane = new ChitchatPane();
     private final MapPanel mapPanel;
@@ -98,6 +101,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private DeliveryRouteMappings routeMappings;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
+    private final TimerService timerService;
     private final BotConfig cfg;
     private final Path configPath;
     private final Path routesPath;
@@ -155,16 +159,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         writTracker = new WritTracker();
         storeInventoryTracker = new StoreInventoryTracker();
+        timerService = new TimerService(cfg, configPath);
 
         mud = new MudClient(
                 cfg.mud,
-                line -> {
-                    this.transcript.logMudToClient(line);
-                    String normalized = normalizeWritOutput(line);
-                    bufferWritLines(normalized);
-                    bufferStoreInventoryLines(normalized);
-                    outputPane.appendMudText(line);
-                },
+                this::handleMudLine,
                 reason -> {
                     outputPane.appendSystemText("* MUD disconnected: " + reason);
                     SwingUtilities.invokeLater(() -> updateConnectionMenuItem(false));
@@ -173,7 +172,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         );
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
 
-        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, this);
+        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, timerService, this);
         mapPanel.setSpeedwalkHandler(
                 location -> commandProcessor.speedwalkTo(location.roomId())
         );
@@ -629,6 +628,23 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void markWritMenuVisited(int index, WritMenuAction action) {
         writMenuVisits.computeIfAbsent(index, ignored -> EnumSet.noneOf(WritMenuAction.class)).add(action);
+    }
+
+    private void handleMudLine(String line) {
+        this.transcript.logMudToClient(line);
+        String normalized = normalizeWritOutput(line);
+        bufferWritLines(normalized);
+        bufferStoreInventoryLines(normalized);
+        outputPane.appendMudText(line);
+
+        if (JOB_AWARD_PATTERN.matcher(normalized).matches()) {
+            String charName = mud.getCurrentRoomSnapshot().characterName();
+            if (charName != null && !charName.isBlank()) {
+                timerService.setTimer(charName, "sample job", 60 * 60 * 1000L);
+            } else {
+                outputPane.appendErrorText("No character logged in; cannot set timer.");
+            }
+        }
     }
 
     private void handleStoreBuy(int index, int quantity) {
