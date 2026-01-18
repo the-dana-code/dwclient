@@ -18,11 +18,12 @@
 
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.core.RoomButtonService;
+import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -70,6 +71,30 @@ public class ThemeTest {
             // Light mode
             panel.updateTheme(false);
             assertEquals(MapPanel.BACKGROUND_LIGHT, panel.getBackground());
+        });
+    }
+
+    @Test
+    public void testRoomButtonBarPanelTheme(@TempDir Path tempDir) throws Exception {
+        Path buttonsPath = tempDir.resolve("room-buttons.json");
+        javax.swing.SwingUtilities.invokeAndWait(() -> {
+            RoomButtonService service = new RoomButtonService(buttonsPath);
+            RoomButtonBarPanel panel = new RoomButtonBarPanel(service, cmd -> {});
+            
+            Color bg = Color.BLACK;
+            Color fg = Color.WHITE;
+            panel.updateTheme(bg, fg);
+            
+            assertEquals(bg, panel.getBackground());
+            assertEquals(fg, panel.getForeground());
+            
+            // Add a button and see if it has the theme
+            service.addButton("room1", "Room 1", new RoomButton("Btn 1", "cmd 1"));
+            panel.updateRoom("room1", "Room 1");
+            
+            assertEquals(1, panel.getComponentCount());
+            assertEquals(bg, panel.getComponent(0).getBackground());
+            assertEquals(fg, panel.getComponent(0).getForeground());
         });
     }
 }

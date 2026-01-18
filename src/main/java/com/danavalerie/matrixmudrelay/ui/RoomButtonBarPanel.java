@@ -16,6 +16,8 @@ public class RoomButtonBarPanel extends JPanel {
     private final Consumer<String> commandSubmitter;
     private String currentRoomId;
     private String currentRoomName;
+    private Color currentBg;
+    private Color currentFg;
 
     public RoomButtonBarPanel(RoomButtonService roomButtonService, Consumer<String> commandSubmitter) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -65,6 +67,12 @@ public class RoomButtonBarPanel extends JPanel {
                 JButton btn = new JButton(rb.getName());
                 btn.setToolTipText(rb.getCommand());
                 btn.addActionListener(e -> commandSubmitter.accept(rb.getCommand()));
+                if (currentBg != null) {
+                    btn.setBackground(currentBg);
+                }
+                if (currentFg != null) {
+                    btn.setForeground(currentFg);
+                }
                 
                 int index = i;
                 btn.addMouseListener(new MouseAdapter() {
@@ -88,6 +96,9 @@ public class RoomButtonBarPanel extends JPanel {
         JMenuItem addBtn = new JMenuItem("Add Button");
         addBtn.addActionListener(e -> showEditDialog(null, -1));
         menu.add(addBtn);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(menu, currentBg, currentFg);
+        }
         menu.show(this, x, y);
     }
 
@@ -127,7 +138,36 @@ public class RoomButtonBarPanel extends JPanel {
         });
         menu.add(moveRight);
 
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(menu, currentBg, currentFg);
+        }
         menu.show(btn, x, y);
+    }
+
+    private void updateMenuTheme(JComponent menu, Color bg, Color fg) {
+        menu.setBackground(bg);
+        menu.setForeground(fg);
+        for (Component c : menu.getComponents()) {
+            if (c instanceof JMenuItem) {
+                updateMenuItemTheme((JMenuItem) c, bg, fg);
+            } else if (c instanceof JComponent) {
+                c.setBackground(bg);
+                c.setForeground(fg);
+            }
+        }
+    }
+
+    private void updateMenuItemTheme(JMenuItem item, Color bg, Color fg) {
+        item.setBackground(bg);
+        item.setForeground(fg);
+        if (item instanceof JMenu menu) {
+            for (int i = 0; i < menu.getItemCount(); i++) {
+                JMenuItem subItem = menu.getItem(i);
+                if (subItem != null) {
+                    updateMenuItemTheme(subItem, bg, fg);
+                }
+            }
+        }
     }
 
     private void showEditDialog(RoomButton existing, int index) {
@@ -187,10 +227,31 @@ public class RoomButtonBarPanel extends JPanel {
 
         dialog.pack();
         dialog.setLocationRelativeTo(parentWindow);
+        if (currentBg != null && currentFg != null) {
+            updateDialogTheme(dialog, currentBg, currentFg);
+        }
         dialog.setVisible(true);
+    }
+
+    private void updateDialogTheme(Component c, Color bg, Color fg) {
+        if (c instanceof JPanel || c instanceof JDialog) {
+            c.setBackground(bg);
+        }
+        if (c instanceof JLabel || c instanceof JTextField || c instanceof JButton) {
+            c.setBackground(bg);
+            c.setForeground(fg);
+        }
+
+        if (c instanceof Container container) {
+            for (Component child : container.getComponents()) {
+                updateDialogTheme(child, bg, fg);
+            }
+        }
     }
     
     public void updateTheme(Color bg, Color fg) {
+        this.currentBg = bg;
+        this.currentFg = fg;
         this.setBackground(bg);
         this.setForeground(fg);
         for (Component c : getComponents()) {

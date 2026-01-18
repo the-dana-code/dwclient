@@ -17,12 +17,30 @@
       }
     ]
   },
+  "07392486e85af327941943107ac9d7c79f8ba43a": {
+    "name": "Turn off the Crystal Ball shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2381cbfa44760a69fea25b5ee4a52499453ff625": {
     "name": "whitewashed room",
     "buttons": [
       {
         "name": "Pull Lever",
         "command": "pull lever"
+      }
+    ]
+  },
+  "45847af6a8e6b8f350115f97474db7211e576347": {
+    "name": "rat shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -97,6 +115,15 @@
       }
     ]
   },
+  "bb97d14f936216eeb7d6457dc4c9bb514ebc0b0d": {
+    "name": "Rendtnor\u0027s Jewellery Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "c86e7e36f138ae6cfe05c6f62aba2b4c88deb596": {
     "name": "Job Market\u0027s Clothing Shop",
     "buttons": [
@@ -133,6 +160,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "f5b34dab173a8773e39404118f2d8842ba844208": {
+    "name": "Joshua\u0027s Climbing Equipment",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]

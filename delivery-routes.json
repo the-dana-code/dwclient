@@ -1014,5 +1014,11 @@
     "location": "Harmony Stardancer\u0027s Magical Shoppe on Treacle Street",
     "roomId": "147e6d0328572991709e74040c841fbe8aa339c6",
     "commands": []
+  },
+  {
+    "npc": "the baker",
+    "location": "Dione Street Bakery",
+    "roomId": "b87a93ae03d7e4781093215984cba0949776467b",
+    "commands": []
   }
 ]
