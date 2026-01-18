@@ -1,4 +1,13 @@
 {
+  "0046b3694d138aae8b757805d7dbb64269a8629a": {
+    "name": "fur shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "047d2c350046d2613c5adecd189edaf639ddafcb": {
     "name": "Krazzander\u0027s Magic Tricks",
     "buttons": [
@@ -44,6 +53,15 @@
       }
     ]
   },
+  "1dfef612dd93c797e9fcf31e6ffdb249832bd39c": {
+    "name": "Actors\u0027 Guild bar",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "2381cbfa44760a69fea25b5ee4a52499453ff625": {
     "name": "whitewashed room",
     "buttons": [
@@ -53,11 +71,29 @@
       }
     ]
   },
+  "41630c8d7e024a632d5ba1071766d1b57ed5eb5b": {
+    "name": "Confections De Confectionairre",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "45847af6a8e6b8f350115f97474db7211e576347": {
     "name": "rat shop",
     "buttons": [
       {
         "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "49b5c096fd0bbae38c0007f57a1694e4c9d9ae00": {
+    "name": "ticket office",
+    "buttons": [
+      {
+        "name": "List Tickets",
         "command": "list"
       }
     ]
@@ -116,6 +152,15 @@
       }
     ]
   },
+  "70102b7c64f25ff79524eeabced2fd68ef0ab69c": {
+    "name": "Shelf Shock Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "73b97bddee091fd07ae5b14cccdb187b4ca11925": {
     "name": "Corner Cafe of the Job Market",
     "buttons": [
@@ -127,6 +172,15 @@
   },
   "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d": {
     "name": "smithy",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "93e7c961a6556586f40b21b13726658fef7ed88b": {
+    "name": "claustrophobically pink shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -151,6 +205,11 @@
         "command": "list"
       }
     ]
+  },
+  "a397123cec941a8ae13e1187cc368eeaa5b3a9aa": {
+    "name": "Actors\u0027 Guild practice room",
+    "notes": "Here you can get a custom-written script performed in order to test it.\n\nSyntax:\n  request [a] performance of \u003cobject\u003e    \n",
+    "buttons": []
   },
   "a5846b0acd26afec87c2dc20daa7ccadecc94cff": {
     "name": "Job Market centre",
@@ -183,12 +242,39 @@
       }
     ]
   },
+  "aa63e6764c9931dadc245b3c2d1aef1df0bfb363": {
+    "name": "Arlof Eetmmot\u0027s Bakery",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "aa771f716e0adf0125bea44c03ee175ebb7e7d7f": {
     "name": "[player shop]",
     "buttons": [
       {
         "name": "List Rates",
         "command": "list rates on changer"
+      }
+    ]
+  },
+  "b2cbb10ce3aac6299eca31664ee4e8f7590f8376": {
+    "name": "Playwrights Guild office",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "b7d1c631bde34be141b8db19b255b5ba59d374ad": {
+    "name": "lumberyard on Dimwell Street",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -222,6 +308,15 @@
   },
   "c86e7e36f138ae6cfe05c6f62aba2b4c88deb596": {
     "name": "Job Market\u0027s Clothing Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "d216295f2d9da67baeb309e36c25fe1025b4edf3": {
+    "name": "Mrs Cosmopilite\u0027s clothes store",
     "buttons": [
       {
         "name": "List Shop",
@@ -266,6 +361,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "e261da3b6304b3cc50553bbf6878117278810765": {
+    "name": "Pishe\u0027s moorlands",
+    "buttons": [
+      {
+        "name": "Enter Cloud",
+        "command": "enter cloud"
       }
     ]
   },

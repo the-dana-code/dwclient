@@ -1020,5 +1020,11 @@
     "location": "Dione Street Bakery",
     "roomId": "b87a93ae03d7e4781093215984cba0949776467b",
     "commands": []
+  },
+  {
+    "npc": "Ella Montigue",
+    "location": "the claustrophobically pink shop on Dolly Sisters",
+    "roomId": "93e7c961a6556586f40b21b13726658fef7ed88b",
+    "commands": []
   }
 ]
