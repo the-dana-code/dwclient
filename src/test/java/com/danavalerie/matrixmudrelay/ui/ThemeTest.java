@@ -22,7 +22,10 @@ import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import javax.swing.*;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.BorderLayout;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,6 +118,64 @@ public class ThemeTest {
             
             assertEquals(bg, panel.getBackground());
             assertEquals(fg, panel.getForeground());
+        });
+    }
+
+    @Test
+    public void testJTabbedPaneTabColors() throws Exception {
+        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        SwingUtilities.invokeAndWait(() -> {
+            JTabbedPane tp = new JTabbedPane();
+            tp.addTab("Room", new JPanel());
+
+            Color bg = Color.BLACK;
+            Color fg = Color.WHITE;
+
+            // Now apply the fix logic:
+            tp.setBackgroundAt(0, bg);
+            tp.setForegroundAt(0, fg);
+
+            Color tabBgFixed = tp.getBackgroundAt(0);
+            assertEquals(bg, tabBgFixed, "Tab background should match the theme background after setBackgroundAt");
+        });
+    }
+
+    @Test
+    public void testThemePersistenceAfterFontChange() throws Exception {
+        UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        // This test simulates the logic in DesktopClientFrame and UiFontManager
+        SwingUtilities.invokeAndWait(() -> {
+            JPanel root = new JPanel(new BorderLayout());
+            JTabbedPane tp = new JTabbedPane();
+            tp.addTab("Room", new JPanel());
+            root.add(tp, BorderLayout.CENTER);
+
+            UiFontManager fontManager = new UiFontManager(root, new Font("Monospaced", Font.PLAIN, 12));
+
+            Color bg = Color.BLACK;
+            Color fg = Color.WHITE;
+
+            // Helper to apply theme (simulating updateTheme/updateComponentTree)
+            Runnable updateTheme = () -> {
+                tp.setBackground(bg);
+                tp.setForeground(fg);
+                for (int i = 0; i < tp.getTabCount(); i++) {
+                    tp.setBackgroundAt(i, bg);
+                    tp.setForegroundAt(i, fg);
+                }
+            };
+
+            // Register listener to re-apply theme on font change
+            fontManager.registerListener(font -> updateTheme.run());
+
+            // Initial apply (happens during registration)
+            assertEquals(bg, tp.getBackgroundAt(0));
+
+            // Change font - this calls updateComponentTreeUI and then our listener
+            fontManager.setBaseFont(new Font("Serif", Font.PLAIN, 14));
+
+            // Verify theme still applied
+            assertEquals(bg, tp.getBackgroundAt(0), "Theme should be re-applied after font change");
         });
     }
 }

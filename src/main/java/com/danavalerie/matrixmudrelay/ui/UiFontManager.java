@@ -53,11 +53,11 @@ public final class UiFontManager {
     public void setBaseFont(Font font) {
         this.baseFont = Objects.requireNonNull(font, "font");
         applyDefaults(font);
+        SwingUtilities.updateComponentTreeUI(root);
         applyFontTree(root, font);
         for (FontChangeListener listener : listeners) {
             listener.onFontChange(font);
         }
-        SwingUtilities.updateComponentTreeUI(root);
     }
 
     private static void applyDefaults(Font font) {
