@@ -131,7 +131,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
 
         if (lower.equals("mm") || lower.startsWith("mm ")) {
-            output.appendSystem("Note: Internal commands now use slashes (e.g., /loc) instead of 'mm'. Type /help for help.");
+            output.appendSystem("Note: Internal commands now use slashes (e.g., /room) instead of 'mm'. Type /help for help.");
             return;
         }
 
@@ -233,7 +233,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             }
         } else {
             if (lastRoomSearchResults.isEmpty()) {
-                output.appendSystem("Error: No recent room search results. Use /loc first.");
+                output.appendSystem("Error: No recent room search results. Use /room first.");
                 return;
             }
             int selection;
@@ -308,7 +308,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             }
             return;
         }
-        if ("loc".equals(subcommand)) {
+        if ("room".equals(subcommand)) {
             handleRoomSearchQuery(query);
             return;
         }
@@ -357,7 +357,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         sb.append("  /disconnect     - Disconnect from the MUD\n");
         sb.append("  /status         - Show connection status\n");
         sb.append("  /info           - Show detailed room and character info (GMCP)\n");
-        sb.append("  /loc <query>    - Search for rooms by name\n");
+        sb.append("  /room <query>   - Search for rooms by name\n");
         sb.append("  /npc <query>    - Search for NPCs by name\n");
         sb.append("  /item <query>   - Search for items in shops\n");
         sb.append("  /map [number]   - Show map for current room or search result\n");
@@ -452,14 +452,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
         String[] parts = query.split("\\s+");
         if (parts.length != 2) {
-            output.appendSystem("Usage: /writ <number> [item|npc|loc|deliver]");
+            output.appendSystem("Usage: /writ <number> [item|npc|room|deliver]");
             return;
         }
         int selection;
         try {
             selection = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
-            output.appendSystem("Usage: /writ <number> [item|npc|loc|deliver]");
+            output.appendSystem("Usage: /writ <number> [item|npc|room|deliver]");
             return;
         }
         String subcommand = parts[1].toLowerCase(Locale.ROOT);
@@ -471,7 +471,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         switch (subcommand) {
             case "item" -> handleItemSearchQuery(req.item());
             case "npc" -> handleNpcSearchQuery(req.npc());
-            case "loc" -> handleRoomSearchQuery(req.locationName());
+            case "room" -> handleRoomSearchQuery(req.locationName());
             case "deliver" -> {
                 String npcName = removeTitle(req);
                 String command = Sanitizer.sanitizeMudInput(
@@ -484,7 +484,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 );
                 sendToMud(command);
             }
-            default -> output.appendSystem("Usage: /writ <number> [item|npc|loc|deliver]");
+            default -> output.appendSystem("Usage: /writ <number> [item|npc|room|deliver]");
         }
     }
 
@@ -533,7 +533,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
     private void handleRoomSearchQuery(String query) {
         if (query.isBlank()) {
-            output.appendSystem("Usage: /loc <room name fragment>");
+            output.appendSystem("Usage: /room <room name fragment>");
             return;
         }
         try {

@@ -108,5 +108,25 @@ class MudCommandShortcutTest {
         
         assertTrue(mud.sentLines.contains("supersecret"), "Password should have been sent to MUD via /password");
     }
+
+    @Test
+    void testRoomCommand() {
+        BotConfig cfg = new BotConfig();
+        StubMudClient mud = new StubMudClient();
+        StubClientOutput output = new StubClientOutput();
+        StubTranscriptLogger transcript = new StubTranscriptLogger();
+        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
+        
+        // Test /room usage
+        processor.handleInput("/room");
+        assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("Usage: /room")), "Should show usage for /room");
+
+        // Verify /loc is unknown (or at least doesn't show room search usage)
+        output.systemMessages.clear();
+        processor.handleInput("/loc");
+        assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("Unknown command")), "Should show unknown command for /loc");
+    }
 }
 

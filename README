@@ -40,7 +40,7 @@ Some commands:
 
 /help   (List all internal commands)
 /       (Show current location and room ID)
-/loc <room name>
+/room <room name>
 /npc <npc name>
 /item <item name>
 /map [number]
