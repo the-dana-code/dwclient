@@ -161,5 +161,31 @@ public class MapPanelTest {
 
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, invertButton.getBackground());
     }
+
+    @Test
+    public void testCenterButtonExistenceAndState() throws Exception {
+        MapPanel mapPanel = new MapPanel(100, z -> {}, false, invert -> {});
+        
+        java.lang.reflect.Field centerButtonField = MapPanel.class.getDeclaredField("centerButton");
+        centerButtonField.setAccessible(true);
+        javax.swing.JButton centerButton = (javax.swing.JButton) centerButtonField.get(mapPanel);
+        
+        org.junit.jupiter.api.Assertions.assertNotNull(centerButton);
+        org.junit.jupiter.api.Assertions.assertEquals("\u2316", centerButton.getText());
+        org.junit.jupiter.api.Assertions.assertFalse(centerButton.isEnabled());
+        
+        // Update current room, should enable button
+        mapPanel.updateCurrentRoom("room1");
+        // updateCurrentRoom uses SwingUtilities.invokeLater
+        Thread.sleep(100); 
+        org.junit.jupiter.api.Assertions.assertTrue(centerButton.isEnabled());
+        
+        // showMessage should disable it
+        java.lang.reflect.Method showMessageMethod = MapPanel.class.getDeclaredMethod("showMessage", String.class);
+        showMessageMethod.setAccessible(true);
+        showMessageMethod.invoke(mapPanel, "Error");
+        Thread.sleep(100);
+        org.junit.jupiter.api.Assertions.assertFalse(centerButton.isEnabled());
+    }
 }
 

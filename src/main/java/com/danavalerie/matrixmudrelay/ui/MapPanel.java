@@ -91,6 +91,7 @@ public final class MapPanel extends JPanel {
     private volatile boolean invertMap;
     private Consumer<RoomMapService.RoomLocation> speedwalkHandler;
     private final JButton speedWalkButton = new JButton("Speed Walk");
+    private final JButton centerButton = new JButton("\u2316");
     private List<RoomMapService.RoomLocation> speedwalkPath = List.of();
     private int zoomPercent;
     private volatile BufferedImage lastBaseImage;
@@ -128,11 +129,16 @@ public final class MapPanel extends JPanel {
         mapLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         speedWalkButton.setEnabled(false);
         speedWalkButton.addActionListener(event -> handleSpeedWalk());
+        centerButton.setEnabled(false);
+        centerButton.setToolTipText("Center on current room");
+        centerButton.setMargin(new Insets(2, 4, 2, 4));
+        centerButton.addActionListener(event -> handleCenterAction());
         invertButton.addActionListener(event -> toggleInvert());
         JPanel titlePanel = new JPanel(new BorderLayout());
         JPanel titleActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 2));
         titleActions.setOpaque(false);
         titleActions.add(speedWalkButton);
+        titleActions.add(centerButton);
         titlePanel.add(areaComboBox, BorderLayout.CENTER);
         titlePanel.add(titleActions, BorderLayout.EAST);
         scrollPane = new JScrollPane(mapLabel);
@@ -276,6 +282,7 @@ public final class MapPanel extends JPanel {
     public void updateCurrentRoom(String roomId) {
         currentRoomId = roomId;
         updateSpeedWalkState();
+        SwingUtilities.invokeLater(() -> centerButton.setEnabled(roomId != null));
     }
 
     public void setSpeedwalkHandler(Consumer<RoomMapService.RoomLocation> speedwalkHandler) {
@@ -399,6 +406,7 @@ public final class MapPanel extends JPanel {
             mapLabel.setPreferredSize(null);
             configureAnimation(null);
             speedWalkButton.setEnabled(false);
+            centerButton.setEnabled(false);
         });
     }
 
@@ -560,6 +568,31 @@ public final class MapPanel extends JPanel {
             return;
         }
         speedwalkHandler.accept(room);
+    }
+
+    private void handleCenterAction() {
+        String roomId = currentRoomId;
+        if (roomId == null) {
+            return;
+        }
+
+        String mapRoomId = lastRoomId.get();
+        RoomMapService.MapImage mapImage = lastMapImage;
+        BufferedImage baseImage = lastBaseImage;
+
+        if (Objects.equals(roomId, mapRoomId) && mapImage != null && baseImage != null) {
+            RoomMapService.RoomLocation currentRoom = new RoomMapService.RoomLocation(
+                    mapImage.roomId(),
+                    mapImage.mapId(),
+                    mapImage.roomX(),
+                    mapImage.roomY(),
+                    mapImage.roomShort()
+            );
+            showImage(mapImage, baseImage, currentRoom);
+        } else {
+            lastRoomId.set(null);
+            updateMap(roomId);
+        }
     }
 
     private void updateSpeedWalkState() {
