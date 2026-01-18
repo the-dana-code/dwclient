@@ -1002,5 +1002,17 @@
     "location": "Rebecca Palm\u0027s Clothing in the Magic Emporium",
     "roomId": "8edd2b9a65f2533cecc14305fafffbb722464931",
     "commands": []
+  },
+  {
+    "npc": "Mrs Dodger",
+    "location": "the canteen in the Pseudopolis Yard Watch House",
+    "roomId": "38e0caedf0ff789f97b6d7e8e2a18fad9ab0f2fd",
+    "commands": []
+  },
+  {
+    "npc": "Harmony Stardancer",
+    "location": "Harmony Stardancer\u0027s Magical Shoppe on Treacle Street",
+    "roomId": "147e6d0328572991709e74040c841fbe8aa339c6",
+    "commands": []
   }
 ]
