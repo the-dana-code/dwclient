@@ -329,7 +329,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             output.appendSystem("Error: " + e.getMessage());
             return;
         }
-        output.appendSystem("Usage: mm loc <room name fragment>");
+        output.appendSystem("Unknown command.");
     }
 
     private void handleCurrentLocation() {
