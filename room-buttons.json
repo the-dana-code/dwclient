@@ -5,6 +5,14 @@
       {
         "name": "List Jobs",
         "command": "list"
+      },
+      {
+        "name": "Collect",
+        "command": "collect"
+      },
+      {
+        "name": "Resign Job",
+        "command": "resign job"
       }
     ]
   }
