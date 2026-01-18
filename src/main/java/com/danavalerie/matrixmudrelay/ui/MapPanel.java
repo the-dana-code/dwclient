@@ -307,6 +307,10 @@ public final class MapPanel extends JPanel {
     }
 
     private void updateDisplayedImage() {
+        updateDisplayedImage(true);
+    }
+
+    private void updateDisplayedImage(boolean shouldCenter) {
         BufferedImage image = lastBaseImage;
         String title = lastTitle;
         Integer mapId = lastMapId;
@@ -344,7 +348,7 @@ public final class MapPanel extends JPanel {
             mapLabel.setPreferredSize(preferredSize);
             mapLabel.revalidate();
             configureAnimation(icon);
-            if (scaledFocus != null && scaledSize != null) {
+            if (shouldCenter && scaledFocus != null && scaledSize != null) {
                 SwingUtilities.invokeLater(() -> centerViewOnPoint(scaledFocus, scaledSize));
             }
         });
@@ -540,7 +544,7 @@ public final class MapPanel extends JPanel {
         }
         selectedRoom = room;
         lastFocusPoint = mapToImagePoint(room, mapImage);
-        updateDisplayedImage();
+        updateDisplayedImage(false);
         updateSpeedWalkState();
     }
 
