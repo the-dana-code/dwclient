@@ -23,6 +23,7 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +82,9 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         StubTranscriptLogger transcript = new StubTranscriptLogger();
+        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
         
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
         
         processor.handleInput("pw");
         
@@ -98,12 +100,13 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         StubTranscriptLogger transcript = new StubTranscriptLogger();
+        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
         
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
         
-        processor.handleInput("mm password");
+        processor.handleInput("/password");
         
-        assertTrue(mud.sentLines.contains("supersecret"), "Password should have been sent to MUD via mm password");
+        assertTrue(mud.sentLines.contains("supersecret"), "Password should have been sent to MUD via /password");
     }
 }
 

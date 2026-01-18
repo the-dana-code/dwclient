@@ -197,7 +197,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             @Override
             public void windowOpened(WindowEvent e) {
                 inputField.requestFocusInWindow();
-                submitCommand("mm connect");
+                submitCommand("/connect");
             }
 
             @Override
@@ -212,9 +212,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         connectionItem = new JMenuItem();
         connectionItem.addActionListener(event -> {
             if (mud.isConnected()) {
-                submitCommand("mm disconnect");
+                submitCommand("/disconnect");
             } else {
-                submitCommand("mm connect");
+                submitCommand("/connect");
             }
             updateConnectionMenuItem(mud.isConnected());
         });
@@ -544,7 +544,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
                     "Item: " + req.quantity() + " " + req.item(),
-                    () -> submitCommand("mm item exact " + req.item()));
+                    () -> submitCommand("/item exact " + req.item()));
             writMenu.add(itemInfo);
 
             JMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
@@ -571,14 +571,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             JMenuItem npcInfo = buildWritMenuItem(index, WritMenuAction.NPC_INFO,
                     "Deliver to: " + req.npc(),
-                    () -> submitCommand("mm writ " + (index + 1) + " npc"));
+                    () -> submitCommand("/writ " + (index + 1) + " npc"));
             writMenu.add(npcInfo);
 
             String locationText = req.locationName()
                     + (req.locationSuffix().isBlank() ? "" : " " + req.locationSuffix());
             JMenuItem locInfo = buildWritMenuItem(index, WritMenuAction.LOCATION_INFO,
                     "Location: " + locationText,
-                    () -> submitCommand("mm writ " + (index + 1) + " loc"));
+                    () -> submitCommand("/writ " + (index + 1) + " loc"));
             writMenu.add(locInfo);
 
             if (!hasRoute && canWriteRoutes) {
@@ -592,12 +592,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     hasRoute ? "Route and Deliver" : "Deliver",
                     () -> routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).ifPresentOrElse(plan -> {
                         List<String> commands = new ArrayList<>(plan.commands());
-                        commands.add("mm writ " + (index + 1) + " deliver");
+                        commands.add("/writ " + (index + 1) + " deliver");
                         commandProcessor.speedwalkToThenCommands(
                                 plan.target().roomId(),
                                 commands
                         );
-                    }, () -> submitCommand("mm writ " + (index + 1) + " deliver")));
+                    }, () -> submitCommand("/writ " + (index + 1) + " deliver")));
             writMenu.add(deliverItem);
             writMenus.add(writMenu);
             menuBar.add(writMenu);

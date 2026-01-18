@@ -25,24 +25,33 @@ Alternatively, you can download IntelliJ IDEA (Free edition). Clone this Github 
 The `config.json` file is included in the release ZIP. You should modify it to customize the client to your liking.
 
 Edit the `config.json` to add your characters' password, and the password can be sent by choosing
-Menu -> Send Password, or by typing the 'pw' command.
+Menu -> Send Password, or by typing the "/password" command.
+
+Type "/help" for a full list of available internal commands.
 
 You can also configure per-character teleports. These will be used automatically while speedwalking.
-You can temporarily disable use of teleports for speedwalking with the "mm notp" command. Re-enable
-them with the "mm tp" command.
+You can temporarily disable use of teleports for speedwalking with the "/notp" command. Re-enable
+them with the "/tp" command.
 
 Delivery Writ helper is coded. Reading a writ from Mr. Werks will auto-generate some menus to help
 you complete the writ.
 
 Some commands:
 
-mm reset (If you're experiencing crashes, it may be due to not running this)
-mm npc <npc name>
-mm item <item name>
-mm item <number> (to choose one of the matching items - or just navigate the R# menu)
-mm loc <room name>
-mm route <number> (or just navigate the R# menu)
+/help   (List all internal commands)
+/       (Show current location and room ID)
+/loc <room name>
+/npc <npc name>
+/item <item name>
+/map [number]
+/route <number>
+/timers
+/writ [number]
+/reset  (Reset MUD terminal options)
+
 read writ (this will autocreate W# menus for delivery writs)
+
+Starting a line with // will send a single / to the MUD.
 
 Send feedback to Lesa via tell or mudmail
 
