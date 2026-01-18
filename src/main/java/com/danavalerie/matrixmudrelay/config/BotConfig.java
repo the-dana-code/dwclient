@@ -33,7 +33,12 @@ public final class BotConfig {
 
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();
-    public Map<String, CharacterTeleports> teleports = new LinkedHashMap<>();
+
+    public Map<String, CharacterConfig> characters = new LinkedHashMap<>();
+
+    /** @deprecated Use characters.teleports instead. This field is for migration. */
+    @Deprecated
+    public Map<String, CharacterTeleports> teleports;
 
     public static final class Mud {
         public String host;
@@ -67,6 +72,10 @@ public final class BotConfig {
             this.name = name;
             this.roomId = roomId;
         }
+    }
+
+    public static final class CharacterConfig {
+        public CharacterTeleports teleports = new CharacterTeleports();
     }
 
     public static final class CharacterTeleports {

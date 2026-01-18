@@ -34,17 +34,18 @@ public final class TeleportRegistry {
     private TeleportRegistry() {
     }
 
-    public static void initialize(Map<String, BotConfig.CharacterTeleports> config) {
+    public static void initialize(Map<String, BotConfig.CharacterConfig> config) {
         Map<String, CharacterTeleports> map = new HashMap<>();
         if (config != null) {
             config.forEach((name, charConfig) -> {
+                if (charConfig.teleports == null) return;
                 List<TeleportLocation> locations = new ArrayList<>();
-                if (charConfig.locations != null) {
-                    for (BotConfig.TeleportLocation loc : charConfig.locations) {
+                if (charConfig.teleports.locations != null) {
+                    for (BotConfig.TeleportLocation loc : charConfig.teleports.locations) {
                         locations.add(new TeleportLocation(loc.command, loc.roomId));
                     }
                 }
-                map.put(name.trim().toLowerCase(Locale.ROOT), new CharacterTeleports(charConfig.reliable, Collections.unmodifiableList(locations)));
+                map.put(name.trim().toLowerCase(Locale.ROOT), new CharacterTeleports(charConfig.teleports.reliable, Collections.unmodifiableList(locations)));
             });
         }
         BY_CHARACTER = Collections.unmodifiableMap(map);

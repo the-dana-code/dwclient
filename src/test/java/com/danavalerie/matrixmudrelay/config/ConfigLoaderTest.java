@@ -75,11 +75,21 @@ class ConfigLoaderTest {
         assertNotNull(cfg);
         assertEquals(1, cfg.bookmarks.size());
         assertEquals("drum_id", cfg.bookmarks.get(0).roomId);
-        
-        var lesaTeleports = cfg.teleports.get("lesa");
-        assertNotNull(lesaTeleports);
-        assertEquals(1, lesaTeleports.locations.size());
-        assertEquals("fiddleys_id", lesaTeleports.locations.get(0).roomId);
+
+        // After migration, it should be in characters map
+        var lesaConfig = cfg.characters.get("lesa");
+        assertNotNull(lesaConfig);
+        assertNotNull(lesaConfig.teleports);
+        assertEquals(1, lesaConfig.teleports.locations.size());
+        assertEquals("fiddleys_id", lesaConfig.teleports.locations.get(0).roomId);
+
+        // Old field should be null
+        assertNull(cfg.teleports);
+
+        // Verify it was saved back in the new format
+        String savedJson = Files.readString(configPath);
+        assertTrue(savedJson.contains("\"characters\":"));
+        assertTrue(savedJson.contains("\"lesa\": {"));
     }
 
     @Test

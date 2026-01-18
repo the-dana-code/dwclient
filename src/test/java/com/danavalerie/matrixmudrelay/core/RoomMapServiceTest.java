@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoomMapServiceTest {
     @BeforeAll
     public static void setup() {
-        BotConfig.CharacterTeleports lesa = new BotConfig.CharacterTeleports();
-        lesa.reliable = true;
-        lesa.locations = List.of(
+        BotConfig.CharacterConfig lesa = new BotConfig.CharacterConfig();
+        lesa.teleports.reliable = true;
+        lesa.teleports.locations = List.of(
                 new BotConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
         );
         TeleportRegistry.initialize(Map.of("lesa", lesa));

@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class ConfigLoader {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -43,7 +44,23 @@ public final class ConfigLoader {
         }
         String json = Files.readString(path);
         BotConfig cfg = GSON.fromJson(json, BotConfig.class);
+
+        boolean migrated = false;
+        if (cfg.teleports != null && !cfg.teleports.isEmpty()) {
+            for (Map.Entry<String, BotConfig.CharacterTeleports> entry : cfg.teleports.entrySet()) {
+                BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(entry.getKey(), k -> new BotConfig.CharacterConfig());
+                charCfg.teleports = entry.getValue();
+            }
+            cfg.teleports = null;
+            migrated = true;
+        }
+
         validate(cfg);
+
+        if (migrated) {
+            save(path, cfg);
+        }
+
         return cfg;
     }
 
@@ -82,10 +99,10 @@ public final class ConfigLoader {
                     }
                 }
             }
-            if (cfg.teleports != null) {
-                for (BotConfig.CharacterTeleports ct : cfg.teleports.values()) {
-                    if (ct.locations != null) {
-                        for (BotConfig.TeleportLocation tl : ct.locations) {
+            if (cfg.characters != null) {
+                for (BotConfig.CharacterConfig cc : cfg.characters.values()) {
+                    if (cc.teleports != null && cc.teleports.locations != null) {
+                        for (BotConfig.TeleportLocation tl : cc.teleports.locations) {
                             if (tl.roomId == null && tl.target != null && tl.target.length >= 3) {
                                 String id = mapService.findRoomIdByCoordinates(tl.target[0], tl.target[1], tl.target[2]);
                                 if (id != null) {
