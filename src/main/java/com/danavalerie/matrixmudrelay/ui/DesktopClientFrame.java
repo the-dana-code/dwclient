@@ -26,7 +26,7 @@ import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.TimerService;
-import com.danavalerie.matrixmudrelay.core.RoomButtonService;
+import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import java.util.regex.Pattern;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
@@ -130,7 +130,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
     private final RoomButtonBarPanel roomButtonBarPanel;
-    private final RoomButtonService roomButtonService;
+    private final RoomNotePanel roomNotePanel;
+    private final RoomNoteService roomButtonService;
     private int lastScrollValue = -1;
 
     private enum WritMenuAction {
@@ -153,9 +154,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.configPath = configPath;
         this.routesPath = configPath.resolveSibling("delivery-routes.json");
         this.routeMappings = routeMappings;
-        this.roomButtonService = new RoomButtonService(configPath.resolveSibling("room-buttons.json"));
+        this.roomButtonService = new RoomNoteService(configPath.resolveSibling("room-notes.json"));
         this.roomButtonService.populateMissingNames(this.routeMapService);
         this.roomButtonBarPanel = new RoomButtonBarPanel(roomButtonService, this::submitCommand);
+        this.roomNotePanel = new RoomNotePanel(roomButtonService);
         this.mapPanel = new MapPanel(
                 resolveMapZoomPercent(),
                 this::persistMapZoomConfig,
@@ -694,7 +696,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JSplitPane buildSplitLayout() {
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapPanel, buildMudPanel());
+        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomNotePanel);
+        mapNotesSplit.setContinuousLayout(true);
+        mapNotesSplit.setResizeWeight(0.7);
+        mapNotesSplit.setDividerSize(6);
+        mapNotesSplit.setBorder(null);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapNotesSplit, buildMudPanel());
         splitPane.setContinuousLayout(true);
         splitPane.setResizeWeight(0.25);
         splitPane.setDividerSize(6);
@@ -903,6 +911,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         SwingUtilities.invokeLater(() -> {
             mapPanel.updateCurrentRoom(roomId);
             roomButtonBarPanel.updateRoom(roomId, roomName);
+            roomNotePanel.updateRoom(roomId, roomName);
         });
     }
 
@@ -1184,6 +1193,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         updateComponentTree(getContentPane(), bg, fg);
         roomButtonBarPanel.updateTheme(bg, fg);
+        roomNotePanel.updateTheme(bg, fg);
         inputField.setCaretColor(fg);
 
         menuBar.setBackground(bg);

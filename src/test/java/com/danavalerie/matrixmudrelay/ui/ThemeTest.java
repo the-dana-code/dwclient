@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.ui;
 
-import com.danavalerie.matrixmudrelay.core.RoomButtonService;
+import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -76,9 +76,9 @@ public class ThemeTest {
 
     @Test
     public void testRoomButtonBarPanelTheme(@TempDir Path tempDir) throws Exception {
-        Path buttonsPath = tempDir.resolve("room-buttons.json");
+        Path buttonsPath = tempDir.resolve("room-notes.json");
         javax.swing.SwingUtilities.invokeAndWait(() -> {
-            RoomButtonService service = new RoomButtonService(buttonsPath);
+            RoomNoteService service = new RoomNoteService(buttonsPath);
             RoomButtonBarPanel panel = new RoomButtonBarPanel(service, cmd -> {});
             
             Color bg = Color.BLACK;
@@ -95,6 +95,22 @@ public class ThemeTest {
             assertEquals(1, panel.getComponentCount());
             assertEquals(bg, panel.getComponent(0).getBackground());
             assertEquals(fg, panel.getComponent(0).getForeground());
+        });
+    }
+
+    @Test
+    public void testRoomNotePanelTheme(@TempDir Path tempDir) throws Exception {
+        Path notesPath = tempDir.resolve("room-notes.json");
+        javax.swing.SwingUtilities.invokeAndWait(() -> {
+            RoomNoteService service = new RoomNoteService(notesPath);
+            RoomNotePanel panel = new RoomNotePanel(service);
+            
+            Color bg = Color.BLACK;
+            Color fg = Color.WHITE;
+            panel.updateTheme(bg, fg);
+            
+            assertEquals(bg, panel.getBackground());
+            assertEquals(fg, panel.getForeground());
         });
     }
 }

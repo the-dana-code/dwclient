@@ -115,8 +115,18 @@
       }
     ]
   },
+  "b87a93ae03d7e4781093215984cba0949776467b": {
+    "name": "Dione Street Bakery",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "bb97d14f936216eeb7d6457dc4c9bb514ebc0b0d": {
     "name": "Rendtnor\u0027s Jewellery Shop",
+    "notes": "restore cost \u003cjewellery\u003e\nrestore \u003cjewellery\u003e",
     "buttons": [
       {
         "name": "List Shop",

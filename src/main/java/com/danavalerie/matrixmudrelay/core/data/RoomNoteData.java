@@ -3,14 +3,21 @@ package com.danavalerie.matrixmudrelay.core.data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomButtons {
+public class RoomNoteData {
     private String name;
+    private String notes;
     private List<RoomButton> buttons = new ArrayList<>();
 
-    public RoomButtons() {}
+    public RoomNoteData() {}
 
-    public RoomButtons(String name, List<RoomButton> buttons) {
+    public RoomNoteData(String name, List<RoomButton> buttons) {
         this.name = name;
+        this.buttons = buttons != null ? new ArrayList<>(buttons) : new ArrayList<>();
+    }
+
+    public RoomNoteData(String name, String notes, List<RoomButton> buttons) {
+        this.name = name;
+        this.notes = notes;
         this.buttons = buttons != null ? new ArrayList<>(buttons) : new ArrayList<>();
     }
 
@@ -20,6 +27,14 @@ public class RoomButtons {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public List<RoomButton> getButtons() {

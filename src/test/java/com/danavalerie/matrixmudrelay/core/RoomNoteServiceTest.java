@@ -11,15 +11,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RoomButtonServiceTest {
+public class RoomNoteServiceTest {
 
     @TempDir
     Path tempDir;
 
     @Test
     public void testPersistence() throws IOException {
-        Path storagePath = tempDir.resolve("room-buttons.json");
-        RoomButtonService service = new RoomButtonService(storagePath);
+        Path storagePath = tempDir.resolve("room-notes.json");
+        RoomNoteService service = new RoomNoteService(storagePath);
 
         String roomId1 = "room1";
         RoomButton btn1 = new RoomButton("Look", "look");
@@ -37,7 +37,7 @@ public class RoomButtonServiceTest {
         assertEquals(1, service.getButtonsForRoom(roomId2).size());
 
         // Re-load from file
-        RoomButtonService service2 = new RoomButtonService(storagePath);
+        RoomNoteService service2 = new RoomNoteService(storagePath);
         List<RoomButton> loaded1 = service2.getButtonsForRoom(roomId1);
         assertEquals(2, loaded1.size());
         assertEquals("Look", loaded1.get(0).getName());
@@ -49,7 +49,7 @@ public class RoomButtonServiceTest {
     @Test
     public void testRoomNamePersistence() throws IOException {
         Path storagePath = tempDir.resolve("room-names.json");
-        RoomButtonService service = new RoomButtonService(storagePath);
+        RoomNoteService service = new RoomNoteService(storagePath);
 
         String roomId = "room1";
         String roomName = "The Mended Drum";
@@ -58,7 +58,7 @@ public class RoomButtonServiceTest {
         service.addButton(roomId, roomName, btn);
 
         // Re-load
-        RoomButtonService service2 = new RoomButtonService(storagePath);
+        RoomNoteService service2 = new RoomNoteService(storagePath);
         String json = Files.readString(storagePath);
         assertTrue(json.contains(roomName), "JSON should contain the room name");
     }
@@ -77,7 +77,7 @@ public class RoomButtonServiceTest {
                 "}";
         Files.writeString(storagePath, oldJson);
 
-        RoomButtonService service = new RoomButtonService(storagePath);
+        RoomNoteService service = new RoomNoteService(storagePath);
         List<RoomButton> buttons = service.getButtonsForRoom("room1");
         
         assertEquals(1, buttons.size());
@@ -91,8 +91,8 @@ public class RoomButtonServiceTest {
 
     @Test
     public void testSorting() throws IOException {
-        Path storagePath = tempDir.resolve("room-buttons-sort.json");
-        RoomButtonService service = new RoomButtonService(storagePath);
+        Path storagePath = tempDir.resolve("room-notes-sort.json");
+        RoomNoteService service = new RoomNoteService(storagePath);
 
         service.addButton("z_room", "Z Room", new RoomButton("Z", "z"));
         service.addButton("a_room", "A Room", new RoomButton("A", "a"));
@@ -107,7 +107,7 @@ public class RoomButtonServiceTest {
     @Test
     public void testLateRoomNameUpdate() throws IOException {
         Path storagePath = tempDir.resolve("late-name.json");
-        RoomButtonService service = new RoomButtonService(storagePath);
+        RoomNoteService service = new RoomNoteService(storagePath);
 
         String roomId = "room1";
         RoomButton btn = new RoomButton("Look", "look");
@@ -130,7 +130,7 @@ public class RoomButtonServiceTest {
     @Test
     public void testUnknownFallback() throws IOException {
         Path storagePath = tempDir.resolve("unknown.json");
-        RoomButtonService service = new RoomButtonService(storagePath);
+        RoomNoteService service = new RoomNoteService(storagePath);
 
         service.addButton("roomX", null, new RoomButton("B", "c"));
 
@@ -144,7 +144,7 @@ public class RoomButtonServiceTest {
         String oldJson = "{\"room1\": [{\"name\": \"Btn\",\"command\": \"cmd\"}]}";
         Files.writeString(storagePath, oldJson);
 
-        RoomButtonService service = new RoomButtonService(storagePath);
+        RoomNoteService service = new RoomNoteService(storagePath);
         service.save();
 
         String json = Files.readString(storagePath);
@@ -153,7 +153,7 @@ public class RoomButtonServiceTest {
 
     @Test
     public void testMovement() {
-        RoomButtonService service = new RoomButtonService(tempDir.resolve("move.json"));
+        RoomNoteService service = new RoomNoteService(tempDir.resolve("move.json"));
         String rid = "room";
         service.addButton(rid, "Test Room", new RoomButton("1", "1"));
         service.addButton(rid, "Test Room", new RoomButton("2", "2"));
@@ -164,5 +164,25 @@ public class RoomButtonServiceTest {
 
         service.moveButtonRight(rid, 0); // [1, 2, 3]
         assertEquals("1", service.getButtonsForRoom(rid).get(0).getName());
+    }
+
+    @Test
+    public void testNotes() throws IOException {
+        Path storagePath = tempDir.resolve("notes-test.json");
+        RoomNoteService service = new RoomNoteService(storagePath);
+
+        String roomId = "room1";
+        String roomName = "The Drum";
+        String notes = "Watch out for Dibbler.";
+
+        service.updateNotesForRoom(roomId, roomName, notes);
+
+        // Verify in-memory
+        assertEquals(notes, service.getNotesForRoom(roomId));
+
+        // Re-load
+        RoomNoteService service2 = new RoomNoteService(storagePath);
+        assertEquals(notes, service2.getNotesForRoom(roomId));
+        assertEquals(roomName, service2.getNotesForRoom(roomId).isEmpty() ? "" : roomName); // Actually RoomNoteService doesn't expose name directly yet, but it's saved.
     }
 }

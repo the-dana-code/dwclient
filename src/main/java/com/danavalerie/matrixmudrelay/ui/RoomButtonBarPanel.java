@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
-import com.danavalerie.matrixmudrelay.core.RoomButtonService;
+import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 
 import javax.swing.*;
@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class RoomButtonBarPanel extends JPanel {
-    private final RoomButtonService roomButtonService;
+    private final RoomNoteService roomButtonService;
     private final Consumer<String> commandSubmitter;
     private String currentRoomId;
     private String currentRoomName;
     private Color currentBg;
     private Color currentFg;
 
-    public RoomButtonBarPanel(RoomButtonService roomButtonService, Consumer<String> commandSubmitter) {
+    public RoomButtonBarPanel(RoomNoteService roomButtonService, Consumer<String> commandSubmitter) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.roomButtonService = roomButtonService;
         this.commandSubmitter = commandSubmitter;
