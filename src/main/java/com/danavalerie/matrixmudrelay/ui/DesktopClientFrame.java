@@ -696,7 +696,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JSplitPane buildSplitLayout() {
-        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomNotePanel);
+        JPanel leftBottomPanel = new JPanel(new BorderLayout());
+        leftBottomPanel.add(roomNotePanel, BorderLayout.CENTER);
+        leftBottomPanel.add(roomButtonBarPanel, BorderLayout.SOUTH);
+
+        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, leftBottomPanel);
         mapNotesSplit.setContinuousLayout(true);
         mapNotesSplit.setResizeWeight(0.7);
         mapNotesSplit.setDividerSize(6);
@@ -839,7 +843,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         
         JPanel bottomMudPanel = new JPanel(new BorderLayout(6, 0));
         bottomMudPanel.add(inputPanel, BorderLayout.NORTH);
-        bottomMudPanel.add(roomButtonBarPanel, BorderLayout.SOUTH);
         
         panel.add(bottomMudPanel, BorderLayout.SOUTH);
         return panel;

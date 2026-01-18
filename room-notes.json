@@ -26,6 +26,15 @@
       }
     ]
   },
+  "0e4dac907042b0bb07e57725c221ae1c9e755ba9": {
+    "name": "bookstore",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "0ffffdbc050cb424566fae5e4ca0cf5d2782b0a2": {
     "name": "Plaza Tobacconist\u0027s",
     "buttons": [
@@ -62,8 +71,35 @@
       }
     ]
   },
+  "528b8255c811cb593ab80cf037d1b69ab5ae4b76": {
+    "name": "job shop",
+    "buttons": [
+      {
+        "name": "Read Sign",
+        "command": "read sign"
+      }
+    ]
+  },
   "53ad9ac8b582dbb423a955a7dd395ce111636388": {
     "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "57981abe779a28f1e8b003732eb35430854670e4": {
+    "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "6a23a422360bfbba06738708d2fa10e400c282f7": {
+    "name": "Bologna shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -107,20 +143,52 @@
       }
     ]
   },
+  "97c0216ddba02e73e8d44bbfe7277e1820b4845e": {
+    "name": "wine lounge",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "a5846b0acd26afec87c2dc20daa7ccadecc94cff": {
     "name": "Job Market centre",
     "buttons": [
       {
-        "name": "List Jobs",
-        "command": "list"
+        "name": "Resign Job",
+        "command": "resign job"
       },
       {
         "name": "Collect",
         "command": "collect"
       },
       {
-        "name": "Resign Job",
-        "command": "resign job"
+        "name": "List Jobs",
+        "command": "list"
+      }
+    ]
+  },
+  "a8d6faa4e0788be811bfaa11f40f95373a304ba0": {
+    "name": "Mrs Cosmopilite\u0027s Clothing House",
+    "notes": "You can have custom clothing made here.\n\nSome commands:\n\nlist\norder \u003cclothing type\u003e\ncollect",
+    "buttons": [
+      {
+        "name": "List",
+        "command": "list"
+      },
+      {
+        "name": "Collect",
+        "command": "collect"
+      }
+    ]
+  },
+  "aa771f716e0adf0125bea44c03ee175ebb7e7d7f": {
+    "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Rates",
+        "command": "list rates on changer"
       }
     ]
   },
@@ -143,8 +211,35 @@
       }
     ]
   },
+  "c2ed14f69e331ba383dc3e62de34c0542a948e7c": {
+    "name": "Warriors\u0027 Guild cafe",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "c86e7e36f138ae6cfe05c6f62aba2b4c88deb596": {
     "name": "Job Market\u0027s Clothing Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "d2265a457a2d8adec9d30100fa6302e8477f045e": {
+    "name": "branch of McSweeney\u0027s Restaurant",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "d864bb147ebbe312510642504ae99d37d7972e06": {
+    "name": "[player shop]",
     "buttons": [
       {
         "name": "List Shop",
@@ -167,6 +262,24 @@
   },
   "de58e8bd3157654fdbc22b37e44c5c8c88b82506": {
     "name": "Filigree Street General Store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "e932fb2c675d244559a737bdc1745378b8bea729": {
+    "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "e946896bb5407b99f7a58bf4c007a403af7877c8": {
+    "name": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids",
     "buttons": [
       {
         "name": "List Shop",

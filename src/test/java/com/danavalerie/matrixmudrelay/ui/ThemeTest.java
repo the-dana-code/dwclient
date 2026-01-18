@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThemeTest {
 
@@ -87,6 +88,9 @@ public class ThemeTest {
             
             assertEquals(bg, panel.getBackground());
             assertEquals(fg, panel.getForeground());
+            
+            assertTrue(panel.getBorder() instanceof javax.swing.border.LineBorder);
+            assertEquals(fg, ((javax.swing.border.LineBorder)panel.getBorder()).getLineColor());
             
             // Add a button and see if it has the theme
             service.addButton("room1", "Room 1", new RoomButton("Btn 1", "cmd 1"));

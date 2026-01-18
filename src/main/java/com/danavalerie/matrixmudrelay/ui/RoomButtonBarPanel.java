@@ -5,6 +5,8 @@ import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,10 +22,17 @@ public class RoomButtonBarPanel extends JPanel {
     private Color currentFg;
 
     public RoomButtonBarPanel(RoomNoteService roomButtonService, Consumer<String> commandSubmitter) {
-        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        super(new WrapLayout(FlowLayout.RIGHT, 0, 0));
         this.roomButtonService = roomButtonService;
         this.commandSubmitter = commandSubmitter;
-        this.setBorder(null);
+        this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                revalidate();
+            }
+        });
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -37,18 +46,11 @@ public class RoomButtonBarPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension ps = super.getPreferredSize();
-        JButton dummy = new JButton("X");
-        if (getFont() != null) {
-            dummy.setFont(getFont());
+        Dimension d = super.getPreferredSize();
+        if (d.height < 24) {
+            d.height = 24;
         }
-        int buttonHeight = dummy.getPreferredSize().height;
-        return new Dimension(ps.width, Math.max(ps.height, buttonHeight));
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-        return getPreferredSize();
+        return d;
     }
 
     public void updateRoom(String roomId, String roomName) {
@@ -254,6 +256,7 @@ public class RoomButtonBarPanel extends JPanel {
         this.currentFg = fg;
         this.setBackground(bg);
         this.setForeground(fg);
+        this.setBorder(BorderFactory.createLineBorder(fg));
         for (Component c : getComponents()) {
             if (c instanceof JButton) {
                 c.setBackground(bg);
