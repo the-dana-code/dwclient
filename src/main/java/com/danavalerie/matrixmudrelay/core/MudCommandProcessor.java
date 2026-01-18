@@ -125,11 +125,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
 
-        if (lower.equals("pw")) {
-            handleInternalCommand("password");
-            return;
-        }
-
         if (lower.equals("mm") || lower.startsWith("mm ")) {
             output.appendSystem("Note: Internal commands now use slashes (e.g., /room) instead of 'mm'. Type /help for help.");
             return;
@@ -368,8 +363,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         sb.append("  /route <number> - Calculate speedwalk to a search result\n");
         sb.append("  /timers         - Show active timers for current character\n");
         sb.append("  /writ [number]  - Show tracked writ requirements or specific writ details\n");
-        sb.append("  /password       - Send the configured password\n");
-        sb.append("  /tp / /notp     - Enable/disable teleport-assisted routing\n");
+        sb.append("  /pw             - Send the configured password\n");
+        sb.append("  /tp             - Enable/disable teleport-assisted routing\n");
+        sb.append("  /notp           - Disable teleport-assisted routing\n");
         sb.append("  /reset          - Reset MUD terminal options\n");
         sb.append("\nStarting a line with // will send a single / to the MUD.");
         output.appendSystem(sb.toString());
