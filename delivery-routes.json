@@ -1698,5 +1698,25 @@
       791
     ],
     "commands": []
+  },
+  {
+    "npc": "Maria",
+    "location": "the opera poster shop on Phedre Road",
+    "target": [
+      1,
+      648,
+      497
+    ],
+    "commands": []
+  },
+  {
+    "npc": "Rebecca Palm",
+    "location": "Rebecca Palm\u0027s Clothing in the Magic Emporium",
+    "target": [
+      3,
+      446,
+      395
+    ],
+    "commands": []
   }
 ]
