@@ -5,6 +5,7 @@ import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -178,6 +179,11 @@ public class RoomButtonBarPanel extends JPanel {
         gbc.gridx = 0; gbc.gridy = 2;
         gbc.gridwidth = 2;
         dialog.add(btnPanel, gbc);
+        
+        dialog.getRootPane().setDefaultButton(saveBtn);
+        dialog.getRootPane().registerKeyboardAction(e -> cancelBtn.doClick(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         dialog.pack();
         dialog.setLocationRelativeTo(parentWindow);

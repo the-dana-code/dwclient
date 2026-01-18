@@ -1,4 +1,85 @@
 {
+  "047d2c350046d2613c5adecd189edaf639ddafcb": {
+    "name": "Krazzander\u0027s Magic Tricks",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "0564fb70ef79e7cd286b24e158c3838dfdb5d964": {
+    "name": "roof of the Mended Drum",
+    "buttons": [
+      {
+        "name": "Climb Down",
+        "command": "climb down"
+      }
+    ]
+  },
+  "2381cbfa44760a69fea25b5ee4a52499453ff625": {
+    "name": "whitewashed room",
+    "buttons": [
+      {
+        "name": "Pull Lever",
+        "command": "pull lever"
+      }
+    ]
+  },
+  "4b11616f93c94e3c766bb5ad9cba3b61dcc73979": {
+    "name": "north end of Short Street outside the Mended Drum",
+    "buttons": [
+      {
+        "name": "Climb Wall",
+        "command": "climb wall"
+      }
+    ]
+  },
+  "53ad9ac8b582dbb423a955a7dd395ce111636388": {
+    "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "6be2a2f4c4d9e01fcdf38498a32a92ea5f33fa51": {
+    "name": "Job Market\u0027s Equipment Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "73b97bddee091fd07ae5b14cccdb187b4ca11925": {
+    "name": "Corner Cafe of the Job Market",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d": {
+    "name": "smithy",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "964ea3c5f971d538232e683612cd41900c232bdd": {
+    "name": "bar of the Mended Drum",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "a5846b0acd26afec87c2dc20daa7ccadecc94cff": {
     "name": "Job Market centre",
     "buttons": [
@@ -13,6 +94,46 @@
       {
         "name": "Resign Job",
         "command": "resign job"
+      }
+    ]
+  },
+  "c86e7e36f138ae6cfe05c6f62aba2b4c88deb596": {
+    "name": "Job Market\u0027s Clothing Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "dddeea620f12f63658bf719cb6cc87519639c5a4": {
+    "name": "front wall of the Mended Drum",
+    "buttons": [
+      {
+        "name": "Climb Up",
+        "command": "climb up"
+      },
+      {
+        "name": "Climb Down",
+        "command": "climb down"
+      }
+    ]
+  },
+  "de58e8bd3157654fdbc22b37e44c5c8c88b82506": {
+    "name": "Filigree Street General Store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "eaa8715cdf2b779c63768077765b9649cbf11350": {
+    "name": "All Jolson\u0027s Restaurant",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
       }
     ]
   }
