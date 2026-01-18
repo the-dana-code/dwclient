@@ -26,6 +26,15 @@
       }
     ]
   },
+  "0ffffdbc050cb424566fae5e4ca0cf5d2782b0a2": {
+    "name": "Plaza Tobacconist\u0027s",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2381cbfa44760a69fea25b5ee4a52499453ff625": {
     "name": "whitewashed room",
     "buttons": [
