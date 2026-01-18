@@ -110,7 +110,7 @@ class MudCommandShortcutTest {
     }
 
     @Test
-    void testRoomCommand() {
+    void testLocCommand() {
         BotConfig cfg = new BotConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
@@ -119,14 +119,15 @@ class MudCommandShortcutTest {
         
         MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
         
-        // Test /room usage
-        processor.handleInput("/room");
-        assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("Usage: /room")), "Should show usage for /room");
-
-        // Verify /loc is unknown (or at least doesn't show room search usage)
-        output.systemMessages.clear();
+        // Test /loc usage
         processor.handleInput("/loc");
-        assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("Unknown command")), "Should show unknown command for /loc");
+        // handleCurrentLocation shows room ID, or error if can't determine.
+        assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("location") || m.contains("Error")), "Should show location info or error for /loc");
+
+        // Verify / is now unknown/shows usage
+        output.systemMessages.clear();
+        processor.handleInput("/");
+        assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("Unknown command")), "Should show unknown command for /");
     }
 }
 

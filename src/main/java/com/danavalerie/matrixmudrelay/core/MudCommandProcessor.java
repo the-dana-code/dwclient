@@ -256,12 +256,16 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private void handleInternalCommand(String input) {
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
-            handleCurrentLocation();
+            output.appendSystem("Unknown command. Type /help for help.");
             return;
         }
         String[] parts = trimmed.split("\\s+", 2);
         String subcommand = parts[0].toLowerCase(Locale.ROOT);
         String query = parts.length > 1 ? parts[1].trim() : "";
+        if ("loc".equals(subcommand)) {
+            handleCurrentLocation();
+            return;
+        }
         if ("help".equals(subcommand)) {
             handleHelp();
             return;
@@ -351,7 +355,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
     private void handleHelp() {
         StringBuilder sb = new StringBuilder("Available slash commands:\n");
-        sb.append("  /               - Show current location and room ID\n");
+        sb.append("  /loc            - Show current location and room ID\n");
         sb.append("  /help           - Show this help message\n");
         sb.append("  /connect        - Connect to the MUD\n");
         sb.append("  /disconnect     - Disconnect from the MUD\n");
