@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 public class RoomNotePanel extends JPanel {
     private final RoomNoteService roomNoteService;
     private final JLabel roomNameLabel;
+    private final JPanel northPanel;
     private final JTextArea notesArea;
     private final JScrollPane scrollPane;
     private String currentRoomId;
@@ -41,6 +42,7 @@ public class RoomNotePanel extends JPanel {
 
         roomNameLabel = new JLabel(" ");
         roomNameLabel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+        roomNameLabel.setMinimumSize(new Dimension(0, 0));
 
         notesArea = new JTextArea();
         notesArea.setEditable(false);
@@ -50,7 +52,11 @@ public class RoomNotePanel extends JPanel {
         scrollPane = new JScrollPane(notesArea);
         scrollPane.setBorder(null);
 
-        add(roomNameLabel, BorderLayout.NORTH);
+        northPanel = new JPanel(new BorderLayout());
+        northPanel.setOpaque(false);
+        northPanel.add(roomNameLabel, BorderLayout.CENTER);
+
+        add(northPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         notesArea.addMouseListener(new MouseAdapter() {
@@ -133,6 +139,7 @@ public class RoomNotePanel extends JPanel {
         roomNameLabel.setOpaque(true);
         roomNameLabel.setBackground(bg);
         roomNameLabel.setForeground(fg);
+        northPanel.setBackground(bg);
         notesArea.setBackground(bg);
         notesArea.setForeground(fg);
         notesArea.setCaretColor(fg);
