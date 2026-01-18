@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ConfigLoader {
@@ -64,6 +65,67 @@ public final class ConfigLoader {
     public static void save(Path path, BotConfig cfg) throws IOException {
         String json = GSON.toJson(cfg);
         Files.writeString(path, json);
+    }
+
+    public static boolean convertCoordinatesToRoomIds(BotConfig cfg, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
+        boolean changed = false;
+        try {
+            if (cfg.bookmarks != null) {
+                for (BotConfig.Bookmark b : cfg.bookmarks) {
+                    if (b.roomId == null && b.target != null && b.target.length >= 3) {
+                        String id = mapService.findRoomIdByCoordinates(b.target[0], b.target[1], b.target[2]);
+                        if (id != null) {
+                            b.roomId = id;
+                            b.target = null;
+                            changed = true;
+                        }
+                    }
+                }
+            }
+            if (cfg.teleports != null) {
+                for (BotConfig.CharacterTeleports ct : cfg.teleports.values()) {
+                    if (ct.locations != null) {
+                        for (BotConfig.TeleportLocation tl : ct.locations) {
+                            if (tl.roomId == null && tl.target != null && tl.target.length >= 3) {
+                                String id = mapService.findRoomIdByCoordinates(tl.target[0], tl.target[1], tl.target[2]);
+                                if (id != null) {
+                                    tl.roomId = id;
+                                    tl.target = null;
+                                    changed = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Error during config coordinate conversion: " + e.getMessage());
+        }
+        return changed;
+    }
+
+    public static DeliveryRouteMappings convertRoutesToRoomIds(DeliveryRouteMappings routes, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
+        boolean changed = false;
+        List<DeliveryRouteMappings.RouteEntry> newEntries = new ArrayList<>();
+        try {
+            if (routes.routes() != null) {
+                for (DeliveryRouteMappings.RouteEntry entry : routes.routes()) {
+                    if (entry.roomId() == null && entry.target() != null && entry.target().size() >= 3) {
+                        String id = mapService.findRoomIdByCoordinates(entry.target().get(0), entry.target().get(1), entry.target().get(2));
+                        if (id != null) {
+                            newEntries.add(new DeliveryRouteMappings.RouteEntry(entry.npc(), entry.location(), id, null, entry.commands()));
+                            changed = true;
+                            continue;
+                        }
+                    }
+                    newEntries.add(entry);
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Error during routes coordinate conversion: " + e.getMessage());
+            return routes;
+        }
+        return changed ? new DeliveryRouteMappings(newEntries) : routes;
     }
 
     private static void validate(BotConfig cfg) {

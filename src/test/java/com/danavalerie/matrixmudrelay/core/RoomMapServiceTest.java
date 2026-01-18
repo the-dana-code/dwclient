@@ -33,7 +33,7 @@ public class RoomMapServiceTest {
         BotConfig.CharacterTeleports lesa = new BotConfig.CharacterTeleports();
         lesa.reliable = true;
         lesa.locations = List.of(
-                new BotConfig.TeleportLocation("tp blackglass", 46, 374, 257)
+                new BotConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
         );
         TeleportRegistry.initialize(Map.of("lesa", lesa));
     }

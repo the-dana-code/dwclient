@@ -32,6 +32,20 @@ public final class Main {
         Path routesPath = configPath.resolveSibling("delivery-routes.json");
         DeliveryRouteMappings routes = ConfigLoader.loadRoutes(routesPath);
 
+        com.danavalerie.matrixmudrelay.core.RoomMapService mapService =
+                new com.danavalerie.matrixmudrelay.core.RoomMapService("database.db");
+
+        boolean cfgChanged = ConfigLoader.convertCoordinatesToRoomIds(cfg, mapService);
+        if (cfgChanged) {
+            ConfigLoader.save(configPath, cfg);
+        }
+
+        DeliveryRouteMappings convertedRoutes = ConfigLoader.convertRoutesToRoomIds(routes, mapService);
+        if (convertedRoutes != routes) {
+            ConfigLoader.saveRoutes(routesPath, convertedRoutes);
+            routes = convertedRoutes;
+        }
+
         TranscriptLogger transcript = TranscriptLogger.create(cfg.transcript);
         DesktopClientFrame.launch(cfg, configPath, routes, transcript);
     }

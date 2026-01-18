@@ -247,7 +247,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private void handleMm(String body) {
         String remainder = body.length() > 3 ? body.substring(3).trim() : "";
         if (remainder.isBlank()) {
-            handleCurrentRoomCoordinates();
+            handleCurrentLocation();
             return;
         }
         String[] parts = remainder.split("\\s+", 2);
@@ -332,7 +332,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         output.appendSystem("Usage: mm loc <room name fragment>");
     }
 
-    private void handleCurrentRoomCoordinates() {
+    private void handleCurrentLocation() {
         String roomId = mud.getCurrentRoomSnapshot().roomId();
         if (roomId == null || roomId.isBlank()) {
             output.appendSystem("Error: Can't determine your location.");
@@ -345,13 +345,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                 out.append(location.roomShort()).append(" - ");
             }
             out.append(mapService.getMapDisplayName(location.mapId()))
-                    .append(" [")
-                    .append(location.mapId())
-                    .append(", ")
-                    .append(location.xpos())
-                    .append(", ")
-                    .append(location.ypos())
-                    .append("]");
+                    .append(" ")
+                    .append(location.roomId());
             output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
             output.appendSystem("Error: " + e.getMessage());
@@ -762,10 +757,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
     }
 
-    public void speedwalkTo(int mapId, int x, int y) {
+    public void speedwalkTo(String roomId) {
         background.submit(() -> {
             try {
-                performSpeedwalk(mapId, x, y);
+                performSpeedwalk(roomId);
             } catch (Exception e) {
                 log.warn("speedwalk failed", e);
                 output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
@@ -773,14 +768,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         });
     }
 
-    public void speedwalkToThenCommand(int mapId, int x, int y, String command) {
-        speedwalkToThenCommands(mapId, x, y, List.of(command));
+    public void speedwalkToThenCommand(String roomId, String command) {
+        speedwalkToThenCommands(roomId, List.of(command));
     }
 
-    public void speedwalkToThenCommands(int mapId, int x, int y, List<String> commands) {
+    public void speedwalkToThenCommands(String roomId, List<String> commands) {
         background.submit(() -> {
             try {
-                performSpeedwalk(mapId, x, y);
+                performSpeedwalk(roomId);
             } catch (Exception e) {
                 log.warn("speedwalk failed", e);
                 output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
@@ -807,7 +802,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
     }
 
-    private void performSpeedwalk(int mapId, int x, int y) throws Exception {
+    private void performSpeedwalk(String targetRoomId) throws Exception {
         if (!mud.isConnected()) {
             output.appendSystem("Error: MUD is disconnected. Send `mm connect` first.");
             return;
@@ -818,9 +813,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
 
-        String targetRoomId = mapService.findRoomIdByCoordinates(mapId, x, y);
-        if (targetRoomId == null) {
-            output.appendSystem("Error: Target room not found at [" + mapId + ", " + x + ", " + y + "]");
+        if (targetRoomId == null || targetRoomId.isBlank()) {
+            output.appendSystem("Error: Target room ID is missing.");
             return;
         }
 
@@ -837,7 +831,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             String aliasName = "LesaClientSpeedwalk";
             String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
             sendToMud(List.of(aliasCommand, aliasName));
-            output.appendSystem("Speedwalking to room at [" + mapId + ", " + x + ", " + y + "] (" + exits.size() + " steps)");
+            output.appendSystem("Speedwalking to room " + targetRoomId + " (" + exits.size() + " steps)");
         }
     }
 

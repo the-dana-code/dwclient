@@ -41,7 +41,7 @@ public final class TeleportRegistry {
                 List<TeleportLocation> locations = new ArrayList<>();
                 if (charConfig.locations != null) {
                     for (BotConfig.TeleportLocation loc : charConfig.locations) {
-                        locations.add(new TeleportLocation(loc.command, loc.target[0], loc.target[1], loc.target[2]));
+                        locations.add(new TeleportLocation(loc.command, loc.roomId));
                     }
                 }
                 map.put(name.trim().toLowerCase(Locale.ROOT), new CharacterTeleports(charConfig.reliable, Collections.unmodifiableList(locations)));
@@ -61,7 +61,7 @@ public final class TeleportRegistry {
     public record CharacterTeleports(boolean reliable, List<TeleportLocation> teleports) {
     }
 
-    public record TeleportLocation(String command, int mapId, int x, int y) {
+    public record TeleportLocation(String command, String roomId) {
     }
 }
 

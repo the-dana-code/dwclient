@@ -59,12 +59,13 @@ public final class BotConfig {
 
     public static final class Bookmark {
         public String name;
+        public String roomId;
         public int[] target;
 
         public Bookmark() {}
-        public Bookmark(String name, int mapId, int x, int y) {
+        public Bookmark(String name, String roomId) {
             this.name = name;
-            this.target = new int[] { mapId, x, y };
+            this.roomId = roomId;
         }
     }
 
@@ -75,12 +76,13 @@ public final class BotConfig {
 
     public static final class TeleportLocation {
         public String command;
+        public String roomId;
         public int[] target;
 
         public TeleportLocation() {}
-        public TeleportLocation(String command, int mapId, int x, int y) {
+        public TeleportLocation(String command, String roomId) {
             this.command = command;
-            this.target = new int[] { mapId, x, y };
+            this.roomId = roomId;
         }
     }
 }

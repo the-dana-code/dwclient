@@ -638,24 +638,14 @@ public class RoomMapService {
                                                     List<TeleportRegistry.TeleportLocation> teleportsToResolve)
             throws SQLException {
         List<ResolvedTeleport> teleports = new ArrayList<>();
-        String sql = "select room_id from rooms where map_id = ? and xpos = ? and ypos = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (TeleportRegistry.TeleportLocation teleport : teleportsToResolve) {
-                stmt.setInt(1, teleport.mapId());
-                stmt.setInt(2, teleport.x());
-                stmt.setInt(3, teleport.y());
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (!rs.next()) {
-                        continue;
-                    }
-                    String roomId = rs.getString("room_id");
-                    RoomRecord room = getRoomCached(conn, roomId, cache);
-                    if (room == null) {
-                        continue;
-                    }
-                    teleports.add(new ResolvedTeleport(teleport.command(), roomId, room));
-                }
+        for (TeleportRegistry.TeleportLocation teleport : teleportsToResolve) {
+            String roomId = teleport.roomId();
+            if (roomId == null) continue;
+            RoomRecord room = getRoomCached(conn, roomId, cache);
+            if (room == null) {
+                continue;
             }
+            teleports.add(new ResolvedTeleport(teleport.command(), roomId, room));
         }
         return teleports;
     }

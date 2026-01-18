@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConfigLoaderTest {
 
     @Test
-    void loadRoutesWithArrayTarget(@TempDir Path tempDir) throws Exception {
+    void loadRoutesWithRoomId(@TempDir Path tempDir) throws Exception {
         Path routesPath = tempDir.resolve("delivery-routes.json");
         String json = """
             [
               {
                 "npc": "Mardi",
                 "location": "Masqueparade on Phedre Road",
-                "target": [7, 328, 68]
+                "roomId": "mardi_room_id"
               }
             ]
             """;
@@ -47,25 +47,23 @@ class ConfigLoaderTest {
         
         var route = mappings.findRoutePlan("Mardi", "Masqueparade on Phedre Road");
         assertTrue(route.isPresent());
-        assertEquals(7, route.get().target().mapId());
-        assertEquals(328, route.get().target().x());
-        assertEquals(68, route.get().target().y());
+        assertEquals("mardi_room_id", route.get().target().roomId());
     }
 
     @Test
-    void loadConfigWithArrayTarget(@TempDir Path tempDir) throws Exception {
+    void loadConfigWithRoomId(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
         String json = """
             {
               "mud": { "host": "localhost", "port": 4242 },
               "bookmarks": [
-                { "name": "Mended Drum", "target": [1, 718, 802] }
+                { "name": "Mended Drum", "roomId": "drum_id" }
               ],
               "teleports": {
                 "lesa": {
                   "reliable": true,
                   "locations": [
-                    { "command": "tp am-fiddleys", "target": [1, 774, 323] }
+                    { "command": "tp am-fiddleys", "roomId": "fiddleys_id" }
                   ]
                 }
               }
@@ -76,12 +74,12 @@ class ConfigLoaderTest {
         BotConfig cfg = ConfigLoader.load(configPath);
         assertNotNull(cfg);
         assertEquals(1, cfg.bookmarks.size());
-        assertArrayEquals(new int[]{1, 718, 802}, cfg.bookmarks.get(0).target);
+        assertEquals("drum_id", cfg.bookmarks.get(0).roomId);
         
         var lesaTeleports = cfg.teleports.get("lesa");
         assertNotNull(lesaTeleports);
         assertEquals(1, lesaTeleports.locations.size());
-        assertArrayEquals(new int[]{1, 774, 323}, lesaTeleports.locations.get(0).target);
+        assertEquals("fiddleys_id", lesaTeleports.locations.get(0).roomId);
     }
 
     @Test

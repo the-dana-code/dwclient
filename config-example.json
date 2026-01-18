@@ -24,43 +24,23 @@
   "bookmarks": [
     {
       "name": "Mended Drum",
-      "target": [
-        1,
-        718,
-        802
-      ]
+      "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
     },
     {
       "name": "Job Market",
-      "target": [
-        1,
-        699,
-        905
-      ]
+      "roomId": "a5846b0acd26afec87c2dc20daa7ccadecc94cff"
     },
     {
       "name": "Bologna shop",
-      "target": [
-        1,
-        648,
-        897
-      ]
+      "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7"
     },
     {
-      "name": "Gennie Applebottom's (Ankh-Morpork)",
-      "target": [
-        1,
-        849,
-        558
-      ]
+      "name": "Gennie Applebottom\u0027s (Ankh-Morpork)",
+      "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
     },
     {
       "name": "Granny Weatherwax (Bad Ass)",
-      "target": [
-        38,
-        1340,
-        182
-      ]
+      "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
     }
   ],
   "teleports": {
@@ -69,435 +49,219 @@
       "locations": [
         {
           "command": "tp am-fiddleys-music",
-          "target": [
-            1,
-            774,
-            323
-          ]
+          "roomId": "ca679a04ebf851ef96d9ee9c42429e4d943909be"
         },
         {
           "command": "tp am-milords",
-          "target": [
-            1,
-            1082,
-            298
-          ]
+          "roomId": "f653670a6ee9e7868919a5b6b15ce7148acb16d0"
         },
         {
           "command": "tp am-pishe",
-          "target": [
-            1,
-            578,
-            480
-          ]
+          "roomId": "a6bfcd86381816a351d3ca14221aa6fce511b5d9"
         },
         {
           "command": "tp am-rimwards-gate",
-          "target": [
-            1,
-            452,
-            200
-          ]
+          "roomId": "606154467ffc43ee165c891889bb597925f7588d"
         },
         {
           "command": "tp badass",
-          "target": [
-            38,
-            1423,
-            224
-          ]
+          "roomId": "1a146e63d6e3a52afca87b52f074688342a5f974"
         },
         {
           "command": "tp balance",
-          "target": [
-            40,
-            269,
-            135
-          ]
+          "roomId": "375905c93d0b436477125681c2282feeef4232cc"
         },
         {
           "command": "tp banditcamp",
-          "target": [
-            38,
-            309,
-            237
-          ]
+          "roomId": "89af9ca7d2be71875cd11eed35e49b2b99d55cac"
         },
         {
           "command": "tp barbariancamp-summer",
-          "target": [
-            38,
-            2125,
-            103
-          ]
+          "roomId": "0252ca10d1535e5384ec9890ebe8d2729f18d914"
         },
         {
           "command": "tp barbariancamp-winter",
-          "target": [
-            46,
-            1737,
-            1063
-          ]
+          "roomId": "8776b0c4669c4710590c2a6bd7769e2e790da7df"
         },
         {
           "command": "tp bi",
-          "target": [
-            21,
-            105,
-            73
-          ]
+          "roomId": "ef740e3f6cb0aec56ba6f4c71620cb817b0bb1f0"
         },
         {
           "command": "tp blackglass",
-          "target": [
-            46,
-            374,
-            257
-          ]
+          "roomId": "087e9ce0a29cb5e1885352a7965d744bf398dfaf"
         },
         {
           "command": "tp bleak",
-          "target": [
-            45,
-            1213,
-            260
-          ]
+          "roomId": "153638d11334e4e573fc0a6dc8fd9efc2ed1627d"
         },
         {
           "command": "tp bp",
-          "target": [
-            17,
-            580,
-            414
-          ]
+          "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
         },
         {
           "command": "tp bp-dojo",
-          "target": [
-            17,
-            272,
-            106
-          ]
+          "roomId": "62c1d0d4a3449a4db14dc64554fecb13f663ad03"
         },
         {
           "command": "tp bp-fish",
-          "target": [
-            17,
-            875,
-            901
-          ]
+          "roomId": "31170af0c11ebb1cd0f647f1034db5e7f7b7bd86"
         },
         {
           "command": "tp bp-ninja",
-          "target": [
-            17,
-            1168,
-            146
-          ]
+          "roomId": "e52e482a9e087500b71dca1ddb4f46c140d8987d"
         },
         {
           "command": "tp bp-tunawalk",
-          "target": [
-            17,
-            1070,
-            748
-          ]
+          "roomId": "649635b91636ddf97c6b70c4ee513ffc0f865963"
         },
         {
           "command": "tp brassneck",
-          "target": [
-            38,
-            1327,
-            87
-          ]
+          "roomId": "601eae2be71c8de42345928b9a35f5a52f7bc414"
         },
         {
           "command": "tp chronides",
-          "target": [
-            48,
-            473,
-            199
-          ]
+          "roomId": "64ee40a06178cbddb80935725cb463e2e21770b5"
         },
         {
           "command": "tp death",
-          "target": [
-            22,
-            42,
-            114
-          ]
+          "roomId": "1bcacf98716e201caca070f20d7299012402ffc5"
         },
         {
           "command": "tp dj",
-          "target": [
-            23,
-            438,
-            285
-          ]
+          "roomId": "7b09e78f281d3c4b443e98aef58986913b0f3448"
         },
         {
           "command": "tp doctor",
-          "target": [
-            3,
-            944,
-            316
-          ]
+          "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
         },
         {
           "command": "tp drum",
-          "target": [
-            1,
-            718,
-            802
-          ]
+          "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
         },
         {
           "command": "tp ephebe",
-          "target": [
-            25,
-            379,
-            349
-          ]
+          "roomId": "bb138a9349adf67346cc5819aa31c990084ef2f6"
         },
         {
           "command": "tp escrow",
-          "target": [
-            46,
-            688,
-            669
-          ]
+          "roomId": "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585"
         },
         {
           "command": "tp forest-pishe",
-          "target": [
-            38,
-            1382,
-            395
-          ]
+          "roomId": "288f14413021b378e72076615d07d4ddc6089622"
         },
         {
           "command": "tp genua",
-          "target": [
-            27,
-            400,
-            284
-          ]
+          "roomId": "88a5a8639b1f92da0b1130c9a491ea28542a0fd5"
         },
         {
           "command": "tp goosegate",
-          "target": [
-            1,
-            522,
-            998
-          ]
+          "roomId": "cca3b4a788b6f7025afe023905c73514ceb395a8"
         },
         {
           "command": "tp granny",
-          "target": [
-            38,
-            1340,
-            182
-          ]
+          "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
         },
         {
           "command": "tp hillshire",
-          "target": [
-            45,
-            1358,
-            467
-          ]
+          "roomId": "e957156f0f75d89cf263b661f630435099b44b66"
         },
         {
           "command": "tp holywood",
-          "target": [
-            45,
-            98,
-            111
-          ]
+          "roomId": "4bc88d12c0917d4380ee024b526595b832df490a"
         },
         {
           "command": "tp horse",
-          "target": [
-            25,
-            290,
-            200
-          ]
+          "roomId": "4da8fd81aa0b5a2f2ee06cc4ca52ed5c618a95cd"
         },
         {
           "command": "tp jobs",
-          "target": [
-            1,
-            699,
-            905
-          ]
+          "roomId": "a5846b0acd26afec87c2dc20daa7ccadecc94cff"
         },
         {
           "command": "tp klatch-foreign-legion",
-          "target": [
-            31,
-            735,
-            515
-          ]
+          "roomId": "31bf3a3c04cb0009a32aee364747be7761530556"
         },
         {
           "command": "tp lancre",
-          "target": [
-            38,
-            1351,
-            589
-          ]
+          "roomId": "6ef1fc26cedacd2ab099c282942533a74b98c086"
         },
         {
           "command": "tp lanfear",
-          "target": [
-            1,
-            774,
-            578
-          ]
+          "roomId": "a4a00bc993f97216ace642c94f4bf7cb5ced3764"
         },
         {
           "command": "tp madstoat",
-          "target": [
-            38,
-            1229,
-            357
-          ]
+          "roomId": "36e23a9697d5123e220744d9fc82ed544d765078"
         },
         {
           "command": "tp madwolf",
-          "target": [
-            38,
-            1768,
-            667
-          ]
+          "roomId": "19b30aabaecbf5960ad7066d6eba782ba173ac91"
         },
         {
           "command": "tp nowhere",
-          "target": [
-            45,
-            243,
-            760
-          ]
+          "roomId": "ef8dea6037376b168f48c9b68d436be95bb342b1"
         },
         {
           "command": "tp oasis",
-          "target": [
-            31,
-            621,
-            1011
-          ]
+          "roomId": "482f82180dfd58da05af5e4ae5c7c2b5b159f06e"
         },
         {
           "command": "tp oc",
-          "target": [
-            38,
-            827,
-            223
-          ]
+          "roomId": "93bf68291d0dbc25680ffb5f42e35e6516b264eb"
         },
         {
           "command": "tp pekanford",
-          "target": [
-            45,
-            1416,
-            617
-          ]
+          "roomId": "3e8df84018719b734c59d5e7e14793f9b5040c70"
         },
         {
           "command": "tp pishe",
-          "target": [
-            45,
-            1416,
-            617
-          ]
+          "roomId": "3e8df84018719b734c59d5e7e14793f9b5040c70"
         },
         {
           "command": "tp postoffice",
-          "target": [
-            51,
-            99,
-            125
-          ]
+          "roomId": "109a9d6ff64b288e95580099e5b72864d67e4d33"
         },
         {
           "command": "tp razorback",
-          "target": [
-            38,
-            1769,
-            393
-          ]
+          "roomId": "1212b8ffdc79082c01580ff424356b7d032c31b5"
         },
         {
           "command": "tp satorsquare",
-          "target": [
-            1,
-            1040,
-            648
-          ]
+          "roomId": "28cb1a4206a92b895d0941164d516491748ef4ef"
         },
         {
           "command": "tp scrogden",
-          "target": [
-            45,
-            1078,
-            305
-          ]
+          "roomId": "5c2ff14f357b50a676d3ee02a73e3710e2d34020"
         },
         {
           "command": "tp scry",
-          "target": [
-            1,
-            858,
-            1054
-          ]
+          "roomId": "3bbc93f1a0af0f4be503ce2969fc5b83061d68a8"
         },
         {
           "command": "tp sheepridge",
-          "target": [
-            45,
-            618,
-            574
-          ]
+          "roomId": "7cdff063a132319a743af7d7d4c38c51ddb6e2d2"
         },
         {
           "command": "tp slice",
-          "target": [
-            38,
-            1979,
-            280
-          ]
+          "roomId": "eb5de57e4ca48dfd9324bd3c9cd66f5c0e1aeddf"
         },
         {
           "command": "tp slipperyhollow",
-          "target": [
-            54,
-            159,
-            123
-          ]
+          "roomId": "fe1bf5763a4420f441744cc8cebb01be4f1a5ee9"
         },
         {
           "command": "tp stickenplace",
-          "target": [
-            1,
-            172,
-            816
-          ]
+          "roomId": "514c484b96d69e11b531189bca3ed3a066f08e66"
         },
         {
           "command": "tp stolat",
-          "target": [
-            39,
-            367,
-            222
-          ]
+          "roomId": "326449a847b703d051fd8efcc2717087a2de429e"
         },
         {
           "command": "tp tosg",
-          "target": [
-            9,
-            221,
-            224
-          ]
+          "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
         }
       ]
     },
