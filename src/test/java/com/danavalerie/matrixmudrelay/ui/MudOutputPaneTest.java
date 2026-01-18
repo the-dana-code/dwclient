@@ -19,13 +19,42 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import org.junit.jupiter.api.Test;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.StyleConstants;
+import java.awt.Color;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MudOutputPaneTest {
+
+    @Test
+    public void testAwardedExperienceColoring() throws BadLocationException {
+        MudOutputPane pane = new MudOutputPane();
+        StyledDocument doc = (StyledDocument) pane.getDocument();
+        
+        String awardedLine = "You have been awarded 123164 experience points for completing this job.\n";
+        pane.appendMudText(awardedLine);
+
+        try {
+            javax.swing.SwingUtilities.invokeAndWait(() -> {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // The line should be at the end of the document
+        int start = 0; // Assuming it's the first line for simplicity in this test
+        AttributeSet attributes = doc.getCharacterElement(start).getAttributes();
+        
+        Color fg = (Color) attributes.getAttribute(StyleConstants.Foreground);
+        Boolean bold = (Boolean) attributes.getAttribute(StyleConstants.Bold);
+
+        assertEquals(Color.WHITE, fg, "Foreground color should be WHITE for awarded experience lines");
+        assertTrue(bold != null && bold, "Text should be bold for awarded experience lines");
+    }
 
     @Test
     public void testAppendCommandEchoEmpty() throws BadLocationException {

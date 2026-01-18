@@ -49,6 +49,7 @@ public final class MudOutputPane extends JTextPane {
                     Pattern.compile("^Your divine protection is weakening\\.$"),
                     ALERT_FOREGROUND,
                     ALERT_BACKGROUND,
+                    false,
                     () -> Toolkit.getDefaultToolkit().beep(),
                     false
             ),
@@ -56,6 +57,7 @@ public final class MudOutputPane extends JTextPane {
                     Pattern.compile("^Your divine protection expires\\.$"),
                     ALERT_FOREGROUND,
                     ALERT_BACKGROUND,
+                    false,
                     () -> Toolkit.getDefaultToolkit().beep(),
                     false
             ),
@@ -63,6 +65,7 @@ public final class MudOutputPane extends JTextPane {
                     Pattern.compile("^\\([^)]*\\) .*"),
                     TALKER_COLOR,
                     null,
+                    false,
                     null,
                     true
             ),
@@ -70,6 +73,7 @@ public final class MudOutputPane extends JTextPane {
                     Pattern.compile("^.+ asks you: .*$"),
                     TELL_COLOR,
                     null,
+                    false,
                     () -> Toolkit.getDefaultToolkit().beep(),
                     true
             ),
@@ -77,6 +81,7 @@ public final class MudOutputPane extends JTextPane {
                     Pattern.compile("^.+ tells you: .*$"),
                     TELL_COLOR,
                     null,
+                    false,
                     () -> Toolkit.getDefaultToolkit().beep(),
                     true
             ),
@@ -84,8 +89,17 @@ public final class MudOutputPane extends JTextPane {
                     Pattern.compile("^You .* tell .+: .*$"),
                     TELL_COLOR,
                     null,
+                    false,
                     () -> Toolkit.getDefaultToolkit().beep(),
                     true
+            ),
+            new AlertPattern(
+                    Pattern.compile("^You have been awarded .*"),
+                    Color.WHITE,
+                    null,
+                    true,
+                    null,
+                    false
             )
     );
     private final AnsiColorParser parser = new AnsiColorParser();
@@ -287,6 +301,9 @@ public final class MudOutputPane extends JTextPane {
         if (alertPattern.background() != null) {
             StyleConstants.setBackground(alert, alertPattern.background());
         }
+        if (alertPattern.bold()) {
+            StyleConstants.setBold(alert, true);
+        }
         return alert;
     }
 
@@ -460,6 +477,7 @@ public final class MudOutputPane extends JTextPane {
     private record AlertPattern(Pattern pattern,
                                 Color foreground,
                                 Color background,
+                                boolean bold,
                                 Runnable sound,
                                 boolean sendToChitchat) {
     }
