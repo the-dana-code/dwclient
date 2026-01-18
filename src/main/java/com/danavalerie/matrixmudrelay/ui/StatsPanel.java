@@ -24,7 +24,9 @@ import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -65,10 +67,10 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final int GP_TIMER_DEFAULT_INTERVAL_MS = 1000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getIntegerInstance(Locale.US);
 
-    private final JComboBox<String> nameComboBox = new JComboBox<>();
+    private final JMenuBar nameMenuBar = new JMenuBar();
+    private final JMenu nameMenu = new JMenu();
     private final JLabel characterLabel = new JLabel("Character: ");
     private Consumer<String> characterSelector;
-    private boolean isUpdatingName = false;
     private final List<String> configCharacters = new ArrayList<>();
     private final JLabel hpLabel = new JLabel("HP");
     private final JLabel gpLabel = new JLabel("GP");
@@ -78,6 +80,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private final JProgressBar gpBar = buildBar(GP_COLOR);
     private final JProgressBar burdenBar = buildBar(BURDEN_COLOR);
     private final JProgressBar xpBar = buildBar(XP_COLOR);
+    private final List<JPanel> statGroups = new ArrayList<>();
     private final int[] gpRateSamples = new int[GP_RATE_SAMPLE_SIZE];
     private final Timer gpTimer;
     private int gpRateIndex = 0;
@@ -93,28 +96,14 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         setLayout(new BorderLayout());
         Arrays.fill(gpRateSamples, -1);
 
-        nameComboBox.setEditable(false);
-        nameComboBox.addActionListener(e -> {
-            if (!isUpdatingName) {
-                String selected = (String) nameComboBox.getSelectedItem();
-                if (selected != null && !selected.equals("--") && characterSelector != null) {
-                    characterSelector.accept(selected);
-                }
-            }
-        });
+        nameMenuBar.add(nameMenu);
+        nameMenuBar.setBorder(BorderFactory.createEmptyBorder());
+        nameMenuBar.setOpaque(false);
 
-        int namePreferredWidth = NAME_MIN_WIDTH;
-        int nameMaxWidth = NAME_MAX_WIDTH;
-        Dimension nameMin = new Dimension(NAME_MIN_WIDTH, nameComboBox.getPreferredSize().height);
-        Dimension namePref = new Dimension(namePreferredWidth, nameComboBox.getPreferredSize().height);
-        Dimension nameMax = new Dimension(nameMaxWidth, nameComboBox.getPreferredSize().height);
-        nameComboBox.setMinimumSize(nameMin);
-        nameComboBox.setPreferredSize(namePref);
-        nameComboBox.setMaximumSize(nameMax);
         JPanel statusBar = new JPanel();
         statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
         statusBar.add(characterLabel);
-        statusBar.add(nameComboBox);
+        statusBar.add(nameMenuBar);
         statusBar.add(Box.createHorizontalStrut(12));
         statusBar.add(buildStatGroup(hpLabel, hpBar));
         statusBar.add(Box.createHorizontalStrut(10));
@@ -128,6 +117,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
         updateTheme(true);
         setUnavailable();
+        refreshAllSizes();
         gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
         gpTimer.start();
     }
@@ -140,29 +130,23 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         ThreadUtils.checkEdt();
         this.configCharacters.clear();
         this.configCharacters.addAll(characters);
-        refreshComboBox();
+        refreshMenu();
     }
 
-    private void refreshComboBox() {
-        isUpdatingName = true;
-        try {
-            String current = (String) nameComboBox.getSelectedItem();
-            nameComboBox.removeAllItems();
-            if (current != null) {
-                nameComboBox.addItem(current);
+    private void refreshMenu() {
+        nameMenu.removeAll();
+        Font font = nameMenu.getFont();
+        for (String configChar : configCharacters) {
+            JMenuItem item = new JMenuItem(configChar);
+            if (font != null) {
+                item.setFont(font);
             }
-            for (String configChar : configCharacters) {
-                if (current == null || !configChar.equalsIgnoreCase(current)) {
-                    nameComboBox.addItem(configChar);
+            item.addActionListener(e -> {
+                if (characterSelector != null) {
+                    characterSelector.accept(configChar);
                 }
-            }
-            if (current != null) {
-                nameComboBox.setSelectedItem(current);
-            } else if (nameComboBox.getItemCount() > 0) {
-                nameComboBox.setSelectedIndex(0);
-            }
-        } finally {
-            isUpdatingName = false;
+            });
+            nameMenu.add(item);
         }
     }
 
@@ -181,25 +165,30 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     }
 
     private void updateComponentTree(Component c, Color bg, Color fg, Color barBg) {
-        if (c instanceof JPanel) {
+        if (c instanceof JPanel || c instanceof JMenuBar || c instanceof JMenu || c instanceof JMenuItem) {
             c.setBackground(bg);
-            for (Component child : ((Container) c).getComponents()) {
-                updateComponentTree(child, bg, fg, barBg);
+            Component[] children = (c instanceof JMenu) ? ((JMenu) c).getMenuComponents() :
+                    (c instanceof Container ? ((Container) c).getComponents() : null);
+            if (children != null) {
+                for (Component child : children) {
+                    updateComponentTree(child, bg, fg, barBg);
+                }
             }
-        } else if (c instanceof JLabel) {
+        }
+        if (c instanceof JLabel || c instanceof JMenu || c instanceof JMenuItem) {
             c.setForeground(fg);
         } else if (c instanceof JProgressBar) {
             c.setBackground(barBg);
-        } else if (c instanceof JComboBox) {
-            c.setBackground(bg);
-            c.setForeground(fg);
         }
     }
 
     @Override
     public void onFontChange(Font font) {
         characterLabel.setFont(font);
-        nameComboBox.setFont(font.deriveFont(Font.BOLD));
+        nameMenu.setFont(font.deriveFont(Font.BOLD));
+        for (Component item : nameMenu.getMenuComponents()) {
+            item.setFont(font);
+        }
         hpLabel.setFont(font);
         gpLabel.setFont(font);
         burdenLabel.setFont(font);
@@ -208,6 +197,8 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         gpBar.setFont(font);
         burdenBar.setFont(font);
         xpBar.setFont(font);
+
+        refreshAllSizes();
     }
 
     public void updateStats(StatsHudRenderer.StatsHudData data) {
@@ -256,26 +247,13 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         return bar;
     }
 
-    private static JPanel buildStatGroup(JLabel label, JProgressBar bar) {
+    private JPanel buildStatGroup(JLabel label, JProgressBar bar) {
         label.setForeground(TEXT_COLOR);
-        Dimension labelSize = new Dimension(LABEL_WIDTH, label.getPreferredSize().height);
-        label.setPreferredSize(labelSize);
-        label.setMinimumSize(labelSize);
         JPanel panel = new JPanel(new BorderLayout(6, 0));
         panel.setBackground(BACKGROUND);
         panel.add(label, BorderLayout.WEST);
-
-        Dimension preferred = new Dimension(BAR_PREFERRED_WIDTH, bar.getPreferredSize().height);
-        Dimension minimum = new Dimension(BAR_MIN_WIDTH, bar.getPreferredSize().height);
-        Dimension maximum = new Dimension(BAR_MAX_WIDTH, bar.getPreferredSize().height);
-        bar.setPreferredSize(preferred);
-        bar.setMinimumSize(minimum);
-        bar.setMaximumSize(maximum);
         panel.add(bar, BorderLayout.CENTER);
-
-        Dimension panelMax = new Dimension(LABEL_WIDTH + BAR_MAX_WIDTH + 6, bar.getPreferredSize().height);
-        panel.setMaximumSize(panelMax);
-        panel.setMinimumSize(new Dimension(LABEL_WIDTH + BAR_MIN_WIDTH + 6, bar.getPreferredSize().height));
+        statGroups.add(panel);
         return panel;
     }
 
@@ -294,31 +272,51 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
             return;
         }
 
-        isUpdatingName = true;
-        try {
-            boolean found = false;
-            for (int i = 0; i < nameComboBox.getItemCount(); i++) {
-                if (name.equalsIgnoreCase(nameComboBox.getItemAt(i))) {
-                    nameComboBox.setSelectedIndex(i);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                nameComboBox.insertItemAt(name, 0);
-                nameComboBox.setSelectedIndex(0);
-            }
-        } finally {
-            isUpdatingName = false;
+        nameMenu.setText(name);
+
+        nameMenuBar.setPreferredSize(null);
+        int h = nameMenuBar.getPreferredSize().height;
+
+        int textWidth = nameMenuBar.getFontMetrics(nameMenu.getFont()).stringWidth(name) + 40;
+        int targetWidth = Math.max(NAME_MIN_WIDTH, Math.min(NAME_MAX_WIDTH, textWidth));
+        Dimension target = new Dimension(targetWidth, h);
+        nameMenuBar.setMinimumSize(target);
+        nameMenuBar.setPreferredSize(target);
+        nameMenuBar.setMaximumSize(new Dimension(Math.max(NAME_MAX_WIDTH, targetWidth), target.height));
+        nameMenuBar.revalidate();
+    }
+
+    private void refreshAllSizes() {
+        ThreadUtils.checkEdt();
+
+        updateNameLabel(nameMenu.getText());
+
+        for (JPanel group : statGroups) {
+            JLabel label = (JLabel) group.getComponent(0);
+            JProgressBar bar = (JProgressBar) group.getComponent(1);
+
+            label.setPreferredSize(null);
+            label.setMinimumSize(null);
+            int labelH = label.getPreferredSize().height;
+            Dimension labelSize = new Dimension(LABEL_WIDTH, labelH);
+            label.setPreferredSize(labelSize);
+            label.setMinimumSize(labelSize);
+
+            bar.setPreferredSize(null);
+            bar.setMinimumSize(null);
+            bar.setMaximumSize(null);
+            int barH = bar.getPreferredSize().height;
+            bar.setPreferredSize(new Dimension(BAR_PREFERRED_WIDTH, barH));
+            bar.setMinimumSize(new Dimension(BAR_MIN_WIDTH, barH));
+            bar.setMaximumSize(new Dimension(BAR_MAX_WIDTH, barH));
+
+            int totalH = Math.max(labelH, barH);
+            group.setMinimumSize(new Dimension(LABEL_WIDTH + BAR_MIN_WIDTH + 6, totalH));
+            group.setMaximumSize(new Dimension(LABEL_WIDTH + BAR_MAX_WIDTH + 6, totalH));
+            group.setPreferredSize(new Dimension(LABEL_WIDTH + BAR_PREFERRED_WIDTH + 6, totalH));
         }
 
-        int textWidth = nameComboBox.getFontMetrics(nameComboBox.getFont()).stringWidth(name) + 40;
-        int targetWidth = Math.max(NAME_MIN_WIDTH, Math.min(NAME_MAX_WIDTH, textWidth));
-        Dimension target = new Dimension(targetWidth, nameComboBox.getPreferredSize().height);
-        nameComboBox.setMinimumSize(target);
-        nameComboBox.setPreferredSize(target);
-        nameComboBox.setMaximumSize(new Dimension(Math.max(NAME_MAX_WIDTH, targetWidth), target.height));
-        nameComboBox.revalidate();
+        revalidate();
     }
 
     private static int clamp(int value, int min, int max) {
