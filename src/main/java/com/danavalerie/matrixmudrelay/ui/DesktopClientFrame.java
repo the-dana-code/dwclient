@@ -636,15 +636,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         bufferWritLines(normalized);
         bufferStoreInventoryLines(normalized);
         outputPane.appendMudText(line);
-
-        if (JOB_AWARD_PATTERN.matcher(normalized).matches()) {
-            String charName = mud.getCurrentRoomSnapshot().characterName();
-            if (charName != null && !charName.isBlank()) {
-                timerService.setTimer(charName, "sample job", 60 * 60 * 1000L);
-            } else {
-                outputPane.appendErrorText("No character logged in; cannot set timer.");
-            }
-        }
     }
 
     private void handleStoreBuy(int index, int quantity) {
