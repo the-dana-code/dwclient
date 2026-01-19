@@ -28,13 +28,24 @@ import javax.swing.text.StyleContext;
 import java.awt.Color;
 import java.awt.Font;
 
-public final class ChitchatPane extends JTextPane {
+public final class ChitchatPane extends JTextPane implements AutoScrollable {
     private static final Color DEFAULT_COLOR = new Color(220, 220, 220);
+    private boolean autoScroll = true;
 
     public ChitchatPane() {
         setEditable(false);
         updateTheme(true);
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
+
+        // Hide the caret and prevent automatic scrolling on insertion
+        javax.swing.text.DefaultCaret caret = new javax.swing.text.DefaultCaret() {
+            @Override
+            public void paint(java.awt.Graphics g) {
+                // do nothing
+            }
+        };
+        caret.setUpdatePolicy(javax.swing.text.DefaultCaret.NEVER_UPDATE);
+        setCaret(caret);
     }
 
     public void updateTheme(boolean inverted) {
@@ -53,9 +64,29 @@ public final class ChitchatPane extends JTextPane {
                 getDocument().insertString(getDocument().getLength(), normalized, buildAttributes(color));
             } catch (BadLocationException ignored) {
             }
-            setCaretPosition(getDocument().getLength());
+            if (autoScroll) {
+                setCaretPosition(getDocument().getLength());
+            }
         };
         runOnEdt(appendTask);
+    }
+
+    @Override
+    public void setAutoScroll(boolean autoScroll) {
+        this.autoScroll = autoScroll;
+    }
+
+    @Override
+    public boolean isAutoScroll() {
+        return autoScroll;
+    }
+
+    @Override
+    public void scrollToBottom() {
+        runOnEdt(() -> {
+            setCaretPosition(getDocument().getLength());
+            setAutoScroll(true);
+        });
     }
 
     private AttributeSet buildAttributes(Color color) {

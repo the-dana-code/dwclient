@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
-public final class MudOutputPane extends JTextPane {
+public final class MudOutputPane extends JTextPane implements AutoScrollable {
     private static final Color SYSTEM_COLOR = new Color(120, 200, 255);
     private static final Color COMMAND_COLOR = new Color(255, 215, 0);
     private static final Color ERROR_COLOR = new Color(255, 80, 80);
@@ -345,14 +345,17 @@ public final class MudOutputPane extends JTextPane {
         this.chitchatListener = chitchatListener;
     }
 
+    @Override
     public void setAutoScroll(boolean autoScroll) {
         this.autoScroll = autoScroll;
     }
 
+    @Override
     public boolean isAutoScroll() {
         return autoScroll;
     }
 
+    @Override
     public void scrollToBottom() {
         runOnEdt(() -> {
             setCaretPosition(getDocument().getLength());

@@ -102,10 +102,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             KeyEvent.VK_NUMPAD7, "northwest",
             KeyEvent.VK_NUMPAD3, "southeast",
             KeyEvent.VK_NUMPAD1, "southwest"
-    );
-    private static final Border BLACK_BORDER = javax.swing.BorderFactory.createLineBorder(Color.BLACK, 2);
-    private static final Border RED_BORDER = javax.swing.BorderFactory.createLineBorder(Color.RED, 2);
-    private final JTextField inputField = new JTextField();
+        );
+        private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
     private final TranscriptLogger transcript;
@@ -120,7 +118,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
     private JMenuItem connectionItem;
-    private JScrollPane outputScroll;
+    private AutoScrollScrollPane outputScroll;
+    private AutoScrollScrollPane chitchatScroll;
     private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults;
     private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
@@ -140,11 +139,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private boolean suppressSplitPersist;
     private final List<String> inputHistory = new ArrayList<>();
     private int historyIndex = -1;
-    private final RoomButtonBarPanel roomButtonBarPanel;
+    private final RoomNoteService roomButtonService;
     private final RoomNotePanel roomNotePanel;
     private final TimerPanel timerPanel;
-    private final RoomNoteService roomButtonService;
-    private int lastScrollValue = -1;
+    private final RoomButtonBarPanel roomButtonBarPanel;
 
     private enum WritMenuAction {
         ITEM_INFO,
@@ -830,7 +828,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void submitCommand(String text) {
         outputPane.scrollToBottom();
-        outputScroll.setBorder(BLACK_BORDER);
+        outputScroll.setBorder(AutoScrollScrollPane.BLACK_BORDER);
         if (text == null) {
             historyIndex = -1;
             return;
@@ -854,8 +852,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private JComponent buildMudPanel() {
-        JScrollPane chitchatScroll = new JScrollPane(chitchatPane);
-        chitchatScroll.setBorder(null);
+        chitchatScroll = new AutoScrollScrollPane(chitchatPane);
 
         timerPanel.setMinimumSize(new Dimension(20, 0));
         JSplitPane chitchatTimerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chitchatScroll, timerPanel);
@@ -889,29 +886,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             persistChitchatTimerSplitRatio(ratio);
         });
 
-        outputScroll = new JScrollPane(outputPane);
-        // Initially bottomed out, so no red border.
-        outputScroll.setBorder(BLACK_BORDER);
-
-        outputScroll.getVerticalScrollBar().addAdjustmentListener(e -> {
-            int extent = outputScroll.getVerticalScrollBar().getModel().getExtent();
-            int maximum = outputScroll.getVerticalScrollBar().getModel().getMaximum();
-            int value = e.getValue();
-
-            boolean atBottom = (value + extent) >= maximum;
-            if (atBottom) {
-                if (!outputPane.isAutoScroll() || outputScroll.getBorder() != BLACK_BORDER) {
-                    outputPane.setAutoScroll(true);
-                    outputScroll.setBorder(BLACK_BORDER);
-                }
-            } else {
-                if (outputPane.isAutoScroll() && value < lastScrollValue) {
-                    outputPane.setAutoScroll(false);
-                    outputScroll.setBorder(RED_BORDER);
-                }
-            }
-            lastScrollValue = value;
-        });
+        outputScroll = new AutoScrollScrollPane(outputPane);
 
         JPanel inputPanel = new JPanel(new BorderLayout(6, 6));
         JButton sendButton = new JButton("Send");
