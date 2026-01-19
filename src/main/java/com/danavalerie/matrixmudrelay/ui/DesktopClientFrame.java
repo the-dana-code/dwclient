@@ -477,11 +477,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void persistFontConfig(Font font) {
         cfg.ui.fontFamily = font.getFamily();
         cfg.ui.fontSize = font.getSize();
-        try {
-            ConfigLoader.save(configPath, cfg);
-        } catch (IOException e) {
-            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
-        }
+        saveConfig();
     }
 
     private int resolveMapZoomPercent() {
@@ -494,11 +490,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void persistMapZoomConfig(int zoomPercent) {
         cfg.ui.mapZoomPercent = zoomPercent;
-        try {
-            ConfigLoader.save(configPath, cfg);
-        } catch (IOException e) {
-            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
-        }
+        saveConfig();
     }
 
     private boolean resolveMapInvert() {
@@ -508,11 +500,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void persistMapInvertConfig(boolean invertMap) {
         cfg.ui.invertMap = invertMap;
         updateTheme(invertMap);
-        try {
-            ConfigLoader.save(configPath, cfg);
-        } catch (IOException e) {
-            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
-        }
+        saveConfig();
     }
 
     private double resolveMudMapSplitRatio() {
@@ -528,6 +516,58 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             return;
         }
         cfg.ui.mudMapSplitRatio = ratio;
+        saveConfig();
+    }
+
+    private double resolveMapNotesSplitRatio() {
+        Double ratio = cfg.ui.mapNotesSplitRatio;
+        if (ratio == null || ratio <= 0 || ratio >= 1) {
+            return 0.7;
+        }
+        return ratio;
+    }
+
+    private void persistMapNotesSplitRatio(double ratio) {
+        if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
+            return;
+        }
+        cfg.ui.mapNotesSplitRatio = ratio;
+        saveConfig();
+    }
+
+    private double resolveChitchatTimerSplitRatio() {
+        Double ratio = cfg.ui.chitchatTimerSplitRatio;
+        if (ratio == null || ratio <= 0 || ratio >= 1) {
+            return 0.7;
+        }
+        return ratio;
+    }
+
+    private void persistChitchatTimerSplitRatio(double ratio) {
+        if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
+            return;
+        }
+        cfg.ui.chitchatTimerSplitRatio = ratio;
+        saveConfig();
+    }
+
+    private double resolveOutputSplitRatio() {
+        Double ratio = cfg.ui.outputSplitRatio;
+        if (ratio == null || ratio <= 0 || ratio >= 1) {
+            return 0.2;
+        }
+        return ratio;
+    }
+
+    private void persistOutputSplitRatio(double ratio) {
+        if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
+            return;
+        }
+        cfg.ui.outputSplitRatio = ratio;
+        saveConfig();
+    }
+
+    private void saveConfig() {
         try {
             ConfigLoader.save(configPath, cfg);
         } catch (IOException e) {
@@ -725,6 +765,31 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mapNotesSplit.setDividerSize(6);
         mapNotesSplit.setBorder(null);
         mapNotesSplit.setMinimumSize(new Dimension(20, 0));
+        double mapNotesInitialRatio = resolveMapNotesSplitRatio();
+        mapNotesSplit.addHierarchyListener(event -> {
+            if ((event.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) == 0) {
+                return;
+            }
+            if (!mapNotesSplit.isShowing()) {
+                return;
+            }
+            SwingUtilities.invokeLater(() -> {
+                suppressSplitPersist = true;
+                mapNotesSplit.setDividerLocation(mapNotesInitialRatio);
+                suppressSplitPersist = false;
+            });
+        });
+        mapNotesSplit.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, event -> {
+            if (!allowSplitPersist || suppressSplitPersist || !mapNotesSplit.isShowing()) {
+                return;
+            }
+            int height = mapNotesSplit.getHeight();
+            if (height <= 0) {
+                return;
+            }
+            double ratio = mapNotesSplit.getDividerLocation() / (double) height;
+            persistMapNotesSplitRatio(ratio);
+        });
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapNotesSplit, buildMudPanel());
         splitPane.setContinuousLayout(true);
@@ -795,6 +860,31 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         chitchatTimerSplit.setResizeWeight(0.7);
         chitchatTimerSplit.setDividerSize(6);
         chitchatTimerSplit.setBorder(null);
+        double chitchatTimerInitialRatio = resolveChitchatTimerSplitRatio();
+        chitchatTimerSplit.addHierarchyListener(event -> {
+            if ((event.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) == 0) {
+                return;
+            }
+            if (!chitchatTimerSplit.isShowing()) {
+                return;
+            }
+            SwingUtilities.invokeLater(() -> {
+                suppressSplitPersist = true;
+                chitchatTimerSplit.setDividerLocation(chitchatTimerInitialRatio);
+                suppressSplitPersist = false;
+            });
+        });
+        chitchatTimerSplit.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, event -> {
+            if (!allowSplitPersist || suppressSplitPersist || !chitchatTimerSplit.isShowing()) {
+                return;
+            }
+            int width = chitchatTimerSplit.getWidth();
+            if (width <= 0) {
+                return;
+            }
+            double ratio = chitchatTimerSplit.getDividerLocation() / (double) width;
+            persistChitchatTimerSplitRatio(ratio);
+        });
 
         outputScroll = new JScrollPane(outputPane);
         // Initially bottomed out, so no red border.
@@ -865,6 +955,31 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         outputSplit.setResizeWeight(0.2);
         outputSplit.setDividerSize(6);
         outputSplit.setBorder(null);
+        double outputInitialRatio = resolveOutputSplitRatio();
+        outputSplit.addHierarchyListener(event -> {
+            if ((event.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) == 0) {
+                return;
+            }
+            if (!outputSplit.isShowing()) {
+                return;
+            }
+            SwingUtilities.invokeLater(() -> {
+                suppressSplitPersist = true;
+                outputSplit.setDividerLocation(outputInitialRatio);
+                suppressSplitPersist = false;
+            });
+        });
+        outputSplit.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, event -> {
+            if (!allowSplitPersist || suppressSplitPersist || !outputSplit.isShowing()) {
+                return;
+            }
+            int height = outputSplit.getHeight();
+            if (height <= 0) {
+                return;
+            }
+            double ratio = outputSplit.getDividerLocation() / (double) height;
+            persistOutputSplitRatio(ratio);
+        });
 
         JPanel panel = new JPanel(new BorderLayout(6, 6));
         panel.add(outputSplit, BorderLayout.CENTER);

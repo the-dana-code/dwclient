@@ -60,6 +60,9 @@ public final class BotConfig {
         public Integer mapZoomPercent;
         public Boolean invertMap;
         public Double mudMapSplitRatio;
+        public Double mapNotesSplitRatio;
+        public Double chitchatTimerSplitRatio;
+        public Double outputSplitRatio;
     }
 
     public static final class Bookmark {
