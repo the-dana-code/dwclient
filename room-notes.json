@@ -72,12 +72,30 @@
       }
     ]
   },
+  "23101ac0bc74913d7b8727335316fd8f140f2145": {
+    "name": "Brookless Bakery",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2381cbfa44760a69fea25b5ee4a52499453ff625": {
     "name": "whitewashed room",
     "buttons": [
       {
         "name": "Pull Lever",
         "command": "pull lever"
+      }
+    ]
+  },
+  "2390d2bc0834b9a4dc7c6391a74c22587c378baf": {
+    "name": "pirate-themed shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -104,8 +122,26 @@
       }
     ]
   },
+  "3e658fac2b551442d118db1e726c01044e9271fa": {
+    "name": "Little Agatea",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "41630c8d7e024a632d5ba1071766d1b57ed5eb5b": {
     "name": "Confections De Confectionairre",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "41d8a69bd27a37c875e918b0a0af33446406705f": {
+    "name": "run-down looking backpack shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -194,6 +230,15 @@
       }
     ]
   },
+  "5763028abd18c89f9240d159d672e9cd06016485": {
+    "name": "Sylver\u0027s",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "57981abe779a28f1e8b003732eb35430854670e4": {
     "name": "[player shop]",
     "buttons": [
@@ -272,6 +317,24 @@
       }
     ]
   },
+  "72792e2f6568b0fa8aedc0e408c8e9f1f4b500b3": {
+    "name": "K. Whistler\u0027s Bakery",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "72f7ed3a6b023c275a53468236a0292a27af1279": {
+    "name": "Groaning Platter Tavern",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "73b97bddee091fd07ae5b14cccdb187b4ca11925": {
     "name": "Corner Cafe of the Job Market",
     "buttons": [
@@ -313,6 +376,16 @@
       }
     ]
   },
+  "94d42056d8bce1a46364b9bd18ee6486bd6edfb8": {
+    "name": "Morporkian Embassy",
+    "notes": "You can convert money between Ankh-Morpork and Djelibeybi here.\n\nExample - Convert AM to DJ:\n  sell 3 dollars\n\nExample - Convert DJ to AM:\n  buy from morpork with 3 talents",
+    "buttons": [
+      {
+        "name": "Exchange Rates",
+        "command": "list"
+      }
+    ]
+  },
   "964ea3c5f971d538232e683612cd41900c232bdd": {
     "name": "bar of the Mended Drum",
     "buttons": [
@@ -340,10 +413,28 @@
       }
     ]
   },
+  "9e4b56f405e88c647bb13d9beb1ec1afcf1db5f6": {
+    "name": "small bridal store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "a397123cec941a8ae13e1187cc368eeaa5b3a9aa": {
     "name": "Actors\u0027 Guild practice room",
     "notes": "Here you can get a custom-written script performed in order to test it.\n\nSyntax:\n  request [a] performance of \u003cobject\u003e    \n",
     "buttons": []
+  },
+  "a418c1c947ee77ecc25603b55ea58364eb2c2c66": {
+    "name": "weapon shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
   },
   "a551cf0ad1aa0137b4e0095c2f348e221f2b2b51": {
     "name": "Marvin\u0027s Mantels",
@@ -413,6 +504,15 @@
       }
     ]
   },
+  "ac76e8b109eacf1b1184c92ef157d6cffcf4fa62": {
+    "name": "Maestro Music",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "aebbd1e03b0bd507f4af1fd85756af039e0fbb20": {
     "name": "Dessert Animals",
     "buttons": [
@@ -474,6 +574,15 @@
       }
     ]
   },
+  "be910f9961b0636114f01fe1daa6c28c1134b7d2": {
+    "name": "Ecksian Souvenir shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "bfa94c52cbbdf77c9ac30200cef8530bd0854484": {
     "name": "Pinky\u0027s Lingerie and Big Top Circus Supply Emporium",
     "buttons": [
@@ -528,6 +637,15 @@
       }
     ]
   },
+  "d80aa1dd7a84e8150089645dd462fd4baf169294": {
+    "name": "Noblesse, gentleman\u0027s outfitters",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "d864bb147ebbe312510642504ae99d37d7972e06": {
     "name": "[player shop]",
     "buttons": [
@@ -573,6 +691,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "e697f73ed0afc0d65ca9fe2778291ce89f3ea938": {
+    "name": "Mr D\u0027abdry\u0027s towel shop",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]

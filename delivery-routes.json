@@ -1026,5 +1026,17 @@
     "location": "the claustrophobically pink shop on Dolly Sisters",
     "roomId": "93e7c961a6556586f40b21b13726658fef7ed88b",
     "commands": []
+  },
+  {
+    "npc": "Fred Sylver",
+    "location": "Sylver\u0027s on Washer Way",
+    "roomId": "5763028abd18c89f9240d159d672e9cd06016485",
+    "commands": []
+  },
+  {
+    "npc": "Kervin Whistler",
+    "location": "Mr. K. Whistler\u0027s Bakery on Pigsty Hill",
+    "roomId": "72792e2f6568b0fa8aedc0e408c8e9f1f4b500b3",
+    "commands": []
   }
 ]
