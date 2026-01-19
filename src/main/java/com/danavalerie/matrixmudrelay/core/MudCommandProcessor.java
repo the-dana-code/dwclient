@@ -25,7 +25,6 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
-import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
     private final BotConfig cfg;
     private final MudClient mud;
-    private final TranscriptLogger transcript;
     private final RoomMapService mapService;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
@@ -81,7 +79,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
     public MudCommandProcessor(BotConfig cfg,
                                MudClient mud,
-                               TranscriptLogger transcript,
                                WritTracker writTracker,
                                StoreInventoryTracker storeInventoryTracker,
                                TimerService timerService,
@@ -89,7 +86,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                                ClientOutput output) {
         this.cfg = cfg;
         this.mud = mud;
-        this.transcript = transcript;
         this.writTracker = writTracker;
         this.storeInventoryTracker = storeInventoryTracker;
         this.timerService = timerService;
@@ -154,7 +150,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private void sendToMud(List<String> lines, boolean maskEcho) {
         for (String line : lines) {
             String sanitized = Sanitizer.sanitizeMudInput(line);
-            transcript.logClientToMud(sanitized);
             output.appendCommandEcho(maskEcho ? "(password)" : sanitized);
             if (!maskEcho) {
                 output.addToHistory(sanitized);
@@ -554,7 +549,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return true;
         }
         boolean maskEcho = "#password".equalsIgnoreCase(trigger);
-        transcript.logClientToMud("[alias:" + trigger + "] " + String.join(" | ", lines));
         sendToMud(lines, maskEcho);
         return true;
     }

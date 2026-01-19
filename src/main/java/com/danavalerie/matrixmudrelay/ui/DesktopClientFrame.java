@@ -33,7 +33,6 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
-import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +105,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         private final JTextField inputField = new JTextField();
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
-    private final TranscriptLogger transcript;
     private DeliveryRouteMappings routeMappings;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
@@ -156,9 +154,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         DELIVER
     }
 
-    public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, TranscriptLogger transcript) {
+    public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings) {
         super("Lesa's Discworld MUD Client");
-        this.transcript = transcript;
         this.cfg = cfg;
         com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
         this.configPath = configPath;
@@ -185,13 +182,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 reason -> {
                     outputPane.appendSystemText("* MUD disconnected: " + reason);
                     SwingUtilities.invokeLater(() -> updateConnectionMenuItem(false));
-                },
-                transcript
+                }
         );
         this.timerPanel = new TimerPanel(timerService, () -> mud.getCurrentRoomSnapshot().characterName());
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
 
-        commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
+        commandProcessor = new MudCommandProcessor(cfg, mud, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
         mapPanel.setSpeedwalkHandler(
                 location -> commandProcessor.speedwalkTo(location.roomId())
         );
@@ -697,7 +693,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void handleMudLine(String line) {
-        this.transcript.logMudToClient(line);
         String normalized = normalizeWritOutput(line);
         bufferWritLines(normalized);
         bufferStoreInventoryLines(normalized);
@@ -1197,10 +1192,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             mud.disconnect("shutdown", null);
         } catch (Exception ignored) {
         }
-        try {
-            transcript.close();
-        } catch (Exception ignored) {
-        }
     }
 
     private void bufferWritLines(String text) {
@@ -1402,14 +1393,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         SwingUtilities.invokeLater(() -> updateConnectionMenuItem(connected));
     }
 
-    public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, TranscriptLogger transcript) {
+    public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             System.err.println("Unable to set cross-platform look and feel: " + e.getMessage());
         }
         SwingUtilities.invokeLater(() -> {
-            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, routes, transcript);
+            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, routes);
             frame.setVisible(true);
         });
     }

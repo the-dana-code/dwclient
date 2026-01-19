@@ -20,7 +20,6 @@ package com.danavalerie.matrixmudrelay.mud;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
-import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,6 @@ public class MudClient {
     private final BotConfig.Mud cfg;
     private final MudLineListener lineListener;
     private final MudDisconnectListener disconnectListener;
-    private final TranscriptLogger transcript;
     private volatile MudGmcpListener gmcpListener;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
@@ -75,12 +73,10 @@ public class MudClient {
 
     public MudClient(BotConfig.Mud cfg,
                      MudLineListener lineListener,
-                     MudDisconnectListener disconnectListener,
-                     TranscriptLogger transcript) {
+                     MudDisconnectListener disconnectListener) {
         this.cfg = cfg;
         this.lineListener = lineListener;
         this.disconnectListener = disconnectListener;
-        this.transcript = transcript;
     }
 
     public boolean isConnected() {
@@ -278,7 +274,6 @@ public class MudClient {
                 line = Sanitizer.sanitizeMudInput(line);
 
 //                log.info("Writing line: " + raw);
-                transcript.logClientToMud(line);
 
                 // MUD line-oriented input; CRLF for telnet compatibility
                 currentOut.write(line.getBytes(Charset.forName(cfg.charset)));

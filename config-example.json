@@ -10,12 +10,6 @@
       "Put your password here"
     ]
   },
-  "transcript": {
-    "enabled": true,
-    "directory": "./transcripts",
-    "maxBytes": 10485760,
-    "maxFiles": 20
-  },
   "ui": {
     "fontFamily": "Monospaced",
     "fontSize": 20,

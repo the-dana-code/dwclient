@@ -21,7 +21,6 @@ package com.danavalerie.matrixmudrelay;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
-import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import com.danavalerie.matrixmudrelay.ui.DesktopClientFrame;
 import java.nio.file.Path;
 
@@ -46,8 +45,7 @@ public final class Main {
             routes = convertedRoutes;
         }
 
-        TranscriptLogger transcript = TranscriptLogger.create(cfg.transcript);
-        DesktopClientFrame.launch(cfg, configPath, routes, transcript);
+        DesktopClientFrame.launch(cfg, configPath, routes);
     }
 }
 

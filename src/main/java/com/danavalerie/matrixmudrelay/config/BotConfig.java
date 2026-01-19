@@ -29,8 +29,6 @@ public final class BotConfig {
     // trigger -> list of lines to send to MUD (may include secrets)
     public Map<String, List<String>> aliases = new LinkedHashMap<>();
 
-    public Transcript transcript = new Transcript();
-
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();
 
@@ -47,12 +45,6 @@ public final class BotConfig {
         public int connectTimeoutMs = 10000;
     }
 
-    public static final class Transcript {
-        public boolean enabled = false;
-        public String directory = "./transcripts";
-        public long maxBytes = 10 * 1024 * 1024;
-        public int maxFiles = 20;
-    }
 
     public static final class Ui {
         public String fontFamily;
