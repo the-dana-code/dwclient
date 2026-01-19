@@ -49,7 +49,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -144,7 +143,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomButtonBarPanel roomButtonBarPanel;
     private final RoomNotePanel roomNotePanel;
     private final TimerPanel timerPanel;
-    private final JTabbedPane roomTabbedPane = new JTabbedPane();
     private final RoomNoteService roomButtonService;
     private int lastScrollValue = -1;
 
@@ -719,19 +717,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         roomNotePanel.setMinimumSize(new Dimension(20, 0));
         roomButtonBarPanel.setMinimumSize(new Dimension(20, 0));
 
-        roomTabbedPane.addTab("Room", roomInfoContent);
-        roomTabbedPane.addTab("Timers", timerPanel);
-        roomTabbedPane.setMinimumSize(new Dimension(20, 0));
-        timerPanel.setMinimumSize(new Dimension(20, 0));
-        roomTabbedPane.addChangeListener(e -> {
-            if (roomTabbedPane.getSelectedComponent() == timerPanel) {
-                timerPanel.refreshData();
-            }
-        });
-
         mapPanel.setMinimumSize(new Dimension(20, 0));
 
-        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomTabbedPane);
+        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomInfoContent);
         mapNotesSplit.setContinuousLayout(true);
         mapNotesSplit.setResizeWeight(0.7);
         mapNotesSplit.setDividerSize(6);
@@ -800,6 +788,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JComponent buildMudPanel() {
         JScrollPane chitchatScroll = new JScrollPane(chitchatPane);
         chitchatScroll.setBorder(null);
+
+        timerPanel.setMinimumSize(new Dimension(20, 0));
+        JSplitPane chitchatTimerSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chitchatScroll, timerPanel);
+        chitchatTimerSplit.setContinuousLayout(true);
+        chitchatTimerSplit.setResizeWeight(0.7);
+        chitchatTimerSplit.setDividerSize(6);
+        chitchatTimerSplit.setBorder(null);
+
         outputScroll = new JScrollPane(outputPane);
         // Initially bottomed out, so no red border.
         outputScroll.setBorder(BLACK_BORDER);
@@ -864,7 +860,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
         });
 
-        JSplitPane outputSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chitchatScroll, outputScroll);
+        JSplitPane outputSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, chitchatTimerSplit, outputScroll);
         outputSplit.setContinuousLayout(true);
         outputSplit.setResizeWeight(0.2);
         outputSplit.setDividerSize(6);
@@ -1245,35 +1241,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         Color bg = inverted ? MapPanel.BACKGROUND_DARK : MapPanel.BACKGROUND_LIGHT;
         Color fg = inverted ? MapPanel.FOREGROUND_LIGHT : MapPanel.FOREGROUND_DARK;
 
-        // Update JTabbedPane defaults in UIManager for better dark mode support
-        if (inverted) {
-            UIManager.put("TabbedPane.selected", bg);
-            UIManager.put("TabbedPane.unselectedBackground", bg);
-            UIManager.put("TabbedPane.tabAreaBackground", bg);
-            UIManager.put("TabbedPane.contentAreaColor", bg);
-            UIManager.put("TabbedPane.shadow", Color.BLACK);
-            UIManager.put("TabbedPane.darkShadow", Color.BLACK);
-            UIManager.put("TabbedPane.light", bg);
-            UIManager.put("TabbedPane.highlight", bg);
-            UIManager.put("TabbedPane.selectHighlight", bg);
-            UIManager.put("TabbedPane.background", bg);
-            UIManager.put("TabbedPane.foreground", fg);
-            UIManager.put("TabbedPane.focus", fg);
-        } else {
-            UIManager.put("TabbedPane.selected", null);
-            UIManager.put("TabbedPane.unselectedBackground", null);
-            UIManager.put("TabbedPane.tabAreaBackground", null);
-            UIManager.put("TabbedPane.contentAreaColor", null);
-            UIManager.put("TabbedPane.shadow", null);
-            UIManager.put("TabbedPane.darkShadow", null);
-            UIManager.put("TabbedPane.light", null);
-            UIManager.put("TabbedPane.highlight", null);
-            UIManager.put("TabbedPane.selectHighlight", null);
-            UIManager.put("TabbedPane.background", null);
-            UIManager.put("TabbedPane.foreground", null);
-            UIManager.put("TabbedPane.focus", null);
-        }
-
         outputPane.updateTheme(inverted);
         chitchatPane.updateTheme(inverted);
         statsPanel.updateTheme(inverted);
@@ -1302,18 +1269,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (c instanceof MapPanel || c instanceof MudOutputPane || c instanceof ChitchatPane || c instanceof StatsPanel) {
             return;
         }
-        if (c instanceof JPanel || c instanceof JSplitPane || c instanceof JScrollPane || c instanceof JTabbedPane) {
-            if (c instanceof JTabbedPane tp) {
-                tp.updateUI(); // Pick up new UIManager defaults for tabs
-                tp.setBackground(bg);
-                tp.setForeground(fg);
-                for (int i = 0; i < tp.getTabCount(); i++) {
-                    tp.setBackgroundAt(i, bg);
-                    tp.setForegroundAt(i, fg);
-                }
-            } else {
-                c.setBackground(bg);
-            }
+        if (c instanceof JPanel || c instanceof JSplitPane || c instanceof JScrollPane) {
+            c.setBackground(bg);
         }
         if (c instanceof JLabel || c instanceof JTextField || c instanceof JButton) {
             c.setBackground(bg);
