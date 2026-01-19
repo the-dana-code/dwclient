@@ -81,6 +81,15 @@
       }
     ]
   },
+  "1d37d2ede0f540a6583759a473e3f7565ac7bddc": {
+    "name": "Simone\u0027s",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "1dfef612dd93c797e9fcf31e6ffdb249832bd39c": {
     "name": "Actors\u0027 Guild bar",
     "buttons": [

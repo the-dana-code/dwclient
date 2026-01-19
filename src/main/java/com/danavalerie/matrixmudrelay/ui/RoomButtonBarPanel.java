@@ -173,6 +173,10 @@ public class RoomButtonBarPanel extends JPanel {
     }
 
     private void showEditDialog(RoomButton existing, int index) {
+        final String roomId = this.currentRoomId;
+        final String roomName = this.currentRoomName;
+        if (roomId == null) return;
+
         Window parentWindow = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(parentWindow, existing == null ? "Add Button" : "Edit Button", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new GridBagLayout());
@@ -200,9 +204,9 @@ public class RoomButtonBarPanel extends JPanel {
             if (!name.isEmpty() && !command.isEmpty()) {
                 RoomButton rb = new RoomButton(name, command);
                 if (existing == null) {
-                    roomButtonService.addButton(currentRoomId, currentRoomName, rb);
+                    roomButtonService.addButton(roomId, roomName, rb);
                 } else {
-                    roomButtonService.updateButton(currentRoomId, currentRoomName, index, rb);
+                    roomButtonService.updateButton(roomId, roomName, index, rb);
                 }
                 refreshButtons();
                 dialog.dispose();

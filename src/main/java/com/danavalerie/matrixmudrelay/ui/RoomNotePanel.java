@@ -91,6 +91,10 @@ public class RoomNotePanel extends JPanel {
     }
 
     private void showEditDialog() {
+        final String roomId = this.currentRoomId;
+        final String roomName = this.currentRoomName;
+        if (roomId == null) return;
+
         Window parentWindow = SwingUtilities.getWindowAncestor(this);
         JDialog dialog = new JDialog(parentWindow, "Edit Room Notes", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
@@ -103,8 +107,10 @@ public class RoomNotePanel extends JPanel {
         JButton saveBtn = new JButton("Save");
         saveBtn.addActionListener(e -> {
             String newNotes = editArea.getText();
-            roomNoteService.updateNotesForRoom(currentRoomId, currentRoomName, newNotes);
-            notesArea.setText(newNotes);
+            roomNoteService.updateNotesForRoom(roomId, roomName, newNotes);
+            if (roomId.equals(currentRoomId)) {
+                notesArea.setText(newNotes);
+            }
             dialog.dispose();
         });
 
