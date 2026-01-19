@@ -53,7 +53,10 @@ public class TimerPanel extends JPanel {
         this.table.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
-                table.clearSelection();
+                Component opposite = e.getOppositeComponent();
+                if (opposite == null || !SwingUtilities.isDescendingFrom(opposite, TimerPanel.this)) {
+                    table.clearSelection();
+                }
             }
         });
         
