@@ -140,6 +140,15 @@
       }
     ]
   },
+  "33a86c039a91e8e3c0fe2f588f35c3ea53185cd2": {
+    "name": "Fishermen\u0027s Guild regional office",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "35b575259dca6b651bf4d2765548b0c14e0f57be": {
     "name": "sulphurous shoproom",
     "buttons": [
@@ -295,6 +304,15 @@
   },
   "59c1b5e8574bd17addc6d82e679474c186afa527": {
     "name": "dwarfish shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "5d9424fdf6460e22b40dc8effd4840d03abc9599": {
+    "name": "Holbrook\u0027s General Shop",
     "buttons": [
       {
         "name": "List Shop",
