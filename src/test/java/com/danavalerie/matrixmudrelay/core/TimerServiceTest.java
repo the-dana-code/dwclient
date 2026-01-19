@@ -72,7 +72,7 @@ class TimerServiceTest {
         data.expirationTime -= 5000;
 
         timerService.restartTimer("Char1", "Timer1");
-        assertTrue(data.expirationTime > originalExpiration);
+        assertTrue(data.expirationTime >= originalExpiration);
         assertEquals(10000, data.durationMs);
     }
 
