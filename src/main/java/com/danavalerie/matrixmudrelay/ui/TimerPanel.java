@@ -1,0 +1,213 @@
+package com.danavalerie.matrixmudrelay.ui;
+
+import com.danavalerie.matrixmudrelay.core.TimerService;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public class TimerPanel extends JPanel {
+    private final TimerService timerService;
+    private final Supplier<String> characterNameSupplier;
+    private final JTable table;
+    private final TimerTableModel tableModel;
+    private final Timer refreshTimer;
+    private final JScrollPane scrollPane;
+    private final JPanel buttonBar;
+    private final JButton addButton;
+    private final JButton editButton;
+    private final JButton deleteButton;
+
+    private Color currentBg;
+    private Color currentFg;
+
+    public TimerPanel(TimerService timerService, Supplier<String> characterNameSupplier) {
+        this.timerService = timerService;
+        this.characterNameSupplier = characterNameSupplier;
+        this.tableModel = new TimerTableModel();
+        this.table = new JTable(tableModel);
+        this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.table.setRowHeight(26);
+        this.table.getTableHeader().setPreferredSize(new Dimension(0, 26));
+
+        this.table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+                return this;
+            }
+        });
+        
+        setLayout(new BorderLayout());
+
+        scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(null);
+        add(scrollPane, BorderLayout.CENTER);
+
+        buttonBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        addButton = new JButton("Add");
+        editButton = new JButton("Edit");
+        deleteButton = new JButton("Delete");
+
+        buttonBar.add(addButton);
+        buttonBar.add(editButton);
+        buttonBar.add(deleteButton);
+        add(buttonBar, BorderLayout.SOUTH);
+
+        addButton.addActionListener(e -> showAddDialog());
+        editButton.addActionListener(e -> showEditDialog());
+        deleteButton.addActionListener(e -> deleteSelectedTimer());
+
+        // Periodically refresh the "Remain" column
+        refreshTimer = new Timer(1000, e -> {
+            tableModel.updateRemainingTimes();
+        });
+        refreshTimer.start();
+        
+        refreshData();
+    }
+
+    public void refreshData() {
+        List<TimerEntry> entries = new ArrayList<>();
+        Map<String, Map<String, Long>> allTimers = timerService.getAllTimers();
+        for (Map.Entry<String, Map<String, Long>> charEntry : allTimers.entrySet()) {
+            String characterName = charEntry.getKey();
+            for (Map.Entry<String, Long> timerEntry : charEntry.getValue().entrySet()) {
+                entries.add(new TimerEntry(characterName, timerEntry.getKey(), timerEntry.getValue()));
+            }
+        }
+        // Sort by expiration date, oldest at the top
+        entries.sort(Comparator.comparingLong(e -> e.expirationTime));
+        tableModel.setEntries(entries);
+    }
+
+    private void showAddDialog() {
+        String currentChar = characterNameSupplier.get();
+        if (currentChar == null || currentChar.isBlank()) {
+            JOptionPane.showMessageDialog(this, "You must be logged in with a character to add a timer.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        TimerDialog dialog = new TimerDialog((Frame) SwingUtilities.getWindowAncestor(this), "Add Timer", false, currentChar, null, 0, timerService, currentBg, currentFg);
+        dialog.setVisible(true);
+        if (dialog.isSaved()) {
+            timerService.setTimer(dialog.getCharacterName(), dialog.getDescription(), dialog.getDurationMs());
+            refreshData();
+        }
+    }
+
+    private void showEditDialog() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a timer to edit.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        TimerEntry entry = tableModel.getEntry(selectedRow);
+        TimerDialog dialog = new TimerDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Timer", true, entry.characterName, entry.description, entry.expirationTime, timerService, currentBg, currentFg);
+        dialog.setVisible(true);
+        if (dialog.isSaved()) {
+            timerService.updateTimerDescription(entry.characterName, entry.description, dialog.getDescription());
+            refreshData();
+        }
+    }
+
+    private void deleteSelectedTimer() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a timer to delete.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        TimerEntry entry = tableModel.getEntry(selectedRow);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the timer '" + entry.description + "' for " + entry.characterName + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            timerService.removeTimer(entry.characterName, entry.description);
+            refreshData();
+        }
+    }
+
+    public void updateTheme(Color bg, Color fg) {
+        this.currentBg = bg;
+        this.currentFg = fg;
+        setBackground(bg);
+        table.setBackground(bg);
+        table.setForeground(fg);
+        table.setGridColor(fg.darker());
+        table.getTableHeader().setBackground(bg);
+        table.getTableHeader().setForeground(fg);
+        scrollPane.setBackground(bg);
+        scrollPane.getViewport().setBackground(bg);
+        
+        buttonBar.setBackground(bg);
+        addButton.setBackground(bg);
+        addButton.setForeground(fg);
+        editButton.setBackground(bg);
+        editButton.setForeground(fg);
+        deleteButton.setBackground(bg);
+        deleteButton.setForeground(fg);
+    }
+
+    private static class TimerEntry {
+        String characterName;
+        String description;
+        long expirationTime;
+
+        TimerEntry(String characterName, String description, long expirationTime) {
+            this.characterName = characterName;
+            this.description = description;
+            this.expirationTime = expirationTime;
+        }
+    }
+
+    private class TimerTableModel extends AbstractTableModel {
+        private final String[] columnNames = {"Char", "Descr", "Remain"};
+        private List<TimerEntry> entries = new ArrayList<>();
+
+        void setEntries(List<TimerEntry> entries) {
+            this.entries = entries;
+            fireTableDataChanged();
+        }
+
+        TimerEntry getEntry(int row) {
+            return entries.get(row);
+        }
+
+        void updateRemainingTimes() {
+            if (entries.isEmpty()) return;
+            fireTableChanged(new javax.swing.event.TableModelEvent(this, 0, entries.size() - 1, 2));
+        }
+
+        @Override
+        public int getRowCount() {
+            return entries.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return columnNames[column];
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            TimerEntry entry = entries.get(rowIndex);
+            switch (columnIndex) {
+                case 0: return entry.characterName;
+                case 1: return entry.description;
+                case 2:
+                    long remain = entry.expirationTime - System.currentTimeMillis();
+                    return timerService.formatRemainingTime(remain);
+                default: return null;
+            }
+        }
+    }
+}

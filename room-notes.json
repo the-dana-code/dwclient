@@ -63,6 +63,24 @@
       }
     ]
   },
+  "10b70b0323c72b5368531b3f9796d4333027bae4": {
+    "name": "foyer of the Dwarf Bread Museum",
+    "buttons": [
+      {
+        "name": "Buy Ticket (A$1)",
+        "command": "buy ticket"
+      }
+    ]
+  },
+  "11979877ad59203c1656a814f71ade7a47c04e18": {
+    "name": "surface of the dunking tank",
+    "buttons": [
+      {
+        "name": "Climb Out",
+        "command": "climb out"
+      }
+    ]
+  },
   "1dfef612dd93c797e9fcf31e6ffdb249832bd39c": {
     "name": "Actors\u0027 Guild bar",
     "buttons": [
@@ -230,6 +248,15 @@
       }
     ]
   },
+  "552ae47ec4c644e729f2c1b2777689ae5624d61d": {
+    "name": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "5763028abd18c89f9240d159d672e9cd06016485": {
     "name": "Sylver\u0027s",
     "buttons": [
@@ -241,6 +268,15 @@
   },
   "57981abe779a28f1e8b003732eb35430854670e4": {
     "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "59c1b5e8574bd17addc6d82e679474c186afa527": {
+    "name": "dwarfish shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -280,6 +316,16 @@
     "name": "wizard\u0027s tent",
     "notes": "You can renew items here, removing spells and wizardly writings from them for a small fee.\n\nSyntax\n  renew \u003citem\u003e",
     "buttons": []
+  },
+  "67651cb9c02e45558e72ed20e182ae8438fdad7b": {
+    "name": "Foreign Things",
+    "notes": "Shop has hard-to-understand names. You must \u0027browse\u0027 items to see what they really are.\n\ni) Carved Bone Aulos",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
   },
   "6a23a422360bfbba06738708d2fa10e400c282f7": {
     "name": "Bologna shop",
@@ -344,6 +390,15 @@
       }
     ]
   },
+  "792cd0be7f3ae1005766e7c9b6507fcc4dc2bc54": {
+    "name": "tailor\u0027s shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "7a7f49079aaec52c07942b59c7f04f0666ac408f": {
     "name": "inside the vault",
     "buttons": [
@@ -353,10 +408,42 @@
       }
     ]
   },
+  "7b4f3c0ae83a90a9a8f6b7ecaf5d232b7a465614": {
+    "name": "southwest corner of the museum\u0027s hall",
+    "buttons": [
+      {
+        "name": "Read Sign",
+        "command": "read sign"
+      },
+      {
+        "name": "Blow Horn",
+        "command": "blow horn"
+      }
+    ]
+  },
   "7ee0b29ed3f90ec0dba692d18b02a69341510c54": {
     "name": "Embroidery Shop",
     "notes": "You can embroider your clothes here.\n\nSyntax\n  embroider \u003cstring\u003e on \u003cobject\u003e\n  order motif on \u003cobject\u003e",
     "buttons": []
+  },
+  "8163a07ecc08d324db8618a4c40c884c81831add": {
+    "name": "Ankh Post Office",
+    "notes": "You can send and receive mail here.\n\nSyntax:\n  mail - read or send mail\n  mail \u003crecipient\u003e - send mail to someone",
+    "buttons": [
+      {
+        "name": "Mail System",
+        "command": "mail"
+      }
+    ]
+  },
+  "87bccf82aa89cb15517caa3a5c5828a7f6113bcb": {
+    "name": "northeast corner of the museum\u0027s hall",
+    "buttons": [
+      {
+        "name": "Read List",
+        "command": "read list"
+      }
+    ]
   },
   "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d": {
     "name": "smithy",
@@ -410,6 +497,23 @@
       {
         "name": "List Menu",
         "command": "list"
+      }
+    ]
+  },
+  "998d5ad620d54b81b8de914f7d293378c5745d43": {
+    "name": "northwest corner of the museum\u0027s hall",
+    "buttons": [
+      {
+        "name": "Enter Tank",
+        "command": "enter tank"
+      },
+      {
+        "name": "Read Sign",
+        "command": "read sign"
+      },
+      {
+        "name": "Ring Bell",
+        "command": "ring bell"
       }
     ]
   },
@@ -746,6 +850,19 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "f510cbb3889023820e563418abb32d26cf6d02f7": {
+    "name": "southeast corner of the museum\u0027s hall",
+    "buttons": [
+      {
+        "name": "Read Sign",
+        "command": "read sign"
+      },
+      {
+        "name": "Tap Triangle",
+        "command": "tap triangle"
       }
     ]
   },

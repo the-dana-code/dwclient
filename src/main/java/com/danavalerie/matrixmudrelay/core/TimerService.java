@@ -31,6 +31,29 @@ public class TimerService {
         saveConfig();
     }
 
+    public synchronized void updateTimerDescription(String characterName, String oldDescription, String newDescription) {
+        if (characterName == null || characterName.isBlank() || oldDescription == null || newDescription == null) {
+            return;
+        }
+        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        if (charConfig != null && charConfig.timers != null && charConfig.timers.containsKey(oldDescription)) {
+            Long expiration = charConfig.timers.remove(oldDescription);
+            charConfig.timers.put(newDescription, expiration);
+            saveConfig();
+        }
+    }
+
+    public synchronized void removeTimer(String characterName, String timerName) {
+        if (characterName == null || characterName.isBlank()) {
+            return;
+        }
+        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        if (charConfig != null && charConfig.timers != null) {
+            charConfig.timers.remove(timerName);
+            saveConfig();
+        }
+    }
+
     public synchronized Map<String, Long> getTimers(String characterName) {
         if (characterName == null || characterName.isBlank()) {
             return Collections.emptyMap();
@@ -43,6 +66,16 @@ public class TimerService {
 
         // Return a copy to avoid concurrent modification issues and keep the original for cleanup if needed
         return new LinkedHashMap<>(charConfig.timers);
+    }
+
+    public synchronized Map<String, Map<String, Long>> getAllTimers() {
+        Map<String, Map<String, Long>> allTimers = new LinkedHashMap<>();
+        for (Map.Entry<String, BotConfig.CharacterConfig> entry : config.characters.entrySet()) {
+            if (entry.getValue().timers != null && !entry.getValue().timers.isEmpty()) {
+                allTimers.put(entry.getKey(), new LinkedHashMap<>(entry.getValue().timers));
+            }
+        }
+        return allTimers;
     }
 
     private void saveConfig() {

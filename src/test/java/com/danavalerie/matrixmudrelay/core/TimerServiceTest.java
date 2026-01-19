@@ -1,0 +1,62 @@
+package com.danavalerie.matrixmudrelay.core;
+
+import com.danavalerie.matrixmudrelay.config.BotConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Path;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class TimerServiceTest {
+    private BotConfig config;
+    private TimerService timerService;
+    private Path configPath;
+
+    @BeforeEach
+    void setUp(@TempDir Path tempDir) {
+        config = new BotConfig();
+        configPath = tempDir.resolve("config.json");
+        timerService = new TimerService(config, configPath);
+    }
+
+    @Test
+    void testAddAndRemoveTimer() {
+        timerService.setTimer("Char1", "Timer1", 1000);
+        Map<String, Long> timers = timerService.getTimers("Char1");
+        assertEquals(1, timers.size());
+        assertTrue(timers.containsKey("Timer1"));
+
+        timerService.removeTimer("Char1", "Timer1");
+        timers = timerService.getTimers("Char1");
+        assertTrue(timers.isEmpty());
+    }
+
+    @Test
+    void testGetAllTimers() {
+        timerService.setTimer("Char1", "Timer1", 1000);
+        timerService.setTimer("Char2", "Timer2", 2000);
+
+        Map<String, Map<String, Long>> allTimers = timerService.getAllTimers();
+        assertEquals(2, allTimers.size());
+        assertTrue(allTimers.containsKey("Char1"));
+        assertTrue(allTimers.containsKey("Char2"));
+        assertTrue(allTimers.get("Char1").containsKey("Timer1"));
+        assertTrue(allTimers.get("Char2").containsKey("Timer2"));
+    }
+
+    @Test
+    void testUpdateTimerDescription() {
+        timerService.setTimer("Char1", "OldDesc", 1000);
+        long expiration = config.characters.get("Char1").timers.get("OldDesc");
+
+        timerService.updateTimerDescription("Char1", "OldDesc", "NewDesc");
+        
+        Map<String, Long> timers = timerService.getTimers("Char1");
+        assertFalse(timers.containsKey("OldDesc"));
+        assertTrue(timers.containsKey("NewDesc"));
+        assertEquals(expiration, timers.get("NewDesc"));
+    }
+}

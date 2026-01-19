@@ -122,6 +122,26 @@ public class ThemeTest {
     }
 
     @Test
+    public void testTimerPanelTheme(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        com.danavalerie.matrixmudrelay.config.BotConfig config = new com.danavalerie.matrixmudrelay.config.BotConfig();
+        com.danavalerie.matrixmudrelay.core.TimerService service = new com.danavalerie.matrixmudrelay.core.TimerService(config, configPath);
+        
+        javax.swing.SwingUtilities.invokeAndWait(() -> {
+            TimerPanel panel = new TimerPanel(service, () -> "TestChar");
+            
+            Color bg = Color.BLACK;
+            Color fg = Color.WHITE;
+            panel.updateTheme(bg, fg);
+            
+            assertEquals(bg, panel.getBackground());
+            assertEquals(bg, panel.getComponent(0).getBackground()); // scrollPane
+            // Components in buttonBar
+            assertEquals(bg, panel.getComponent(1).getBackground()); // buttonBar
+        });
+    }
+
+    @Test
     public void testJTabbedPaneTabColors() throws Exception {
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         SwingUtilities.invokeAndWait(() -> {

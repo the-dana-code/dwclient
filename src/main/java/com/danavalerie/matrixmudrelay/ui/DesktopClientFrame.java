@@ -143,6 +143,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private int historyIndex = -1;
     private final RoomButtonBarPanel roomButtonBarPanel;
     private final RoomNotePanel roomNotePanel;
+    private final TimerPanel timerPanel;
     private final JTabbedPane roomTabbedPane = new JTabbedPane();
     private final RoomNoteService roomButtonService;
     private int lastScrollValue = -1;
@@ -191,6 +192,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 },
                 transcript
         );
+        this.timerPanel = new TimerPanel(timerService, () -> mud.getCurrentRoomSnapshot().characterName());
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
 
         commandProcessor = new MudCommandProcessor(cfg, mud, transcript, writTracker, storeInventoryTracker, timerService, this);
@@ -715,6 +717,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         roomInfoContent.add(roomButtonBarPanel, BorderLayout.SOUTH);
 
         roomTabbedPane.addTab("Room", roomInfoContent);
+        roomTabbedPane.addTab("Timers", timerPanel);
+        roomTabbedPane.addChangeListener(e -> {
+            if (roomTabbedPane.getSelectedComponent() == timerPanel) {
+                timerPanel.refreshData();
+            }
+        });
 
         JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomTabbedPane);
         mapNotesSplit.setContinuousLayout(true);
@@ -1265,6 +1273,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updateComponentTree(getContentPane(), bg, fg);
         roomButtonBarPanel.updateTheme(bg, fg);
         roomNotePanel.updateTheme(bg, fg);
+        timerPanel.updateTheme(bg, fg);
         inputField.setCaretColor(fg);
 
         menuBar.setBackground(bg);

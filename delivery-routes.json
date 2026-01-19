@@ -1038,5 +1038,11 @@
     "location": "Mr. K. Whistler\u0027s Bakery on Pigsty Hill",
     "roomId": "72792e2f6568b0fa8aedc0e408c8e9f1f4b500b3",
     "commands": []
+  },
+  {
+    "npc": "No. 1 Son",
+    "location": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids on Heroes Street",
+    "roomId": "552ae47ec4c644e729f2c1b2777689ae5624d61d",
+    "commands": []
   }
 ]
