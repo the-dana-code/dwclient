@@ -167,6 +167,15 @@
       }
     ]
   },
+  "37bd6af408da6fce7cd61f400443cfc875b1eaa9": {
+    "name": "swampy green tent",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "3e658fac2b551442d118db1e726c01044e9271fa": {
     "name": "Little Agatea",
     "buttons": [
@@ -357,6 +366,15 @@
       }
     ]
   },
+  "62f6b3f50ef49ca7fd8105ecf96764e0b1a9463a": {
+    "name": "Weapon Masters\u0027 Court armoury",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "6544a6185c5b6aaf62554ecde584f40965e7f65f": {
     "name": "wizard\u0027s tent",
     "notes": "You can renew items here, removing spells and wizardly writings from them for a small fee.\n\nSyntax\n  renew \u003citem\u003e",
@@ -492,6 +510,15 @@
   },
   "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d": {
     "name": "smithy",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "8fb0571296430ab92e47f0ce5d5cbc44467ec110": {
+    "name": "small, smelly tannery",
     "buttons": [
       {
         "name": "List Shop",
@@ -698,6 +725,15 @@
       }
     ]
   },
+  "b580a1647a3eb6e36dcdb14ac3634a9368978cd4": {
+    "name": "Occult Harry\u0027s Arcane Boutique",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "b5ed7c10bec7b728919c356788faffb7b546cd4d": {
     "name": "house of rest and safety",
     "notes": "This is a PvP safe area.",
@@ -858,6 +894,15 @@
       }
     ]
   },
+  "dbe4ea262a6a5c77e75aa1ce780d1ab16c34a0e2": {
+    "name": "Dunstan Tichenor\u0027s Travel Agency",
+    "buttons": [
+      {
+        "name": "Request Brochure",
+        "command": "say I want a brochure please"
+      }
+    ]
+  },
   "dd73061f5252980cac11a758e449136cf1a3907b": {
     "name": "priest clothing shop",
     "buttons": [
@@ -936,6 +981,15 @@
   },
   "e946896bb5407b99f7a58bf4c007a403af7877c8": {
     "name": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "ea2858fd644cc32e65c257e531734d95d2015dd8": {
+    "name": "Stop Losing Your Way",
     "buttons": [
       {
         "name": "List Shop",
