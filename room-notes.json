@@ -26,6 +26,15 @@
       }
     ]
   },
+  "06eacb063ebb4ef3627f778d92cdecd0089a78b1": {
+    "name": "incense shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "07392486e85af327941943107ac9d7c79f8ba43a": {
     "name": "Turn off the Crystal Ball shop",
     "buttons": [
@@ -78,6 +87,15 @@
       {
         "name": "Climb Out",
         "command": "climb out"
+      }
+    ]
+  },
+  "13c33a2610639d0964b07ea27c650c46c2bb2434": {
+    "name": "relic shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -173,6 +191,19 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "3d71496a59f5a866a7642874033154019f7f7aca": {
+    "name": "south part of the gallery",
+    "buttons": [
+      {
+        "name": "Collect Finished Beads",
+        "command": "say I want to collect"
+      },
+      {
+        "name": "Order Prayer Beads",
+        "command": "say I want to buy something"
       }
     ]
   },
@@ -453,6 +484,15 @@
       }
     ]
   },
+  "786f922eeddebe8d739709ae43559d01bf1dbcc2": {
+    "name": "post office",
+    "buttons": [
+      {
+        "name": "Mail",
+        "command": "mail"
+      }
+    ]
+  },
   "792cd0be7f3ae1005766e7c9b6507fcc4dc2bc54": {
     "name": "tailor\u0027s shop",
     "buttons": [
@@ -499,6 +539,15 @@
       }
     ]
   },
+  "82ad539ebda22f80ccee441dae6e09113eb10d34": {
+    "name": "southwest corner of the town square",
+    "buttons": [
+      {
+        "name": "Enter Hut",
+        "command": "enter hut"
+      }
+    ]
+  },
   "87bccf82aa89cb15517caa3a5c5828a7f6113bcb": {
     "name": "northeast corner of the museum\u0027s hall",
     "buttons": [
@@ -523,6 +572,25 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "917446ff80d14cacf75b035961cc89303d3d51e9": {
+    "name": "Combat Crib",
+    "buttons": [
+      {
+        "name": "Attack Pumpkin",
+        "command": "attack pumpkin"
+      }
+    ]
+  },
+  "9271d72f8a6e761d0fb9a20e45f412b7ab53d9bc": {
+    "name": "bright and airy travel agency",
+    "notes": "You can choose a nationality here. This will determine your starting location and your native language.\n\nSyntax:\n  info - list all nations\n  info \u003cnation\u003e - show info on a nation\n  choose \u003cnation\u003e \u003cregion\u003e\n\nFor example, to choose Ankh-Morpork as your starting location, which means your native language is Morporkian (probably the easiest combination for new players):\n  choose morpork ankh-morpork\n",
+    "buttons": [
+      {
+        "name": "List Nations",
+        "command": "info"
       }
     ]
   },
@@ -577,6 +645,24 @@
       }
     ]
   },
+  "96fbb85b40e6b5bf50eaea8f3da113a432a0b7a2": {
+    "name": "Temple furniture shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "979f4cf8e3b53219d75ee6faa5c0e498ed588abc": {
+    "name": "Equipment Emporium",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "97c0216ddba02e73e8d44bbfe7277e1820b4845e": {
     "name": "wine lounge",
     "buttons": [
@@ -609,6 +695,24 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "Introduction:HelpHut": {
+    "name": "help hut",
+    "buttons": [
+      {
+        "name": "Read Sign",
+        "command": "read sign"
+      }
+    ]
+  },
+  "Introduction:Notes": {
+    "name": "park",
+    "buttons": [
+      {
+        "name": "Leave Hut",
+        "command": "out"
       }
     ]
   },
@@ -739,6 +843,15 @@
       }
     ]
   },
+  "b4ef49ae5608c6cbf1440df70c1aef91d6f2e88b": {
+    "name": "miscellaneous shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "b580a1647a3eb6e36dcdb14ac3634a9368978cd4": {
     "name": "Occult Harry\u0027s Arcane Boutique",
     "buttons": [
@@ -752,6 +865,15 @@
     "name": "house of rest and safety",
     "notes": "This is a PvP safe area.",
     "buttons": []
+  },
+  "b6c94cc471cf0f91499773a663a1675680841218": {
+    "name": "weapons and armour shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
   },
   "b7d1c631bde34be141b8db19b255b5ba59d374ad": {
     "name": "lumberyard on Dimwell Street",
@@ -818,6 +940,15 @@
       }
     ]
   },
+  "c01b78a962f6bc2b79cd82483d45f37abe4f91c0": {
+    "name": "kitchen of the Seasick Sea Serpent",
+    "buttons": [
+      {
+        "name": "Shift Lever",
+        "command": "shift lever"
+      }
+    ]
+  },
   "c2ed14f69e331ba383dc3e62de34c0542a948e7c": {
     "name": "Warriors\u0027 Guild cafe",
     "buttons": [
@@ -863,6 +994,19 @@
       }
     ]
   },
+  "ca731a674a9521468cdf0d83eeff54d9f496b78e": {
+    "name": "back room of the Seasick Sea Serpent",
+    "buttons": [
+      {
+        "name": "Shift Lever",
+        "command": "shift lever"
+      },
+      {
+        "name": "Dive into Pool (Dangerous)",
+        "command": "dive into pool"
+      }
+    ]
+  },
   "cac9b0d4268de02d644ebbb771e8db270d83af8c": {
     "name": "Bolly\u0027s Boot Boutique",
     "buttons": [
@@ -905,6 +1049,28 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "dac6d8ceafd5f0d77914983c834727d7a3c8cd8b": {
+    "name": "temple to the gods",
+    "notes": "Alignment is important for anyone following a god, and especially important for priests. Each god expects their followers\u0027 alignment to fall within a specific range.\n\nYou can change your starting alignment here. Rescue beetles to become more good. Drown beetles to become more evil.",
+    "buttons": [
+      {
+        "name": "Read Sign",
+        "command": "read sign"
+      },
+      {
+        "name": "More Good",
+        "command": "rescue beetle"
+      },
+      {
+        "name": "More Evil",
+        "command": "drown beetle"
+      },
+      {
+        "name": "See Alignment",
+        "command": "score align"
       }
     ]
   },
