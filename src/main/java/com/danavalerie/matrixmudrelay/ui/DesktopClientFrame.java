@@ -715,20 +715,28 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         JPanel roomInfoContent = new JPanel(new BorderLayout());
         roomInfoContent.add(roomNotePanel, BorderLayout.CENTER);
         roomInfoContent.add(roomButtonBarPanel, BorderLayout.SOUTH);
+        roomInfoContent.setMinimumSize(new Dimension(20, 0));
+        roomNotePanel.setMinimumSize(new Dimension(20, 0));
+        roomButtonBarPanel.setMinimumSize(new Dimension(20, 0));
 
         roomTabbedPane.addTab("Room", roomInfoContent);
         roomTabbedPane.addTab("Timers", timerPanel);
+        roomTabbedPane.setMinimumSize(new Dimension(20, 0));
+        timerPanel.setMinimumSize(new Dimension(20, 0));
         roomTabbedPane.addChangeListener(e -> {
             if (roomTabbedPane.getSelectedComponent() == timerPanel) {
                 timerPanel.refreshData();
             }
         });
 
+        mapPanel.setMinimumSize(new Dimension(20, 0));
+
         JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomTabbedPane);
         mapNotesSplit.setContinuousLayout(true);
         mapNotesSplit.setResizeWeight(0.7);
         mapNotesSplit.setDividerSize(6);
         mapNotesSplit.setBorder(null);
+        mapNotesSplit.setMinimumSize(new Dimension(20, 0));
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapNotesSplit, buildMudPanel());
         splitPane.setContinuousLayout(true);
