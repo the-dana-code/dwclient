@@ -31,7 +31,10 @@ import java.util.List;
 import java.util.Map;
 
 public final class ConfigLoader {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(BotConfig.TimerData.class, new TimerDataAdapter())
+            .setPrettyPrinting()
+            .create();
 
     private ConfigLoader() {}
 

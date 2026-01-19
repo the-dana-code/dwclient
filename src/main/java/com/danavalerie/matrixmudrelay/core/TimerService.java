@@ -27,8 +27,22 @@ public class TimerService {
             charConfig.timers = new LinkedHashMap<>();
         }
         long expiration = System.currentTimeMillis() + durationMs;
-        charConfig.timers.put(timerName, expiration);
+        charConfig.timers.put(timerName, new BotConfig.TimerData(expiration, durationMs));
         saveConfig();
+    }
+
+    public synchronized void restartTimer(String characterName, String timerName) {
+        if (characterName == null || characterName.isBlank() || timerName == null) {
+            return;
+        }
+        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        if (charConfig != null && charConfig.timers != null) {
+            BotConfig.TimerData data = charConfig.timers.get(timerName);
+            if (data != null && data.durationMs > 0) {
+                data.expirationTime = System.currentTimeMillis() + data.durationMs;
+                saveConfig();
+            }
+        }
     }
 
     public synchronized void updateTimerDescription(String characterName, String oldDescription, String newDescription) {
@@ -37,8 +51,8 @@ public class TimerService {
         }
         BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null && charConfig.timers.containsKey(oldDescription)) {
-            Long expiration = charConfig.timers.remove(oldDescription);
-            charConfig.timers.put(newDescription, expiration);
+            BotConfig.TimerData data = charConfig.timers.remove(oldDescription);
+            charConfig.timers.put(newDescription, data);
             saveConfig();
         }
     }
@@ -54,7 +68,7 @@ public class TimerService {
         }
     }
 
-    public synchronized Map<String, Long> getTimers(String characterName) {
+    public synchronized Map<String, BotConfig.TimerData> getTimers(String characterName) {
         if (characterName == null || characterName.isBlank()) {
             return Collections.emptyMap();
         }
@@ -68,8 +82,8 @@ public class TimerService {
         return new LinkedHashMap<>(charConfig.timers);
     }
 
-    public synchronized Map<String, Map<String, Long>> getAllTimers() {
-        Map<String, Map<String, Long>> allTimers = new LinkedHashMap<>();
+    public synchronized Map<String, Map<String, BotConfig.TimerData>> getAllTimers() {
+        Map<String, Map<String, BotConfig.TimerData>> allTimers = new LinkedHashMap<>();
         for (Map.Entry<String, BotConfig.CharacterConfig> entry : config.characters.entrySet()) {
             if (entry.getValue().timers != null && !entry.getValue().timers.isEmpty()) {
                 allTimers.put(entry.getKey(), new LinkedHashMap<>(entry.getValue().timers));

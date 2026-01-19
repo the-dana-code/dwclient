@@ -399,7 +399,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
 
-        Map<String, Long> timers = timerService.getTimers(charName);
+        Map<String, BotConfig.TimerData> timers = timerService.getTimers(charName);
         if (timers.isEmpty()) {
             output.appendSystem("No active timers for " + charName + ".");
             return;
@@ -411,10 +411,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         // Find max timer name length for padding
         int maxNameLen = timers.keySet().stream().mapToInt(String::length).max().orElse(0);
 
-        for (Map.Entry<String, Long> entry : timers.entrySet()) {
+        for (Map.Entry<String, BotConfig.TimerData> entry : timers.entrySet()) {
             String name = entry.getKey();
-            long expiration = entry.getValue();
-            long remaining = expiration - now;
+            BotConfig.TimerData data = entry.getValue();
+            long remaining = data.expirationTime - now;
 
             out.append(String.format("%-" + (maxNameLen + 2) + "s", name + ":"))
                     .append(timerService.formatRemainingTime(remaining))

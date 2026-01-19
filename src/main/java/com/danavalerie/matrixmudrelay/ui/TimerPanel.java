@@ -23,6 +23,7 @@ public class TimerPanel extends JPanel {
     private final JButton addButton;
     private final JButton editButton;
     private final JButton deleteButton;
+    private final JButton restartButton;
 
     private Color currentBg;
     private Color currentFg;
@@ -70,15 +71,18 @@ public class TimerPanel extends JPanel {
         addButton = new JButton("Add");
         editButton = new JButton("Edit");
         deleteButton = new JButton("Delete");
+        restartButton = new JButton("Restart");
 
         buttonBar.add(addButton);
         buttonBar.add(editButton);
         buttonBar.add(deleteButton);
+        buttonBar.add(restartButton);
         add(buttonBar, BorderLayout.SOUTH);
 
         addButton.addActionListener(e -> showAddDialog());
         editButton.addActionListener(e -> showEditDialog());
         deleteButton.addActionListener(e -> deleteSelectedTimer());
+        restartButton.addActionListener(e -> restartSelectedTimer());
 
         // Periodically refresh the "Remain" column
         refreshTimer = new Timer(1000, e -> {
@@ -91,11 +95,12 @@ public class TimerPanel extends JPanel {
 
     public void refreshData() {
         List<TimerEntry> entries = new ArrayList<>();
-        Map<String, Map<String, Long>> allTimers = timerService.getAllTimers();
-        for (Map.Entry<String, Map<String, Long>> charEntry : allTimers.entrySet()) {
+        Map<String, Map<String, com.danavalerie.matrixmudrelay.config.BotConfig.TimerData>> allTimers = timerService.getAllTimers();
+        for (Map.Entry<String, Map<String, com.danavalerie.matrixmudrelay.config.BotConfig.TimerData>> charEntry : allTimers.entrySet()) {
             String characterName = charEntry.getKey();
-            for (Map.Entry<String, Long> timerEntry : charEntry.getValue().entrySet()) {
-                entries.add(new TimerEntry(characterName, timerEntry.getKey(), timerEntry.getValue()));
+            for (Map.Entry<String, com.danavalerie.matrixmudrelay.config.BotConfig.TimerData> timerEntry : charEntry.getValue().entrySet()) {
+                com.danavalerie.matrixmudrelay.config.BotConfig.TimerData data = timerEntry.getValue();
+                entries.add(new TimerEntry(characterName, timerEntry.getKey(), data.expirationTime, data.durationMs));
             }
         }
         // Sort by expiration date, oldest at the top
@@ -146,6 +151,24 @@ public class TimerPanel extends JPanel {
         }
     }
 
+    private void restartSelectedTimer() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a timer to restart.", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        TimerEntry entry = tableModel.getEntry(selectedRow);
+        if (entry.durationMs <= 0) {
+            JOptionPane.showMessageDialog(this, "This timer does not have an initial duration saved and cannot be automatically restarted.", "Cannot Restart", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to restart the timer '" + entry.description + "' for " + entry.characterName + "?", "Confirm Restart", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            timerService.restartTimer(entry.characterName, entry.description);
+            refreshData();
+        }
+    }
+
     public void updateTheme(Color bg, Color fg) {
         this.currentBg = bg;
         this.currentFg = fg;
@@ -165,17 +188,21 @@ public class TimerPanel extends JPanel {
         editButton.setForeground(fg);
         deleteButton.setBackground(bg);
         deleteButton.setForeground(fg);
+        restartButton.setBackground(bg);
+        restartButton.setForeground(fg);
     }
 
     private static class TimerEntry {
         String characterName;
         String description;
         long expirationTime;
+        long durationMs;
 
-        TimerEntry(String characterName, String description, long expirationTime) {
+        TimerEntry(String characterName, String description, long expirationTime, long durationMs) {
             this.characterName = characterName;
             this.description = description;
             this.expirationTime = expirationTime;
+            this.durationMs = durationMs;
         }
     }
 

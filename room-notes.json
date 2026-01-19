@@ -117,6 +117,15 @@
       }
     ]
   },
+  "2bc27e913d0fb72751ee53f5f7caff7dfeb9fd71": {
+    "name": "Silver Bells Silversmiths",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2d715bf254b2675fc60159bcc6cf6baf71399215": {
     "name": "Ripley\u0027s Custom Tabards",
     "notes": "You can order custom tabards here.\n\nSyntax:\n  order tabard\n  collect tabard",
@@ -268,6 +277,15 @@
   },
   "57981abe779a28f1e8b003732eb35430854670e4": {
     "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "58ec926d89fc8b43ec311749ecbead2a1dc0df02": {
+    "name": "bakery of Bestiality Carter",
     "buttons": [
       {
         "name": "List Shop",
@@ -526,6 +544,15 @@
       }
     ]
   },
+  "a2a0fadb7b1715417aa2be58a4f2085700a2554a": {
+    "name": "Jui-Pi Way Shoe-Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "a397123cec941a8ae13e1187cc368eeaa5b3a9aa": {
     "name": "Actors\u0027 Guild practice room",
     "notes": "Here you can get a custom-written script performed in order to test it.\n\nSyntax:\n  request [a] performance of \u003cobject\u003e    \n",
@@ -626,6 +653,15 @@
       }
     ]
   },
+  "afbc05497b3f6d1b05014d5813a4a644b8181e2f": {
+    "name": "strange amphora-and-weaponry garden at the edge of the Harbour Market",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "b2cbb10ce3aac6299eca31664ee4e8f7590f8376": {
     "name": "Playwrights Guild office",
     "buttons": [
@@ -642,6 +678,15 @@
   },
   "b7d1c631bde34be141b8db19b255b5ba59d374ad": {
     "name": "lumberyard on Dimwell Street",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "b839d36a1108671857f43f507cd40ab62475c31c": {
+    "name": "Rosa\u0027s Chocolate Emporium",
     "buttons": [
       {
         "name": "List Shop",
@@ -698,6 +743,15 @@
   },
   "c2ed14f69e331ba383dc3e62de34c0542a948e7c": {
     "name": "Warriors\u0027 Guild cafe",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "c722a6320db00226f0c56fafe92d9be7a02a0dc6": {
+    "name": "Georgio\u0027s pizza place",
     "buttons": [
       {
         "name": "List Menu",
@@ -774,6 +828,15 @@
   },
   "de58e8bd3157654fdbc22b37e44c5c8c88b82506": {
     "name": "Filigree Street General Store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "df1f1f7d38ff74d74b5ff5d565460899daeb5cbf": {
+    "name": "bucket shop",
     "buttons": [
       {
         "name": "List Shop",

@@ -79,7 +79,18 @@ public final class BotConfig {
 
     public static final class CharacterConfig {
         public CharacterTeleports teleports = new CharacterTeleports();
-        public Map<String, Long> timers = new LinkedHashMap<>();
+        public Map<String, TimerData> timers = new LinkedHashMap<>();
+    }
+
+    public static final class TimerData {
+        public long expirationTime;
+        public long durationMs;
+
+        public TimerData() {}
+        public TimerData(long expirationTime, long durationMs) {
+            this.expirationTime = expirationTime;
+            this.durationMs = durationMs;
+        }
     }
 
     public static final class CharacterTeleports {

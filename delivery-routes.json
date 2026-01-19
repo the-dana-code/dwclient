@@ -1044,5 +1044,11 @@
     "location": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids on Heroes Street",
     "roomId": "552ae47ec4c644e729f2c1b2777689ae5624d61d",
     "commands": []
+  },
+  {
+    "npc": "Mrs B\u0027cket",
+    "location": "the bucket shop on King\u0027s Down",
+    "roomId": "df1f1f7d38ff74d74b5ff5d565460899daeb5cbf",
+    "commands": []
   }
 ]

@@ -25,9 +25,10 @@ class TimerServiceTest {
     @Test
     void testAddAndRemoveTimer() {
         timerService.setTimer("Char1", "Timer1", 1000);
-        Map<String, Long> timers = timerService.getTimers("Char1");
+        Map<String, BotConfig.TimerData> timers = timerService.getTimers("Char1");
         assertEquals(1, timers.size());
         assertTrue(timers.containsKey("Timer1"));
+        assertEquals(1000, timers.get("Timer1").durationMs);
 
         timerService.removeTimer("Char1", "Timer1");
         timers = timerService.getTimers("Char1");
@@ -39,7 +40,7 @@ class TimerServiceTest {
         timerService.setTimer("Char1", "Timer1", 1000);
         timerService.setTimer("Char2", "Timer2", 2000);
 
-        Map<String, Map<String, Long>> allTimers = timerService.getAllTimers();
+        Map<String, Map<String, BotConfig.TimerData>> allTimers = timerService.getAllTimers();
         assertEquals(2, allTimers.size());
         assertTrue(allTimers.containsKey("Char1"));
         assertTrue(allTimers.containsKey("Char2"));
@@ -50,14 +51,29 @@ class TimerServiceTest {
     @Test
     void testUpdateTimerDescription() {
         timerService.setTimer("Char1", "OldDesc", 1000);
-        long expiration = config.characters.get("Char1").timers.get("OldDesc");
+        BotConfig.TimerData data = config.characters.get("Char1").timers.get("OldDesc");
+        long expiration = data.expirationTime;
 
         timerService.updateTimerDescription("Char1", "OldDesc", "NewDesc");
         
-        Map<String, Long> timers = timerService.getTimers("Char1");
+        Map<String, BotConfig.TimerData> timers = timerService.getTimers("Char1");
         assertFalse(timers.containsKey("OldDesc"));
         assertTrue(timers.containsKey("NewDesc"));
-        assertEquals(expiration, timers.get("NewDesc"));
+        assertEquals(expiration, timers.get("NewDesc").expirationTime);
+    }
+
+    @Test
+    void testRestartTimer() {
+        timerService.setTimer("Char1", "Timer1", 10000);
+        BotConfig.TimerData data = config.characters.get("Char1").timers.get("Timer1");
+        long originalExpiration = data.expirationTime;
+
+        // Manually age the timer
+        data.expirationTime -= 5000;
+
+        timerService.restartTimer("Char1", "Timer1");
+        assertTrue(data.expirationTime > originalExpiration);
+        assertEquals(10000, data.durationMs);
     }
 
     @Test
