@@ -68,6 +68,15 @@ public class TimerService {
         }
     }
 
+    public synchronized void setTimerColumnWidths(java.util.List<Integer> widths) {
+        config.ui.timerColumnWidths = widths;
+        saveConfig();
+    }
+
+    public synchronized java.util.List<Integer> getTimerColumnWidths() {
+        return config.ui.timerColumnWidths;
+    }
+
     public synchronized Map<String, BotConfig.TimerData> getTimers(String characterName) {
         if (characterName == null || characterName.isBlank()) {
             return Collections.emptyMap();

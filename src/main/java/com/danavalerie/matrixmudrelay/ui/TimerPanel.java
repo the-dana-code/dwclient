@@ -3,14 +3,19 @@ package com.danavalerie.matrixmudrelay.ui;
 import com.danavalerie.matrixmudrelay.core.TimerService;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class TimerPanel extends JPanel {
     private final TimerService timerService;
@@ -36,6 +41,23 @@ public class TimerPanel extends JPanel {
         this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.table.setRowHeight(26);
         this.table.getTableHeader().setPreferredSize(new Dimension(0, 26));
+
+        List<Integer> savedWidths = timerService.getTimerColumnWidths();
+        if (savedWidths != null && savedWidths.size() == table.getColumnCount()) {
+            for (int i = 0; i < savedWidths.size(); i++) {
+                table.getColumnModel().getColumn(i).setPreferredWidth(savedWidths.get(i));
+            }
+        }
+
+        this.table.getColumnModel().addColumnModelListener(new TableColumnModelListener() {
+            @Override public void columnAdded(TableColumnModelEvent e) {}
+            @Override public void columnRemoved(TableColumnModelEvent e) {}
+            @Override public void columnMoved(TableColumnModelEvent e) {}
+            @Override public void columnMarginChanged(javax.swing.event.ChangeEvent e) {
+                saveColumnWidths();
+            }
+            @Override public void columnSelectionChanged(ListSelectionEvent e) {}
+        });
 
         this.table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
@@ -167,6 +189,14 @@ public class TimerPanel extends JPanel {
             timerService.restartTimer(entry.characterName, entry.description);
             refreshData();
         }
+    }
+
+    void saveColumnWidths() {
+        List<Integer> widths = new ArrayList<>();
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            widths.add(table.getColumnModel().getColumn(i).getWidth());
+        }
+        timerService.setTimerColumnWidths(widths);
     }
 
     public void updateTheme(Color bg, Color fg) {

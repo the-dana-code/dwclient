@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.nio.file.Path;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -110,6 +111,39 @@ public class TimerPanelTest {
                 
                 assert restartButton.getText().equals("Restart");
                 assert restartButton.isEnabled();
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void testColumnWidthPersistence(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        BotConfig config = new BotConfig();
+        TimerService service = new TimerService(config, configPath);
+
+        SwingUtilities.invokeAndWait(() -> {
+            TimerPanel panel = new TimerPanel(service, () -> "TestChar");
+            try {
+                Field tableField = TimerPanel.class.getDeclaredField("table");
+                tableField.setAccessible(true);
+                JTable table = (JTable) tableField.get(panel);
+
+                // Change column width
+                table.getColumnModel().getColumn(0).setWidth(123);
+                // Manually trigger the save
+                panel.saveColumnWidths();
+
+                List<Integer> savedWidths = service.getTimerColumnWidths();
+                assertEquals(table.getColumnCount(), savedWidths.size());
+                assertEquals(123, (int) savedWidths.get(0));
+
+                // Create a new panel and check if it loads the widths
+                TimerPanel panel2 = new TimerPanel(service, () -> "TestChar");
+                JTable table2 = (JTable) tableField.get(panel2);
+                assertEquals(123, table2.getColumnModel().getColumn(0).getPreferredWidth());
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

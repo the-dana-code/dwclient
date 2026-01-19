@@ -759,8 +759,26 @@
       }
     ]
   },
+  "c81d328377224f5281740eff52e5eae6a780ed0b": {
+    "name": "smithy",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "c86e7e36f138ae6cfe05c6f62aba2b4c88deb596": {
     "name": "Job Market\u0027s Clothing Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "c8990555cf1dacc9ff75294d8e4d7f4984195679": {
+    "name": "underwear shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -806,6 +824,15 @@
   },
   "d864bb147ebbe312510642504ae99d37d7972e06": {
     "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "dd73061f5252980cac11a758e449136cf1a3907b": {
+    "name": "priest clothing shop",
     "buttons": [
       {
         "name": "List Shop",

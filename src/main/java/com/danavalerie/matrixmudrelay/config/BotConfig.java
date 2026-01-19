@@ -63,6 +63,7 @@ public final class BotConfig {
         public Double mapNotesSplitRatio;
         public Double chitchatTimerSplitRatio;
         public Double outputSplitRatio;
+        public List<Integer> timerColumnWidths;
     }
 
     public static final class Bookmark {
