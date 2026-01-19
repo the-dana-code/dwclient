@@ -89,7 +89,7 @@ public class TimerService {
 
     public String formatRemainingTime(long remainingMs) {
         if (remainingMs <= 0) {
-            return "0:00";
+            return "EXPIRED";
         }
 
         long totalSeconds = remainingMs / 1000;

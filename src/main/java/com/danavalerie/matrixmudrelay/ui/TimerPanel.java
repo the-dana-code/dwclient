@@ -41,7 +41,19 @@ public class TimerPanel extends JPanel {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+                if ("EXPIRED".equals(value) && column == 2) {
+                    setForeground(Color.RED);
+                } else if (!isSelected) {
+                    setForeground(table.getForeground());
+                }
                 return this;
+            }
+        });
+
+        this.table.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                table.clearSelection();
             }
         });
         

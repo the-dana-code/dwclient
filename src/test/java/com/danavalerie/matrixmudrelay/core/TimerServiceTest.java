@@ -59,4 +59,13 @@ class TimerServiceTest {
         assertTrue(timers.containsKey("NewDesc"));
         assertEquals(expiration, timers.get("NewDesc"));
     }
+
+    @Test
+    void testFormatRemainingTime() {
+        assertEquals("EXPIRED", timerService.formatRemainingTime(0));
+        assertEquals("EXPIRED", timerService.formatRemainingTime(-1000));
+        assertEquals("0:05", timerService.formatRemainingTime(5000));
+        assertEquals("1:00", timerService.formatRemainingTime(60000));
+        assertEquals("1:00:00", timerService.formatRemainingTime(3600000));
+    }
 }
