@@ -33,6 +33,10 @@ jobs:
         cp run-mac.command dist/
         cp run-linux.sh dist/
         cp config-example.json dist/config.json
+        cp delivery-routes.json dist/delivery-routes.json
+        cp room-notes.json dist/room-notes.json
+        cp database.db dist/database.db
+        cp LICENSE dist/LICENSE
         RELEASE_NAME="dwclient"
         ZIP_NAME="dwclient-${{ github.ref_name }}.zip"
         cd dist && zip -r "../$ZIP_NAME" .
