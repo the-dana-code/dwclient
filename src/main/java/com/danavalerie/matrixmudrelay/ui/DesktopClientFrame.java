@@ -94,6 +94,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private static final int RESULTS_MENU_PAGE_SIZE = 15;
+    private static final Map<Integer, String> KEYPAD_DIRECTIONS = Map.of(
+            KeyEvent.VK_NUMPAD8, "north",
+            KeyEvent.VK_NUMPAD2, "south",
+            KeyEvent.VK_NUMPAD6, "east",
+            KeyEvent.VK_NUMPAD4, "west",
+            KeyEvent.VK_NUMPAD9, "northeast",
+            KeyEvent.VK_NUMPAD7, "northwest",
+            KeyEvent.VK_NUMPAD3, "southeast",
+            KeyEvent.VK_NUMPAD1, "southwest"
+    );
     private static final Border BLACK_BORDER = javax.swing.BorderFactory.createLineBorder(Color.BLACK, 2);
     private static final Border RED_BORDER = javax.swing.BorderFactory.createLineBorder(Color.RED, 2);
     private final JTextField inputField = new JTextField();
@@ -126,6 +136,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private Color writCurrentColor = AnsiColorParser.defaultColor();
     private boolean writCurrentBold;
     private boolean forwardingKey;
+    private boolean suppressNextKeyTyped;
     private boolean allowSplitPersist;
     private boolean suppressSplitPersist;
     private final List<String> inputHistory = new ArrayList<>();
@@ -855,7 +866,30 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void installInputFocusForwarding() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(event -> {
-            if (!isVisible() || !isFocused() || inputField.isFocusOwner() || forwardingKey) {
+            if (!isVisible() || !isFocused() || forwardingKey) {
+                return false;
+            }
+
+            if (event.getID() == KeyEvent.KEY_PRESSED) {
+                suppressNextKeyTyped = false;
+                if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+                    String command = KEYPAD_DIRECTIONS.get(event.getKeyCode());
+                    if (command != null) {
+                        submitCommand(command);
+                        event.consume();
+                        suppressNextKeyTyped = true;
+                        return true;
+                    }
+                }
+            } else if (event.getID() == KeyEvent.KEY_TYPED) {
+                if (suppressNextKeyTyped) {
+                    event.consume();
+                    suppressNextKeyTyped = false;
+                    return true;
+                }
+            }
+
+            if (inputField.isFocusOwner()) {
                 return false;
             }
             boolean shouldForward = false;
