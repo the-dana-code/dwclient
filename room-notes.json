@@ -545,6 +545,20 @@
       }
     ]
   },
+  "9639b7d243afe55b07220f0acf30b09c5da8a1e8": {
+    "name": "small classroom",
+    "notes": "You can get started with the Ephebian language here.\n\nSyntax:\n  request spoken lesson\n  request written lesson",
+    "buttons": [
+      {
+        "name": "Spoken Ephebian Lesson (A$5)",
+        "command": "request spoken lesson"
+      },
+      {
+        "name": "Written Ephebian Lesson (A$5)",
+        "command": "request written lesson"
+      }
+    ]
+  },
   "964ea3c5f971d538232e683612cd41900c232bdd": {
     "name": "bar of the Mended Drum",
     "buttons": [

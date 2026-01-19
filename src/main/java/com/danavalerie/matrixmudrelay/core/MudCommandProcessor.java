@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
@@ -68,6 +69,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
     private final TimerService timerService;
+    private final java.util.function.Supplier<DeliveryRouteMappings> routeMappingsSupplier;
     private final ClientOutput output;
     private final ExecutorService background;
 
@@ -83,6 +85,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
                                WritTracker writTracker,
                                StoreInventoryTracker storeInventoryTracker,
                                TimerService timerService,
+                               java.util.function.Supplier<DeliveryRouteMappings> routeMappingsSupplier,
                                ClientOutput output) {
         this.cfg = cfg;
         this.mud = mud;
@@ -90,6 +93,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         this.writTracker = writTracker;
         this.storeInventoryTracker = storeInventoryTracker;
         this.timerService = timerService;
+        this.routeMappingsSupplier = routeMappingsSupplier;
         this.output = output;
         this.mapService = new RoomMapService("database.db");
         this.background = Executors.newSingleThreadExecutor(r -> {
@@ -494,7 +498,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             case "npc" -> handleNpcSearchQuery(req.npc());
             case "room" -> handleRoomSearchQuery(req.locationName());
             case "deliver" -> {
-                String npcName = removeTitle(req);
+                String npcName = routeMappingsSupplier.get().findRoutePlan(req.npc(), req.locationDisplay())
+                        .map(DeliveryRouteMappings.RoutePlan::npcOverride)
+                        .filter(override -> override != null && !override.isBlank())
+                        .orElseGet(() -> removeTitle(req));
                 String command = Sanitizer.sanitizeMudInput(
                         "deliver "
                                 + req.item()

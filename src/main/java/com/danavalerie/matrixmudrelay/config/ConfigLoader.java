@@ -133,7 +133,7 @@ public final class ConfigLoader {
                     if (entry.roomId() == null && entry.target() != null && entry.target().size() >= 3) {
                         String id = mapService.findRoomIdByCoordinates(entry.target().get(0), entry.target().get(1), entry.target().get(2));
                         if (id != null) {
-                            newEntries.add(new DeliveryRouteMappings.RouteEntry(entry.npc(), entry.location(), id, null, entry.commands()));
+                            newEntries.add(new DeliveryRouteMappings.RouteEntry(entry.npc(), entry.location(), id, null, entry.commands(), entry.npcOverride()));
                             changed = true;
                             continue;
                         }

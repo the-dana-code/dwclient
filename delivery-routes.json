@@ -977,7 +977,8 @@
     "npc": "the Ephebian teacher in the Ephebian Embassy",
     "location": "the small classroom in The Ephebian Embassy",
     "roomId": "9639b7d243afe55b07220f0acf30b09c5da8a1e8",
-    "commands": []
+    "commands": [],
+    "npcOverride": "the teacher"
   },
   {
     "npc": "Lolinda Lovelace",

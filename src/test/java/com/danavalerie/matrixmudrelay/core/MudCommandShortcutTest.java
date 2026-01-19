@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.TranscriptLogger;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
@@ -97,7 +98,7 @@ class MudCommandShortcutTest {
         StubTranscriptLogger transcript = new StubTranscriptLogger();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
         
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
         processor.handleInput("/pw");
         
@@ -115,7 +116,7 @@ class MudCommandShortcutTest {
         StubTranscriptLogger transcript = new StubTranscriptLogger();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
         
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
         processor.handleInput("/password");
         
@@ -130,7 +131,7 @@ class MudCommandShortcutTest {
         StubTranscriptLogger transcript = new StubTranscriptLogger();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
         
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
         // Test /loc usage
         processor.handleInput("/loc");
@@ -151,7 +152,7 @@ class MudCommandShortcutTest {
         StubTranscriptLogger transcript = new StubTranscriptLogger();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
         // Scenario: Room ID arrives, but Name is null
         JsonObject roomInfo1 = new JsonObject();
@@ -183,7 +184,7 @@ class MudCommandShortcutTest {
         StubTranscriptLogger transcript = new StubTranscriptLogger();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
         // Room ID for the Mended Drum from database.db
         String drumRoomId = "4b11616f93c94e3c766bb5ad9cba3b61dcc73979";
@@ -197,6 +198,34 @@ class MudCommandShortcutTest {
         // The name should be looked up from the database
         assertEquals(1, output.roomUpdates.size());
         assertEquals(drumRoomId + ":north end of Short Street outside the Mended Drum", output.roomUpdates.get(0));
+    }
+
+    @Test
+    void testDeliverNpcOverride() {
+        BotConfig cfg = new BotConfig();
+        StubMudClient mud = new StubMudClient();
+        StubClientOutput output = new StubClientOutput();
+        StubTranscriptLogger transcript = new StubTranscriptLogger();
+        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        WritTracker writTracker = new WritTracker();
+
+        String npc = "the Ephebian teacher in the Ephebian Embassy";
+        String loc = "the small classroom in The Ephebian Embassy";
+        String item = "a wicker tube";
+
+        DeliveryRouteMappings routeMappings = new DeliveryRouteMappings(List.of(
+                new DeliveryRouteMappings.RouteEntry(npc, loc, "room1", null, List.of(), "the teacher")
+        ));
+
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, mud, transcript, writTracker, new StoreInventoryTracker(), timerService, () -> routeMappings, output);
+
+        // Simulating parsing the writ line
+        writTracker.ingest("You read the official employment writ\n[ ] " + item + " to " + npc + " at " + loc);
+
+        processor.handleInput("/writ 1 deliver");
+
+        assertTrue(mud.sentLines.contains("deliver wicker tube to the teacher"),
+                "Should use NPC override 'the teacher' in deliver command. Sent: " + mud.sentLines);
     }
 }
 

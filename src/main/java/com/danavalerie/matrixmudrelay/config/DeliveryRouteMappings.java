@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 public record DeliveryRouteMappings(List<RouteEntry> routes) {
-    public record RouteEntry(String npc, String location, String roomId, List<Integer> target, List<String> commands) {}
+    public record RouteEntry(String npc, String location, String roomId, List<Integer> target, List<String> commands, String npcOverride) {}
     public record RouteTarget(String roomId) {}
-    public record RoutePlan(RouteTarget target, List<String> commands) {}
+    public record RoutePlan(RouteTarget target, List<String> commands, String npcOverride) {}
 
     public Optional<RoutePlan> findRoutePlan(String npc, String location) {
         if (npc == null || location == null) {
@@ -35,7 +35,8 @@ public record DeliveryRouteMappings(List<RouteEntry> routes) {
                 .filter(r -> r.roomId() != null)
                 .map(r -> new RoutePlan(
                         new RouteTarget(r.roomId()),
-                        r.commands() == null ? List.of() : List.copyOf(r.commands())
+                        r.commands() == null ? List.of() : List.copyOf(r.commands()),
+                        r.npcOverride()
                 ))
                 .findFirst();
     }
