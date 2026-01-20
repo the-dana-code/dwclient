@@ -63,7 +63,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final int LABEL_WIDTH = 60;
     private static final int NAME_MIN_WIDTH = 140;
     private static final int NAME_MAX_WIDTH = 260;
-    private static final int GP_RATE_SAMPLE_SIZE = 10;
+    private static final int GP_RATE_SAMPLE_SIZE = 5;
     private static final int GP_TIMER_DEFAULT_INTERVAL_MS = 1000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getIntegerInstance(Locale.US);
 
