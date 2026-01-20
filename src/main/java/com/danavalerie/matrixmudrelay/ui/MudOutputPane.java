@@ -33,6 +33,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public final class MudOutputPane extends JTextPane implements AutoScrollable {
@@ -123,6 +124,7 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
     private final StringBuilder lineBuffer = new StringBuilder();
     private int lineStartOffset = 0;
     private BiConsumer<String, Color> chitchatListener;
+    private Consumer<String> lineListener;
     private boolean autoScroll = true;
 
     public MudOutputPane() {
@@ -299,6 +301,9 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
             Color color = alertPattern.foreground() != null ? alertPattern.foreground() : DEFAULT_COLOR;
             chitchatListener.accept(fullLine, color);
         }
+        if (lineListener != null) {
+            lineListener.accept(trimmed);
+        }
         lineStartOffset = getDocument().getLength();
     }
 
@@ -351,6 +356,10 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
 
     public void setChitchatListener(BiConsumer<String, Color> chitchatListener) {
         this.chitchatListener = chitchatListener;
+    }
+
+    public void setLineListener(Consumer<String> lineListener) {
+        this.lineListener = lineListener;
     }
 
     @Override
