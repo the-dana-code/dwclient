@@ -251,25 +251,44 @@ public final class MapPanel extends JPanel {
     }
 
     public void updateMap(String roomId) {
-        if (roomId == null || roomId.isBlank()) {
+        updateMap(roomId, null);
+    }
+
+    public void updateMap(Integer mapId) {
+        updateMap(null, mapId);
+    }
+
+    private void updateMap(String roomId, Integer mapId) {
+        if ((roomId == null || roomId.isBlank()) && mapId == null) {
             showMessage("No room info available yet.");
             return;
         }
-        String previous = lastRoomId.getAndSet(roomId);
-        if (Objects.equals(previous, roomId)) {
-            return;
+
+        if (roomId != null && !roomId.isBlank()) {
+            String previous = lastRoomId.getAndSet(roomId);
+            if (Objects.equals(previous, roomId)) {
+                return;
+            }
+        } else {
+            lastRoomId.set(null);
         }
+
         executor.submit(() -> {
             try {
-                RoomMapService.MapImage mapImage = mapService.renderMapImage(roomId, invertMap);
+                RoomMapService.MapImage mapImage;
+                if (roomId != null && !roomId.isBlank()) {
+                    mapImage = mapService.renderMapImage(roomId, invertMap);
+                } else {
+                    mapImage = mapService.renderMapByMapId(mapId, invertMap);
+                }
                 BufferedImage image = resolveBaseImage(mapImage);
-                RoomMapService.RoomLocation currentRoom = new RoomMapService.RoomLocation(
+                RoomMapService.RoomLocation currentRoom = mapImage.roomId() != null ? new RoomMapService.RoomLocation(
                         mapImage.roomId(),
                         mapImage.mapId(),
                         mapImage.roomX(),
                         mapImage.roomY(),
                         mapImage.roomShort()
-                );
+                ) : null;
                 showImage(mapImage, image, currentRoom);
             } catch (RoomMapService.MapLookupException e) {
                 showMessage("Map error: " + e.getMessage());
@@ -691,10 +710,10 @@ public final class MapPanel extends JPanel {
             try {
                 String roomId = mapService.findRepresentativeRoomId(area.mapId());
                 if (roomId == null || roomId.isBlank()) {
-                    showMessage("Map error: No rooms found for " + area.displayName() + ".");
-                    return;
+                    updateMap(area.mapId());
+                } else {
+                    updateMap(roomId);
                 }
-                updateMap(roomId);
             } catch (RoomMapService.MapLookupException e) {
                 showMessage("Map error: " + e.getMessage());
             } catch (Exception e) {

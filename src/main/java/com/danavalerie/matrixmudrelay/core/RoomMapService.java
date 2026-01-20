@@ -175,6 +175,60 @@ public class RoomMapService {
         }
     }
 
+    public MapImage renderMapByMapId(int mapId, boolean isDark) throws SQLException, MapLookupException, IOException {
+        if (!driverAvailable) {
+            throw new MapLookupException("SQLite driver not available.");
+        }
+
+        BufferedImage backgroundImage = loadMapBackground(mapId, isDark);
+        if (backgroundImage == null) {
+            throw new MapLookupException("No background image for map " + mapId);
+        }
+
+        int minX = 0;
+        int minY = 0;
+        int maxX = backgroundImage.getWidth() - 1;
+        int maxY = backgroundImage.getHeight() - 1;
+        int imageWidth = backgroundImage.getWidth() * IMAGE_SCALE;
+        int imageHeight = backgroundImage.getHeight() * IMAGE_SCALE;
+
+        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        g2.setColor(isDark ? new Color(12, 12, 18) : new Color(240, 240, 245));
+        g2.fillRect(0, 0, imageWidth, imageHeight);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g2.setStroke(new BasicStroke(IMAGE_SCALE));
+
+        drawMapBackground(backgroundImage, g2);
+        g2.dispose();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", out);
+        byte[] data = out.toByteArray();
+
+        String mapName = getMapDisplayName(mapId);
+        return new MapImage(
+                data,
+                imageWidth,
+                imageHeight,
+                "image/png",
+                mapName,
+                -1, -1, // No current room marker
+                false,
+                mapId,
+                minX,
+                minY,
+                IMAGE_SCALE,
+                ROOM_PIXEL_OFFSET_X,
+                ROOM_PIXEL_OFFSET_Y,
+                null,
+                -1, -1,
+                null,
+                isDark
+        );
+    }
+
     public List<MapArea> listMapAreas() {
         List<MapArea> areas = new ArrayList<>();
         for (MapBackground background : MapBackground.values()) {
