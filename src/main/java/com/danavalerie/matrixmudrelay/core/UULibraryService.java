@@ -45,9 +45,9 @@ public class UULibraryService {
     }
 
     private final Map<String, Room> maze = new HashMap<>();
-    private int curN, curM;
-    private Orientation orientation = Orientation.NORTH;
-    private boolean active = false;
+    private volatile int curN, curM;
+    private volatile Orientation orientation = Orientation.NORTH;
+    private volatile boolean active = false;
 
     private static final UULibraryService INSTANCE = new UULibraryService();
 

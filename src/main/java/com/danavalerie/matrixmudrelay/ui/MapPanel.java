@@ -293,8 +293,10 @@ public final class MapPanel extends JPanel {
 
     public void updateCurrentRoom(String roomId) {
         currentRoomId = roomId;
-        updateSpeedWalkState();
-        centerButton.setEnabled(roomId != null);
+        SwingUtilities.invokeLater(() -> {
+            updateSpeedWalkState();
+            centerButton.setEnabled(roomId != null);
+        });
     }
 
     public void setSpeedwalkHandler(Consumer<RoomMapService.RoomLocation> speedwalkHandler) {
@@ -321,7 +323,6 @@ public final class MapPanel extends JPanel {
         lastImageSize = new Dimension(mapImage.width(), mapImage.height());
         selectedRoom = currentRoom;
         updateDisplayedImage();
-        updateSpeedWalkState();
     }
 
     private void updateDisplayedImage() {
@@ -335,43 +336,47 @@ public final class MapPanel extends JPanel {
         Point focusPoint = lastFocusPoint;
         Dimension imageSize = lastImageSize;
         RoomMapService.MapImage mapImage = lastMapImage;
-        if (mapId != null) {
-            updatingAreaSelection = true;
-            RoomMapService.MapArea area = ensureAreaOption(mapId, title);
-            areaComboBox.setSelectedItem(area);
-            updatingAreaSelection = false;
-        }
-        if (image == null || imageSize == null) {
-            mapLabel.setIcon(null);
+        SwingUtilities.invokeLater(() -> {
+            if (mapId != null) {
+                updatingAreaSelection = true;
+                RoomMapService.MapArea area = ensureAreaOption(mapId, title);
+                areaComboBox.setSelectedItem(area);
+                updatingAreaSelection = false;
+            }
+            if (image == null || imageSize == null) {
+                mapLabel.setIcon(null);
+                mapLabel.setText("");
+                mapLabel.setPreferredSize(null);
+                mapLabel.revalidate();
+                configureAnimation(null);
+                updateSpeedWalkState();
+                return;
+            }
+            BufferedImage scaled = scaleImage(image, zoomPercent);
+            Dimension scaledSize = scaleDimension(imageSize, zoomPercent);
+            Point focus = scalePoint(focusPoint, zoomPercent);
+            if (UULibraryService.getInstance().isActive()) {
+                focus = scalePoint(new Point(UULibraryService.getInstance().getX(), UULibraryService.getInstance().getY()), zoomPercent);
+            }
+            final Point scaledFocus = focus;
+            List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);
+            int markerDiameter = scaledMarkerDiameter(zoomPercent);
+            AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath, invertMap);
+            mapLabel.setIcon(icon);
             mapLabel.setText("");
-            mapLabel.setPreferredSize(null);
+            Insets insets = mapLabel.getInsets();
+            Dimension preferredSize = new Dimension(
+                    scaledSize.width + insets.left + insets.right,
+                    scaledSize.height + insets.top + insets.bottom
+            );
+            mapLabel.setPreferredSize(preferredSize);
             mapLabel.revalidate();
-            configureAnimation(null);
-            return;
-        }
-        BufferedImage scaled = scaleImage(image, zoomPercent);
-        Dimension scaledSize = scaleDimension(imageSize, zoomPercent);
-        Point focus = scalePoint(focusPoint, zoomPercent);
-        if (UULibraryService.getInstance().isActive()) {
-            focus = scalePoint(new Point(UULibraryService.getInstance().getX(), UULibraryService.getInstance().getY()), zoomPercent);
-        }
-        final Point scaledFocus = focus;
-        List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);
-        int markerDiameter = scaledMarkerDiameter(zoomPercent);
-        AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath, invertMap);
-        mapLabel.setIcon(icon);
-        mapLabel.setText("");
-        Insets insets = mapLabel.getInsets();
-        Dimension preferredSize = new Dimension(
-                scaledSize.width + insets.left + insets.right,
-                scaledSize.height + insets.top + insets.bottom
-        );
-        mapLabel.setPreferredSize(preferredSize);
-        mapLabel.revalidate();
-        configureAnimation(icon);
-        if (shouldCenter && scaledFocus != null && scaledSize != null) {
-            centerViewOnPoint(scaledFocus, scaledSize);
-        }
+            configureAnimation(icon);
+            if (shouldCenter && scaledFocus != null && scaledSize != null) {
+                centerViewOnPoint(scaledFocus, scaledSize);
+            }
+            updateSpeedWalkState();
+        });
     }
 
     private List<Point> buildScaledSpeedwalkPath(RoomMapService.MapImage mapImage, Integer mapId, int zoomPercent) {

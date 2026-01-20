@@ -206,6 +206,9 @@ public class RoomMapService {
         drawMapBackground(backgroundImage, g2);
         g2.dispose();
 
+        baseImageCache = new BaseImageCache(mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,
+                image, isDark);
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(image, "png", out);
         byte[] data = out.toByteArray();
