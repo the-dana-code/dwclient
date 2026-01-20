@@ -364,7 +364,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             output.appendSystem("Error: " + e.getMessage());
             return;
         }
-        output.appendSystem("Unknown command.");
+        output.appendSystem("Unknown command. Type /help for help.");
     }
 
     private void handleHelp() {

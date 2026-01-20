@@ -180,6 +180,15 @@
       }
     ]
   },
+  "2af0886fd4c6aa0f5418186c1993893ba701d0a4": {
+    "name": "Lolinda\u0027s Lovely Leather",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2bc27e913d0fb72751ee53f5f7caff7dfeb9fd71": {
     "name": "Silver Bells Silversmiths",
     "buttons": [
@@ -471,6 +480,19 @@
       {
         "name": "List Menu",
         "command": "list"
+      }
+    ]
+  },
+  "66cdb7f0e0fd006c472e00abf2fb23348bb74337": {
+    "name": "opulent office",
+    "buttons": [
+      {
+        "name": "Open Account (A$7.50)",
+        "command": "open an account"
+      },
+      {
+        "name": "Enter Vault (A$0.30)",
+        "command": "northeast"
       }
     ]
   },
@@ -1054,6 +1076,15 @@
       {
         "name": "Shift Lever",
         "command": "shift lever"
+      }
+    ]
+  },
+  "c06e6c2965bd51133521c4b01152ce318faa278e": {
+    "name": "inside the vault",
+    "buttons": [
+      {
+        "name": "Exit Vault",
+        "command": "southwest"
       }
     ]
   },
