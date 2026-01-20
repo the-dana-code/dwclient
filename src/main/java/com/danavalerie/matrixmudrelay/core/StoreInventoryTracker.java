@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 public final class StoreInventoryTracker {
     private static final String INVENTORY_START = "The following items are for sale:";
+    private static final String MENU_START = "You read the menu:";
     private static final String OFFER_START = "You find on offer:";
     private static final Pattern ITEM_LINE = Pattern.compile("^\\s{0,3}([A-Za-z0-9]{1,4}):\\s+(.+?)\\s+for\\s+.+$");
     private final List<StoreItem> items = new ArrayList<>();
@@ -104,7 +105,7 @@ public final class StoreInventoryTracker {
             listingMode = ListingMode.LETTERED;
             return true;
         }
-        if (OFFER_START.equals(trimmed)) {
+        if (OFFER_START.equals(trimmed) || MENU_START.equals(trimmed)) {
             items.clear();
             hasInventory = true;
             listingMode = ListingMode.NAME_LISTED;
