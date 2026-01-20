@@ -55,8 +55,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void updateContextualResults(ContextualResultList results);
 
         void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path);
-
         void updateConnectionState(boolean connected);
+        void setUULibraryButtonsEnabled(boolean enabled);
     }
 
     private final BotConfig cfg;
@@ -175,6 +175,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
 
         if (roomId != null && !roomId.isBlank()) {
             UULibraryService.getInstance().setRoomId(roomId);
+            output.setUULibraryButtonsEnabled(true);
             if (!roomId.equals(lastRoomId) || !Objects.equals(roomName, lastRoomName)) {
                 boolean roomChanged = !roomId.equals(lastRoomId);
                 lastRoomId = roomId;

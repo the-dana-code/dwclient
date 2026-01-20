@@ -1412,6 +1412,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         SwingUtilities.invokeLater(() -> updateConnectionMenuItem(connected));
     }
 
+    @Override
+    public void setUULibraryButtonsEnabled(boolean enabled) {
+        SwingUtilities.invokeLater(() -> uuLibraryButtonPanel.setButtonsEnabled(enabled));
+    }
+
     public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());

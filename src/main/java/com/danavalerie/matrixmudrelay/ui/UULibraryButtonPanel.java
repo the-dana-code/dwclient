@@ -53,11 +53,20 @@ public class UULibraryButtonPanel extends JPanel {
                 String cmd = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance()
                         .getNextStepCommand(target.x, target.y);
                 if (cmd != null) {
+                    setButtonsEnabled(false);
                     commandSubmitter.accept(cmd);
                 }
             }
         });
         add(btn);
+    }
+
+    public void setButtonsEnabled(boolean enabled) {
+        for (Component c : getComponents()) {
+            if (c instanceof JButton) {
+                c.setEnabled(enabled);
+            }
+        }
     }
 
     public void updateTheme(Color bg, Color fg) {

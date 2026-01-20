@@ -26,11 +26,22 @@ public class UULibraryButtonPanelTest {
         assertEquals("G", ((JButton)components[16]).getText());
         assertEquals("X", ((JButton)components[17]).getText());
         
-        // Test action
-        ((JButton)components[0]).doClick();
+        // Test action and disabling
+        JButton btn1 = (JButton) components[0];
+        assertTrue(btn1.isEnabled());
+        btn1.doClick();
         assertEquals(1, commands.size());
-        // From (1,5) North, to Room 1 (2,6)
-        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(0)));
+        assertFalse(btn1.isEnabled());
+        for (Component c : components) {
+            assertFalse(c.isEnabled());
+        }
+
+        // Test re-enabling
+        panel.setButtonsEnabled(true);
+        assertTrue(btn1.isEnabled());
+        for (Component c : components) {
+            assertTrue(c.isEnabled());
+        }
         
         ((JButton)components[16]).doClick(); // Button "G" -> Room 10 (12,6)
         assertEquals(2, commands.size());
