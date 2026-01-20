@@ -21,7 +21,7 @@ public class UULibraryMapGenerator {
         int startY = 4810;
         int spacingY = 30;
         int maxRow = 160;
-        int maxCol = 9;
+        int maxCol = 8;
 
         for (int row = 1; row <= maxRow; row++) {
             for (int col = 1; col <= maxCol; col++) {
@@ -147,39 +147,8 @@ public class UULibraryMapGenerator {
     }
 
     private static boolean isConnectedWrap(BufferedImage img, int x, int y, int targetX, int targetY) {
-        // Force wrap connection for Row 1 as per requirements
-        if (y >= 4810) return true;
-        
-        return isConnectedToEdge(img, x, y, (x < targetX ? -1 : 1), 0) &&
-               isConnectedToEdge(img, targetX, y, (x < targetX ? 1 : -1), 0);
-    }
-
-    private static boolean isConnectedToEdge(BufferedImage img, int x, int y, int dx, int dy) {
-        // West/East wrap connection in the library map usually goes to the extreme edge
-        // The image has 300px width.
-        int cx = x;
-        int cy = y;
-        while (cx >= 0 && cx < img.getWidth()) {
-            if (isBlackOnly(img, cx, cy)) {
-                // Good
-            } else {
-                boolean found = false;
-                for (int j = -4; j <= 4; j++) {
-                    if (isBlackOnly(img, cx, cy + j)) { found = true; break; }
-                }
-                if (!found) {
-                    // If we reached close to the edge, it's a wrap exit
-                    return (cx < 10 || cx > img.getWidth() - 10);
-                }
-            }
-            cx += dx;
-        }
+        // The library map is cylindrical, so it always wraps East-West
         return true;
-    }
-
-    private static boolean isBlackOnly(BufferedImage img, int x, int y) {
-        if (x < 0 || x >= img.getWidth() || y < 0 || y >= img.getHeight()) return false;
-        return (img.getRGB(x, y) & 0xFFFFFF) == 0;
     }
 
     private static boolean hasColorNearby(BufferedImage img, int x, int y, int targetColor, int radius) {

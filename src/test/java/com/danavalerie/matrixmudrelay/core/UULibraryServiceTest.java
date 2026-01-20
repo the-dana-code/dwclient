@@ -84,4 +84,44 @@ public class UULibraryServiceTest {
         cmd = service.getNextStepCommand(2, 6);
         assertEquals("lt", cmd);
     }
+
+    @Test
+    public void testWrapAroundNavigation() throws Exception {
+        UULibraryService service = UULibraryService.getInstance();
+        service.setRoomId("UULibrary");
+
+        // Set position to (12, 1) facing NORTH using reflection
+        java.lang.reflect.Field curRowField = UULibraryService.class.getDeclaredField("curRow");
+        java.lang.reflect.Field curColField = UULibraryService.class.getDeclaredField("curCol");
+        java.lang.reflect.Field orientationField = UULibraryService.class.getDeclaredField("orientation");
+        curRowField.setAccessible(true);
+        curColField.setAccessible(true);
+        orientationField.setAccessible(true);
+
+        curRowField.set(service, 12);
+        curColField.set(service, 1);
+        orientationField.set(service, UULibraryService.Orientation.NORTH);
+
+        // Target Room 8 at (10, 8)
+        // If 8-column wrap works, it should go WEST.
+        // Facing NORTH, WEST is a left turn: "lt"
+        String cmd = service.getNextStepCommand(10, 8);
+        assertEquals("lt", cmd, "From (12, 1) to (10, 8) should be WEST (lt) because of wrap-around");
+    }
+
+    @Test
+    public void testRow10Col1NoWestExit() throws Exception {
+        UULibraryService service = UULibraryService.getInstance();
+        
+        java.lang.reflect.Field mazeField = UULibraryService.class.getDeclaredField("maze");
+        mazeField.setAccessible(true);
+        java.util.Map<String, UULibraryService.Room> maze = (java.util.Map<String, UULibraryService.Room>) mazeField.get(service);
+        
+        UULibraryService.Room room10_1 = maze.get("10,1");
+        assertNotNull(room10_1, "Room (10, 1) should exist");
+        assertFalse(room10_1.exits.contains("west"), "Room (10, 1) should NOT have a west exit");
+        assertTrue(room10_1.exits.contains("north"), "Room (10, 1) should have north exit");
+        assertTrue(room10_1.exits.contains("east"), "Room (10, 1) should have east exit");
+        assertTrue(room10_1.exits.contains("south"), "Room (10, 1) should have south exit");
+    }
 }

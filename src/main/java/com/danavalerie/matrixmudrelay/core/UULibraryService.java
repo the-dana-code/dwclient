@@ -136,8 +136,8 @@ public class UULibraryService {
             int nextCol = curCol + orientation.dCol;
             
             // Handle wrap-around
-            if (nextCol < 1) nextCol = 9;
-            if (nextCol > 9) nextCol = 1;
+            if (nextCol < 1) nextCol = 8;
+            if (nextCol > 8) nextCol = 1;
             
             curRow = nextRow;
             curCol = nextCol;
@@ -181,8 +181,8 @@ public class UULibraryService {
                 if (r.exits.contains(o.name)) {
                     int nextRow = current.row + o.dRow;
                     int nextCol = current.col + o.dCol;
-                    if (nextCol < 1) nextCol = 9;
-                    if (nextCol > 9) nextCol = 1;
+                    if (nextCol < 1) nextCol = 8;
+                    if (nextCol > 8) nextCol = 1;
 
                     int tentativeG = current.gScore + 1;
                     String key = nextRow + "," + nextCol;
@@ -210,7 +210,7 @@ public class UULibraryService {
     private double heuristic(int r1, int c1, int r2, int c2) {
         int dr = Math.abs(r1 - r2);
         int dc = Math.abs(c1 - c2);
-        dc = Math.min(dc, 9 - dc);
+        dc = Math.min(dc, 8 - dc);
         return dr + dc;
     }
 
@@ -218,9 +218,8 @@ public class UULibraryService {
         for (Orientation o : Orientation.values()) {
             int nextR = r1 + o.dRow;
             int nextC = c1 + o.dCol;
-            if (nextC < 1) nextC = 9;
-            if (nextC > 9) nextC = 1;
-
+            if (nextC < 1) nextC = 8;
+            if (nextC > 8) nextC = 1;
             if (nextR == r2 && nextC == c2) {
                 if (o == currentOri) return "fw";
                 if (o == currentOri.turn180()) return "bw";
