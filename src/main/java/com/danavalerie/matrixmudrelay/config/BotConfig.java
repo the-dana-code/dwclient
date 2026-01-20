@@ -18,6 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.config;
 
+import com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap;
 import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public final class BotConfig {
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();
 
-    public Map<String, CharacterConfig> characters = new LinkedHashMap<>();
+    public Map<String, CharacterConfig> characters = new CaseInsensitiveLinkedHashMap<>();
 
     /** @deprecated Use characters.teleports instead. This field is for migration. */
     @Deprecated

@@ -205,11 +205,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
         });
         statsPanel.setCharacterSamplesLoader(name -> {
-            BotConfig.CharacterConfig c = cfg.characters.get(name.toLowerCase());
+            BotConfig.CharacterConfig c = cfg.characters.get(name);
             return c != null ? c.gpRateSamples : null;
         });
         statsPanel.setOnSamplesChanged((name, samples) -> {
-            BotConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name.toLowerCase(), k -> new BotConfig.CharacterConfig());
+            BotConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new BotConfig.CharacterConfig());
             c.gpRateSamples = new ArrayList<>(samples);
             saveConfig();
         });
