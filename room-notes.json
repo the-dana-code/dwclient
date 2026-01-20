@@ -108,6 +108,15 @@
       }
     ]
   },
+  "1953162a25f312a0f60df63e3d956c07fdccb72f": {
+    "name": "backroom of Madame Dawning\u0027s Palliaments",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "1d37d2ede0f540a6583759a473e3f7565ac7bddc": {
     "name": "Simone\u0027s",
     "buttons": [
@@ -447,6 +456,15 @@
     "notes": "You can renew items here, removing spells and wizardly writings from them for a small fee.\n\nSyntax\n  renew \u003citem\u003e",
     "buttons": []
   },
+  "65ae5d46000d389f7bfad626558aa0848b99c47c": {
+    "name": "Somethynge-or-Other Licenced Caffe",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "67651cb9c02e45558e72ed20e182ae8438fdad7b": {
     "name": "Foreign Things",
     "notes": "Shop has hard-to-understand names. You must \u0027browse\u0027 items to see what they really are.\n\ni) Carved Bone Aulos",
@@ -595,6 +613,15 @@
   },
   "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d": {
     "name": "smithy",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "8edd2b9a65f2533cecc14305fafffbb722464931": {
+    "name": "Rebecca Palm\u0027s Clothing",
     "buttons": [
       {
         "name": "List Shop",
@@ -913,6 +940,15 @@
   },
   "b6c94cc471cf0f91499773a663a1675680841218": {
     "name": "weapons and armour shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "b6ebe2efcb6dc1480847543b343193c00832cc0d": {
+    "name": "Urban Pturbans",
     "buttons": [
       {
         "name": "List Shop",
