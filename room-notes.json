@@ -144,6 +144,15 @@
       }
     ]
   },
+  "22f326e3649c67b9eb54f030055444fce724a231": {
+    "name": "Elsie\u0027s Clothing Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "23101ac0bc74913d7b8727335316fd8f140f2145": {
     "name": "Brookless Bakery",
     "buttons": [
@@ -1035,6 +1044,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "c5912fb38f70e71c2d805f80b180d2fdd7567866": {
+    "name": "magic stall on the rimbank",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]

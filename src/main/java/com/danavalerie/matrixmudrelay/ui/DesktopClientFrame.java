@@ -722,15 +722,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         WritTracker.WritRequirement requirement = writRequirements.get(index);
         String itemName = requirement.item();
-        if (quantity == 1) {
-            List<String> singulars = GrammarUtils.singularizePhrase(itemName);
-            if (!singulars.isEmpty()) {
-                itemName = singulars.get(0);
-            }
+        List<String> singulars = GrammarUtils.singularizePhrase(itemName);
+        if (!singulars.isEmpty()) {
+            itemName = singulars.get(0);
         }
 
         if (storeInventoryTracker.isNameListed()) {
-            submitCommand("buy " + quantity + " " + itemName);
+            for (int i = 0; i < quantity; i++) {
+                submitCommand("buy " + itemName);
+            }
             return;
         }
         String finalItemName = itemName;
