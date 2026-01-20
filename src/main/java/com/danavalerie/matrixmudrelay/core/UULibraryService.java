@@ -131,14 +131,12 @@ public class UULibraryService {
     }
 
     public int getX() {
-        // Center of col 1 is 45. Spacing is 30.
-        // x = 45 + (curCol - 1) * 30 = curCol * 30 + 15.
-        return curCol * 30 + 15;
+        // Inverse of translation logic in UULibraryMapGenerator: c = (x - 45) / 30 + 1
+        return (curCol - 1) * 30 + 45;
     }
 
     public int getY() {
-        // Center of row 1 is 4810. Spacing is 30.
-        // y = 4810 - (curRow - 1) * 30.
+        // Inverse of translation logic in UULibraryMapGenerator: r = (4810 - y) / 30 + 1
         return 4810 - (curRow - 1) * 30;
     }
 

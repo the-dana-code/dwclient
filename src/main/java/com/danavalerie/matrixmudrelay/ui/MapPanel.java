@@ -356,7 +356,8 @@ public final class MapPanel extends JPanel {
             Dimension scaledSize = scaleDimension(imageSize, zoomPercent);
             Point focus = scalePoint(focusPoint, zoomPercent);
             if (UULibraryService.getInstance().isActive()) {
-                focus = scalePoint(new Point(UULibraryService.getInstance().getX(), UULibraryService.getInstance().getY()), zoomPercent);
+                int scale = (mapImage != null) ? mapImage.imageScale() : 1;
+                focus = scalePoint(new Point(UULibraryService.getInstance().getX() * scale, UULibraryService.getInstance().getY() * scale), zoomPercent);
             }
             final Point scaledFocus = focus;
             List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);

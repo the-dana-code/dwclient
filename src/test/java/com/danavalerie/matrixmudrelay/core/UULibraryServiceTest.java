@@ -18,11 +18,11 @@ public class UULibraryServiceTest {
         assertTrue(service.isActive());
         assertEquals(UULibraryService.Orientation.NORTH, service.getOrientation());
         
-        // Check initial coordinates (9, 321)
-        // x = 15 + 15*9 = 150
-        // y = 10 + 15*321 = 4825
-        assertEquals(150, service.getX());
-        assertEquals(4825, service.getY());
+        // Check initial coordinates (row 1, col 5)
+        // x = (5 - 1) * 30 + 45 = 120 + 45 = 165
+        // y = 4810 - (1 - 1) * 30 = 4810
+        assertEquals(165, service.getX());
+        assertEquals(4810, service.getY());
         
         // Move forward
         // Need to check if (9, 319) has a north exit.

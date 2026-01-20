@@ -546,7 +546,7 @@ public class RoomMapService {
 
     public RoomLocation lookupRoomLocation(String roomId) throws SQLException, MapLookupException {
         if (roomId != null && "UULibrary".equalsIgnoreCase(roomId.trim())) {
-            return new RoomLocation("UULibrary", 47, 150, 4795, "Unseen University Library");
+            return new RoomLocation("UULibrary", 47, 165, 4810, "Unseen University Library");
         }
         if (roomId == null || roomId.isBlank()) {
             throw new MapLookupException("No room info available yet.");
