@@ -1057,5 +1057,11 @@
     "location": "Krazzander\u0027s Magik Shoppe on Cockbill Street",
     "roomId": "925880da85a8d01ee4bcb302949f8eef099bb195",
     "commands": []
+  },
+  {
+    "npc": "Jonas",
+    "location": "an opulent office on The Ridings",
+    "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337",
+    "commands": []
   }
 ]

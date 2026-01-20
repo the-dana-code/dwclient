@@ -46,6 +46,14 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
     private static final Color TALKER_COLOR = new Color(180, 120, 255);
     private static final List<AlertPattern> ALERT_PATTERNS = List.of(
             new AlertPattern(
+                    Pattern.compile("^Whoops!  You tried to carry too many things and fumbled .*$"),
+                    Color.WHITE,
+                    Color.RED,
+                    true,
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    true
+            ),
+            new AlertPattern(
                     Pattern.compile("^Your divine protection is weakening\\.$"),
                     ALERT_FOREGROUND,
                     ALERT_BACKGROUND,

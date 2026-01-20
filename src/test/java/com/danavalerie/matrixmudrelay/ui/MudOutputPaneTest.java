@@ -57,6 +57,31 @@ public class MudOutputPaneTest {
     }
 
     @Test
+    public void testFumbleAlertColoring() throws BadLocationException {
+        MudOutputPane pane = new MudOutputPane();
+        StyledDocument doc = (StyledDocument) pane.getDocument();
+
+        String fumbleLine = "Whoops!  You tried to carry too many things and fumbled a heavy iron key.\n";
+        pane.appendMudText(fumbleLine);
+
+        try {
+            javax.swing.SwingUtilities.invokeAndWait(() -> {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        AttributeSet attributes = doc.getCharacterElement(0).getAttributes();
+
+        Color fg = (Color) attributes.getAttribute(StyleConstants.Foreground);
+        Color bg = (Color) attributes.getAttribute(StyleConstants.Background);
+        Boolean bold = (Boolean) attributes.getAttribute(StyleConstants.Bold);
+
+        assertEquals(Color.WHITE, fg, "Foreground color should be WHITE for fumble lines");
+        assertEquals(Color.RED, bg, "Background color should be RED for fumble lines");
+        assertTrue(bold != null && bold, "Text should be bold for fumble lines");
+    }
+
+    @Test
     public void testAppendCommandEchoEmpty() throws BadLocationException {
         MudOutputPane pane = new MudOutputPane();
         Document doc = pane.getDocument();
