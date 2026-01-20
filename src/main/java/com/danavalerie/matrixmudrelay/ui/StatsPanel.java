@@ -126,6 +126,12 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         this.characterSelector = selector;
     }
 
+    public String getCurrentCharacterName() {
+        ThreadUtils.checkEdt();
+        String text = nameMenu.getText();
+        return "--".equals(text) ? null : text;
+    }
+
     public void setConfigCharacters(List<String> characters) {
         ThreadUtils.checkEdt();
         this.configCharacters.clear();

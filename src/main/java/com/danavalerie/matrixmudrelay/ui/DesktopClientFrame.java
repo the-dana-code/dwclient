@@ -196,7 +196,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         fontManager.registerListener(statsPanel);
         fontManager.registerListener(font -> updateTheme(mapPanel.isInverted()));
 
-        statsPanel.setCharacterSelector(name -> submitCommand("su " + name));
+        statsPanel.setCharacterSelector(name -> {
+            String current = statsPanel.getCurrentCharacterName();
+            if (current == null) {
+                submitCommand(name);
+            } else {
+                submitCommand("su " + name);
+            }
+        });
         if (cfg.characters != null) {
             statsPanel.setConfigCharacters(new ArrayList<>(cfg.characters.keySet()));
         }
