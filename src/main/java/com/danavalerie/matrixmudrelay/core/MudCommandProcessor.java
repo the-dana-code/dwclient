@@ -34,10 +34,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public final class MudCommandProcessor implements MudClient.MudGmcpListener {
+public final class MudCommandProcessor implements MudClient.MudGmcpListener, MudClient.MudConnectListener {
     private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
     private static final int ROOM_SEARCH_LIMIT = 999;
 
@@ -69,7 +67,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     private final TimerService timerService;
     private final java.util.function.Supplier<DeliveryRouteMappings> routeMappingsSupplier;
     private final ClientOutput output;
-    private final ExecutorService background;
 
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
@@ -92,15 +89,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         this.routeMappingsSupplier = routeMappingsSupplier;
         this.output = output;
         this.mapService = new RoomMapService("database.db");
-        this.background = Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "mud-command");
-            t.setDaemon(true);
-            return t;
-        });
     }
 
     public void shutdown() {
-        background.shutdownNow();
     }
 
     public void handleInput(String input) {
@@ -214,16 +205,18 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
         output.appendSystem("Connecting to MUD...");
-        background.submit(() -> {
-            try {
-                mud.connect();
-                output.appendSystem("Connected.");
-                output.updateConnectionState(true);
-            } catch (Exception e) {
-                log.warn("connect failed err={}", e.toString());
-                output.appendSystem("Connect failed: " + e.getMessage());
-            }
-        });
+        mud.connectAsync();
+    }
+
+    @Override
+    public void onConnected() {
+        output.appendSystem("Connected.");
+        output.updateConnectionState(true);
+    }
+
+    @Override
+    public void onConnectFailed(String message) {
+        output.appendSystem("Connect failed: " + message);
     }
 
     private void handleDisconnect() {
@@ -857,14 +850,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     }
 
     public void speedwalkTo(String roomId) {
-        background.submit(() -> {
-            try {
-                performSpeedwalk(roomId);
-            } catch (Exception e) {
-                log.warn("speedwalk failed", e);
-                output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
-            }
-        });
+        try {
+            performSpeedwalk(roomId);
+        } catch (Exception e) {
+            log.warn("speedwalk failed", e);
+            output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
+        }
     }
 
     public void speedwalkToThenCommand(String roomId, String command) {
@@ -872,16 +863,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     }
 
     public void speedwalkToThenCommands(String roomId, List<String> commands) {
-        background.submit(() -> {
-            try {
-                performSpeedwalk(roomId);
-            } catch (Exception e) {
-                log.warn("speedwalk failed", e);
-                output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
-            } finally {
-                runPostSpeedwalkCommands(commands);
-            }
-        });
+        try {
+            performSpeedwalk(roomId);
+        } catch (Exception e) {
+            log.warn("speedwalk failed", e);
+            output.appendSystem("Error: Speedwalk failed: " + e.getMessage());
+        } finally {
+            runPostSpeedwalkCommands(commands);
+        }
     }
 
     private void runPostSpeedwalkCommands(List<String> commands) {

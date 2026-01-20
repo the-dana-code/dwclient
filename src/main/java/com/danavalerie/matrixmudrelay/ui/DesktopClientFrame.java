@@ -192,6 +192,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 location -> commandProcessor.speedwalkTo(location.roomId())
         );
         mud.setGmcpListener(commandProcessor);
+        mud.setConnectListener(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
         fontManager.registerListener(statsPanel);
         fontManager.registerListener(font -> updateTheme(mapPanel.isInverted()));
@@ -383,35 +384,28 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void addCurrentRoomRoute(WritTracker.WritRequirement requirement,
                                      Consumer<DeliveryRouteMappings> onSuccess,
                                      Consumer<String> onError) {
-        Thread worker = new Thread(() -> {
-            ThreadUtils.checkNotEdt();
-            try {
-                String roomId = mud.getCurrentRoomSnapshot().roomId();
-                if (roomId == null || roomId.isBlank()) {
-                    SwingUtilities.invokeLater(() -> onError.accept("Error: No room info available yet."));
-                    return;
-                }
-                RoomMapService.RoomLocation location = routeMapService.lookupRoomLocation(roomId);
-                DeliveryRouteMappings updated = appendRouteMapping(requirement, location);
-                ConfigLoader.saveRoutes(routesPath, updated);
-                DeliveryRouteMappings reloaded = ConfigLoader.loadRoutes(routesPath);
-                SwingUtilities.invokeLater(() -> {
-                    routeMappings = reloaded;
-                    onSuccess.accept(reloaded);
-                    outputPane.appendSystemText("Saved delivery route for \"" + requirement.npc()
-                            + "\" at \"" + requirement.locationDisplay() + "\".");
-                });
-            } catch (RoomMapService.MapLookupException e) {
-                SwingUtilities.invokeLater(() -> onError.accept("Error: " + e.getMessage()));
-            } catch (IllegalStateException e) {
-                SwingUtilities.invokeLater(() -> onError.accept("Error: " + e.getMessage()));
-            } catch (Exception e) {
-                log.warn("route mapping save failed", e);
-                SwingUtilities.invokeLater(() -> onError.accept("Error: Unable to save delivery route."));
+        try {
+            String roomId = mud.getCurrentRoomSnapshot().roomId();
+            if (roomId == null || roomId.isBlank()) {
+                onError.accept("Error: No room info available yet.");
+                return;
             }
-        }, "delivery-route-save");
-        worker.setDaemon(true);
-        worker.start();
+            RoomMapService.RoomLocation location = routeMapService.lookupRoomLocation(roomId);
+            DeliveryRouteMappings updated = appendRouteMapping(requirement, location);
+            ConfigLoader.saveRoutes(routesPath, updated);
+            DeliveryRouteMappings reloaded = ConfigLoader.loadRoutes(routesPath);
+            routeMappings = reloaded;
+            onSuccess.accept(reloaded);
+            outputPane.appendSystemText("Saved delivery route for \"" + requirement.npc()
+                    + "\" at \"" + requirement.locationDisplay() + "\".");
+        } catch (RoomMapService.MapLookupException e) {
+            onError.accept("Error: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            onError.accept("Error: " + e.getMessage());
+        } catch (Exception e) {
+            log.warn("route mapping save failed", e);
+            onError.accept("Error: Unable to save delivery route.");
+        }
     }
 
     private DeliveryRouteMappings appendRouteMapping(WritTracker.WritRequirement requirement,
@@ -1061,16 +1055,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void updateMap(String roomId) {
-        SwingUtilities.invokeLater(() -> mapPanel.updateMap(roomId));
+        mapPanel.updateMap(roomId);
     }
 
     @Override
     public void updateCurrentRoom(String roomId, String roomName) {
-        SwingUtilities.invokeLater(() -> {
-            mapPanel.updateCurrentRoom(roomId);
-            roomButtonBarPanel.updateRoom(roomId, roomName);
-            roomNotePanel.updateRoom(roomId, roomName);
-        });
+        mapPanel.updateCurrentRoom(roomId);
+        roomButtonBarPanel.updateRoom(roomId, roomName);
+        roomNotePanel.updateRoom(roomId, roomName);
     }
 
     @Override
@@ -1085,90 +1077,88 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path) {
-        SwingUtilities.invokeLater(() -> mapPanel.setSpeedwalkPath(path));
+        mapPanel.setSpeedwalkPath(path);
     }
 
     private void updateResultsMenu(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
-        SwingUtilities.invokeLater(() -> {
-            boolean resetResultsVisits = results != null && !Objects.equals(currentResults, results);
-            if (results != null) {
-                currentResults = results;
-            }
-            if (resetResultsVisits) {
-                resultsMenuVisits.clear();
-            }
-            for (JMenu menu : resultsMenus) {
-                menuBar.remove(menu);
-            }
-            resultsMenus.clear();
-            if (currentResults == null) {
-                menuBar.revalidate();
-                menuBar.repaint();
-                return;
-            }
-            List<com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult> resultsList =
-                    currentResults.results();
-            int totalResults = resultsList.size();
-            int totalMenus = Math.max(1, (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE));
-            String title = currentResults.title();
-            String footerText = currentResults.footer();
+        boolean resetResultsVisits = results != null && !Objects.equals(currentResults, results);
+        if (results != null) {
+            currentResults = results;
+        }
+        if (resetResultsVisits) {
+            resultsMenuVisits.clear();
+        }
+        for (JMenu menu : resultsMenus) {
+            menuBar.remove(menu);
+        }
+        resultsMenus.clear();
+        if (currentResults == null) {
+            menuBar.revalidate();
+            menuBar.repaint();
+            return;
+        }
+        List<com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult> resultsList =
+                currentResults.results();
+        int totalResults = resultsList.size();
+        int totalMenus = Math.max(1, (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE));
+        String title = currentResults.title();
+        String footerText = currentResults.footer();
 
-            for (int menuIndex = 0; menuIndex < totalMenus; menuIndex++) {
-                JMenu menu = new JMenu("R" + (menuIndex + 1));
-                if (menuIndex == 0 && title != null && !title.isBlank()) {
-                    JMenuItem header = new JMenuItem(title);
-                    header.setEnabled(false);
-                    menu.add(header);
-                    menu.addSeparator();
-                }
+        for (int menuIndex = 0; menuIndex < totalMenus; menuIndex++) {
+            JMenu menu = new JMenu("R" + (menuIndex + 1));
+            if (menuIndex == 0 && title != null && !title.isBlank()) {
+                JMenuItem header = new JMenuItem(title);
+                header.setEnabled(false);
+                menu.add(header);
+                menu.addSeparator();
+            }
 
-                int start = menuIndex * RESULTS_MENU_PAGE_SIZE;
-                int end = Math.min(start + RESULTS_MENU_PAGE_SIZE, totalResults);
-                if (totalResults == 0) {
-                    String empty = currentResults.emptyMessage() == null
-                            ? "No results."
-                            : currentResults.emptyMessage();
-                    JMenuItem emptyItem = new JMenuItem(empty);
-                    emptyItem.setEnabled(false);
-                    menu.add(emptyItem);
-                } else {
-                    for (int index = start; index < end; index++) {
-                        com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result =
-                                resultsList.get(index);
-                        boolean visited = resultsMenuVisits.contains(index);
-                        JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
-                        int resultIndex = index;
-                        if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
-                            item.addActionListener(event -> {
-                                resultsMenuVisits.add(resultIndex);
-                                item.setText(formatResultsMenuLabel(true, result.label()));
-                                submitCommand(result.mapCommand());
-                                showSpeedWalkPrompt(result.command());
-                            });
-                        } else {
-                            item.addActionListener(event -> {
-                                resultsMenuVisits.add(resultIndex);
-                                item.setText(formatResultsMenuLabel(true, result.label()));
-                                submitCommand(result.command());
-                            });
-                        }
-                        menu.add(item);
+            int start = menuIndex * RESULTS_MENU_PAGE_SIZE;
+            int end = Math.min(start + RESULTS_MENU_PAGE_SIZE, totalResults);
+            if (totalResults == 0) {
+                String empty = currentResults.emptyMessage() == null
+                        ? "No results."
+                        : currentResults.emptyMessage();
+                JMenuItem emptyItem = new JMenuItem(empty);
+                emptyItem.setEnabled(false);
+                menu.add(emptyItem);
+            } else {
+                for (int index = start; index < end; index++) {
+                    com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result =
+                            resultsList.get(index);
+                    boolean visited = resultsMenuVisits.contains(index);
+                    JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
+                    int resultIndex = index;
+                    if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
+                        item.addActionListener(event -> {
+                            resultsMenuVisits.add(resultIndex);
+                            item.setText(formatResultsMenuLabel(true, result.label()));
+                            submitCommand(result.mapCommand());
+                            showSpeedWalkPrompt(result.command());
+                        });
+                    } else {
+                        item.addActionListener(event -> {
+                            resultsMenuVisits.add(resultIndex);
+                            item.setText(formatResultsMenuLabel(true, result.label()));
+                            submitCommand(result.command());
+                        });
                     }
+                    menu.add(item);
                 }
-
-                boolean isLastMenu = menuIndex == totalMenus - 1;
-                if (isLastMenu && footerText != null && !footerText.isBlank()) {
-                    menu.addSeparator();
-                    JMenuItem footer = new JMenuItem(footerText);
-                    footer.setEnabled(false);
-                    menu.add(footer);
-                }
-
-                resultsMenus.add(menu);
-                menuBar.add(menu);
             }
-            updateTheme(mapPanel.isInverted());
-        });
+
+            boolean isLastMenu = menuIndex == totalMenus - 1;
+            if (isLastMenu && footerText != null && !footerText.isBlank()) {
+                menu.addSeparator();
+                JMenuItem footer = new JMenuItem(footerText);
+                footer.setEnabled(false);
+                menu.add(footer);
+            }
+
+            resultsMenus.add(menu);
+            menuBar.add(menu);
+        }
+        updateTheme(mapPanel.isInverted());
     }
 
     private void reattachResultsMenus() {

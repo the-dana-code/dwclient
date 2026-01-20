@@ -23,6 +23,7 @@ import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.SwingUtilities;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -52,10 +53,16 @@ public class MudClient {
         void onDisconnected(String reason);
     }
 
+    public interface MudConnectListener {
+        void onConnected();
+        void onConnectFailed(String message);
+    }
+
     private final BotConfig.Mud cfg;
     private final MudLineListener lineListener;
     private final MudDisconnectListener disconnectListener;
     private volatile MudGmcpListener gmcpListener;
+    private volatile MudConnectListener connectListener;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
@@ -87,6 +94,10 @@ public class MudClient {
         this.gmcpListener = gmcpListener;
     }
 
+    public void setConnectListener(MudConnectListener connectListener) {
+        this.connectListener = connectListener;
+    }
+
     public CurrentRoomInfo.Snapshot getCurrentRoomSnapshot() {
         return currentRoomInfo.getSnapshot();
     }
@@ -114,6 +125,28 @@ public class MudClient {
         }
     }
 
+    public void connectAsync() {
+        writer.submit(() -> {
+            try {
+                connect();
+                SwingUtilities.invokeLater(() -> {
+                    MudConnectListener listener = connectListener;
+                    if (listener != null) {
+                        listener.onConnected();
+                    }
+                });
+            } catch (IOException e) {
+                log.warn("connect failed err={}", e.toString());
+                SwingUtilities.invokeLater(() -> {
+                    MudConnectListener listener = connectListener;
+                    if (listener != null) {
+                        listener.onConnectFailed(e.getMessage());
+                    }
+                });
+            }
+        });
+    }
+
     private void startReader() {
         readerThread = new Thread(this::readLoop, "mud-read");
         readerThread.setDaemon(true);
@@ -129,10 +162,12 @@ public class MudClient {
                 //log.debug("Received GMCP: {}", msg);
                 TelnetDecoder.GmcpMessage parsed = TelnetDecoder.parseGmcpMessage(msg);
                 if (parsed != null) {
-                    currentRoomInfo.update(parsed.command(), parsed.payload());
                     MudGmcpListener listener = gmcpListener;
                     if (listener != null) {
-                        listener.onGmcp(parsed);
+                        SwingUtilities.invokeLater(() -> {
+                            currentRoomInfo.update(parsed.command(), parsed.payload());
+                            listener.onGmcp(parsed);
+                        });
                     }
                 }
             }
@@ -149,25 +184,25 @@ public class MudClient {
                 }
 
                 if (b == -1) {
-                    disconnect("eof", null);
+                    SwingUtilities.invokeLater(() -> disconnect("eof", null));
                     return;
                 }
 
                 byte[] decoded = decoder.accept((byte) b);
                 String text = decodeState.append(decoded);
                 if (!text.isEmpty()) {
-                    lineListener.onLine(text);
+                    SwingUtilities.invokeLater(() -> lineListener.onLine(text));
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
             if (connected.get()) {
-                disconnect("io_error", e);
+                SwingUtilities.invokeLater(() -> disconnect("io_error", e));
             }
         } catch (Exception e) {
             e.printStackTrace();
             if (connected.get()) {
-                disconnect("unexpected exception", e);
+                SwingUtilities.invokeLater(() -> disconnect("unexpected exception", e));
             }
         }
     }
@@ -300,7 +335,7 @@ public class MudClient {
         closeQuietly(s);
 
         log.info("mud disconnected reason=" + reason, e);
-        disconnectListener.onDisconnected(reason);
+        SwingUtilities.invokeLater(() -> disconnectListener.onDisconnected(reason));
     }
 
     private static void closeQuietly(Closeable c) {
