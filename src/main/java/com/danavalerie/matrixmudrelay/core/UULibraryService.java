@@ -144,6 +144,108 @@ public class UULibraryService {
         }
     }
 
+    public String getNextStepCommand(int targetRow, int targetCol) {
+        if (!active) return null;
+        if (curRow == targetRow && curCol == targetCol) return null;
+
+        List<Room> path = findPath(curRow, curCol, targetRow, targetCol);
+        if (path == null || path.isEmpty()) return null;
+
+        Room next = path.get(0);
+        return determineCommand(curRow, curCol, orientation, next.row, next.col);
+    }
+
+    private List<Room> findPath(int startRow, int startCol, int targetRow, int targetCol) {
+        PriorityQueue<Node> open = new PriorityQueue<>(Comparator.comparingDouble(n -> n.fScore));
+        Map<String, Integer> gScores = new HashMap<>();
+
+        Node startNode = new Node(startRow, startCol, 0, heuristic(startRow, startCol, targetRow, targetCol), null);
+        open.add(startNode);
+        gScores.put(startRow + "," + startCol, 0);
+
+        while (!open.isEmpty()) {
+            Node current = open.poll();
+
+            if (current.row == targetRow && current.col == targetCol) {
+                return reconstructPath(current);
+            }
+
+            if (current.gScore > gScores.getOrDefault(current.row + "," + current.col, Integer.MAX_VALUE)) {
+                continue;
+            }
+
+            Room r = maze.get(current.row + "," + current.col);
+            if (r == null || r.exits == null) continue;
+
+            for (Orientation o : Orientation.values()) {
+                if (r.exits.contains(o.name)) {
+                    int nextRow = current.row + o.dRow;
+                    int nextCol = current.col + o.dCol;
+                    if (nextCol < 1) nextCol = 9;
+                    if (nextCol > 9) nextCol = 1;
+
+                    int tentativeG = current.gScore + 1;
+                    String key = nextRow + "," + nextCol;
+                    if (tentativeG < gScores.getOrDefault(key, Integer.MAX_VALUE)) {
+                        gScores.put(key, tentativeG);
+                        double fScore = tentativeG + heuristic(nextRow, nextCol, targetRow, targetCol);
+                        open.add(new Node(nextRow, nextCol, tentativeG, fScore, current));
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private List<Room> reconstructPath(Node targetNode) {
+        LinkedList<Room> path = new LinkedList<>();
+        Node curr = targetNode;
+        while (curr != null && curr.parent != null) {
+            path.addFirst(maze.get(curr.row + "," + curr.col));
+            curr = curr.parent;
+        }
+        return path;
+    }
+
+    private double heuristic(int r1, int c1, int r2, int c2) {
+        int dr = Math.abs(r1 - r2);
+        int dc = Math.abs(c1 - c2);
+        dc = Math.min(dc, 9 - dc);
+        return dr + dc;
+    }
+
+    private String determineCommand(int r1, int c1, Orientation currentOri, int r2, int c2) {
+        for (Orientation o : Orientation.values()) {
+            int nextR = r1 + o.dRow;
+            int nextC = c1 + o.dCol;
+            if (nextC < 1) nextC = 9;
+            if (nextC > 9) nextC = 1;
+
+            if (nextR == r2 && nextC == c2) {
+                if (o == currentOri) return "fw";
+                if (o == currentOri.turn180()) return "bw";
+                if (o == currentOri.turnRight()) return "rt";
+                if (o == currentOri.turnLeft()) return "lt";
+            }
+        }
+        return null;
+    }
+
+    private static class Node {
+        int row, col;
+        int gScore;
+        double fScore;
+        Node parent;
+
+        Node(int row, int col, int gScore, double fScore, Node parent) {
+            this.row = row;
+            this.col = col;
+            this.gScore = gScore;
+            this.fScore = fScore;
+            this.parent = parent;
+        }
+    }
+
     public int getX() {
         // Inverse of translation logic in UULibraryMapGenerator: c = (x - 45) / 30 + 1
         return (curCol - 1) * 30 + 45;
@@ -156,5 +258,13 @@ public class UULibraryService {
 
     public Orientation getOrientation() {
         return orientation;
+    }
+
+    public int getCurRow() {
+        return curRow;
+    }
+
+    public int getCurCol() {
+        return curCol;
     }
 }

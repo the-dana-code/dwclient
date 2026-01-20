@@ -51,4 +51,37 @@ public class UULibraryServiceTest {
         service.processCommand("bw");
         assertEquals(UULibraryService.Orientation.WEST, service.getOrientation());
     }
+
+    @Test
+    public void testGetNextStepCommand() {
+        UULibraryService service = UULibraryService.getInstance();
+        service.setRoomId("None");
+        service.setRoomId("UULibrary"); // Resets to row 1, col 5, North
+
+        // Target 1,4. From 1,5 facing North, should be "lt"
+        String cmd = service.getNextStepCommand(1, 4);
+        assertEquals("lt", cmd);
+
+        // Target 1,6. From 1,5 facing North, should be "rt"
+        cmd = service.getNextStepCommand(1, 6);
+        assertEquals("rt", cmd);
+
+        // Move to 1,6 (facing East)
+        service.processCommand("rt");
+        assertEquals(1, service.getCurRow());
+        assertEquals(6, service.getCurCol());
+        assertEquals(UULibraryService.Orientation.EAST, service.getOrientation());
+
+        // Target 1,7. From 1,6 facing East, should be "fw"
+        cmd = service.getNextStepCommand(1, 7);
+        assertEquals("fw", cmd);
+
+        // Target 1,5. From 1,6 facing East, should be "bw"
+        cmd = service.getNextStepCommand(1, 5);
+        assertEquals("bw", cmd);
+
+        // Target 2,6. From 1,6 facing East, should be "lt"
+        cmd = service.getNextStepCommand(2, 6);
+        assertEquals("lt", cmd);
+    }
 }

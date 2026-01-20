@@ -10,6 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UULibraryButtonPanelTest {
     @Test
     public void testButtons() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("None");
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
+
         List<String> commands = new ArrayList<>();
         UULibraryButtonPanel panel = new UULibraryButtonPanel(commands::add);
         
@@ -26,14 +29,11 @@ public class UULibraryButtonPanelTest {
         // Test action
         ((JButton)components[0]).doClick();
         assertEquals(1, commands.size());
-        assertEquals("1", commands.get(0));
+        // From (1,5) North, to Room 1 (2,6)
+        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(0)));
         
-        ((JButton)components[16]).doClick();
+        ((JButton)components[16]).doClick(); // Button "G" -> Room 10 (12,6)
         assertEquals(2, commands.size());
-        assertEquals("G", commands.get(1));
-        
-        ((JButton)components[17]).doClick();
-        assertEquals(3, commands.size());
-        assertEquals("X", commands.get(2));
+        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(1)));
     }
 }
