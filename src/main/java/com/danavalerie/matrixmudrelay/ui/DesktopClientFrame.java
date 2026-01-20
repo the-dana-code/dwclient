@@ -141,6 +141,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomNotePanel roomNotePanel;
     private final TimerPanel timerPanel;
     private final RoomButtonBarPanel roomButtonBarPanel;
+    private final UULibraryButtonPanel uuLibraryButtonPanel;
 
     private enum WritMenuAction {
         ITEM_INFO,
@@ -164,6 +165,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.roomButtonService = new RoomNoteService(configPath.resolveSibling("room-notes.json"));
         this.roomButtonService.populateMissingNames(this.routeMapService);
         this.roomButtonBarPanel = new RoomButtonBarPanel(roomButtonService, this::submitCommand);
+        this.uuLibraryButtonPanel = new UULibraryButtonPanel(this::submitCommand);
+        
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().addListener(() -> {
+            SwingUtilities.invokeLater(() -> {
+                uuLibraryButtonPanel.setVisible(com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().isActive());
+            });
+        });
         this.roomNotePanel = new RoomNotePanel(roomButtonService);
         this.mapPanel = new MapPanel(
                 resolveMapZoomPercent(),
@@ -765,7 +773,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         mapPanel.setMinimumSize(new Dimension(20, 0));
 
-        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, roomInfoContent);
+        JPanel mapContainer = new JPanel(new BorderLayout());
+        mapContainer.add(mapPanel, BorderLayout.CENTER);
+        mapContainer.add(uuLibraryButtonPanel, BorderLayout.SOUTH);
+
+        JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapContainer, roomInfoContent);
         mapNotesSplit.setContinuousLayout(true);
         mapNotesSplit.setResizeWeight(0.7);
         mapNotesSplit.setDividerSize(6);
@@ -1337,6 +1349,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         updateComponentTree(getContentPane(), bg, fg);
         roomButtonBarPanel.updateTheme(bg, fg);
+        uuLibraryButtonPanel.updateTheme(bg, fg);
         roomNotePanel.updateTheme(bg, fg);
         timerPanel.updateTheme(bg, fg);
         inputField.setCaretColor(fg);

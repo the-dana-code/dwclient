@@ -50,11 +50,22 @@ public class UULibraryService {
     private volatile int curRow, curCol;
     private volatile Orientation orientation = Orientation.NORTH;
     private volatile boolean active = false;
+    private final List<Runnable> listeners = new ArrayList<>();
 
     private static final UULibraryService INSTANCE = new UULibraryService();
 
     public static UULibraryService getInstance() {
         return INSTANCE;
+    }
+
+    public void addListener(Runnable listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListeners() {
+        for (Runnable listener : listeners) {
+            listener.run();
+        }
     }
 
     private UULibraryService() {
@@ -82,6 +93,9 @@ public class UULibraryService {
             curRow = 1;
             curCol = 5;
             orientation = Orientation.NORTH;
+        }
+        if (active != wasActive) {
+            notifyListeners();
         }
     }
 
