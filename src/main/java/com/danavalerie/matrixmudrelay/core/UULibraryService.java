@@ -12,17 +12,17 @@ import java.util.*;
 
 public class UULibraryService {
     public enum Orientation {
-        NORTH(0, -2, "north"),
-        EAST(2, 0, "east"),
-        SOUTH(0, 2, "south"),
-        WEST(-2, 0, "west");
+        NORTH(1, 0, "north"),
+        EAST(0, 1, "east"),
+        SOUTH(-1, 0, "south"),
+        WEST(0, -1, "west");
 
-        public final int dn, dm;
+        public final int dRow, dCol;
         public final String name;
 
-        Orientation(int dn, int dm, String name) {
-            this.dn = dn;
-            this.dm = dm;
+        Orientation(int dRow, int dCol, String name) {
+            this.dRow = dRow;
+            this.dCol = dCol;
             this.name = name;
         }
 
@@ -40,14 +40,14 @@ public class UULibraryService {
     }
 
     public static class Room {
-        public int n, m, x, y;
+        public int row, col;
         public boolean table;
         public int number = -1;
         public List<String> exits;
     }
 
     private final Map<String, Room> maze = new HashMap<>();
-    private volatile int curN, curM;
+    private volatile int curRow, curCol;
     private volatile Orientation orientation = Orientation.NORTH;
     private volatile boolean active = false;
 
@@ -67,7 +67,7 @@ public class UULibraryService {
             Type listType = new TypeToken<List<Room>>() {}.getType();
             List<Room> rooms = gson.fromJson(new InputStreamReader(is), listType);
             for (Room r : rooms) {
-                maze.put(r.n + "," + r.m, r);
+                maze.put(r.row + "," + r.col, r);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,8 +79,8 @@ public class UULibraryService {
         active = roomId != null && "UULibrary".equalsIgnoreCase(roomId.trim());
         if (active && !wasActive) {
             // Initial position when entering from South
-            curN = 9;
-            curM = 321;
+            curRow = 1;
+            curCol = 5;
             orientation = Orientation.NORTH;
         }
     }
@@ -116,22 +116,30 @@ public class UULibraryService {
     }
 
     private void move() {
-        Room r = maze.get(curN + "," + curM);
+        Room r = maze.get(curRow + "," + curCol);
         if (r != null && r.exits != null && r.exits.contains(orientation.name)) {
-            curN += orientation.dn;
-            curM += orientation.dm;
+            int nextRow = curRow + orientation.dRow;
+            int nextCol = curCol + orientation.dCol;
+            
+            // Handle wrap-around
+            if (nextCol < 1) nextCol = 9;
+            if (nextCol > 9) nextCol = 1;
+            
+            curRow = nextRow;
+            curCol = nextCol;
         }
-        // Even if move fails, orientation remains changed
     }
 
     public int getX() {
-        Room r = maze.get(curN + "," + curM);
-        return r != null ? r.x : 150; // Default to Exit area
+        // Center of col 1 is 45. Spacing is 30.
+        // x = 45 + (curCol - 1) * 30 = curCol * 30 + 15.
+        return curCol * 30 + 15;
     }
 
     public int getY() {
-        Room r = maze.get(curN + "," + curM);
-        return r != null ? r.y : 4825;
+        // Center of row 1 is 4810. Spacing is 30.
+        // y = 4810 - (curRow - 1) * 30.
+        return 4810 - (curRow - 1) * 30;
     }
 
     public Orientation getOrientation() {
