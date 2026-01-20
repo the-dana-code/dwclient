@@ -368,6 +368,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
     }
 
     private void handleHelp() {
+        //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Available slash commands:\n");
         sb.append("  /loc            - Show current location and room ID\n");
         sb.append("  /help           - Show this help message\n");
