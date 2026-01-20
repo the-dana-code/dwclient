@@ -135,6 +135,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         if (tryAlias(trimmed)) {
             return;
         }
+
+        if (UULibraryService.getInstance().isActive()) {
+            UULibraryService.getInstance().processCommand(trimmed);
+            output.updateMap("UULibrary");
+        }
+
         sendToMud(trimmed);
     }
 
@@ -177,6 +183,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         }
 
         if (roomId != null && !roomId.isBlank()) {
+            UULibraryService.getInstance().setRoomId(roomId);
             if (!roomId.equals(lastRoomId) || !Objects.equals(roomName, lastRoomName)) {
                 boolean roomChanged = !roomId.equals(lastRoomId);
                 lastRoomId = roomId;

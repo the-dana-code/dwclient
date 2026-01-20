@@ -34,6 +34,7 @@ jobs:
         cp run-linux.sh dist/
         cp config-example.json dist/config.json
         cp delivery-routes.json dist/delivery-routes.json
+        cp src/main/resources/uu_library.json dist/uu_library.json
         cp room-notes.json dist/room-notes.json
         cp database.db dist/database.db
         cp LICENSE dist/LICENSE

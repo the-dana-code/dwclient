@@ -180,6 +180,24 @@
       }
     ]
   },
+  "25f7d315e063c446f7419150bc40291f9349aa2e": {
+    "name": "Xoo Xoo Ha\u0027s General Trading",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "2aea9e4f9b102c10623ee9955786fa776b6f72e8": {
+    "name": "exclusive hat boutique",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2af0886fd4c6aa0f5418186c1993893ba701d0a4": {
     "name": "Lolinda\u0027s Lovely Leather",
     "buttons": [
@@ -333,6 +351,15 @@
       }
     ]
   },
+  "4b7f7586cb084ba806541ddc63154e95fe9d282a": {
+    "name": "Bad Ass General Traders",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "4bbbb0674074f2ff9d68e3cbbf618d39276faf4b": {
     "name": "Fine Clothing shop",
     "buttons": [
@@ -469,6 +496,15 @@
       }
     ]
   },
+  "634ec474418e42dee92acefe86d16e47a84c4f13": {
+    "name": "Little Agatea",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "6544a6185c5b6aaf62554ecde584f40965e7f65f": {
     "name": "wizard\u0027s tent",
     "notes": "You can renew items here, removing spells and wizardly writings from them for a small fee.\n\nSyntax\n  renew \u003citem\u003e",
@@ -535,6 +571,15 @@
   },
   "70102b7c64f25ff79524eeabced2fd68ef0ab69c": {
     "name": "Shelf Shock Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "707dc39c76bd7840e0c293414972d8d07ef6588a": {
+    "name": "Slippery Hollow General Store",
     "buttons": [
       {
         "name": "List Shop",
@@ -1348,6 +1393,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "ee8c809bf50e4aad42351c7d8ec8079f3f47b568": {
+    "name": "Ankh-Morpork Apothecary",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]

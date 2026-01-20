@@ -1063,5 +1063,11 @@
     "location": "an opulent office on The Ridings",
     "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337",
     "commands": []
+  },
+  {
+    "npc": "the elderly man",
+    "location": "Little Agatea",
+    "roomId": "634ec474418e42dee92acefe86d16e47a84c4f13",
+    "commands": []
   }
 ]

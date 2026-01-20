@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
+import com.danavalerie.matrixmudrelay.core.UULibraryService;
 import com.danavalerie.matrixmudrelay.util.DarkThemeConverter;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -266,7 +267,7 @@ public final class MapPanel extends JPanel {
 
         if (roomId != null && !roomId.isBlank()) {
             String previous = lastRoomId.getAndSet(roomId);
-            if (Objects.equals(previous, roomId)) {
+            if (Objects.equals(previous, roomId) && !"UULibrary".equals(roomId)) {
                 return;
             }
         } else {
@@ -276,8 +277,11 @@ public final class MapPanel extends JPanel {
         executor.submit(() -> {
             try {
                 RoomMapService.MapImage mapImage;
-                if (roomId != null && !roomId.isBlank()) {
-                    mapImage = mapService.renderMapImage(roomId, invertMap);
+                String normalizedRoomId = roomId != null ? roomId.trim() : null;
+                if ("UULibrary".equalsIgnoreCase(normalizedRoomId)) {
+                    mapImage = mapService.renderMapByMapId(47, invertMap);
+                } else if (normalizedRoomId != null && !normalizedRoomId.isEmpty()) {
+                    mapImage = mapService.renderMapImage(normalizedRoomId, invertMap);
                 } else {
                     mapImage = mapService.renderMapByMapId(mapId, invertMap);
                 }
@@ -360,7 +364,11 @@ public final class MapPanel extends JPanel {
             }
             BufferedImage scaled = scaleImage(image, zoomPercent);
             Dimension scaledSize = scaleDimension(imageSize, zoomPercent);
-            Point scaledFocus = scalePoint(focusPoint, zoomPercent);
+            Point focus = scalePoint(focusPoint, zoomPercent);
+            if (UULibraryService.getInstance().isActive()) {
+                focus = scalePoint(new Point(UULibraryService.getInstance().getX(), UULibraryService.getInstance().getY()), zoomPercent);
+            }
+            final Point scaledFocus = focus;
             List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);
             int markerDiameter = scaledMarkerDiameter(zoomPercent);
             AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath, invertMap);
@@ -774,20 +782,58 @@ public final class MapPanel extends JPanel {
             int centerY = y + focusPoint.y;
             int diameter = markerDiameter;
             int radius = diameter / 2;
-            int topLeftX = centerX - radius;
-            int topLeftY = centerY - radius;
-            float segmentSweep = 360f / PINWHEEL_SEGMENTS;
-            float rotation = phase * 360f;
-            for (int i = 0; i < PINWHEEL_SEGMENTS; i++) {
-                float hue = i / (float) PINWHEEL_SEGMENTS;
-                Color segment = Color.getHSBColor(hue, 0.85f, invertMap ? 1.0f : 0.7f);
-                Color segmentWithAlpha = new Color(segment.getRed(), segment.getGreen(), segment.getBlue(),
-                        Math.round(255 * PINWHEEL_ALPHA));
-                g2.setColor(segmentWithAlpha);
-                int startAngle = Math.round(rotation + i * segmentSweep);
-                g2.fillArc(topLeftX, topLeftY, diameter, diameter, startAngle, Math.round(segmentSweep));
+
+            if (UULibraryService.getInstance().isActive()) {
+                drawOrientationArrow(g2, centerX, centerY, radius);
+            } else {
+                int topLeftX = centerX - radius;
+                int topLeftY = centerY - radius;
+                float segmentSweep = 360f / PINWHEEL_SEGMENTS;
+                float rotation = phase * 360f;
+                for (int i = 0; i < PINWHEEL_SEGMENTS; i++) {
+                    float hue = i / (float) PINWHEEL_SEGMENTS;
+                    Color segment = Color.getHSBColor(hue, 0.85f, invertMap ? 1.0f : 0.7f);
+                    Color segmentWithAlpha = new Color(segment.getRed(), segment.getGreen(), segment.getBlue(),
+                            Math.round(255 * PINWHEEL_ALPHA));
+                    g2.setColor(segmentWithAlpha);
+                    int startAngle = Math.round(rotation + i * segmentSweep);
+                    g2.fillArc(topLeftX, topLeftY, diameter, diameter, startAngle, Math.round(segmentSweep));
+                }
             }
             g2.dispose();
+        }
+
+        private void drawOrientationArrow(Graphics2D g2, int centerX, int centerY, int radius) {
+            UULibraryService.Orientation orientation = UULibraryService.getInstance().getOrientation();
+            g2.setColor(Color.BLUE);
+            g2.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            
+            int size = radius;
+            int x = centerX;
+            int y = centerY;
+            
+            switch (orientation) {
+                case NORTH:
+                    g2.drawLine(x, y + size, x, y - size);
+                    g2.drawLine(x, y - size, x - size/2, y - size/2);
+                    g2.drawLine(x, y - size, x + size/2, y - size/2);
+                    break;
+                case SOUTH:
+                    g2.drawLine(x, y - size, x, y + size);
+                    g2.drawLine(x, y + size, x - size/2, y + size/2);
+                    g2.drawLine(x, y + size, x + size/2, y + size/2);
+                    break;
+                case EAST:
+                    g2.drawLine(x - size, y, x + size, y);
+                    g2.drawLine(x + size, y, x + size/2, y - size/2);
+                    g2.drawLine(x + size, y, x + size/2, y + size/2);
+                    break;
+                case WEST:
+                    g2.drawLine(x + size, y, x - size, y);
+                    g2.drawLine(x - size, y, x - size/2, y - size/2);
+                    g2.drawLine(x - size, y, x - size/2, y + size/2);
+                    break;
+            }
         }
 
         private void drawSpeedwalkPath(java.awt.Graphics g, int x, int y) {
