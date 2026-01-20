@@ -1051,5 +1051,11 @@
     "location": "the bucket shop on King\u0027s Down",
     "roomId": "df1f1f7d38ff74d74b5ff5d565460899daeb5cbf",
     "commands": []
+  },
+  {
+    "npc": "Starspirit Moonfire",
+    "location": "Krazzander\u0027s Magik Shoppe on Cockbill Street",
+    "roomId": "925880da85a8d01ee4bcb302949f8eef099bb195",
+    "commands": []
   }
 ]

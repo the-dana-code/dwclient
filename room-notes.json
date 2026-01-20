@@ -63,6 +63,15 @@
       }
     ]
   },
+  "0ea4dd073ead6a6f91f47f9d07a561ca98d41dd8": {
+    "name": "Genuan Gents",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "0ffffdbc050cb424566fae5e4ca0cf5d2782b0a2": {
     "name": "Plaza Tobacconist\u0027s",
     "buttons": [
@@ -101,6 +110,15 @@
   },
   "1d37d2ede0f540a6583759a473e3f7565ac7bddc": {
     "name": "Simone\u0027s",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "1d91446442858d15da04669a52e3a95950c0347e": {
+    "name": "Hurple\u0027s towel shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -164,6 +182,15 @@
       {
         "name": "Order Tabard (A$2.25)",
         "command": "order tabard"
+      }
+    ]
+  },
+  "31bf3a3c04cb0009a32aee364747be7761530556": {
+    "name": "Klatchian Foreign Legion outpost storage tent",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -276,6 +303,15 @@
       {
         "name": "Climb Wall",
         "command": "climb wall"
+      }
+    ]
+  },
+  "4bbbb0674074f2ff9d68e3cbbf618d39276faf4b": {
+    "name": "Fine Clothing shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -994,6 +1030,15 @@
       }
     ]
   },
+  "ca679a04ebf851ef96d9ee9c42429e4d943909be": {
+    "name": "Fiddley\u0027s Music Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "ca731a674a9521468cdf0d83eeff54d9f496b78e": {
     "name": "back room of the Seasick Sea Serpent",
     "buttons": [
@@ -1132,6 +1177,15 @@
       }
     ]
   },
+  "e305b628de902cbbdbeb6fb11305a6585ba3b158": {
+    "name": "coffee table shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "e4889c7fe573289e63211238c6d15d85cc5ae836": {
     "name": "Havlik\u0027s Dwarf Bar",
     "buttons": [
@@ -1219,6 +1273,15 @@
   },
   "f5b34dab173a8773e39404118f2d8842ba844208": {
     "name": "Joshua\u0027s Climbing Equipment",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "f733f4dba1923138ae73b5b8d11b81abd9a113cb": {
+    "name": "pottery workshop",
     "buttons": [
       {
         "name": "List Shop",

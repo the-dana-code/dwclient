@@ -86,6 +86,9 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private int gpRateIndex = 0;
     private int gpRateCount = 0;
     private int gpRateMode = 0;
+    private String lastCharacterName = null;
+    private java.util.function.Function<String, List<Integer>> characterSamplesLoader;
+    private java.util.function.BiConsumer<String, List<Integer>> onSamplesChanged;
     private Integer lastReportedGp = null;
     private long lastGpUpdateTimeMs = 0L;
     private int gpMillisPerPoint = 0;
@@ -124,6 +127,14 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     public void setCharacterSelector(Consumer<String> selector) {
         this.characterSelector = selector;
+    }
+
+    public void setCharacterSamplesLoader(java.util.function.Function<String, List<Integer>> loader) {
+        this.characterSamplesLoader = loader;
+    }
+
+    public void setOnSamplesChanged(java.util.function.BiConsumer<String, List<Integer>> listener) {
+        this.onSamplesChanged = listener;
     }
 
     public String getCurrentCharacterName() {
@@ -213,7 +224,14 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
                 setUnavailable();
                 return;
             }
-            updateNameLabel(data.name());
+            String name = data.name();
+            if (name != null && !name.isBlank() && !name.equalsIgnoreCase(lastCharacterName)) {
+                lastCharacterName = name;
+                if (characterSamplesLoader != null) {
+                    loadSamples(characterSamplesLoader.apply(name));
+                }
+            }
+            updateNameLabel(name);
             updateBar(hpBar, data.hp(), data.maxHp(),
                     format(data.hp()) + " / " + format(data.maxHp()));
             updateGpFromVitals(data.gp(), data.maxGp());
@@ -363,6 +381,40 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         gpRateCount = Math.min(gpRateCount + 1, GP_RATE_SAMPLE_SIZE);
         gpRateMode = calculateMode();
         updateGpTimerInterval();
+
+        if (lastCharacterName != null && onSamplesChanged != null) {
+            onSamplesChanged.accept(lastCharacterName, getSaveableSamples());
+        }
+    }
+
+    public void loadSamples(List<Integer> samples) {
+        ThreadUtils.checkEdt();
+        if (samples == null || samples.size() != GP_RATE_SAMPLE_SIZE) {
+            Arrays.fill(gpRateSamples, -1);
+            gpRateIndex = 0;
+            gpRateCount = 0;
+        } else {
+            for (int i = 0; i < GP_RATE_SAMPLE_SIZE; i++) {
+                gpRateSamples[i] = samples.get(i);
+            }
+            gpRateIndex = 0;
+            gpRateCount = 0;
+            for (int sample : gpRateSamples) {
+                if (sample >= 0) {
+                    gpRateCount++;
+                }
+            }
+        }
+        gpRateMode = calculateMode();
+        updateGpTimerInterval();
+    }
+
+    private List<Integer> getSaveableSamples() {
+        List<Integer> list = new ArrayList<>(GP_RATE_SAMPLE_SIZE);
+        for (int i = 0; i < GP_RATE_SAMPLE_SIZE; i++) {
+            list.add(gpRateSamples[(gpRateIndex + i) % GP_RATE_SAMPLE_SIZE]);
+        }
+        return list;
     }
 
     private int calculateMode() {

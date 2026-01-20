@@ -73,6 +73,7 @@ public final class BotConfig {
     public static final class CharacterConfig {
         public CharacterTeleports teleports = new CharacterTeleports();
         public Map<String, TimerData> timers = new LinkedHashMap<>();
+        public List<Integer> gpRateSamples = new ArrayList<>();
     }
 
     public static final class TimerData {

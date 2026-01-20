@@ -6,6 +6,10 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,5 +55,89 @@ class StatsPanelTest {
         SwingUtilities.invokeAndWait(() -> {
             assertNull(statsPanel.getCurrentCharacterName(), "Name should be null after setUnavailable");
         });
+    }
+
+    @Test
+    void testGpRateSamplePersistenceAndRotation() throws Exception {
+        final StatsPanel[] panelRef = new StatsPanel[1];
+        SwingUtilities.invokeAndWait(() -> {
+            panelRef[0] = new StatsPanel();
+        });
+        StatsPanel statsPanel = panelRef[0];
+
+        // 1. Load samples
+        List<Integer> initialSamples = Arrays.asList(10, 20, 30, 40, 50);
+        SwingUtilities.invokeAndWait(() -> {
+            statsPanel.loadSamples(initialSamples);
+        });
+
+        // 2. Verify rotation logic
+        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableSamples");
+        getSaveableSamples.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<Integer> saved = (List<Integer>) getSaveableSamples.invoke(statsPanel);
+        assertEquals(initialSamples, saved, "Saved samples should match initial after load");
+
+        // 3. Test rotation after recording
+        Method recordGpRate = StatsPanel.class.getDeclaredMethod("recordGpRate", int.class);
+        recordGpRate.setAccessible(true);
+
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                // Should overwrite index 0 (value 10) because gpRateIndex was 0
+                recordGpRate.invoke(statsPanel, 60);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // After recordGpRate:
+        // gpRateSamples = [60, 20, 30, 40, 50]
+        // gpRateIndex = 1
+        // getSaveableSamples (rotating from index 1): [20, 30, 40, 50, 60]
+
+        @SuppressWarnings("unchecked")
+        List<Integer> rotated = (List<Integer>) getSaveableSamples.invoke(statsPanel);
+        assertEquals(Arrays.asList(20, 30, 40, 50, 60), rotated, "Samples should be rotated correctly");
+    }
+
+    @Test
+    void testCharacterSwitchingLoadsSamples() throws Exception {
+        final StatsPanel[] panelRef = new StatsPanel[1];
+        SwingUtilities.invokeAndWait(() -> {
+            panelRef[0] = new StatsPanel();
+        });
+        StatsPanel statsPanel = panelRef[0];
+
+        List<Integer> char1Samples = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> char2Samples = Arrays.asList(6, 7, 8, 9, 10);
+
+        statsPanel.setCharacterSamplesLoader(name -> {
+            if ("Char1".equals(name)) return char1Samples;
+            if ("Char2".equals(name)) return char2Samples;
+            return null;
+        });
+
+        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableSamples");
+        getSaveableSamples.setAccessible(true);
+
+        SwingUtilities.invokeAndWait(() -> {
+            statsPanel.updateStats(new StatsHudRenderer.StatsHudData("Char1", 100, 100, 50, 50, 0, 1000L));
+        });
+        SwingUtilities.invokeAndWait(() -> {});
+
+        @SuppressWarnings("unchecked")
+        List<Integer> saved1 = (List<Integer>) getSaveableSamples.invoke(statsPanel);
+        assertEquals(char1Samples, saved1);
+
+        SwingUtilities.invokeAndWait(() -> {
+            statsPanel.updateStats(new StatsHudRenderer.StatsHudData("Char2", 100, 100, 50, 50, 0, 1000L));
+        });
+        SwingUtilities.invokeAndWait(() -> {});
+
+        @SuppressWarnings("unchecked")
+        List<Integer> saved2 = (List<Integer>) getSaveableSamples.invoke(statsPanel);
+        assertEquals(char2Samples, saved2);
     }
 }
