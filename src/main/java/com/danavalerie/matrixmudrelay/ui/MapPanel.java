@@ -622,47 +622,67 @@ public final class MapPanel extends JPanel {
     }
 
     private void centerViewOnPoint(Point point, Dimension imageSize) {
-        Dimension extent = scrollPane.getViewport().getExtentSize();
-        if (extent.width <= 0 || extent.height <= 0) {
-            return;
-        }
+        if (point == null) return;
+        SwingUtilities.invokeLater(new Runnable() {
+            private int retries = 0;
 
-        javax.swing.Icon icon = mapLabel.getIcon();
-        if (icon == null) {
-            return;
-        }
+            @Override
+            public void run() {
+                Dimension extent = scrollPane.getViewport().getExtentSize();
+                if (extent.width <= 0 || extent.height <= 0) {
+                    if (retries < 20 && isDisplayable()) {
+                        retries++;
+                        SwingUtilities.invokeLater(this);
+                    }
+                    return;
+                }
 
-        Insets insets = mapLabel.getInsets();
-        int iconWidth = icon.getIconWidth();
-        int iconHeight = icon.getIconHeight();
-        int labelWidth = mapLabel.getWidth();
-        int labelHeight = mapLabel.getHeight();
+                javax.swing.Icon icon = mapLabel.getIcon();
+                if (icon == null) {
+                    return;
+                }
 
-        // Calculate icon position within the label (centered)
-        int xOffset = insets.left + (labelWidth - insets.left - insets.right - iconWidth) / 2;
-        int yOffset = insets.top + (labelHeight - insets.top - insets.bottom - iconHeight) / 2;
+                Insets insets = mapLabel.getInsets();
+                int iconWidth = icon.getIconWidth();
+                int iconHeight = icon.getIconHeight();
+                int labelWidth = mapLabel.getWidth();
+                int labelHeight = mapLabel.getHeight();
 
-        int componentX = point.x + xOffset;
-        int componentY = point.y + yOffset;
+                if (labelWidth <= 0 || labelHeight <= 0) {
+                    if (retries < 20 && isDisplayable()) {
+                        retries++;
+                        SwingUtilities.invokeLater(this);
+                    }
+                    return;
+                }
 
-        Dimension effectiveSize = imageSize;
-        Dimension labelSize = mapLabel.getSize();
-        if (labelSize.width > 0 && labelSize.height > 0) {
-            effectiveSize = labelSize;
-        }
-        int viewX = componentX - extent.width / 2;
-        int viewY = componentY - extent.height / 2;
-        if (effectiveSize.width > extent.width) {
-            viewX = Math.max(0, Math.min(viewX, effectiveSize.width - extent.width));
-        } else {
-            viewX = 0;
-        }
-        if (effectiveSize.height > extent.height) {
-            viewY = Math.max(0, Math.min(viewY, effectiveSize.height - extent.height));
-        } else {
-            viewY = 0;
-        }
-        scrollPane.getViewport().setViewPosition(new Point(viewX, viewY));
+                // Calculate icon position within the label (centered)
+                int xOffset = insets.left + (labelWidth - insets.left - insets.right - iconWidth) / 2;
+                int yOffset = insets.top + (labelHeight - insets.top - insets.bottom - iconHeight) / 2;
+
+                int componentX = point.x + xOffset;
+                int componentY = point.y + yOffset;
+
+                Dimension effectiveSize = imageSize;
+                Dimension labelSize = mapLabel.getSize();
+                if (labelSize.width > 0 && labelSize.height > 0) {
+                    effectiveSize = labelSize;
+                }
+                int viewX = componentX - extent.width / 2;
+                int viewY = componentY - extent.height / 2;
+                if (effectiveSize.width > extent.width) {
+                    viewX = Math.max(0, Math.min(viewX, effectiveSize.width - extent.width));
+                } else {
+                    viewX = 0;
+                }
+                if (effectiveSize.height > extent.height) {
+                    viewY = Math.max(0, Math.min(viewY, effectiveSize.height - extent.height));
+                } else {
+                    viewY = 0;
+                }
+                scrollPane.getViewport().setViewPosition(new Point(viewX, viewY));
+            }
+        });
     }
 
     private void configureAnimation(AnimatedMapIcon icon) {
