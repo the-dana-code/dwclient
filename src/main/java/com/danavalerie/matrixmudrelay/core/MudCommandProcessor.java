@@ -115,16 +115,15 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
 
         output.addToHistory(trimmed);
 
-        String normalized = normalizeInput(trimmed);
-        String lower = normalized.toLowerCase(Locale.ROOT);
+        String lower = trimmed.toLowerCase(Locale.ROOT);
 
         if (lower.startsWith("//")) {
-            sendToMud(normalized.substring(1));
+            sendToMud(trimmed.substring(1));
             return;
         }
 
         if (lower.startsWith("/")) {
-            handleInternalCommand(normalized.substring(1));
+            handleInternalCommand(trimmed.substring(1));
             return;
         }
 
@@ -133,10 +132,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
             return;
         }
 
-        if (tryAlias(normalized)) {
+        if (tryAlias(trimmed)) {
             return;
         }
-        sendToMud(normalized);
+        sendToMud(trimmed);
     }
 
     private void sendToMud(String line) {
@@ -1068,21 +1067,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener {
         String empty = "No NPCs found matching \"" + query + "\".";
         String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
         return new ContextualResultList(title, list, empty, footer);
-    }
-
-    private static String normalizeInput(String body) {
-        if (body.isEmpty()) {
-            return body;
-        }
-        int firstCodePoint = body.codePointAt(0);
-        if (!Character.isUpperCase(firstCodePoint)) {
-            return body;
-        }
-        int lowerFirst = Character.toLowerCase(firstCodePoint);
-        StringBuilder normalized = new StringBuilder(body.length());
-        normalized.appendCodePoint(lowerFirst);
-        normalized.append(body.substring(Character.charCount(firstCodePoint)));
-        return normalized.toString();
     }
 
 }
