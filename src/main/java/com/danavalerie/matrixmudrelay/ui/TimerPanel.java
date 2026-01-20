@@ -67,7 +67,16 @@ public class TimerPanel extends JPanel {
                 if ("EXPIRED".equals(value) && column == 2) {
                     setForeground(Color.RED);
                 } else if (!isSelected) {
-                    setForeground(table.getForeground());
+                    String currentChar = characterNameSupplier.get();
+                    int modelRow = table.convertRowIndexToModel(row);
+                    Object rowCharValue = table.getModel().getValueAt(modelRow, 0);
+                    String rowChar = rowCharValue != null ? rowCharValue.toString() : null;
+
+                    if (currentChar != null && !currentChar.isBlank() && rowChar != null && currentChar.equalsIgnoreCase(rowChar)) {
+                        setForeground(new Color(144, 238, 144)); // Light green
+                    } else {
+                        setForeground(table.getForeground());
+                    }
                 }
                 return this;
             }
@@ -251,7 +260,7 @@ public class TimerPanel extends JPanel {
 
         void updateRemainingTimes() {
             if (entries.isEmpty()) return;
-            fireTableChanged(new javax.swing.event.TableModelEvent(this, 0, entries.size() - 1, 2));
+            fireTableRowsUpdated(0, entries.size() - 1);
         }
 
         @Override

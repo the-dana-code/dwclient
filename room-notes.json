@@ -547,6 +547,24 @@
       }
     ]
   },
+  "7736f3400b1dfa46cf626c72c442ea3b333ef9f9": {
+    "name": "Madame Gumble\u0027s Jewellery",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "780b00a39490812ccfe170095fb62fa6f906c729": {
+    "name": "guild forge",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "786f922eeddebe8d739709ae43559d01bf1dbcc2": {
     "name": "post office",
     "buttons": [

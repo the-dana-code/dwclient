@@ -150,4 +150,78 @@ public class TimerPanelTest {
             }
         });
     }
+
+    @Test
+    public void testCharacterNameColoring(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        BotConfig config = new BotConfig();
+        TimerService service = new TimerService(config, configPath);
+        // Use different expiration times to ensure deterministic order (oldest first)
+        service.setTimer("CurrentChar", "Timer1", 10000);
+        Thread.sleep(10);
+        service.setTimer("OtherChar", "Timer2", 20000);
+        Thread.sleep(10);
+        service.setTimer("CurrentChar", "ExpiredTimer", -1000); // Expired
+
+        SwingUtilities.invokeAndWait(() -> {
+            TimerPanel panel = new TimerPanel(service, () -> "CurrentChar");
+            try {
+                Field tableField = TimerPanel.class.getDeclaredField("table");
+                tableField.setAccessible(true);
+                JTable table = (JTable) tableField.get(panel);
+
+                table.setForeground(Color.BLACK);
+
+                int currentCharRow = -1;
+                int otherCharRow = -1;
+                int expiredRow = -1;
+                for (int i = 0; i < table.getRowCount(); i++) {
+                    String name = (String) table.getValueAt(i, 0);
+                    String desc = (String) table.getValueAt(i, 1);
+                    if ("CurrentChar".equals(name) && "Timer1".equals(desc)) currentCharRow = i;
+                    if ("OtherChar".equals(name)) otherCharRow = i;
+                    if ("CurrentChar".equals(name) && "ExpiredTimer".equals(desc)) expiredRow = i;
+                }
+
+                Component rendererComp;
+
+                // Test CurrentChar coloring - all columns should be green
+                for (int col = 0; col < 3; col++) {
+                    rendererComp = table.prepareRenderer(table.getCellRenderer(currentCharRow, col), currentCharRow, col);
+                    assertEquals(new Color(144, 238, 144), rendererComp.getForeground(), "Current character row column " + col + " should be light green");
+                }
+
+                // Test OtherChar coloring - columns should be default
+                for (int col = 0; col < 3; col++) {
+                    rendererComp = table.prepareRenderer(table.getCellRenderer(otherCharRow, col), otherCharRow, col);
+                    assertEquals(Color.BLACK, rendererComp.getForeground(), "Other character row column " + col + " should be default color");
+                }
+
+                // Test Expired coloring - column 2 should be RED, others green
+                rendererComp = table.prepareRenderer(table.getCellRenderer(expiredRow, 0), expiredRow, 0);
+                assertEquals(new Color(144, 238, 144), rendererComp.getForeground(), "Expired row column 0 should be light green");
+                rendererComp = table.prepareRenderer(table.getCellRenderer(expiredRow, 1), expiredRow, 1);
+                assertEquals(new Color(144, 238, 144), rendererComp.getForeground(), "Expired row column 1 should be light green");
+                rendererComp = table.prepareRenderer(table.getCellRenderer(expiredRow, 2), expiredRow, 2);
+                assertEquals(Color.RED, rendererComp.getForeground(), "Expired row column 2 (Remain) should be RED");
+
+                // Test case insensitivity
+                TimerPanel panel2 = new TimerPanel(service, () -> "currentchar");
+                JTable table2 = (JTable) tableField.get(panel2);
+                table2.setForeground(Color.BLACK);
+                rendererComp = table2.prepareRenderer(table2.getCellRenderer(currentCharRow, 0), currentCharRow, 0);
+                assertEquals(new Color(144, 238, 144), rendererComp.getForeground(), "Current character name should be light green (case insensitive)");
+
+                // Test no character logged in
+                TimerPanel panel3 = new TimerPanel(service, () -> null);
+                JTable table3 = (JTable) tableField.get(panel3);
+                table3.setForeground(Color.BLACK);
+                rendererComp = table3.prepareRenderer(table3.getCellRenderer(currentCharRow, 0), currentCharRow, 0);
+                assertEquals(Color.BLACK, rendererComp.getForeground(), "No character name should be green if not logged in");
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }
