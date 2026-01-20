@@ -630,6 +630,15 @@
       }
     ]
   },
+  "929e9d5de5fc3a77b62374635c04e7539bbf9249": {
+    "name": "temple gift shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "93e7c961a6556586f40b21b13726658fef7ed88b": {
     "name": "claustrophobically pink shop",
     "buttons": [
