@@ -147,8 +147,30 @@ public class UULibraryMapGenerator {
     }
 
     private static boolean isConnectedWrap(BufferedImage img, int x, int y, int targetX, int targetY) {
-        // The library map is cylindrical, so it always wraps East-West
-        return true;
+        // x is either col 1 (startX) or col 8 (startX + 7*spacingX)
+        // targetX is the other one.
+        // We check if there is a "stub" of a path pointing towards the edge of the image.
+        int dirX = (x < targetX) ? -1 : 1;
+        int dirTarget = (targetX < x) ? -1 : 1;
+        
+        return hasStub(img, x, y, dirX) && hasStub(img, targetX, y, dirTarget);
+    }
+
+    private static boolean hasStub(BufferedImage img, int x, int y, int direction) {
+        int black = 0;
+        int total = 0;
+        // Check a 5x11 block starting 10 pixels away from center in the given direction
+        for (int dy = -2; dy <= 2; dy++) {
+            for (int i = 10; i <= 20; i++) {
+                int cx = x + i * direction;
+                int cy = y + dy;
+                if (cx >= 0 && cx < img.getWidth() && cy >= 0 && cy < img.getHeight()) {
+                    total++;
+                    if ((img.getRGB(cx, cy) & 0xFFFFFF) == 0) black++;
+                }
+            }
+        }
+        return total > 0 && (double)black / total > 0.4;
     }
 
     private static boolean hasColorNearby(BufferedImage img, int x, int y, int targetColor, int radius) {
