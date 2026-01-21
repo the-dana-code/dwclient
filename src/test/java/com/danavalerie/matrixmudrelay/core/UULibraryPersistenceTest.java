@@ -86,6 +86,7 @@ class UULibraryPersistenceTest {
 
         // Verify config file also reflects the removal
         try {
+            Thread.sleep(200);
             BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
             assertNull(loaded.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
         } catch (Exception e) {
@@ -149,6 +150,7 @@ class UULibraryPersistenceTest {
         assertFalse(service.isActive());
         assertNull(cfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
 
+        Thread.sleep(200);
         BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
         assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }

@@ -581,11 +581,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void saveConfig() {
-        try {
-            ConfigLoader.save(configPath, cfg);
-        } catch (IOException e) {
-            outputPane.appendSystemText("* Unable to save config: " + e.getMessage());
-        }
+        ConfigLoader.save(configPath, cfg);
     }
 
 

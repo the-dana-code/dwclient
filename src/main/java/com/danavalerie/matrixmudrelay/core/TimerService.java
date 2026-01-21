@@ -102,12 +102,7 @@ public class TimerService {
     }
 
     private void saveConfig() {
-        try {
-            ConfigLoader.save(configPath, config);
-        } catch (Exception e) {
-            // Log error or handle it
-            System.err.println("Failed to save config after updating timers: " + e.getMessage());
-        }
+        ConfigLoader.save(configPath, config);
     }
 
     public String formatRemainingTime(long remainingMs) {

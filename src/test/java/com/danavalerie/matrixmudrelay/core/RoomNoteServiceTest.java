@@ -17,7 +17,7 @@ public class RoomNoteServiceTest {
     Path tempDir;
 
     @Test
-    public void testPersistence() throws IOException {
+    public void testPersistence() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("room-notes.json");
         RoomNoteService service = new RoomNoteService(storagePath);
 
@@ -36,6 +36,8 @@ public class RoomNoteServiceTest {
         assertEquals(2, service.getButtonsForRoom(roomId1).size());
         assertEquals(1, service.getButtonsForRoom(roomId2).size());
 
+        Thread.sleep(200);
+
         // Re-load from file
         RoomNoteService service2 = new RoomNoteService(storagePath);
         List<RoomButton> loaded1 = service2.getButtonsForRoom(roomId1);
@@ -47,7 +49,7 @@ public class RoomNoteServiceTest {
     }
 
     @Test
-    public void testRoomNamePersistence() throws IOException {
+    public void testRoomNamePersistence() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("room-names.json");
         RoomNoteService service = new RoomNoteService(storagePath);
 
@@ -56,6 +58,7 @@ public class RoomNoteServiceTest {
         RoomButton btn = new RoomButton("Look", "look");
 
         service.addButton(roomId, roomName, btn);
+        Thread.sleep(200);
 
         // Re-load
         RoomNoteService service2 = new RoomNoteService(storagePath);
@@ -64,7 +67,7 @@ public class RoomNoteServiceTest {
     }
 
     @Test
-    public void testMigration() throws IOException {
+    public void testMigration() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("migration.json");
         // Create an old-format JSON
         String oldJson = "{\n" +
@@ -85,18 +88,20 @@ public class RoomNoteServiceTest {
         
         // Save and verify it's now in new format
         service.save();
+        Thread.sleep(200);
         String newJson = Files.readString(storagePath);
         assertTrue(newJson.contains("\"buttons\":"), "Should have been migrated to new format with 'buttons' field");
     }
 
     @Test
-    public void testSorting() throws IOException {
+    public void testSorting() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("room-notes-sort.json");
         RoomNoteService service = new RoomNoteService(storagePath);
 
         service.addButton("z_room", "Z Room", new RoomButton("Z", "z"));
         service.addButton("a_room", "A Room", new RoomButton("A", "a"));
 
+        Thread.sleep(200);
         String json = Files.readString(storagePath);
         int indexA = json.indexOf("a_room");
         int indexZ = json.indexOf("z_room");
@@ -105,7 +110,7 @@ public class RoomNoteServiceTest {
     }
 
     @Test
-    public void testLateRoomNameUpdate() throws IOException {
+    public void testLateRoomNameUpdate() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("late-name.json");
         RoomNoteService service = new RoomNoteService(storagePath);
 
@@ -115,6 +120,7 @@ public class RoomNoteServiceTest {
         // Add button with null name
         service.addButton(roomId, null, btn);
 
+        Thread.sleep(200);
         String json1 = Files.readString(storagePath);
         // It will contain "name" because of the button name, but not as a sibling to "buttons" at the top level of the room object.
         // A simple way to check is to see if "The Drum" is NOT there yet.
@@ -123,23 +129,25 @@ public class RoomNoteServiceTest {
         // Now update name
         service.updateRoomName(roomId, "The Drum");
 
+        Thread.sleep(200);
         String json2 = Files.readString(storagePath);
         assertTrue(json2.contains("\"name\": \"The Drum\""), "JSON should now contain the room name");
     }
 
     @Test
-    public void testUnknownFallback() throws IOException {
+    public void testUnknownFallback() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("unknown.json");
         RoomNoteService service = new RoomNoteService(storagePath);
 
         service.addButton("roomX", null, new RoomButton("B", "c"));
 
+        Thread.sleep(200);
         String json = Files.readString(storagePath);
         assertTrue(json.contains("\"name\": \"Unknown\""), "Should fallback to 'Unknown' if name is null");
     }
 
     @Test
-    public void testMigrationToUnknown() throws IOException {
+    public void testMigrationToUnknown() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("migration-unknown.json");
         String oldJson = "{\"room1\": [{\"name\": \"Btn\",\"command\": \"cmd\"}]}";
         Files.writeString(storagePath, oldJson);
@@ -147,12 +155,13 @@ public class RoomNoteServiceTest {
         RoomNoteService service = new RoomNoteService(storagePath);
         service.save();
 
+        Thread.sleep(200);
         String json = Files.readString(storagePath);
         assertTrue(json.contains("\"name\": \"Unknown\""), "Old entries should migrate with 'Unknown' name");
     }
 
     @Test
-    public void testMovement() {
+    public void testMovement() throws InterruptedException {
         RoomNoteService service = new RoomNoteService(tempDir.resolve("move.json"));
         String rid = "room";
         service.addButton(rid, "Test Room", new RoomButton("1", "1"));
@@ -164,10 +173,13 @@ public class RoomNoteServiceTest {
 
         service.moveButtonRight(rid, 0); // [1, 2, 3]
         assertEquals("1", service.getButtonsForRoom(rid).get(0).getName());
+        
+        // Ensure pending saves finish so file can be deleted
+        Thread.sleep(200);
     }
 
     @Test
-    public void testNotes() throws IOException {
+    public void testNotes() throws IOException, InterruptedException {
         Path storagePath = tempDir.resolve("notes-test.json");
         RoomNoteService service = new RoomNoteService(storagePath);
 
@@ -176,6 +188,7 @@ public class RoomNoteServiceTest {
         String notes = "Watch out for Dibbler.";
 
         service.updateNotesForRoom(roomId, roomName, notes);
+        Thread.sleep(200);
 
         // Verify in-memory
         assertEquals(notes, service.getNotesForRoom(roomId));

@@ -2,6 +2,7 @@ package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 import com.danavalerie.matrixmudrelay.core.data.RoomNoteData;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -64,13 +65,9 @@ public class RoomNoteService {
     }
 
     public synchronized void save() {
-        try {
-            // Map is already a TreeMap, so it will be sorted by roomId
-            String json = GSON.toJson(roomButtonsMap);
-            Files.writeString(storagePath, json);
-        } catch (IOException e) {
-            logger.error("Failed to save room buttons to {}", storagePath, e);
-        }
+        // Map is already a TreeMap, so it will be sorted by roomId
+        String json = GSON.toJson(roomButtonsMap);
+        BackgroundSaver.save(storagePath, json);
     }
 
     public synchronized List<RoomButton> getButtonsForRoom(String roomId) {

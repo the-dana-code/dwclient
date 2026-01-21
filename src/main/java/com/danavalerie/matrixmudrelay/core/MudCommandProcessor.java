@@ -126,11 +126,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
 
         if (configPath != null) {
-            try {
-                ConfigLoader.save(configPath, cfg);
-            } catch (Exception e) {
-                log.warn("Failed to save config for UULibrary state: {}", e.getMessage());
-            }
+            ConfigLoader.save(configPath, cfg);
         }
     }
 

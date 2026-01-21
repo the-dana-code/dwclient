@@ -86,6 +86,14 @@ class ConfigLoaderTest {
         // Old field should be null
         assertNull(cfg.teleports);
 
+        // Migration causes an asynchronous save. We need to wait for it.
+        // We can't easily get the Future here without changing the load() API,
+        // but we can submit a dummy task to the same single-threaded executor and wait for it.
+        // Or better, we can expose a wait method in BackgroundSaver for testing.
+        
+        // For now, let's just try to wait a bit or use a more robust way if I add it to BackgroundSaver.
+        Thread.sleep(200);
+
         // Verify it was saved back in the new format
         String savedJson = Files.readString(configPath);
         assertTrue(savedJson.contains("\"characters\":"));

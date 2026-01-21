@@ -18,6 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.config;
 
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -81,14 +82,14 @@ public final class ConfigLoader {
         return new DeliveryRouteMappings(entries);
     }
 
-    public static void saveRoutes(Path path, DeliveryRouteMappings routes) throws IOException {
+    public static java.util.concurrent.Future<?> saveRoutes(Path path, DeliveryRouteMappings routes) {
         String json = GSON.toJson(routes.routes());
-        Files.writeString(path, json);
+        return BackgroundSaver.save(path, json);
     }
 
-    public static void save(Path path, BotConfig cfg) throws IOException {
+    public static java.util.concurrent.Future<?> save(Path path, BotConfig cfg) {
         String json = GSON.toJson(cfg);
-        Files.writeString(path, json);
+        return BackgroundSaver.save(path, json);
     }
 
     public static boolean convertCoordinatesToRoomIds(BotConfig cfg, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
