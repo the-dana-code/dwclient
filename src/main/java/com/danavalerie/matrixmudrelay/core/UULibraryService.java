@@ -47,6 +47,7 @@ public class UULibraryService {
     }
 
     private final Map<String, Room> maze = new HashMap<>();
+    private final Map<String, Set<Orientation>> barriers = new HashMap<>();
     private volatile int curRow, curCol;
     private volatile Orientation orientation = Orientation.NORTH;
     private volatile boolean active = false;
@@ -63,6 +64,7 @@ public class UULibraryService {
         curRow = 1;
         curCol = 5;
         orientation = Orientation.NORTH;
+        barriers.clear();
         listeners.clear();
     }
 
@@ -101,10 +103,27 @@ public class UULibraryService {
             curRow = 1;
             curCol = 5;
             orientation = Orientation.NORTH;
+            barriers.clear();
         }
         if (active != wasActive) {
             notifyListeners();
         }
+    }
+
+    public void addBarrier(Orientation dir) {
+        if (!active) return;
+        barriers.computeIfAbsent(curRow + "," + curCol, k -> new HashSet<>()).add(dir);
+        notifyListeners();
+    }
+
+    public void clearBarriers() {
+        if (!active) return;
+        barriers.remove(curRow + "," + curCol);
+        notifyListeners();
+    }
+
+    public Map<String, Set<Orientation>> getBarriers() {
+        return Collections.unmodifiableMap(barriers);
     }
 
     public void setState(int row, int col, Orientation orientation) {
@@ -200,6 +219,12 @@ public class UULibraryService {
 
             for (Orientation o : Orientation.values()) {
                 if (r.exits.contains(o.name)) {
+                    // Check for barriers in the current room
+                    Set<Orientation> currentBarriers = barriers.get(current.row + "," + current.col);
+                    if (currentBarriers != null && currentBarriers.contains(o)) {
+                        continue;
+                    }
+
                     int nextRow = current.row + o.dRow;
                     int nextCol = current.col + o.dCol;
                     if (nextCol < 1) nextCol = 8;

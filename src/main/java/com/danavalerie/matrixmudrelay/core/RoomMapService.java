@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -204,6 +205,55 @@ public class RoomMapService {
         g2.setStroke(new BasicStroke(IMAGE_SCALE));
 
         drawMapBackground(backgroundImage, g2);
+
+        if (mapId == 47) {
+            UULibraryService lib = UULibraryService.getInstance();
+            Map<String, Set<UULibraryService.Orientation>> barriers = lib.getBarriers();
+            if (!barriers.isEmpty()) {
+                g2.setColor(Color.RED);
+                g2.setStroke(new BasicStroke(3 * IMAGE_SCALE));
+                for (Map.Entry<String, Set<UULibraryService.Orientation>> entry : barriers.entrySet()) {
+                    String[] parts = entry.getKey().split(",");
+                    int r = Integer.parseInt(parts[0]);
+                    int c = Integer.parseInt(parts[1]);
+                    
+                    // Center of room in background coords:
+                    // x = (c - 1) * 30 + 45
+                    // y = 4810 - (r - 1) * 30
+                    int cx = (c - 1) * 30 + 45;
+                    int cy = 4810 - (r - 1) * 30;
+                    
+                    int half = 15; // Room size is 30x30
+                    int inset = 4; // Draw barrier 4 pixels inside the room
+                    
+                    for (UULibraryService.Orientation dir : entry.getValue()) {
+                        int x1, y1, x2, y2;
+                        switch (dir) {
+                            case NORTH:
+                                x1 = cx - half + inset; y1 = cy - half + inset;
+                                x2 = cx + half - inset; y2 = cy - half + inset;
+                                break;
+                            case SOUTH:
+                                x1 = cx - half + inset; y1 = cy + half - inset;
+                                x2 = cx + half - inset; y2 = cy + half - inset;
+                                break;
+                            case EAST:
+                                x1 = cx + half - inset; y1 = cy - half + inset;
+                                x2 = cx + half - inset; y2 = cy + half - inset;
+                                break;
+                            case WEST:
+                                x1 = cx - half + inset; y1 = cy - half + inset;
+                                x2 = cx - half + inset; y2 = cy + half - inset;
+                                break;
+                            default:
+                                continue;
+                        }
+                        g2.drawLine(x1 * IMAGE_SCALE, y1 * IMAGE_SCALE, x2 * IMAGE_SCALE, y2 * IMAGE_SCALE);
+                    }
+                }
+            }
+        }
+
         g2.dispose();
 
         baseImageCache = new BaseImageCache(mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,

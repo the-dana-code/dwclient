@@ -42,6 +42,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
     private static final int ROOM_SEARCH_LIMIT = 999;
     private static final Pattern UU_LIBRARY_RE_ENABLE_PATTERN = Pattern.compile("^Cannot find \"distortion\", no match\\.$");
+    private static final Pattern UU_LIBRARY_DISTORTION_AHEAD = Pattern.compile("^There is a strange distortion in space and time up ahead of you!.*");
+    private static final Pattern UU_LIBRARY_DISTORTION_BEHIND = Pattern.compile("^There is a strange distortion in space and time behind you!.*");
+    private static final Pattern UU_LIBRARY_DISTORTION_LEFT = Pattern.compile("^There is a strange distortion in space and time to the left of you!.*");
+    private static final Pattern UU_LIBRARY_DISTORTION_RIGHT = Pattern.compile("^There is a strange distortion in space and time to the right of you!.*");
 
     public interface ClientOutput {
         void appendSystem(String text);
@@ -177,6 +181,34 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     public void onFullLineReceived(String line) {
         if (UU_LIBRARY_RE_ENABLE_PATTERN.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
+            if (UULibraryService.getInstance().isActive()) {
+                UULibraryService.getInstance().clearBarriers();
+                output.updateMap("UULibrary");
+            }
+        } else if (UU_LIBRARY_DISTORTION_AHEAD.matcher(line).matches()) {
+            output.setUULibraryButtonsEnabled(true);
+            if (UULibraryService.getInstance().isActive()) {
+                UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation());
+                output.updateMap("UULibrary");
+            }
+        } else if (UU_LIBRARY_DISTORTION_BEHIND.matcher(line).matches()) {
+            output.setUULibraryButtonsEnabled(true);
+            if (UULibraryService.getInstance().isActive()) {
+                UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turn180());
+                output.updateMap("UULibrary");
+            }
+        } else if (UU_LIBRARY_DISTORTION_LEFT.matcher(line).matches()) {
+            output.setUULibraryButtonsEnabled(true);
+            if (UULibraryService.getInstance().isActive()) {
+                UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnLeft());
+                output.updateMap("UULibrary");
+            }
+        } else if (UU_LIBRARY_DISTORTION_RIGHT.matcher(line).matches()) {
+            output.setUULibraryButtonsEnabled(true);
+            if (UULibraryService.getInstance().isActive()) {
+                UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnRight());
+                output.updateMap("UULibrary");
+            }
         }
     }
 
