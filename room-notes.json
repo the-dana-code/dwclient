@@ -189,6 +189,16 @@
       }
     ]
   },
+  "24b2ffde15897df53f685128b8cc6fe22a534c51": {
+    "name": "Bes Pelargic money changers",
+    "notes": "You can exchange money here.\n\nExamples:\n  buy from Ankh-Morpork with 10 rhinu\n  sell 5 dollars  ",
+    "buttons": [
+      {
+        "name": "List Rates",
+        "command": "list"
+      }
+    ]
+  },
   "25f7d315e063c446f7419150bc40291f9349aa2e": {
     "name": "Xoo Xoo Ha\u0027s General Trading",
     "buttons": [
@@ -879,6 +889,15 @@
       {
         "name": "Ring Bell",
         "command": "ring bell"
+      }
+    ]
+  },
+  "9a3a449db93764f190366394aaf2768a0e11cc64": {
+    "name": "Elt On Wong\u0027s Wig-O-Rama",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
