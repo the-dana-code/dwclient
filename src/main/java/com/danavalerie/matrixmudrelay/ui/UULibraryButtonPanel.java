@@ -153,7 +153,11 @@ public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
 
     public void setDistortion(boolean distortion) {
         this.distortion = distortion;
-        this.setBackground(distortion ? Color.RED : themeBg);
+        Color bg = distortion ? Color.RED : themeBg;
+        this.setBackground(bg);
+        for (JLabel btn : slots) {
+            btn.setBackground(bg);
+        }
     }
 
     public void updateTheme(Color bg, Color fg) {
@@ -168,7 +172,7 @@ public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
         );
         
         for (JLabel btn : slots) {
-            btn.setBackground(bg);
+            btn.setBackground(distortion ? Color.RED : bg);
             btn.setForeground(fg);
         }
         

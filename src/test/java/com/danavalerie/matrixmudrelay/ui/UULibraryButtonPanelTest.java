@@ -115,6 +115,36 @@ public class UULibraryButtonPanelTest {
     }
 
     @Test
+    public void testDistortionColors() {
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+        panel.updateTheme(Color.BLACK, Color.WHITE);
+        panel.rebuildLayout();
+
+        JLabel forwardBtn = (JLabel) panel.getComponents()[0];
+
+        // Set distortion
+        panel.setDistortion(true);
+        assertEquals(Color.RED, panel.getBackground());
+        assertEquals(Color.RED, forwardBtn.getBackground());
+
+        // Clear distortion
+        panel.setDistortion(false);
+        assertEquals(Color.BLACK, panel.getBackground());
+        assertEquals(Color.BLACK, forwardBtn.getBackground());
+        
+        // Update theme while distorted
+        panel.setDistortion(true);
+        panel.updateTheme(Color.BLUE, Color.YELLOW);
+        assertEquals(Color.RED, panel.getBackground());
+        assertEquals(Color.RED, forwardBtn.getBackground());
+        
+        // Clear distortion after theme update
+        panel.setDistortion(false);
+        assertEquals(Color.BLUE, panel.getBackground());
+        assertEquals(Color.BLUE, forwardBtn.getBackground());
+    }
+
+    @Test
     public void testLayoutStability() {
         com.danavalerie.matrixmudrelay.core.UULibraryService service = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance();
         service.setRoomId("UULibrary");
