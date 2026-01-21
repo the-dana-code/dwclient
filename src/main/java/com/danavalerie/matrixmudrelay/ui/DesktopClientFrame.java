@@ -50,7 +50,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -104,6 +107,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             KeyEvent.VK_NUMPAD1, "southwest"
         );
         private final JTextField inputField = new JTextField();
+    private Color currentBg;
+    private Color currentFg;
     private final MudCommandProcessor commandProcessor;
     private final MudClient mud;
     private DeliveryRouteMappings routeMappings;
@@ -529,6 +534,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void persistMapInvertConfig(boolean invertMap) {
         cfg.ui.invertMap = invertMap;
         saveConfig();
+        updateTheme(invertMap);
     }
 
 
@@ -1362,6 +1368,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void updateTheme(boolean inverted) {
         Color bg = inverted ? MapPanel.BACKGROUND_DARK : MapPanel.BACKGROUND_LIGHT;
         Color fg = inverted ? MapPanel.FOREGROUND_LIGHT : MapPanel.FOREGROUND_DARK;
+        this.currentBg = bg;
+        this.currentFg = fg;
 
         outputPane.updateTheme(inverted);
         chitchatPane.updateTheme(inverted);
@@ -1389,15 +1397,22 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void updateComponentTree(Component c, Color bg, Color fg) {
-        if (c instanceof MapPanel || c instanceof MudOutputPane || c instanceof ChitchatPane || c instanceof StatsPanel) {
+        if (c instanceof MapPanel || c instanceof MudOutputPane || c instanceof ChitchatPane || c instanceof StatsPanel
+                || c instanceof RoomButtonBarPanel || c instanceof UULibraryButtonPanel || c instanceof RoomNotePanel || c instanceof TimerPanel) {
             return;
         }
-        if (c instanceof JPanel || c instanceof JSplitPane || c instanceof JScrollPane) {
+        if (c instanceof JPanel || c instanceof JSplitPane || c instanceof JScrollPane || c instanceof JViewport) {
             c.setBackground(bg);
         }
-        if (c instanceof JLabel || c instanceof JTextField || c instanceof JButton) {
+        if (c instanceof JLabel || c instanceof JTextField || c instanceof JTextArea || c instanceof JButton || c instanceof JTable || c instanceof JComboBox || c instanceof JSpinner || c instanceof JCheckBox) {
             c.setBackground(bg);
             c.setForeground(fg);
+            if (c instanceof JTextArea ta) {
+                ta.setCaretColor(fg);
+            }
+            if (c instanceof JTextField tf) {
+                tf.setCaretColor(fg);
+            }
         }
 
         if (c instanceof Container container) {

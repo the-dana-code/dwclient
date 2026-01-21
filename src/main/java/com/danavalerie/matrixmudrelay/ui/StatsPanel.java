@@ -108,6 +108,8 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private int hpMillisPerPoint = 0;
     private int currentHp = 0;
     private int currentMaxHp = 1;
+    private Color currentBg;
+    private Color currentFg;
 
     public StatsPanel() {
         setLayout(new BorderLayout());
@@ -183,6 +185,12 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
             if (font != null) {
                 item.setFont(font);
             }
+            if (currentBg != null) {
+                item.setBackground(currentBg);
+            }
+            if (currentFg != null) {
+                item.setForeground(currentFg);
+            }
             item.addActionListener(e -> {
                 if (characterSelector != null) {
                     characterSelector.accept(configChar);
@@ -196,6 +204,8 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         Color bg = inverted ? MapPanel.BACKGROUND_DARK : MapPanel.BACKGROUND_LIGHT;
         Color fg = inverted ? MapPanel.FOREGROUND_LIGHT : MapPanel.FOREGROUND_DARK;
         Color barBg = inverted ? BAR_BG : new Color(220, 220, 215);
+        this.currentBg = bg;
+        this.currentFg = fg;
 
         setBackground(bg);
         setBorder(BorderFactory.createCompoundBorder(
