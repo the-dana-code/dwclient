@@ -57,4 +57,19 @@ class WritTrackerTest {
         assertEquals(1, reqs.get(1).quantity());
         assertEquals("bottle of wine", reqs.get(1).item());
     }
+    @Test
+    void testParseWritWithAlternativeStart() {
+        WritTracker tracker = new WritTracker();
+        String writText = "Written in carefully printed text:\n" +
+                "[ ] a oil lamp to The Storekeeper at Sator Square\n" +
+                "You have until tomorrow to complete this.";
+
+        tracker.ingest(writText);
+        List<WritTracker.WritRequirement> reqs = tracker.getRequirements();
+
+        assertEquals(1, reqs.size());
+        WritTracker.WritRequirement req = reqs.get(0);
+        assertEquals(1, req.quantity());
+        assertEquals("oil lamp", req.item());
+    }
 }

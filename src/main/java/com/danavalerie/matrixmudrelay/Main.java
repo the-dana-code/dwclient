@@ -51,7 +51,7 @@ public final class Main {
             routes = convertedRoutes;
         }
 
-        DesktopClientFrame.launch(cfg, configPath, routes);
+        DesktopClientFrame.launch(cfg, configPath, routes, mapService);
     }
 }
 

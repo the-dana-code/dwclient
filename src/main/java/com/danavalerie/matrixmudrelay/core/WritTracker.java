@@ -59,7 +59,7 @@ public final class WritTracker {
         if (trimmed.isEmpty()) {
             return false;
         }
-        if (trimmed.startsWith("You read the official employment writ")) {
+        if (trimmed.startsWith("You read the official employment writ") || trimmed.startsWith("Written in carefully printed text:")) {
             readingWrit = true;
             if (!requirements.isEmpty()) {
                 requirements.clear();

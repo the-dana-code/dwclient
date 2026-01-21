@@ -112,7 +112,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final BotConfig cfg;
     private final Path configPath;
     private final Path routesPath;
-    private final RoomMapService routeMapService = new RoomMapService("database.db");
+    private final RoomMapService routeMapService;
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
     private JMenuItem connectionItem;
@@ -155,9 +155,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         DELIVER
     }
 
-    public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings) {
+    public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
         super("Lesa's Discworld MUD Client");
         this.cfg = cfg;
+        this.routeMapService = routeMapService;
         com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
         this.configPath = configPath;
         this.routesPath = configPath.resolveSibling("delivery-routes.json");
@@ -194,7 +195,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         );
         this.timerPanel = new TimerPanel(timerService, () -> mud.getCurrentRoomSnapshot().characterName());
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
-        commandProcessor = new MudCommandProcessor(cfg, configPath, mud, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
+        commandProcessor = new MudCommandProcessor(cfg, configPath, mud, routeMapService, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
         outputPane.setLineListener(line -> commandProcessor.onFullLineReceived(line));
         mapPanel.setSpeedwalkHandler(
                 location -> commandProcessor.speedwalkTo(location.roomId())
@@ -401,9 +402,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             RoomMapService.RoomLocation location = routeMapService.lookupRoomLocation(roomId);
             DeliveryRouteMappings updated = appendRouteMapping(requirement, location);
             ConfigLoader.saveRoutes(routesPath, updated);
-            DeliveryRouteMappings reloaded = ConfigLoader.loadRoutes(routesPath);
-            routeMappings = reloaded;
-            onSuccess.accept(reloaded);
+            routeMappings = updated;
+            onSuccess.accept(updated);
             outputPane.appendSystemText("Saved delivery route for \"" + requirement.npc()
                     + "\" at \"" + requirement.locationDisplay() + "\".");
         } catch (RoomMapService.MapLookupException e) {
@@ -585,7 +585,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
 
-    private void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
+    void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
         boolean resetVisits = !Objects.equals(writRequirements, requirements);
         writRequirements.clear();
         if (requirements != null) {
@@ -680,6 +680,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         reattachResultsMenus();
         updateTheme(mapPanel.isInverted());
+        menuBar.revalidate();
+        menuBar.repaint();
     }
 
     private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
@@ -1167,6 +1169,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             menuBar.add(menu);
         }
         updateTheme(mapPanel.isInverted());
+        menuBar.revalidate();
+        menuBar.repaint();
     }
 
     private void reattachResultsMenus() {
@@ -1413,14 +1417,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         SwingUtilities.invokeLater(() -> uuLibraryButtonPanel.setButtonsEnabled(enabled));
     }
 
-    public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes) {
+    public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, RoomMapService routeMapService) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             System.err.println("Unable to set cross-platform look and feel: " + e.getMessage());
         }
         SwingUtilities.invokeLater(() -> {
-            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, routes);
+            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, routes, routeMapService);
             frame.setVisible(true);
         });
     }

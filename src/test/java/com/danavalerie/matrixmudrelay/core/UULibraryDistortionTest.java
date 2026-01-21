@@ -45,8 +45,9 @@ class UULibraryDistortionTest {
         BotConfig cfg = new BotConfig();
         Path configPath = Paths.get("config.json");
         MudClient mud = new MudClient(new BotConfig.Mud(), null, null);
+        RoomMapService mapService = new RoomMapService("database.db");
         
-        processor = new MudCommandProcessor(cfg, configPath, mud, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), output);
+        processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), output);
     }
 
     @Test

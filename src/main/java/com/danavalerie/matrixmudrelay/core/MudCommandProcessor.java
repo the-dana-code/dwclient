@@ -88,6 +88,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     public MudCommandProcessor(BotConfig cfg,
                                Path configPath,
                                MudClient mud,
+                               RoomMapService mapService,
                                WritTracker writTracker,
                                StoreInventoryTracker storeInventoryTracker,
                                TimerService timerService,
@@ -96,12 +97,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         this.cfg = cfg;
         this.configPath = configPath;
         this.mud = mud;
+        this.mapService = mapService;
         this.writTracker = writTracker;
         this.storeInventoryTracker = storeInventoryTracker;
         this.timerService = timerService;
         this.routeMappingsSupplier = routeMappingsSupplier;
         this.output = output;
-        this.mapService = new RoomMapService("database.db");
 
         UULibraryService.getInstance().addListener(this::saveUULibraryState);
     }

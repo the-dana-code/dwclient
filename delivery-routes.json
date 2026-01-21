@@ -1069,5 +1069,11 @@
     "location": "Little Agatea",
     "roomId": "634ec474418e42dee92acefe86d16e47a84c4f13",
     "commands": []
+  },
+  {
+    "npc": "the receptionist",
+    "location": "the Psychiatrist reception area on Short Street",
+    "roomId": "66d482ef115caa98f0aed044e3cca5e49b95d93a",
+    "commands": []
   }
 ]

@@ -60,8 +60,9 @@ class UULibraryPersistenceTest {
         JsonObject charInfo = new JsonObject();
         charInfo.addProperty("capname", "TestChar");
         mud.cri.update("char.info", charInfo);
-        
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+
+        RoomMapService mapService = new RoomMapService("database.db");
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
 
         UULibraryService service = UULibraryService.getInstance();
         service.setRoomId("UULibrary");
@@ -122,7 +123,8 @@ class UULibraryPersistenceTest {
         charInfo.addProperty("capname", "Walker");
         mud.cri.update("char.info", charInfo);
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        RoomMapService mapService = new RoomMapService("database.db");
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
         UULibraryService service = UULibraryService.getInstance();
 
         // 2. Enter Library
@@ -168,7 +170,8 @@ class UULibraryPersistenceTest {
         charCfg.uuLibrary = new BotConfig.UULibraryState(10, 20, "SOUTH");
         cfg.characters.put("LateChar", charCfg);
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        RoomMapService mapService = new RoomMapService("database.db");
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
         UULibraryService service = UULibraryService.getInstance();
 
         // 1. room.info arrives first. No character name known yet.
