@@ -50,6 +50,8 @@ public class UULibraryService {
     private final Map<String, Set<Orientation>> barriers = new java.util.concurrent.ConcurrentHashMap<>();
     private volatile int curRow, curCol;
     private volatile Orientation orientation = Orientation.NORTH;
+    private int prevRow, prevCol;
+    private Orientation prevOri;
     private volatile boolean active = false;
     private final List<Runnable> listeners = new java.util.concurrent.CopyOnWriteArrayList<>();
 
@@ -64,6 +66,9 @@ public class UULibraryService {
         curRow = 1;
         curCol = 5;
         orientation = Orientation.NORTH;
+        prevRow = curRow;
+        prevCol = curCol;
+        prevOri = orientation;
         barriers.clear();
         listeners.clear();
     }
@@ -103,6 +108,9 @@ public class UULibraryService {
             curRow = 1;
             curCol = 5;
             orientation = Orientation.NORTH;
+            prevRow = curRow;
+            prevCol = curCol;
+            prevOri = orientation;
             barriers.clear();
         }
         if (active != wasActive) {
@@ -140,9 +148,30 @@ public class UULibraryService {
         return active;
     }
 
+    public boolean canMove(Orientation dir) {
+        if (!active) return false;
+        Room r = maze.get(curRow + "," + curCol);
+        if (r == null || r.exits == null || !r.exits.contains(dir.name)) {
+            return false;
+        }
+        Set<Orientation> cellBarriers = barriers.get(curRow + "," + curCol);
+        return cellBarriers == null || !cellBarriers.contains(dir);
+    }
+
+    public void revert() {
+        if (!active) return;
+        this.curRow = prevRow;
+        this.curCol = prevCol;
+        this.orientation = prevOri;
+        notifyListeners();
+    }
+
     public void processCommand(String cmd) {
         if (!active) return;
         cmd = cmd.toLowerCase().trim();
+        prevRow = curRow;
+        prevCol = curCol;
+        prevOri = orientation;
         Orientation oldOri = orientation;
         int oldRow = curRow;
         int oldCol = curCol;

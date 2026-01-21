@@ -1,106 +1,99 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Map;
 import java.util.function.Consumer;
 import com.danavalerie.matrixmudrelay.core.UULibraryService;
 
 public class UULibraryButtonPanel extends JPanel {
     private final Consumer<String> commandSubmitter;
 
-    private final JComboBox<String> targetCombo;
-    private final JLabel stepButton;
+    private final JLabel forwardBtn;
+    private final JLabel backwardBtn;
+    private final JLabel leftBtn;
+    private final JLabel rightBtn;
+    
     private Color themeBg = null;
     private Color themeFg = null;
 
-    private static final Map<String, Point> BUTTON_COORDINATES = Map.ofEntries(
-            Map.entry("Exit", new Point(1, 5)),
-            Map.entry("1", new Point(2, 6)),
-            Map.entry("2", new Point(3, 5)),
-            Map.entry("3", new Point(4, 2)),
-            Map.entry("4", new Point(5, 7)),
-            Map.entry("5", new Point(6, 3)),
-            Map.entry("6", new Point(6, 6)),
-            Map.entry("7", new Point(7, 1)),
-            Map.entry("8", new Point(10, 8)),
-            Map.entry("9", new Point(11, 5)),
-            Map.entry("10", new Point(15, 3)),
-            Map.entry("11", new Point(16, 4)),
-            Map.entry("12", new Point(17, 7)),
-            Map.entry("13", new Point(19, 1)),
-            Map.entry("14", new Point(22, 6)),
-            Map.entry("15", new Point(22, 8)),
-            Map.entry("16", new Point(23, 3)),
-            Map.entry("Gap", new Point(12, 6))
-    );
-
-    private static final Insets BUTTON_MARGIN = new Insets(2, 50, 2, 50);
+    private static final Insets BUTTON_MARGIN = new Insets(2, 10, 2, 10);
 
     public UULibraryButtonPanel(Consumer<String> commandSubmitter) {
-        super(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        super(new GridBagLayout());
         this.commandSubmitter = commandSubmitter;
         this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 
-        add(new JLabel("Target:"));
+        forwardBtn = createButton("forward");
+        backwardBtn = createButton("backward");
+        leftBtn = createButton("left");
+        rightBtn = createButton("right");
 
-        String[] targets = new String[18];
-        targets[0] = "Exit";
-        for (int i = 1; i <= 16; i++) {
-            targets[i] = String.valueOf(i);
-        }
-        targets[17] = "Gap";
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2, 2, 2, 2);
+        gbc.fill = GridBagConstraints.BOTH;
 
-        targetCombo = new JComboBox<>(targets);
-        targetCombo.setFocusable(false);
-        add(targetCombo);
+        // Cross layout
+        gbc.gridx = 1; gbc.gridy = 0;
+        add(forwardBtn, gbc);
 
-        stepButton = new JLabel("Step", SwingConstants.CENTER);
-        stepButton.setFocusable(false);
-        stepButton.setOpaque(true);
-        stepButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (stepButton.isEnabled()) {
-                    String label = (String) targetCombo.getSelectedItem();
-                    Point target = BUTTON_COORDINATES.get(label);
-                    if (target != null) {
-                        setButtonsEnabled(false);
-                        new Thread(() -> {
-                            String cmd = UULibraryService.getInstance().getNextStepCommand(target.x, target.y);
-                            SwingUtilities.invokeLater(() -> {
-                                if (cmd != null) {
-                                    commandSubmitter.accept(cmd);
-                                    commandSubmitter.accept("look distortion");
-                                } else {
-                                    setButtonsEnabled(true);
-                                }
-                            });
-                        }, "UU-AStar-Thread").start();
-                    }
-                }
-            }
-        });
-        add(stepButton);
+        gbc.gridx = 0; gbc.gridy = 1;
+        add(leftBtn, gbc);
+
+        gbc.gridx = 2; gbc.gridy = 1;
+        add(rightBtn, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 2;
+        add(backwardBtn, gbc);
 
         setVisible(false);
     }
 
-    public void setButtonsEnabled(boolean enabled) {
-        stepButton.setEnabled(enabled);
-        targetCombo.setEnabled(enabled);
-        updateStepButtonColor();
+    private JLabel createButton(String command) {
+        JLabel btn = new JLabel(command, SwingConstants.CENTER);
+        btn.setFocusable(false);
+        btn.setOpaque(true);
+        btn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (btn.isEnabled()) {
+                    setButtonsEnabled(false);
+                    commandSubmitter.accept(command);
+                    commandSubmitter.accept("look distortion");
+                }
+            }
+        });
+        return btn;
     }
 
-    private void updateStepButtonColor() {
-        if (stepButton.isEnabled()) {
-            stepButton.setBackground(Color.RED);
-            stepButton.setForeground(Color.WHITE);
+    public void setButtonsEnabled(boolean enabled) {
+        UULibraryService svc = UULibraryService.getInstance();
+        UULibraryService.Orientation currentOri = svc.getOrientation();
+        
+        forwardBtn.setEnabled(enabled && svc.canMove(currentOri));
+        backwardBtn.setEnabled(enabled && svc.canMove(currentOri.turn180()));
+        leftBtn.setEnabled(enabled && svc.canMove(currentOri.turnLeft()));
+        rightBtn.setEnabled(enabled && svc.canMove(currentOri.turnRight()));
+        
+        updateButtonColors();
+    }
+
+    private void updateButtonColors() {
+        updateButtonColor(forwardBtn);
+        updateButtonColor(backwardBtn);
+        updateButtonColor(leftBtn);
+        updateButtonColor(rightBtn);
+    }
+
+    private void updateButtonColor(JLabel btn) {
+        if (btn.isEnabled()) {
+            btn.setBackground(Color.RED);
+            btn.setForeground(Color.WHITE);
         } else {
-            stepButton.setBackground(themeBg);
-            stepButton.setForeground(themeFg);
+            btn.setBackground(themeBg);
+            btn.setForeground(themeFg);
         }
     }
 
@@ -113,20 +106,17 @@ public class UULibraryButtonPanel extends JPanel {
                 BorderFactory.createLineBorder(fg),
                 BorderFactory.createEmptyBorder(2, 2, 2, 2)
         ));
-        for (Component c : getComponents()) {
-            if (c instanceof JComboBox) {
-                c.setBackground(bg);
-                c.setForeground(fg);
-                ((JComboBox<?>) c).setBorder(BorderFactory.createLineBorder(fg));
-            } else if (c == stepButton) {
-                stepButton.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(fg),
-                        BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right)
-                ));
-            } else if (c instanceof JLabel) {
-                c.setForeground(fg);
-            }
-        }
-        updateStepButtonColor();
+        
+        Border btnBorder = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(fg),
+                BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right)
+        );
+        
+        forwardBtn.setBorder(btnBorder);
+        backwardBtn.setBorder(btnBorder);
+        leftBtn.setBorder(btnBorder);
+        rightBtn.setBorder(btnBorder);
+        
+        updateButtonColors();
     }
 }
