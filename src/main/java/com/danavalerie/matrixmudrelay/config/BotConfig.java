@@ -63,6 +63,7 @@ public final class BotConfig {
         public String name;
         public String roomId;
         public int[] target;
+        public List<Bookmark> bookmarks;
 
         public Bookmark() {}
         public Bookmark(String name, String roomId) {

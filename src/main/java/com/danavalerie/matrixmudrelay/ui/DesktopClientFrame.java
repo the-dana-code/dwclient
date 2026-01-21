@@ -47,6 +47,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
@@ -277,7 +278,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JMenuBar buildMenuBar() {
         JMenu mainMenu = new JMenu("Menu");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(mainMenu, currentBg, currentFg);
+        }
         connectionItem = new JMenuItem();
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(connectionItem, currentBg, currentFg);
+        }
         connectionItem.addActionListener(event -> {
             if (mud.isConnected()) {
                 submitCommand("/disconnect");
@@ -305,15 +312,24 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         mainMenu.addSeparator();
         JMenuItem fontItem = new JMenuItem("Output Font...");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(fontItem, currentBg, currentFg);
+        }
         fontItem.addActionListener(event -> showFontDialog());
         mainMenu.add(fontItem);
 
         JMenuItem sendPasswordItem = new JMenuItem("Send Password");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(sendPasswordItem, currentBg, currentFg);
+        }
         sendPasswordItem.addActionListener(event -> submitCommand("/pw"));
         mainMenu.add(sendPasswordItem);
 
         mainMenu.addSeparator();
         JMenuItem exitItem = new JMenuItem("Exit");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(exitItem, currentBg, currentFg);
+        }
         exitItem.addActionListener(event -> {
             shutdown();
             System.exit(0);
@@ -323,23 +339,51 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         menuBar.add(mainMenu);
 
         JMenu quickLinksMenu = new JMenu("Navigate");
-        for (BotConfig.Bookmark link : cfg.bookmarks) {
-            JMenuItem linkItem = new JMenuItem(link.name);
-            linkItem.addActionListener(event -> {
-                commandProcessor.speedwalkTo(link.roomId);
-                submitCommand(null); // Just reset history index if we're not recording navigation
-            });
-            quickLinksMenu.add(linkItem);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
+        addBookmarksToMenu(quickLinksMenu, cfg.bookmarks);
         menuBar.add(quickLinksMenu);
         menuBar.add(buildHelpMenu());
 
         return menuBar;
     }
 
+    private void addBookmarksToMenu(Container menu, List<BotConfig.Bookmark> bookmarks) {
+        if (bookmarks == null) {
+            return;
+        }
+        for (BotConfig.Bookmark link : bookmarks) {
+            if (link.bookmarks != null && !link.bookmarks.isEmpty()) {
+                JMenu subMenu = new JMenu(link.name);
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(subMenu, currentBg, currentFg);
+                }
+                addBookmarksToMenu(subMenu, link.bookmarks);
+                menu.add(subMenu);
+            } else {
+                JMenuItem linkItem = new JMenuItem(link.name);
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(linkItem, currentBg, currentFg);
+                }
+                linkItem.addActionListener(event -> {
+                    commandProcessor.speedwalkTo(link.roomId);
+                    submitCommand(null); // Just reset history index if we're not recording navigation
+                });
+                menu.add(linkItem);
+            }
+        }
+    }
+
     private JMenu buildHelpMenu() {
         JMenu helpMenu = new JMenu("Help");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(helpMenu, currentBg, currentFg);
+        }
         JMenuItem aboutItem = new JMenuItem("About");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(aboutItem, currentBg, currentFg);
+        }
         aboutItem.addActionListener(event -> {
             javax.swing.JOptionPane.showMessageDialog(this,
                 "Lesa's Discworld MUD client\n" +
@@ -1423,14 +1467,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void updateMenuTheme(JMenuItem item, Color bg, Color fg) {
+        if (item == null) return;
         item.setBackground(bg);
         item.setForeground(fg);
+        item.setOpaque(true);
         if (item instanceof JMenu menu) {
+            JPopupMenu popup = menu.getPopupMenu();
+            if (popup != null) {
+                popup.setBackground(bg);
+                popup.setForeground(fg);
+            }
             for (int i = 0; i < menu.getItemCount(); i++) {
                 JMenuItem subItem = menu.getItem(i);
-                if (subItem != null) {
-                    updateMenuTheme(subItem, bg, fg);
-                }
+                updateMenuTheme(subItem, bg, fg);
             }
         }
     }

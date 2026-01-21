@@ -96,16 +96,7 @@ public final class ConfigLoader {
         boolean changed = false;
         try {
             if (cfg.bookmarks != null) {
-                for (BotConfig.Bookmark b : cfg.bookmarks) {
-                    if (b.roomId == null && b.target != null && b.target.length >= 3) {
-                        String id = mapService.findRoomIdByCoordinates(b.target[0], b.target[1], b.target[2]);
-                        if (id != null) {
-                            b.roomId = id;
-                            b.target = null;
-                            changed = true;
-                        }
-                    }
-                }
+                changed |= convertBookmarksToRoomIds(cfg.bookmarks, mapService);
             }
             if (cfg.characters != null) {
                 for (BotConfig.CharacterConfig cc : cfg.characters.values()) {
@@ -125,6 +116,24 @@ public final class ConfigLoader {
             }
         } catch (java.sql.SQLException e) {
             System.err.println("Error during config coordinate conversion: " + e.getMessage());
+        }
+        return changed;
+    }
+
+    private static boolean convertBookmarksToRoomIds(List<BotConfig.Bookmark> bookmarks, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) throws java.sql.SQLException {
+        boolean changed = false;
+        for (BotConfig.Bookmark b : bookmarks) {
+            if (b.roomId == null && b.target != null && b.target.length >= 3) {
+                String id = mapService.findRoomIdByCoordinates(b.target[0], b.target[1], b.target[2]);
+                if (id != null) {
+                    b.roomId = id;
+                    b.target = null;
+                    changed = true;
+                }
+            }
+            if (b.bookmarks != null) {
+                changed |= convertBookmarksToRoomIds(b.bookmarks, mapService);
+            }
         }
         return changed;
     }

@@ -29,12 +29,17 @@
       "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7"
     },
     {
-      "name": "Gennie Applebottom\u0027s (Ankh-Morpork)",
-      "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
-    },
-    {
-      "name": "Granny Weatherwax (Bad Ass)",
-      "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
+      "name": "Witches",
+      "bookmarks": [
+        {
+          "name": "Gennie Applebottom\u0027s (Ankh-Morpork)",
+          "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
+        },
+        {
+          "name": "Granny Weatherwax (Bad Ass)",
+          "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
+        }
+      ]
     }
   ],
   "characters": {

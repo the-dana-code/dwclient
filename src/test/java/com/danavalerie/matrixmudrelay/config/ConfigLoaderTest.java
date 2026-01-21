@@ -131,5 +131,36 @@ class ConfigLoaderTest {
         assertEquals("example.com", cfg.mud.host);
         assertEquals(exampleJson, Files.readString(configPath));
     }
+
+    @Test
+    void loadConfigWithNestedBookmarks(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        String json = """
+            {
+              "mud": { "host": "localhost", "port": 4242 },
+              "bookmarks": [
+                { "name": "Mended Drum", "roomId": "drum_id" },
+                {
+                  "name": "Witches",
+                  "bookmarks": [
+                    { "name": "Granny Weatherwax", "roomId": "weatherwax_id" }
+                  ]
+                }
+              ]
+            }
+            """;
+        Files.writeString(configPath, json);
+
+        BotConfig cfg = ConfigLoader.load(configPath);
+        assertNotNull(cfg);
+        assertEquals(2, cfg.bookmarks.size());
+        assertEquals("drum_id", cfg.bookmarks.get(0).roomId);
+        
+        BotConfig.Bookmark category = cfg.bookmarks.get(1);
+        assertEquals("Witches", category.name);
+        assertNotNull(category.bookmarks);
+        assertEquals(1, category.bookmarks.size());
+        assertEquals("weatherwax_id", category.bookmarks.get(0).roomId);
+    }
 }
 
