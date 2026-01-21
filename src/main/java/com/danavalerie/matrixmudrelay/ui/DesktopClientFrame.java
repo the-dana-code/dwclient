@@ -1427,6 +1427,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     @Override
+    public void setUULibraryDistortion(boolean distortion) {
+        SwingUtilities.invokeLater(() -> uuLibraryButtonPanel.setDistortion(distortion));
+    }
+
+    @Override
     public void playUULibraryReadySound() {
         com.danavalerie.matrixmudrelay.util.SoundUtils.playUULibraryReadySound();
     }

@@ -18,6 +18,7 @@ public class UULibraryButtonPanel extends JPanel {
     
     private Color themeBg = null;
     private Color themeFg = null;
+    private boolean distortion = false;
 
     private static final Insets BUTTON_MARGIN = new Insets(2, 10, 2, 10);
 
@@ -59,6 +60,7 @@ public class UULibraryButtonPanel extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (btn.isEnabled()) {
+                    setDistortion(false);
                     setButtonsEnabled(false);
                     commandSubmitter.accept(command);
                     commandSubmitter.accept("look distortion");
@@ -74,6 +76,12 @@ public class UULibraryButtonPanel extends JPanel {
         leftBtn.setEnabled(enabled);
         rightBtn.setEnabled(enabled);
         
+        updateButtonColors();
+    }
+
+    public void setDistortion(boolean distortion) {
+        this.distortion = distortion;
+        this.setBackground(distortion ? Color.RED : themeBg);
         updateButtonColors();
     }
 
@@ -97,7 +105,7 @@ public class UULibraryButtonPanel extends JPanel {
     public void updateTheme(Color bg, Color fg) {
         this.themeBg = bg;
         this.themeFg = fg;
-        this.setBackground(bg);
+        this.setBackground(distortion ? Color.RED : bg);
         this.setForeground(fg);
         this.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(fg),

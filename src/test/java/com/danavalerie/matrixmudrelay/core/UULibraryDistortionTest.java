@@ -17,6 +17,7 @@ class UULibraryDistortionTest {
 
     static class StubClientOutput implements MudCommandProcessor.ClientOutput {
         boolean buttonsEnabled = true;
+        boolean distortion = false;
         int mapUpdateCount = 0;
         int readySoundCount = 0;
         int alertSoundCount = 0;
@@ -31,6 +32,7 @@ class UULibraryDistortionTest {
         @Override public void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path) {}
         @Override public void updateConnectionState(boolean connected) {}
         @Override public void setUULibraryButtonsEnabled(boolean enabled) { buttonsEnabled = enabled; }
+        @Override public void setUULibraryDistortion(boolean distortion) { this.distortion = distortion; }
         @Override public void playUULibraryReadySound() { readySoundCount++; }
         @Override public void playUULibraryAlertSound() { alertSoundCount++; }
     }
@@ -180,24 +182,28 @@ class UULibraryDistortionTest {
     }
 
     @Test
-    void testDistortionSounds() {
-        // Ready sound
+    void testDistortionVisualFeedback() {
+        // Clear distortion
         processor.onFullLineReceived("Cannot find \"distortion\", no match.");
-        assertEquals(1, output.readySoundCount);
-        assertEquals(0, output.alertSoundCount);
+        assertFalse(output.distortion);
 
-        // Alert sounds
+        // Distortion ahead
         processor.onFullLineReceived("There is a strange distortion in space and time up ahead of you!");
-        assertEquals(1, output.readySoundCount);
-        assertEquals(1, output.alertSoundCount);
+        assertTrue(output.distortion);
 
+        processor.onFullLineReceived("Cannot find \"distortion\", no match.");
+        assertFalse(output.distortion);
+
+        // Distortion behind
         processor.onFullLineReceived("There is a strange distortion in space and time behind you!");
-        assertEquals(2, output.alertSoundCount);
+        assertTrue(output.distortion);
 
+        // Distortion left
         processor.onFullLineReceived("There is a strange distortion in space and time to the left of you!");
-        assertEquals(3, output.alertSoundCount);
+        assertTrue(output.distortion);
 
+        // Distortion right
         processor.onFullLineReceived("There is a strange distortion in space and time to the right of you!");
-        assertEquals(4, output.alertSoundCount);
+        assertTrue(output.distortion);
     }
 }

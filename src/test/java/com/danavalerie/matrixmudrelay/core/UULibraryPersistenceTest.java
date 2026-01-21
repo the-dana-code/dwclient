@@ -42,6 +42,7 @@ class UULibraryPersistenceTest {
         @Override public void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path) {}
         @Override public void updateConnectionState(boolean connected) {}
         @Override public void setUULibraryButtonsEnabled(boolean enabled) {}
+        @Override public void setUULibraryDistortion(boolean distortion) {}
         @Override public void playUULibraryReadySound() {}
         @Override public void playUULibraryAlertSound() {}
     }

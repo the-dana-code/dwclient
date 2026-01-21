@@ -65,6 +65,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path);
         void updateConnectionState(boolean connected);
         void setUULibraryButtonsEnabled(boolean enabled);
+        void setUULibraryDistortion(boolean distortion);
         void playUULibraryReadySound();
         void playUULibraryAlertSound();
     }
@@ -180,42 +181,47 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     public void onFullLineReceived(String line) {
         if (UU_LIBRARY_RE_ENABLE_PATTERN.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
+            output.setUULibraryDistortion(false);
             if (UULibraryService.getInstance().isActive()) {
                 UULibraryService.getInstance().clearBarriers();
                 output.updateMap("UULibrary");
-                output.playUULibraryReadySound();
+                // output.playUULibraryReadySound();
             }
         } else if (UU_LIBRARY_DISTORTION_AHEAD.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
+            output.setUULibraryDistortion(true);
             if (UULibraryService.getInstance().isActive()) {
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation());
                 output.updateMap("UULibrary");
-                output.playUULibraryAlertSound();
+                // output.playUULibraryAlertSound();
             }
         } else if (UU_LIBRARY_DISTORTION_BEHIND.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
+            output.setUULibraryDistortion(true);
             if (UULibraryService.getInstance().isActive()) {
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turn180());
                 output.updateMap("UULibrary");
-                output.playUULibraryAlertSound();
+                // output.playUULibraryAlertSound();
             }
         } else if (UU_LIBRARY_DISTORTION_LEFT.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
+            output.setUULibraryDistortion(true);
             if (UULibraryService.getInstance().isActive()) {
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnLeft());
                 output.updateMap("UULibrary");
-                output.playUULibraryAlertSound();
+                // output.playUULibraryAlertSound();
             }
         } else if (UU_LIBRARY_DISTORTION_RIGHT.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
+            output.setUULibraryDistortion(true);
             if (UULibraryService.getInstance().isActive()) {
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnRight());
                 output.updateMap("UULibrary");
-                output.playUULibraryAlertSound();
+                // output.playUULibraryAlertSound();
             }
         }
     }
