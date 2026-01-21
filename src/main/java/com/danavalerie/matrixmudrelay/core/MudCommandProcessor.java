@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public final class MudCommandProcessor implements MudClient.MudGmcpListener, MudClient.MudConnectListener {
     private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
     private static final int ROOM_SEARCH_LIMIT = 999;
-    private static final Pattern UU_LIBRARY_RE_ENABLE_PATTERN = Pattern.compile("^Cannot find \"disturbance\", no match\\.$");
+    private static final Pattern UU_LIBRARY_RE_ENABLE_PATTERN = Pattern.compile("^Cannot find \"distortion\", no match\\.$");
 
     public interface ClientOutput {
         void appendSystem(String text);

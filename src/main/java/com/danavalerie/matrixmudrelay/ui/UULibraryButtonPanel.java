@@ -55,7 +55,7 @@ public class UULibraryButtonPanel extends JPanel {
                 if (cmd != null) {
                     setButtonsEnabled(false);
                     commandSubmitter.accept(cmd);
-                    commandSubmitter.accept("look disturbance");
+                    commandSubmitter.accept("look distortion");
                 }
             }
         });
