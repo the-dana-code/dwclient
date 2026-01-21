@@ -47,17 +47,22 @@ public class UULibraryButtonPanelTest {
         assertEquals("forward", commands.get(0));
         assertEquals("look distortion", commands.get(1));
 
-        // Should be disabled now
+        // Should be disabled and "invisible" (empty text) now, but still taking space
         assertFalse(forwardBtn.isEnabled());
+        assertTrue(forwardBtn.isVisible());
+        assertEquals("", forwardBtn.getText());
         assertFalse(((JLabel)components[1]).isEnabled());
+        assertTrue(((JLabel)components[1]).isVisible());
+        assertEquals("", ((JLabel)components[1]).getText());
 
-        // Clicking again when disabled should not add commands
+        // Clicking again when disabled/invisible should not add commands
         click(forwardBtn);
         assertEquals(2, commands.size());
 
         // Test re-enabling
         panel.setButtonsEnabled(true);
         assertTrue(forwardBtn.isEnabled());
+        assertTrue(forwardBtn.isVisible());
         
         click(forwardBtn);
         waitForCommands(commands, 4);
@@ -85,7 +90,7 @@ public class UULibraryButtonPanelTest {
     }
 
     @Test
-    public void testColors() {
+    public void testVisibilityAndColors() {
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
         
@@ -96,15 +101,44 @@ public class UULibraryButtonPanelTest {
         JLabel forwardBtn = (JLabel) panel.getComponents()[0];
         assertEquals("forward", forwardBtn.getText());
 
-        // Enabled should be red
+        // Enabled should be visible and use theme background (BLACK)
         panel.setButtonsEnabled(true);
-        assertEquals(Color.RED, forwardBtn.getBackground());
-        assertEquals(Color.WHITE, forwardBtn.getForeground());
-
-        // Disabled should be theme background (BLACK)
-        panel.setButtonsEnabled(false);
+        assertTrue(forwardBtn.isVisible());
         assertEquals(Color.BLACK, forwardBtn.getBackground());
         assertEquals(Color.WHITE, forwardBtn.getForeground());
+
+        // Disabled should be empty/transparent but still visible (space-taking)
+        panel.setButtonsEnabled(false);
+        assertTrue(forwardBtn.isVisible());
+        assertEquals("", forwardBtn.getText());
+        assertFalse(forwardBtn.isOpaque());
+    }
+
+    @Test
+    public void testLayoutStability() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService service = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance();
+        service.setRoomId("UULibrary");
+        
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+        panel.updateTheme(Color.BLACK, Color.WHITE);
+        panel.onFontChange(new Font("Arial", Font.PLAIN, 12));
+        
+        // State 1: 4 buttons
+        service.setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
+        panel.rebuildLayout();
+        Dimension size4 = panel.getPreferredSize();
+        
+        // State 2: 2 buttons
+        service.setState(1, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
+        panel.rebuildLayout();
+        Dimension size2 = panel.getPreferredSize();
+        
+        assertEquals(size4, size2, "Panel size should be identical between rooms with different exit counts");
+        
+        // State 3: Disabled
+        panel.setButtonsEnabled(false);
+        Dimension sizeDisabled = panel.getPreferredSize();
+        assertEquals(size4, sizeDisabled, "Panel size should be identical when disabled");
     }
 
     @Test
@@ -186,11 +220,48 @@ public class UULibraryButtonPanelTest {
         assertButtonOrder(panel, "forward", "backward");
     }
 
+    @Test
+    public void testInvisibleTakingSpace() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService service = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance();
+        service.setRoomId("UULibrary");
+        // Room (1,3) only has "east" and "west" exits.
+        service.setState(1, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
+
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+        panel.rebuildLayout();
+        panel.setButtonsEnabled(true);
+
+        Component[] components = panel.getComponents();
+        assertEquals(4, components.length);
+
+        JLabel btn0 = (JLabel) components[0]; // "right" (EAST)
+        JLabel btn1 = (JLabel) components[1]; // "left" (WEST)
+        JLabel btn2 = (JLabel) components[2]; // empty
+        JLabel btn3 = (JLabel) components[3]; // empty
+
+        assertEquals("right", btn0.getText());
+        assertTrue(btn0.isVisible());
+        assertTrue(btn0.isOpaque());
+
+        assertEquals("left", btn1.getText());
+        assertTrue(btn1.isVisible());
+        assertTrue(btn1.isOpaque());
+
+        assertEquals("", btn2.getText());
+        assertTrue(btn2.isVisible()); // Taking space
+        assertFalse(btn2.isOpaque()); // Invisible
+
+        assertEquals("", btn3.getText());
+        assertTrue(btn3.isVisible()); // Taking space
+        assertFalse(btn3.isOpaque()); // Invisible
+    }
+
     private void assertButtonOrder(UULibraryButtonPanel panel, String... expectedLabels) {
         Component[] components = panel.getComponents();
-        assertEquals(expectedLabels.length, components.length);
-        for (int i = 0; i < expectedLabels.length; i++) {
-            assertEquals(expectedLabels[i], ((JLabel)components[i]).getText(), "Mismatch at index " + i);
+        assertEquals(4, components.length);
+        for (int i = 0; i < 4; i++) {
+            String expected = i < expectedLabels.length ? expectedLabels[i] : "";
+            assertEquals(expected, ((JLabel)components[i]).getText(), "Mismatch at index " + i);
         }
     }
 }
