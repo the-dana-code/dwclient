@@ -152,4 +152,43 @@ class UULibraryPersistenceTest {
         BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
         assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }
+
+    @Test
+    void testRestoreStateWhenRoomInfoArrivesBeforeCharInfo() {
+        Path configPath = tempDir.resolve("config_late_char.json");
+        BotConfig cfg = new BotConfig();
+        cfg.mud.host = "localhost";
+        cfg.mud.port = 1234;
+        StubMudClient mud = new StubMudClient();
+
+        // Saved state for character "LateChar"
+        BotConfig.CharacterConfig charCfg = new BotConfig.CharacterConfig();
+        charCfg.uuLibrary = new BotConfig.UULibraryState(10, 20, "SOUTH");
+        cfg.characters.put("LateChar", charCfg);
+
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        UULibraryService service = UULibraryService.getInstance();
+
+        // 1. room.info arrives first. No character name known yet.
+        JsonObject roomInfo = new JsonObject();
+        roomInfo.addProperty("id", "UULibrary");
+        mud.cri.update("room.info", roomInfo);
+        processor.onGmcp(new TelnetDecoder.GmcpMessage("room.info", roomInfo));
+
+        assertTrue(service.isActive());
+        // Should be at default position because charName was null
+        assertEquals(1, service.getCurRow());
+        assertEquals(5, service.getCurCol());
+
+        // 2. char.info arrives later
+        JsonObject charInfo = new JsonObject();
+        charInfo.addProperty("capname", "LateChar");
+        mud.cri.update("char.info", charInfo);
+        processor.onGmcp(new TelnetDecoder.GmcpMessage("char.info", charInfo));
+
+        // Now it SHOULD be restored
+        assertEquals(10, service.getCurRow(), "Should have restored row after char.info arrived");
+        assertEquals(20, service.getCurCol());
+        assertEquals(UULibraryService.Orientation.SOUTH, service.getOrientation());
+    }
 }

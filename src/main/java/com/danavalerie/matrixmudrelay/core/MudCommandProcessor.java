@@ -79,6 +79,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private volatile String lastRoomId = null;
     private volatile String lastRoomName = null;
     private boolean isRestoring = false;
+    private String uuLibraryRestoredForChar = null;
 
     public MudCommandProcessor(BotConfig cfg,
                                Path configPath,
@@ -222,10 +223,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             isRestoring = true;
             try {
                 UULibraryService.getInstance().setRoomId(roomId);
-                if (UULibraryService.getInstance().isActive() && !wasActive) {
-                    // Just entered library. Check for saved state.
+                if (UULibraryService.getInstance().isActive()) {
+                    if (!wasActive) {
+                        uuLibraryRestoredForChar = null;
+                    }
                     String charName = snapshot.characterName();
-                    if (charName != null) {
+                    if (charName != null && !charName.equals(uuLibraryRestoredForChar)) {
                         BotConfig.CharacterConfig charCfg = cfg.characters.get(charName);
                         if (charCfg != null && charCfg.uuLibrary != null) {
                             try {
@@ -238,6 +241,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                                 log.warn("Failed to restore UULibrary state: {}", e.getMessage());
                             }
                         }
+                        uuLibraryRestoredForChar = charName;
                     }
                 }
             } finally {
