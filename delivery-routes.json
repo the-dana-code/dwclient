@@ -1100,5 +1100,11 @@
     "location": "Opposite\u0027s all-night apothecary on Pigsty Hill",
     "roomId": "22f97fe6057d4dc344b43341a302162d2bc1d6b9",
     "commands": []
+  },
+  {
+    "npc": "Gertrude",
+    "location": "Gertrude\u0027s Perfumery in the Flintwick Building",
+    "roomId": "3159ce4dcfacc07ee2006db42fac3016235bb263",
+    "commands": []
   }
 ]

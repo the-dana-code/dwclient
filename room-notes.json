@@ -81,6 +81,15 @@
       }
     ]
   },
+  "108e5e762f597121a6994986373fc031c2402fba": {
+    "name": "Monsieur Rosset\u0027s Beauty Parlour",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "10b70b0323c72b5368531b3f9796d4333027bae4": {
     "name": "foyer of the Dwarf Bread Museum",
     "buttons": [
@@ -105,6 +114,15 @@
       {
         "name": "Climb Out",
         "command": "climb out"
+      }
+    ]
+  },
+  "1265fde9f132238c01a5f9dffa32994145de6755": {
+    "name": "wedding shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -370,11 +388,29 @@
       }
     ]
   },
+  "4384397a3f8b10f28836c06ec80ef4dea26ebde9": {
+    "name": "cobbler shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "45847af6a8e6b8f350115f97474db7211e576347": {
     "name": "rat shop",
     "buttons": [
       {
         "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "48b5df180d837e76c09bc13a5caf8965a2013e60": {
+    "name": "inside Stuck\u0027s Bar",
+    "buttons": [
+      {
+        "name": "List Menu",
         "command": "list"
       }
     ]
@@ -426,6 +462,15 @@
   },
   "50193d819d63ff2a6060b8b55659760683cc930b": {
     "name": "[player shop]",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "512bbcac133fc29a17ed3cd719347e601ec80b71": {
+    "name": "Madame Bertie\u0027s Ladies\u0027 Apparel",
     "buttons": [
       {
         "name": "List Shop",
@@ -1454,6 +1499,15 @@
   },
   "e697f73ed0afc0d65ca9fe2778291ce89f3ea938": {
     "name": "Mr D\u0027abdry\u0027s towel shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "e69b79381d2f0ce799a046a3888fc1c327c3fef7": {
+    "name": "O-fish-ial Fishermen\u0027s Guild Shoppe",
     "buttons": [
       {
         "name": "List Shop",
