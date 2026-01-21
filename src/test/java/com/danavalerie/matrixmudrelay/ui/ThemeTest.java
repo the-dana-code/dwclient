@@ -20,6 +20,8 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import javax.swing.*;
@@ -32,6 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThemeTest {
+    @AfterEach
+    public void tearDown() {
+        BackgroundSaver.waitForIdle();
+    }
 
     @Test
     public void testMudOutputPaneTheme() {

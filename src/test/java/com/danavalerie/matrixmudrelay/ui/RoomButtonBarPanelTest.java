@@ -2,6 +2,8 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -12,6 +14,10 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomButtonBarPanelTest {
+    @AfterEach
+    public void tearDown() {
+        BackgroundSaver.waitForIdle();
+    }
 
     @Test
     public void testAlignment(@TempDir Path tempDir) throws Exception {
