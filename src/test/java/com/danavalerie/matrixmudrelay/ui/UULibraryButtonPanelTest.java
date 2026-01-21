@@ -9,42 +9,76 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UULibraryButtonPanelTest {
     @Test
-    public void testButtons() {
+    public void testComponents() {
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("None");
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
 
         List<String> commands = new ArrayList<>();
         UULibraryButtonPanel panel = new UULibraryButtonPanel(commands::add);
-        
+
         Component[] components = panel.getComponents();
-        assertEquals(18, components.length);
-        
-        assertTrue(components[0] instanceof JButton);
-        assertEquals("1", ((JButton)components[0]).getText());
-        
-        assertEquals("16", ((JButton)components[15]).getText());
-        assertEquals("G", ((JButton)components[16]).getText());
-        assertEquals("X", ((JButton)components[17]).getText());
-        
+        // Label, ComboBox, Button
+        assertEquals(3, components.length);
+
+        assertTrue(components[0] instanceof JLabel);
+        assertEquals("Target:", ((JLabel)components[0]).getText());
+
+        assertTrue(components[1] instanceof JComboBox);
+        JComboBox<?> combo = (JComboBox<?>) components[1];
+        assertEquals(18, combo.getItemCount());
+        assertEquals("1", combo.getItemAt(0));
+        assertEquals("16", combo.getItemAt(15));
+        assertEquals("Gap", combo.getItemAt(16));
+        assertEquals("Exit", combo.getItemAt(17));
+
+        assertTrue(components[2] instanceof JButton);
+        JButton stepButton = (JButton) components[2];
+        assertEquals("Step", stepButton.getText());
+
         // Test action and disabling
-        JButton btn1 = (JButton) components[0];
-        assertTrue(btn1.isEnabled());
-        btn1.doClick();
-        assertEquals(1, commands.size());
-        assertFalse(btn1.isEnabled());
-        for (Component c : components) {
-            assertFalse(c.isEnabled());
-        }
+        assertTrue(stepButton.isEnabled());
+        assertTrue(combo.isEnabled());
+        
+        // Select "Gap" which is at index 16
+        combo.setSelectedIndex(16);
+        
+        stepButton.doClick();
+        assertEquals(2, commands.size()); // step command + look distortion
+        // Should stay enabled but logical state is inactive
+        assertTrue(stepButton.isEnabled());
+        assertTrue(combo.isEnabled());
+
+        // Clicking again when logically disabled should not add commands
+        stepButton.doClick();
+        assertEquals(2, commands.size());
 
         // Test re-enabling
         panel.setButtonsEnabled(true);
-        assertTrue(btn1.isEnabled());
-        for (Component c : components) {
-            assertTrue(c.isEnabled());
-        }
+        assertTrue(stepButton.isEnabled());
+        assertTrue(combo.isEnabled());
         
-        ((JButton)components[16]).doClick(); // Button "G" -> Room 10 (12,6)
-        assertEquals(2, commands.size());
-        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(1)));
+        stepButton.doClick();
+        assertEquals(4, commands.size());
+        
+        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(0)));
+        assertEquals("look distortion", commands.get(1));
+    }
+
+    @Test
+    public void testColors() {
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+        panel.updateTheme(Color.BLACK, Color.WHITE);
+
+        JButton stepButton = (JButton) panel.getComponents()[2];
+
+        // Enabled should be red
+        panel.setButtonsEnabled(true);
+        assertEquals(Color.RED, stepButton.getBackground());
+        assertEquals(Color.WHITE, stepButton.getForeground());
+
+        // Disabled should be theme background (BLACK)
+        panel.setButtonsEnabled(false);
+        assertEquals(Color.BLACK, stepButton.getBackground());
+        assertEquals(Color.WHITE, stepButton.getForeground());
     }
 }

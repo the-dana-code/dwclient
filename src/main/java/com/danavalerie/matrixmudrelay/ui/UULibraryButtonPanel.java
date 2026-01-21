@@ -8,7 +8,14 @@ import java.util.function.Consumer;
 public class UULibraryButtonPanel extends JPanel {
     private final Consumer<String> commandSubmitter;
 
+    private final JComboBox<String> targetCombo;
+    private final JButton stepButton;
+    private boolean buttonsActive = true;
+    private Color themeBg = null;
+    private Color themeFg = null;
+
     private static final Map<String, Point> BUTTON_COORDINATES = Map.ofEntries(
+            Map.entry("Exit", new Point(1, 5)),
             Map.entry("1", new Point(2, 6)),
             Map.entry("2", new Point(3, 5)),
             Map.entry("3", new Point(4, 2)),
@@ -25,29 +32,35 @@ public class UULibraryButtonPanel extends JPanel {
             Map.entry("14", new Point(22, 6)),
             Map.entry("15", new Point(22, 8)),
             Map.entry("16", new Point(23, 3)),
-            Map.entry("G", new Point(12, 6)),
-            Map.entry("X", new Point(1, 5))
+            Map.entry("Gap", new Point(12, 6))
     );
 
+    private static final Insets BUTTON_MARGIN = new Insets(2, 50, 2, 50);
+
     public UULibraryButtonPanel(Consumer<String> commandSubmitter) {
-        super(new GridLayout(3, 6, 2, 2));
+        super(new FlowLayout(FlowLayout.CENTER, 5, 2));
         this.commandSubmitter = commandSubmitter;
         this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        
-        for (int i = 1; i <= 16; i++) {
-            addButton(String.valueOf(i));
-        }
-        addButton("G");
-        addButton("X");
-        
-        setVisible(false);
-    }
 
-    private void addButton(String label) {
-        JButton btn = new JButton(label);
-        btn.setMargin(new Insets(2, 2, 2, 2));
-        btn.setFocusable(false);
-        btn.addActionListener(e -> {
+        add(new JLabel("Target:"));
+
+        String[] targets = new String[18];
+        targets[0] = "Exit";
+        for (int i = 1; i <= 16; i++) {
+            targets[i] = String.valueOf(i);
+        }
+        targets[17] = "Gap";
+
+        targetCombo = new JComboBox<>(targets);
+        targetCombo.setFocusable(false);
+        add(targetCombo);
+
+        stepButton = new JButton("Step");
+        stepButton.setFocusable(false);
+        stepButton.setMargin(BUTTON_MARGIN);
+        stepButton.addActionListener(e -> {
+            if (!buttonsActive) return;
+            String label = (String) targetCombo.getSelectedItem();
             Point target = BUTTON_COORDINATES.get(label);
             if (target != null) {
                 String cmd = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance()
@@ -59,18 +72,29 @@ public class UULibraryButtonPanel extends JPanel {
                 }
             }
         });
-        add(btn);
+        add(stepButton);
+
+        setVisible(false);
     }
 
     public void setButtonsEnabled(boolean enabled) {
-        for (Component c : getComponents()) {
-            if (c instanceof JButton) {
-                c.setEnabled(enabled);
-            }
+        this.buttonsActive = enabled;
+        updateStepButtonColor();
+    }
+
+    private void updateStepButtonColor() {
+        if (buttonsActive) {
+            stepButton.setBackground(Color.RED);
+            stepButton.setForeground(Color.WHITE);
+        } else {
+            stepButton.setBackground(themeBg);
+            stepButton.setForeground(themeFg);
         }
     }
 
     public void updateTheme(Color bg, Color fg) {
+        this.themeBg = bg;
+        this.themeFg = fg;
         this.setBackground(bg);
         this.setForeground(fg);
         this.setBorder(BorderFactory.createCompoundBorder(
@@ -78,11 +102,19 @@ public class UULibraryButtonPanel extends JPanel {
                 BorderFactory.createEmptyBorder(2, 2, 2, 2)
         ));
         for (Component c : getComponents()) {
-            if (c instanceof JButton) {
+            if (c instanceof JLabel) {
+                c.setForeground(fg);
+            } else if (c instanceof JComboBox) {
                 c.setBackground(bg);
                 c.setForeground(fg);
-                ((JButton) c).setBorder(BorderFactory.createLineBorder(fg));
+                ((JComboBox<?>) c).setBorder(BorderFactory.createLineBorder(fg));
+            } else if (c instanceof JButton) {
+                ((JButton) c).setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(fg),
+                        BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right)
+                ));
             }
         }
+        updateStepButtonColor();
     }
 }
