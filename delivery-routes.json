@@ -1075,5 +1075,11 @@
     "location": "the Psychiatrist reception area on Short Street",
     "roomId": "66d482ef115caa98f0aed044e3cca5e49b95d93a",
     "commands": []
+  },
+  {
+    "npc": "Gimlet",
+    "location": "Gimlet\u0027s Hole Food Delicatessen on Cable Street",
+    "roomId": "a6df1adb71ca9acc5007fc82443b70f683d718dc",
+    "commands": []
   }
 ]

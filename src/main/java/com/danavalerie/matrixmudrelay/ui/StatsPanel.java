@@ -65,6 +65,8 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private static final int NAME_MAX_WIDTH = 260;
     private static final int GP_RATE_SAMPLE_SIZE = 5;
     private static final int GP_TIMER_DEFAULT_INTERVAL_MS = 1000;
+    private static final int HP_RATE_SAMPLE_SIZE = 5;
+    private static final int HP_TIMER_DEFAULT_INTERVAL_MS = 1000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getIntegerInstance(Locale.US);
 
     private final JMenuBar nameMenuBar = new JMenuBar();
@@ -86,18 +88,31 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private int gpRateIndex = 0;
     private int gpRateCount = 0;
     private int gpRateMode = 0;
+    private final int[] hpRateSamples = new int[HP_RATE_SAMPLE_SIZE];
+    private final Timer hpTimer;
+    private int hpRateIndex = 0;
+    private int hpRateCount = 0;
+    private int hpRateMode = 0;
     private String lastCharacterName = null;
-    private java.util.function.Function<String, List<Integer>> characterSamplesLoader;
-    private java.util.function.BiConsumer<String, List<Integer>> onSamplesChanged;
+    private java.util.function.Function<String, List<Integer>> characterGpSamplesLoader;
+    private java.util.function.Function<String, List<Integer>> characterHpSamplesLoader;
+    private java.util.function.BiConsumer<String, List<Integer>> onGpSamplesChanged;
+    private java.util.function.BiConsumer<String, List<Integer>> onHpSamplesChanged;
     private Integer lastReportedGp = null;
     private long lastGpUpdateTimeMs = 0L;
     private int gpMillisPerPoint = 0;
     private int currentGp = 0;
     private int currentMaxGp = 1;
+    private Integer lastReportedHp = null;
+    private long lastHpUpdateTimeMs = 0L;
+    private int hpMillisPerPoint = 0;
+    private int currentHp = 0;
+    private int currentMaxHp = 1;
 
     public StatsPanel() {
         setLayout(new BorderLayout());
         Arrays.fill(gpRateSamples, -1);
+        Arrays.fill(hpRateSamples, -1);
 
         nameMenuBar.add(nameMenu);
         nameMenuBar.setBorder(BorderFactory.createEmptyBorder());
@@ -123,18 +138,28 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         refreshAllSizes();
         gpTimer = new Timer(GP_TIMER_DEFAULT_INTERVAL_MS, this::onGpTick);
         gpTimer.start();
+        hpTimer = new Timer(HP_TIMER_DEFAULT_INTERVAL_MS, this::onHpTick);
+        hpTimer.start();
     }
 
     public void setCharacterSelector(Consumer<String> selector) {
         this.characterSelector = selector;
     }
 
-    public void setCharacterSamplesLoader(java.util.function.Function<String, List<Integer>> loader) {
-        this.characterSamplesLoader = loader;
+    public void setCharacterGpSamplesLoader(java.util.function.Function<String, List<Integer>> loader) {
+        this.characterGpSamplesLoader = loader;
     }
 
-    public void setOnSamplesChanged(java.util.function.BiConsumer<String, List<Integer>> listener) {
-        this.onSamplesChanged = listener;
+    public void setCharacterHpSamplesLoader(java.util.function.Function<String, List<Integer>> loader) {
+        this.characterHpSamplesLoader = loader;
+    }
+
+    public void setOnGpSamplesChanged(java.util.function.BiConsumer<String, List<Integer>> listener) {
+        this.onGpSamplesChanged = listener;
+    }
+
+    public void setOnHpSamplesChanged(java.util.function.BiConsumer<String, List<Integer>> listener) {
+        this.onHpSamplesChanged = listener;
     }
 
     public String getCurrentCharacterName() {
@@ -227,13 +252,15 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
             String name = data.name();
             if (name != null && !name.isBlank() && !name.equalsIgnoreCase(lastCharacterName)) {
                 lastCharacterName = name;
-                if (characterSamplesLoader != null) {
-                    loadSamples(characterSamplesLoader.apply(name));
+                if (characterGpSamplesLoader != null) {
+                    loadGpSamples(characterGpSamplesLoader.apply(name));
+                }
+                if (characterHpSamplesLoader != null) {
+                    loadHpSamples(characterHpSamplesLoader.apply(name));
                 }
             }
             updateNameLabel(name);
-            updateBar(hpBar, data.hp(), data.maxHp(),
-                    format(data.hp()) + " / " + format(data.maxHp()));
+            updateHpFromVitals(data.hp(), data.maxHp());
             updateGpFromVitals(data.gp(), data.maxGp());
 
             int burdenValue = clamp(data.burden(), 0, 100);
@@ -260,6 +287,15 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         gpRateCount = 0;
         gpRateMode = 0;
         Arrays.fill(gpRateSamples, -1);
+        lastReportedHp = null;
+        lastHpUpdateTimeMs = 0L;
+        hpMillisPerPoint = 0;
+        currentHp = 0;
+        currentMaxHp = 1;
+        hpRateIndex = 0;
+        hpRateCount = 0;
+        hpRateMode = 0;
+        Arrays.fill(hpRateSamples, -1);
     }
 
     private static JProgressBar buildBar(Color color) {
@@ -375,19 +411,55 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         updateBar(gpBar, gp, currentMaxGp, format(gp) + " / " + format(currentMaxGp));
     }
 
+    private void updateHpFromVitals(int hp, int maxHp) {
+        long now = System.currentTimeMillis();
+        if (hp < maxHp && lastReportedHp != null && lastHpUpdateTimeMs > 0L) {
+            long elapsedMs = now - lastHpUpdateTimeMs;
+            if (elapsedMs > 0L) {
+                double seconds = elapsedMs / 1000.0;
+                if (seconds >= 6.0) {
+                    double perTwoSeconds = (hp - lastReportedHp) / seconds * 2.0;
+                    if (perTwoSeconds > 0) {
+                        int roundedRate = (int) Math.round(perTwoSeconds);
+                        if (roundedRate > 0) {
+                            recordHpRate(roundedRate);
+                        }
+                    }
+                }
+            }
+        }
+        lastReportedHp = hp;
+        lastHpUpdateTimeMs = now;
+        currentHp = hp;
+        currentMaxHp = Math.max(1, maxHp);
+        updateBar(hpBar, hp, currentMaxHp, format(hp) + " / " + format(currentMaxHp));
+    }
+
     private void recordGpRate(int rate) {
         gpRateSamples[gpRateIndex] = rate;
         gpRateIndex = (gpRateIndex + 1) % GP_RATE_SAMPLE_SIZE;
         gpRateCount = Math.min(gpRateCount + 1, GP_RATE_SAMPLE_SIZE);
-        gpRateMode = calculateMode();
+        gpRateMode = calculateMode(gpRateSamples, gpRateCount);
         updateGpTimerInterval();
 
-        if (lastCharacterName != null && onSamplesChanged != null) {
-            onSamplesChanged.accept(lastCharacterName, getSaveableSamples());
+        if (lastCharacterName != null && onGpSamplesChanged != null) {
+            onGpSamplesChanged.accept(lastCharacterName, getSaveableGpSamples());
         }
     }
 
-    public void loadSamples(List<Integer> samples) {
+    private void recordHpRate(int rate) {
+        hpRateSamples[hpRateIndex] = rate;
+        hpRateIndex = (hpRateIndex + 1) % HP_RATE_SAMPLE_SIZE;
+        hpRateCount = Math.min(hpRateCount + 1, HP_RATE_SAMPLE_SIZE);
+        hpRateMode = calculateMode(hpRateSamples, hpRateCount);
+        updateHpTimerInterval();
+
+        if (lastCharacterName != null && onHpSamplesChanged != null) {
+            onHpSamplesChanged.accept(lastCharacterName, getSaveableHpSamples());
+        }
+    }
+
+    public void loadGpSamples(List<Integer> samples) {
         ThreadUtils.checkEdt();
         if (samples == null || samples.size() != GP_RATE_SAMPLE_SIZE) {
             Arrays.fill(gpRateSamples, -1);
@@ -405,11 +477,33 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
                 }
             }
         }
-        gpRateMode = calculateMode();
+        gpRateMode = calculateMode(gpRateSamples, gpRateCount);
         updateGpTimerInterval();
     }
 
-    private List<Integer> getSaveableSamples() {
+    public void loadHpSamples(List<Integer> samples) {
+        ThreadUtils.checkEdt();
+        if (samples == null || samples.size() != HP_RATE_SAMPLE_SIZE) {
+            Arrays.fill(hpRateSamples, -1);
+            hpRateIndex = 0;
+            hpRateCount = 0;
+        } else {
+            for (int i = 0; i < HP_RATE_SAMPLE_SIZE; i++) {
+                hpRateSamples[i] = samples.get(i);
+            }
+            hpRateIndex = 0;
+            hpRateCount = 0;
+            for (int sample : hpRateSamples) {
+                if (sample >= 0) {
+                    hpRateCount++;
+                }
+            }
+        }
+        hpRateMode = calculateMode(hpRateSamples, hpRateCount);
+        updateHpTimerInterval();
+    }
+
+    private List<Integer> getSaveableGpSamples() {
         List<Integer> list = new ArrayList<>(GP_RATE_SAMPLE_SIZE);
         for (int i = 0; i < GP_RATE_SAMPLE_SIZE; i++) {
             list.add(gpRateSamples[(gpRateIndex + i) % GP_RATE_SAMPLE_SIZE]);
@@ -417,13 +511,21 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         return list;
     }
 
-    private int calculateMode() {
-        if (gpRateCount == 0) {
+    private List<Integer> getSaveableHpSamples() {
+        List<Integer> list = new ArrayList<>(HP_RATE_SAMPLE_SIZE);
+        for (int i = 0; i < HP_RATE_SAMPLE_SIZE; i++) {
+            list.add(hpRateSamples[(hpRateIndex + i) % HP_RATE_SAMPLE_SIZE]);
+        }
+        return list;
+    }
+
+    private int calculateMode(int[] samples, int count) {
+        if (count == 0) {
             return 0;
         }
         Map<Integer, Integer> counts = new HashMap<>();
-        for (int i = 0; i < gpRateCount; i++) {
-            int value = gpRateSamples[i];
+        for (int i = 0; i < count; i++) {
+            int value = samples[i];
             if (value < 0) {
                 continue;
             }
@@ -433,9 +535,9 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         int bestCount = -1;
         for (Map.Entry<Integer, Integer> entry : counts.entrySet()) {
             int value = entry.getKey();
-            int count = entry.getValue();
-            if (count > bestCount) {
-                bestCount = count;
+            int c = entry.getValue();
+            if (c > bestCount) {
+                bestCount = c;
                 mode = value;
             }
         }
@@ -451,6 +553,15 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         updateBar(gpBar, currentGp, currentMaxGp, format(currentGp) + " / " + format(currentMaxGp));
     }
 
+    private void onHpTick(ActionEvent event) {
+        ThreadUtils.checkEdt();
+        if (hpRateMode <= 0 || hpMillisPerPoint <= 0 || currentHp >= currentMaxHp) {
+            return;
+        }
+        currentHp = Math.min(currentHp + 1, currentMaxHp);
+        updateBar(hpBar, currentHp, currentMaxHp, format(currentHp) + " / " + format(currentMaxHp));
+    }
+
     private void updateGpTimerInterval() {
         if (gpRateMode <= 0) {
             gpMillisPerPoint = 0;
@@ -459,6 +570,16 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         gpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / gpRateMode));
         gpTimer.setDelay(gpMillisPerPoint);
         gpTimer.setInitialDelay(gpMillisPerPoint);
+    }
+
+    private void updateHpTimerInterval() {
+        if (hpRateMode <= 0) {
+            hpMillisPerPoint = 0;
+            return;
+        }
+        hpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / hpRateMode));
+        hpTimer.setDelay(hpMillisPerPoint);
+        hpTimer.setInitialDelay(hpMillisPerPoint);
     }
 }
 

@@ -214,13 +214,22 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 submitCommand("su " + name);
             }
         });
-        statsPanel.setCharacterSamplesLoader(name -> {
+        statsPanel.setCharacterGpSamplesLoader(name -> {
             BotConfig.CharacterConfig c = cfg.characters.get(name);
             return c != null ? c.gpRateSamples : null;
         });
-        statsPanel.setOnSamplesChanged((name, samples) -> {
+        statsPanel.setCharacterHpSamplesLoader(name -> {
+            BotConfig.CharacterConfig c = cfg.characters.get(name);
+            return c != null ? c.hpRateSamples : null;
+        });
+        statsPanel.setOnGpSamplesChanged((name, samples) -> {
             BotConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new BotConfig.CharacterConfig());
             c.gpRateSamples = new ArrayList<>(samples);
+            saveConfig();
+        });
+        statsPanel.setOnHpSamplesChanged((name, samples) -> {
+            BotConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new BotConfig.CharacterConfig());
+            c.hpRateSamples = new ArrayList<>(samples);
             saveConfig();
         });
         if (cfg.characters != null) {

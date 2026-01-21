@@ -75,6 +75,7 @@ public final class BotConfig {
         public CharacterTeleports teleports = new CharacterTeleports();
         public Map<String, TimerData> timers = new LinkedHashMap<>();
         public List<Integer> gpRateSamples = new ArrayList<>();
+        public List<Integer> hpRateSamples = new ArrayList<>();
         public UULibraryState uuLibrary;
     }
 

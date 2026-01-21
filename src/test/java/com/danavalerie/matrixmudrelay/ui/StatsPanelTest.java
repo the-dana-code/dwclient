@@ -68,11 +68,11 @@ class StatsPanelTest {
         // 1. Load samples
         List<Integer> initialSamples = Arrays.asList(10, 20, 30, 40, 50);
         SwingUtilities.invokeAndWait(() -> {
-            statsPanel.loadSamples(initialSamples);
+            statsPanel.loadGpSamples(initialSamples);
         });
 
         // 2. Verify rotation logic
-        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableSamples");
+        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableGpSamples");
         getSaveableSamples.setAccessible(true);
 
         @SuppressWarnings("unchecked")
@@ -113,13 +113,13 @@ class StatsPanelTest {
         List<Integer> char1Samples = Arrays.asList(1, 2, 3, 4, 5);
         List<Integer> char2Samples = Arrays.asList(6, 7, 8, 9, 10);
 
-        statsPanel.setCharacterSamplesLoader(name -> {
+        statsPanel.setCharacterGpSamplesLoader(name -> {
             if ("Char1".equals(name)) return char1Samples;
             if ("Char2".equals(name)) return char2Samples;
             return null;
         });
 
-        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableSamples");
+        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableGpSamples");
         getSaveableSamples.setAccessible(true);
 
         SwingUtilities.invokeAndWait(() -> {
@@ -139,5 +139,44 @@ class StatsPanelTest {
         @SuppressWarnings("unchecked")
         List<Integer> saved2 = (List<Integer>) getSaveableSamples.invoke(statsPanel);
         assertEquals(char2Samples, saved2);
+    }
+
+    @Test
+    void testHpRateSamplePersistenceAndRotation() throws Exception {
+        final StatsPanel[] panelRef = new StatsPanel[1];
+        SwingUtilities.invokeAndWait(() -> {
+            panelRef[0] = new StatsPanel();
+        });
+        StatsPanel statsPanel = panelRef[0];
+
+        // 1. Load samples
+        List<Integer> initialSamples = Arrays.asList(5, 15, 25, 35, 45);
+        SwingUtilities.invokeAndWait(() -> {
+            statsPanel.loadHpSamples(initialSamples);
+        });
+
+        // 2. Verify rotation logic
+        Method getSaveableSamples = StatsPanel.class.getDeclaredMethod("getSaveableHpSamples");
+        getSaveableSamples.setAccessible(true);
+
+        @SuppressWarnings("unchecked")
+        List<Integer> saved = (List<Integer>) getSaveableSamples.invoke(statsPanel);
+        assertEquals(initialSamples, saved, "Saved HP samples should match initial after load");
+
+        // 3. Test rotation after recording
+        Method recordHpRate = StatsPanel.class.getDeclaredMethod("recordHpRate", int.class);
+        recordHpRate.setAccessible(true);
+
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                recordHpRate.invoke(statsPanel, 55);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        @SuppressWarnings("unchecked")
+        List<Integer> rotated = (List<Integer>) getSaveableSamples.invoke(statsPanel);
+        assertEquals(Arrays.asList(15, 25, 35, 45, 55), rotated, "HP samples should be rotated correctly");
     }
 }

@@ -90,6 +90,15 @@
       }
     ]
   },
+  "11317a4baae84a5e41106430330d4dd2fb36f524": {
+    "name": "shed",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "11979877ad59203c1656a814f71ade7a47c04e18": {
     "name": "surface of the dunking tank",
     "buttons": [
@@ -308,6 +317,15 @@
   },
   "422368239d14c936a03a7cfc2b38935c455d4df0": {
     "name": "Mr. T.A. Steless\u0027s World of Art",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "422f29229cedd5d0fb40eb0c1f293bf59621f7ce": {
+    "name": "Bernita\u0027s Flower Shop",
     "buttons": [
       {
         "name": "List Shop",
@@ -1426,6 +1444,15 @@
   },
   "f1c5ff18dacac3c8566baf41def204db9c3db062": {
     "name": "La Raude\u0027s Shelf shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "f5098e2d4ef339752ecf946a14189836c72202cc": {
+    "name": "art gallery",
     "buttons": [
       {
         "name": "List Shop",
