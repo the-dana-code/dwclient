@@ -56,6 +56,7 @@ class GrammarUtilsTest {
     @Test
     void testSpecialCases() {
         assertEquals(List.of("petit fours"), GrammarUtils.singularizePhrase("petits fours"));
+        assertEquals(List.of("main gauche"), GrammarUtils.singularizePhrase("mains gauches"));
     }
 }
 

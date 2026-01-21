@@ -45,6 +45,8 @@ public final class GrammarUtils {
             phrases.add(s);
         } else if ((s = replacePrefix(phrase, "petits fours", "petit fours")) != null) {
             phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "mains gauches", "main gauche")) != null) {
+            phrases.add(s);
         } else {
             String lower = phrase.toLowerCase(Locale.ROOT);
             for (String prep : new String[]{" with ", " of ", " in ", " for ", " to "}) {

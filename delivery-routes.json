@@ -1088,5 +1088,17 @@
     "roomId": "cc341b668af320ba5fdf88814d02b6237c79d5c1",
     "commands": [],
     "npcOverride": "the teacher"
+  },
+  {
+    "npc": "Nese Stenzelle",
+    "location": "Nese\u0027s Fine Decor on Phedre Road",
+    "roomId": "0e2cb0fd91508ed05773c487e22f21079b804c50",
+    "commands": []
+  },
+  {
+    "npc": "Duzbun Opposite",
+    "location": "Opposite\u0027s all-night apothecary on Pigsty Hill",
+    "roomId": "22f97fe6057d4dc344b43341a302162d2bc1d6b9",
+    "commands": []
   }
 ]

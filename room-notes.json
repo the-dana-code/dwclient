@@ -162,6 +162,15 @@
       }
     ]
   },
+  "22f97fe6057d4dc344b43341a302162d2bc1d6b9": {
+    "name": "Opposite\u0027s all-night apothecary",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "23101ac0bc74913d7b8727335316fd8f140f2145": {
     "name": "Brookless Bakery",
     "buttons": [
@@ -287,6 +296,15 @@
   },
   "37bd6af408da6fce7cd61f400443cfc875b1eaa9": {
     "name": "swampy green tent",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "398ce8b182f8cd52d8d10d8106963ecd8dd00045": {
+    "name": "Argle\u0027s Bakery",
     "buttons": [
       {
         "name": "List Shop",
