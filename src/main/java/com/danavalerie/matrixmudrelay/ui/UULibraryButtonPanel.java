@@ -90,7 +90,7 @@ public class UULibraryButtonPanel extends JPanel {
 
     public void setButtonsEnabled(boolean enabled) {
         stepButton.setEnabled(enabled);
-//        targetCombo.setEnabled(enabled);
+        targetCombo.setEnabled(enabled);
         updateStepButtonColor();
     }
 

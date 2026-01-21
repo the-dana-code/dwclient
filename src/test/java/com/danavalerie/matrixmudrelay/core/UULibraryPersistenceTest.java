@@ -5,7 +5,9 @@ import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import com.google.gson.JsonObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -18,6 +20,11 @@ class UULibraryPersistenceTest {
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         UULibraryService.getInstance().reset();
+    }
+
+    @AfterEach
+    void tearDown() {
+        BackgroundSaver.waitForIdle();
     }
 
     @TempDir
@@ -87,7 +94,7 @@ class UULibraryPersistenceTest {
 
         // Verify config file also reflects the removal
         try {
-            Thread.sleep(200);
+            BackgroundSaver.waitForIdle();
             BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
             assertNull(loaded.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
         } catch (Exception e) {
@@ -152,7 +159,7 @@ class UULibraryPersistenceTest {
         assertFalse(service.isActive());
         assertNull(cfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
         assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }

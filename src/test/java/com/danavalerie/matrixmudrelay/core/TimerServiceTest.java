@@ -1,6 +1,8 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -20,6 +22,11 @@ class TimerServiceTest {
         config = new BotConfig();
         configPath = tempDir.resolve("config.json");
         timerService = new TimerService(config, configPath);
+    }
+    
+    @AfterEach
+    void tearDown() {
+        BackgroundSaver.waitForIdle();
     }
 
     @Test

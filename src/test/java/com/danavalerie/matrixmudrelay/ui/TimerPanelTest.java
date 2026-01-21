@@ -2,6 +2,8 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.core.TimerService;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -15,6 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TimerPanelTest {
+    @AfterEach
+    void tearDown() {
+        BackgroundSaver.waitForIdle();
+    }
 
     @Test
     public void testTableSelectionMode(@TempDir Path tempDir) throws Exception {

@@ -1,6 +1,8 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -12,6 +14,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RoomNoteServiceTest {
+    @AfterEach
+    void tearDown() {
+        BackgroundSaver.waitForIdle();
+    }
 
     @TempDir
     Path tempDir;
@@ -36,7 +42,7 @@ public class RoomNoteServiceTest {
         assertEquals(2, service.getButtonsForRoom(roomId1).size());
         assertEquals(1, service.getButtonsForRoom(roomId2).size());
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
 
         // Re-load from file
         RoomNoteService service2 = new RoomNoteService(storagePath);
@@ -58,7 +64,7 @@ public class RoomNoteServiceTest {
         RoomButton btn = new RoomButton("Look", "look");
 
         service.addButton(roomId, roomName, btn);
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
 
         // Re-load
         RoomNoteService service2 = new RoomNoteService(storagePath);
@@ -88,7 +94,7 @@ public class RoomNoteServiceTest {
         
         // Save and verify it's now in new format
         service.save();
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         String newJson = Files.readString(storagePath);
         assertTrue(newJson.contains("\"buttons\":"), "Should have been migrated to new format with 'buttons' field");
     }
@@ -101,7 +107,7 @@ public class RoomNoteServiceTest {
         service.addButton("z_room", "Z Room", new RoomButton("Z", "z"));
         service.addButton("a_room", "A Room", new RoomButton("A", "a"));
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         String json = Files.readString(storagePath);
         int indexA = json.indexOf("a_room");
         int indexZ = json.indexOf("z_room");
@@ -120,7 +126,7 @@ public class RoomNoteServiceTest {
         // Add button with null name
         service.addButton(roomId, null, btn);
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         String json1 = Files.readString(storagePath);
         // It will contain "name" because of the button name, but not as a sibling to "buttons" at the top level of the room object.
         // A simple way to check is to see if "The Drum" is NOT there yet.
@@ -129,7 +135,7 @@ public class RoomNoteServiceTest {
         // Now update name
         service.updateRoomName(roomId, "The Drum");
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         String json2 = Files.readString(storagePath);
         assertTrue(json2.contains("\"name\": \"The Drum\""), "JSON should now contain the room name");
     }
@@ -141,7 +147,7 @@ public class RoomNoteServiceTest {
 
         service.addButton("roomX", null, new RoomButton("B", "c"));
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         String json = Files.readString(storagePath);
         assertTrue(json.contains("\"name\": \"Unknown\""), "Should fallback to 'Unknown' if name is null");
     }
@@ -155,7 +161,7 @@ public class RoomNoteServiceTest {
         RoomNoteService service = new RoomNoteService(storagePath);
         service.save();
 
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
         String json = Files.readString(storagePath);
         assertTrue(json.contains("\"name\": \"Unknown\""), "Old entries should migrate with 'Unknown' name");
     }
@@ -175,7 +181,7 @@ public class RoomNoteServiceTest {
         assertEquals("1", service.getButtonsForRoom(rid).get(0).getName());
         
         // Ensure pending saves finish so file can be deleted
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
     }
 
     @Test
@@ -188,7 +194,7 @@ public class RoomNoteServiceTest {
         String notes = "Watch out for Dibbler.";
 
         service.updateNotesForRoom(roomId, roomName, notes);
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
 
         // Verify in-memory
         assertEquals(notes, service.getNotesForRoom(roomId));

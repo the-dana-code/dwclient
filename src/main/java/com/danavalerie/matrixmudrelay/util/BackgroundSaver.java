@@ -116,6 +116,20 @@ public final class BackgroundSaver {
     }
 
     /**
+     * Waits for all currently queued save tasks to complete.
+     */
+    public static void waitForIdle() {
+        if (executor.isShutdown()) {
+            return;
+        }
+        try {
+            executor.submit(() -> {}).get(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.error("Error waiting for BackgroundSaver to be idle", e);
+        }
+    }
+
+    /**
      * Resets the executor. For testing purposes only.
      */
     static void resetForTests() {

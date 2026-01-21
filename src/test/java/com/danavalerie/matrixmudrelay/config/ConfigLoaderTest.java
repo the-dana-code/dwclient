@@ -18,6 +18,8 @@
 
 package com.danavalerie.matrixmudrelay.config;
 
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -26,6 +28,10 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigLoaderTest {
+    @AfterEach
+    void tearDown() {
+        BackgroundSaver.waitForIdle();
+    }
 
     @Test
     void loadRoutesWithRoomId(@TempDir Path tempDir) throws Exception {
@@ -92,7 +98,7 @@ class ConfigLoaderTest {
         // Or better, we can expose a wait method in BackgroundSaver for testing.
         
         // For now, let's just try to wait a bit or use a more robust way if I add it to BackgroundSaver.
-        Thread.sleep(200);
+        BackgroundSaver.waitForIdle();
 
         // Verify it was saved back in the new format
         String savedJson = Files.readString(configPath);
