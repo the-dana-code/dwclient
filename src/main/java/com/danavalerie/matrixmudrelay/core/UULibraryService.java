@@ -58,6 +58,14 @@ public class UULibraryService {
         return INSTANCE;
     }
 
+    public void reset() {
+        active = false;
+        curRow = 1;
+        curCol = 5;
+        orientation = Orientation.NORTH;
+        listeners.clear();
+    }
+
     public void addListener(Runnable listener) {
         listeners.add(listener);
     }

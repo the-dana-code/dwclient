@@ -102,11 +102,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     private void saveUULibraryState() {
-        if (isRestoring) return;
+        UULibraryService service = UULibraryService.getInstance();
+        if (isRestoring && service.isActive()) return;
+
         String charName = mud.getCurrentRoomSnapshot().characterName();
         if (charName == null || charName.isBlank()) return;
 
-        UULibraryService service = UULibraryService.getInstance();
         BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(charName, k -> new BotConfig.CharacterConfig());
 
         if (service.isActive()) {

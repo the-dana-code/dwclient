@@ -15,6 +15,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UULibraryPersistenceTest {
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        UULibraryService.getInstance().reset();
+    }
 
     @TempDir
     Path tempDir;
@@ -49,6 +53,8 @@ class UULibraryPersistenceTest {
     void testSaveAndRestoreState() {
         Path configPath = tempDir.resolve("config.json");
         BotConfig cfg = new BotConfig();
+        cfg.mud.host = "localhost";
+        cfg.mud.port = 1234;
         StubMudClient mud = new StubMudClient();
         
         JsonObject charInfo = new JsonObject();
@@ -78,6 +84,14 @@ class UULibraryPersistenceTest {
         service.setRoomId("OtherRoom");
         assertNull(cfg.characters.get("TestChar").uuLibrary);
 
+        // Verify config file also reflects the removal
+        try {
+            BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
+            assertNull(loaded.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
+        } catch (Exception e) {
+            fail("Failed to load config: " + e.getMessage());
+        }
+
         // Put it back manually to simulate loading from config
         cfg.characters.get("TestChar").uuLibrary = new BotConfig.UULibraryState(3, 4, "WEST");
         
@@ -92,5 +106,50 @@ class UULibraryPersistenceTest {
         assertEquals(3, service.getCurRow());
         assertEquals(4, service.getCurCol());
         assertEquals(UULibraryService.Orientation.WEST, service.getOrientation());
+    }
+
+    @Test
+    void testRemoveStateOnWalkOut() throws Exception {
+        Path configPath = tempDir.resolve("config_walkout.json");
+        BotConfig cfg = new BotConfig();
+        cfg.mud.host = "localhost";
+        cfg.mud.port = 1234;
+        StubMudClient mud = new StubMudClient();
+
+        // 1. Initial state: Character name available
+        JsonObject charInfo = new JsonObject();
+        charInfo.addProperty("capname", "Walker");
+        mud.cri.update("char.info", charInfo);
+
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        UULibraryService service = UULibraryService.getInstance();
+
+        // 2. Enter Library
+        JsonObject roomLibrary = new JsonObject();
+        roomLibrary.addProperty("id", "UULibrary");
+        mud.cri.update("room.info", roomLibrary);
+        
+        processor.onGmcp(new TelnetDecoder.GmcpMessage("room.info", roomLibrary));
+        assertTrue(service.isActive());
+        
+        // Move to ensure something is saved (skipping entry save is intended)
+        service.processCommand("rt"); 
+        
+        BotConfig.CharacterConfig charCfg = cfg.characters.values().stream().findFirst().orElse(null);
+        assertNotNull(charCfg, "CharacterConfig should exist after movement");
+        assertNotNull(charCfg.uuLibrary, "uuLibrary state should not be null after movement");
+
+        // 3. Walk out (New room ID)
+        JsonObject roomOutside = new JsonObject();
+        roomOutside.addProperty("id", "outside_library");
+        mud.cri.update("room.info", roomOutside);
+        processor.onGmcp(new TelnetDecoder.GmcpMessage("room.info", roomOutside));
+
+        // 4. Verify
+        assertFalse(service.isActive());
+        assertNull(cfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
+
+        BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
+        assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }
 }
