@@ -110,9 +110,13 @@ public class UULibraryService {
         }
     }
 
-    public void addBarrier(Orientation dir) {
-        barriers.computeIfAbsent(curRow + "," + curCol, k -> java.util.concurrent.ConcurrentHashMap.newKeySet()).add(dir);
+    public void addBarrierAt(int row, int col, Orientation dir) {
+        barriers.computeIfAbsent(row + "," + col, k -> java.util.concurrent.ConcurrentHashMap.newKeySet()).add(dir);
         notifyListeners();
+    }
+
+    public void addBarrier(Orientation dir) {
+        addBarrierAt(curRow, curCol, dir);
     }
 
     public void clearBarriers() {
@@ -218,9 +222,12 @@ public class UULibraryService {
 
             for (Orientation o : Orientation.values()) {
                 if (r.exits.contains(o.name)) {
-                    // Check for barriers in the current room
-                    Set<Orientation> currentBarriers = barriers.get(current.row + "," + current.col);
-                    if (currentBarriers != null && currentBarriers.contains(o)) {
+                    // Check for barriers
+                    Set<Orientation> cellBarriers = barriers.get(current.row + "," + current.col);
+                    boolean hasBarrier = cellBarriers != null && cellBarriers.contains(o);
+                    
+                    if (hasBarrier && current.row == curRow && current.col == curCol) {
+                        // Barriers in the USERS CURRENT ROOM are impassable
                         continue;
                     }
 
@@ -229,7 +236,8 @@ public class UULibraryService {
                     if (nextCol < 1) nextCol = 8;
                     if (nextCol > 8) nextCol = 1;
 
-                    int tentativeG = current.gScore + 1;
+                    int moveCost = hasBarrier ? 100 : 1;
+                    int tentativeG = current.gScore + moveCost;
                     String key = nextRow + "," + nextCol;
                     if (tentativeG < gScores.getOrDefault(key, Integer.MAX_VALUE)) {
                         gScores.put(key, tentativeG);
