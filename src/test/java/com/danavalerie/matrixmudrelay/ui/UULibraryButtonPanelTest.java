@@ -3,6 +3,8 @@ package com.danavalerie.matrixmudrelay.ui;
 import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +15,7 @@ public class UULibraryButtonPanelTest {
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("None");
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
 
-        List<String> commands = new ArrayList<>();
+        List<String> commands = new java.util.concurrent.CopyOnWriteArrayList<>();
         UULibraryButtonPanel panel = new UULibraryButtonPanel(commands::add);
 
         Component[] components = panel.getComponents();
@@ -26,13 +28,13 @@ public class UULibraryButtonPanelTest {
         assertTrue(components[1] instanceof JComboBox);
         JComboBox<?> combo = (JComboBox<?>) components[1];
         assertEquals(18, combo.getItemCount());
-        assertEquals("1", combo.getItemAt(0));
-        assertEquals("16", combo.getItemAt(15));
-        assertEquals("Gap", combo.getItemAt(16));
-        assertEquals("Exit", combo.getItemAt(17));
+        assertEquals("Exit", combo.getItemAt(0));
+        assertEquals("15", combo.getItemAt(15));
+        assertEquals("16", combo.getItemAt(16));
+        assertEquals("Gap", combo.getItemAt(17));
 
-        assertTrue(components[2] instanceof JButton);
-        JButton stepButton = (JButton) components[2];
+        assertTrue(components[2] instanceof JLabel);
+        JLabel stepButton = (JLabel) components[2];
         assertEquals("Step", stepButton.getText());
 
         // Test action and disabling
@@ -42,14 +44,15 @@ public class UULibraryButtonPanelTest {
         // Select "Gap" which is at index 16
         combo.setSelectedIndex(16);
         
-        stepButton.doClick();
+        click(stepButton);
+        waitForCommands(commands, 2);
         assertEquals(2, commands.size()); // step command + look distortion
-        // Should stay enabled but logical state is inactive
-        assertTrue(stepButton.isEnabled());
-        assertTrue(combo.isEnabled());
+        // Should be disabled now
+        assertFalse(stepButton.isEnabled());
+        assertFalse(combo.isEnabled());
 
-        // Clicking again when logically disabled should not add commands
-        stepButton.doClick();
+        // Clicking again when disabled should not add commands
+        click(stepButton);
         assertEquals(2, commands.size());
 
         // Test re-enabling
@@ -57,11 +60,30 @@ public class UULibraryButtonPanelTest {
         assertTrue(stepButton.isEnabled());
         assertTrue(combo.isEnabled());
         
-        stepButton.doClick();
+        click(stepButton);
+        waitForCommands(commands, 4);
         assertEquals(4, commands.size());
         
-        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(0)));
-        assertEquals("look distortion", commands.get(1));
+        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(2)));
+        assertEquals("look distortion", commands.get(3));
+    }
+
+    private void waitForCommands(List<String> commands, int expectedCount) {
+        long start = System.currentTimeMillis();
+        while (commands.size() < expectedCount && System.currentTimeMillis() - start < 2000) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    private void click(Component c) {
+        for (MouseListener ml : c.getMouseListeners()) {
+            ml.mouseClicked(new MouseEvent(c, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, 0, 0, 1, false));
+        }
     }
 
     @Test
@@ -69,7 +91,7 @@ public class UULibraryButtonPanelTest {
         UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
         panel.updateTheme(Color.BLACK, Color.WHITE);
 
-        JButton stepButton = (JButton) panel.getComponents()[2];
+        JLabel stepButton = (JLabel) panel.getComponents()[2];
 
         // Enabled should be red
         panel.setButtonsEnabled(true);

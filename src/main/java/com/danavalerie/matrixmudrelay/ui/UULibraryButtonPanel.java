@@ -2,15 +2,17 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Map;
 import java.util.function.Consumer;
+import com.danavalerie.matrixmudrelay.core.UULibraryService;
 
 public class UULibraryButtonPanel extends JPanel {
     private final Consumer<String> commandSubmitter;
 
     private final JComboBox<String> targetCombo;
-    private final JButton stepButton;
-    private boolean buttonsActive = true;
+    private final JLabel stepButton;
     private Color themeBg = null;
     private Color themeFg = null;
 
@@ -55,20 +57,29 @@ public class UULibraryButtonPanel extends JPanel {
         targetCombo.setFocusable(false);
         add(targetCombo);
 
-        stepButton = new JButton("Step");
+        stepButton = new JLabel("Step", SwingConstants.CENTER);
         stepButton.setFocusable(false);
-        stepButton.setMargin(BUTTON_MARGIN);
-        stepButton.addActionListener(e -> {
-            if (!buttonsActive) return;
-            String label = (String) targetCombo.getSelectedItem();
-            Point target = BUTTON_COORDINATES.get(label);
-            if (target != null) {
-                String cmd = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance()
-                        .getNextStepCommand(target.x, target.y);
-                if (cmd != null) {
-                    setButtonsEnabled(false);
-                    commandSubmitter.accept(cmd);
-                    commandSubmitter.accept("look distortion");
+        stepButton.setOpaque(true);
+        stepButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (stepButton.isEnabled()) {
+                    String label = (String) targetCombo.getSelectedItem();
+                    Point target = BUTTON_COORDINATES.get(label);
+                    if (target != null) {
+                        setButtonsEnabled(false);
+                        new Thread(() -> {
+                            String cmd = UULibraryService.getInstance().getNextStepCommand(target.x, target.y);
+                            SwingUtilities.invokeLater(() -> {
+                                if (cmd != null) {
+                                    commandSubmitter.accept(cmd);
+                                    commandSubmitter.accept("look distortion");
+                                } else {
+                                    setButtonsEnabled(true);
+                                }
+                            });
+                        }, "UU-AStar-Thread").start();
+                    }
                 }
             }
         });
@@ -78,12 +89,13 @@ public class UULibraryButtonPanel extends JPanel {
     }
 
     public void setButtonsEnabled(boolean enabled) {
-        this.buttonsActive = enabled;
+        stepButton.setEnabled(enabled);
+        targetCombo.setEnabled(enabled);
         updateStepButtonColor();
     }
 
     private void updateStepButtonColor() {
-        if (buttonsActive) {
+        if (stepButton.isEnabled()) {
             stepButton.setBackground(Color.RED);
             stepButton.setForeground(Color.WHITE);
         } else {
@@ -102,17 +114,17 @@ public class UULibraryButtonPanel extends JPanel {
                 BorderFactory.createEmptyBorder(2, 2, 2, 2)
         ));
         for (Component c : getComponents()) {
-            if (c instanceof JLabel) {
-                c.setForeground(fg);
-            } else if (c instanceof JComboBox) {
+            if (c instanceof JComboBox) {
                 c.setBackground(bg);
                 c.setForeground(fg);
                 ((JComboBox<?>) c).setBorder(BorderFactory.createLineBorder(fg));
-            } else if (c instanceof JButton) {
-                ((JButton) c).setBorder(BorderFactory.createCompoundBorder(
+            } else if (c == stepButton) {
+                stepButton.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(fg),
                         BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right)
                 ));
+            } else if (c instanceof JLabel) {
+                c.setForeground(fg);
             }
         }
         updateStepButtonColor();

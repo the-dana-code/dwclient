@@ -47,11 +47,11 @@ public class UULibraryService {
     }
 
     private final Map<String, Room> maze = new HashMap<>();
-    private final Map<String, Set<Orientation>> barriers = new HashMap<>();
+    private final Map<String, Set<Orientation>> barriers = new java.util.concurrent.ConcurrentHashMap<>();
     private volatile int curRow, curCol;
     private volatile Orientation orientation = Orientation.NORTH;
     private volatile boolean active = false;
-    private final List<Runnable> listeners = new ArrayList<>();
+    private final List<Runnable> listeners = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private static final UULibraryService INSTANCE = new UULibraryService();
 
@@ -111,8 +111,7 @@ public class UULibraryService {
     }
 
     public void addBarrier(Orientation dir) {
-        if (!active) return;
-        barriers.computeIfAbsent(curRow + "," + curCol, k -> new HashSet<>()).add(dir);
+        barriers.computeIfAbsent(curRow + "," + curCol, k -> java.util.concurrent.ConcurrentHashMap.newKeySet()).add(dir);
         notifyListeners();
     }
 
