@@ -194,7 +194,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         );
         this.timerPanel = new TimerPanel(timerService, () -> mud.getCurrentRoomSnapshot().characterName());
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
-        commandProcessor = new MudCommandProcessor(cfg, mud, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
+        commandProcessor = new MudCommandProcessor(cfg, configPath, mud, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
         outputPane.setLineListener(line -> commandProcessor.onFullLineReceived(line));
         mapPanel.setSpeedwalkHandler(
                 location -> commandProcessor.speedwalkTo(location.roomId())

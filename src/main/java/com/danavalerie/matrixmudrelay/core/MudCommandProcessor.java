@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
@@ -28,6 +29,7 @@ import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -62,6 +64,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     private final BotConfig cfg;
+    private final Path configPath;
     private final MudClient mud;
     private final RoomMapService mapService;
     private final WritTracker writTracker;
@@ -75,8 +78,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private boolean useTeleports = true;
     private volatile String lastRoomId = null;
     private volatile String lastRoomName = null;
+    private boolean isRestoring = false;
 
     public MudCommandProcessor(BotConfig cfg,
+                               Path configPath,
                                MudClient mud,
                                WritTracker writTracker,
                                StoreInventoryTracker storeInventoryTracker,
@@ -84,6 +89,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                                java.util.function.Supplier<DeliveryRouteMappings> routeMappingsSupplier,
                                ClientOutput output) {
         this.cfg = cfg;
+        this.configPath = configPath;
         this.mud = mud;
         this.writTracker = writTracker;
         this.storeInventoryTracker = storeInventoryTracker;
@@ -91,6 +97,35 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         this.routeMappingsSupplier = routeMappingsSupplier;
         this.output = output;
         this.mapService = new RoomMapService("database.db");
+
+        UULibraryService.getInstance().addListener(this::saveUULibraryState);
+    }
+
+    private void saveUULibraryState() {
+        if (isRestoring) return;
+        String charName = mud.getCurrentRoomSnapshot().characterName();
+        if (charName == null || charName.isBlank()) return;
+
+        UULibraryService service = UULibraryService.getInstance();
+        BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(charName, k -> new BotConfig.CharacterConfig());
+
+        if (service.isActive()) {
+            charCfg.uuLibrary = new BotConfig.UULibraryState(
+                    service.getCurRow(),
+                    service.getCurCol(),
+                    service.getOrientation().name()
+            );
+        } else {
+            charCfg.uuLibrary = null;
+        }
+
+        if (configPath != null) {
+            try {
+                ConfigLoader.save(configPath, cfg);
+            } catch (Exception e) {
+                log.warn("Failed to save config for UULibrary state: {}", e.getMessage());
+            }
+        }
     }
 
     public void shutdown() {
@@ -182,7 +217,31 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
 
         if (roomId != null && !roomId.isBlank()) {
-            UULibraryService.getInstance().setRoomId(roomId);
+            boolean wasActive = UULibraryService.getInstance().isActive();
+            isRestoring = true;
+            try {
+                UULibraryService.getInstance().setRoomId(roomId);
+                if (UULibraryService.getInstance().isActive() && !wasActive) {
+                    // Just entered library. Check for saved state.
+                    String charName = snapshot.characterName();
+                    if (charName != null) {
+                        BotConfig.CharacterConfig charCfg = cfg.characters.get(charName);
+                        if (charCfg != null && charCfg.uuLibrary != null) {
+                            try {
+                                UULibraryService.getInstance().setState(
+                                        charCfg.uuLibrary.row,
+                                        charCfg.uuLibrary.col,
+                                        UULibraryService.Orientation.valueOf(charCfg.uuLibrary.orientation)
+                                );
+                            } catch (Exception e) {
+                                log.warn("Failed to restore UULibrary state: {}", e.getMessage());
+                            }
+                        }
+                    }
+                }
+            } finally {
+                isRestoring = false;
+            }
             if (!roomId.equals(lastRoomId) || !Objects.equals(roomName, lastRoomName)) {
                 boolean roomChanged = !roomId.equals(lastRoomId);
                 lastRoomId = roomId;

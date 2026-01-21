@@ -75,6 +75,20 @@ public final class BotConfig {
         public CharacterTeleports teleports = new CharacterTeleports();
         public Map<String, TimerData> timers = new LinkedHashMap<>();
         public List<Integer> gpRateSamples = new ArrayList<>();
+        public UULibraryState uuLibrary;
+    }
+
+    public static final class UULibraryState {
+        public int row;
+        public int col;
+        public String orientation;
+
+        public UULibraryState() {}
+        public UULibraryState(int row, int col, String orientation) {
+            this.row = row;
+            this.col = col;
+            this.orientation = orientation;
+        }
     }
 
     public static final class TimerData {

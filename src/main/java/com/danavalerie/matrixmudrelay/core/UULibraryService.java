@@ -99,6 +99,13 @@ public class UULibraryService {
         }
     }
 
+    public void setState(int row, int col, Orientation orientation) {
+        this.curRow = row;
+        this.curCol = col;
+        this.orientation = orientation;
+        notifyListeners();
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -106,6 +113,9 @@ public class UULibraryService {
     public void processCommand(String cmd) {
         if (!active) return;
         cmd = cmd.toLowerCase().trim();
+        Orientation oldOri = orientation;
+        int oldRow = curRow;
+        int oldCol = curCol;
         switch (cmd) {
             case "forward":
             case "fw":
@@ -126,6 +136,9 @@ public class UULibraryService {
                 orientation = orientation.turnLeft();
                 move();
                 break;
+        }
+        if (orientation != oldOri || curRow != oldRow || curCol != oldCol) {
+            notifyListeners();
         }
     }
 
