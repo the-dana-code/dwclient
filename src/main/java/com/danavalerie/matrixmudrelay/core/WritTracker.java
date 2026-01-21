@@ -26,9 +26,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class WritTracker {
-    private static final Pattern REQUIREMENT_PATTERN = Pattern.compile("^\\[[ xX]?\\] (.+?) to (.+?) at (.+)$");
-    private static final Pattern REQUIREMENT_SENTENCE_PATTERN = Pattern.compile(
+    private static final Pattern REQUIREMENT_PATTERN_AT = Pattern.compile("^\\[[ xX]?\\] (.+?) to (.+?) at (.+)$");
+    private static final Pattern REQUIREMENT_PATTERN_IN = Pattern.compile("^\\[[ xX]?\\] (.+?) to (.+?) in (.+)$");
+    private static final Pattern REQUIREMENT_SENTENCE_PATTERN_AT = Pattern.compile(
             "^You are required to deliver (.+?) to (.+?) at (.+?)[.]?$");
+    private static final Pattern REQUIREMENT_SENTENCE_PATTERN_IN = Pattern.compile(
+            "^You are required to deliver (.+?) to (.+?) in (.+?)[.]?$");
     private static final Pattern NUMBER_PREFIX = Pattern.compile("^(\\d+)\\s+(.*)$");
     private static final String LOCATION_SEPARATOR = " on ";
 
@@ -74,11 +77,17 @@ public final class WritTracker {
         if (!readingWrit) {
             return false;
         }
-        Matcher matcher = REQUIREMENT_PATTERN.matcher(trimmed);
+        Matcher matcher = REQUIREMENT_PATTERN_AT.matcher(trimmed);
         if (!matcher.matches()) {
-            matcher = REQUIREMENT_SENTENCE_PATTERN.matcher(trimmed);
+            matcher = REQUIREMENT_PATTERN_IN.matcher(trimmed);
             if (!matcher.matches()) {
-                return false;
+                matcher = REQUIREMENT_SENTENCE_PATTERN_AT.matcher(trimmed);
+                if (!matcher.matches()) {
+                    matcher = REQUIREMENT_SENTENCE_PATTERN_IN.matcher(trimmed);
+                    if (!matcher.matches()) {
+                        return false;
+                    }
+                }
             }
         }
         String itemText = matcher.group(1).trim();
