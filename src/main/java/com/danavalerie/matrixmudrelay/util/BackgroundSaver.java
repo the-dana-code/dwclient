@@ -35,11 +35,15 @@ public final class BackgroundSaver {
     private static final Logger log = LoggerFactory.getLogger(BackgroundSaver.class);
     
     // Single thread executor ensures that saves happen in the order they were queued.
-    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> {
-        Thread thread = new Thread(r, "BackgroundSaver-Thread");
-        thread.setDaemon(true);
-        return thread;
-    });
+    private static ExecutorService executor = createExecutor();
+
+    private static ExecutorService createExecutor() {
+        return Executors.newSingleThreadExecutor(r -> {
+            Thread thread = new Thread(r, "BackgroundSaver-Thread");
+            thread.setDaemon(true);
+            return thread;
+        });
+    }
 
     private BackgroundSaver() {}
 
@@ -51,11 +55,11 @@ public final class BackgroundSaver {
      * @return A Future representing pending completion of the save task.
      */
     public static java.util.concurrent.Future<?> save(Path path, String content) {
-        if (EXECUTOR.isShutdown()) {
+        if (executor.isShutdown()) {
             log.warn("Saver is shut down, cannot save to {}", path);
             return java.util.concurrent.CompletableFuture.completedFuture(null);
         }
-        return EXECUTOR.submit(() -> {
+        return executor.submit(() -> {
             try {
                 atomicWrite(path, content);
             } catch (IOException e) {
@@ -91,14 +95,33 @@ public final class BackgroundSaver {
      * Shutdown the background saver and wait for pending tasks to complete.
      */
     public static void shutdown() {
-        EXECUTOR.shutdown();
+        executor.shutdown();
         try {
-            if (!EXECUTOR.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
-                EXECUTOR.shutdownNow();
+            if (!executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                executor.shutdownNow();
             }
         } catch (InterruptedException e) {
-            EXECUTOR.shutdownNow();
+            executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    /**
+     * Returns true if the saver has been shut down.
+     *
+     * @return true if shut down.
+     */
+    public static boolean isShutdown() {
+        return executor.isShutdown();
+    }
+
+    /**
+     * Resets the executor. For testing purposes only.
+     */
+    static void resetForTests() {
+        if (!executor.isShutdown()) {
+            shutdown();
+        }
+        executor = createExecutor();
     }
 }

@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.util;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -14,6 +15,11 @@ import java.util.concurrent.Future;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BackgroundSaverTest {
+
+    @BeforeEach
+    void setUp() {
+        BackgroundSaver.resetForTests();
+    }
 
     @Test
     void testSequentialSaving(@TempDir Path tempDir) throws Exception {
@@ -46,5 +52,25 @@ class BackgroundSaverTest {
         // Verify no temp file is left behind
         Path tempPath = path.resolveSibling(path.getFileName().toString() + ".tmp");
         assertFalse(Files.exists(tempPath), "Temp file should be gone");
+    }
+
+    @Test
+    void testShutdown(@TempDir Path tempDir) throws Exception {
+        Path path = tempDir.resolve("shutdown.txt");
+        // Queue many saves
+        for (int i = 0; i < 50; i++) {
+            BackgroundSaver.save(path, "data" + i);
+        }
+        
+        BackgroundSaver.shutdown();
+        
+        assertTrue(BackgroundSaver.isShutdown());
+        // After shutdown, final file should be "data49" because shutdown() waits for termination
+        assertEquals("data49", Files.readString(path));
+        
+        // Subsequent saves should fail (log warning and return completed future)
+        Future<?> future = BackgroundSaver.save(path, "lost");
+        assertTrue(future.isDone());
+        assertEquals("data49", Files.readString(path));
     }
 }

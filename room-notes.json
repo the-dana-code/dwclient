@@ -677,6 +677,15 @@
     "notes": "You can embroider your clothes here.\n\nSyntax\n  embroider \u003cstring\u003e on \u003cobject\u003e\n  order motif on \u003cobject\u003e",
     "buttons": []
   },
+  "814b427c463698937d560d669ccb604e2f01ea4e": {
+    "name": "Ligeia\u0027s chiton shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "8163a07ecc08d324db8618a4c40c884c81831add": {
     "name": "Ankh Post Office",
     "notes": "You can send and receive mail here.\n\nSyntax:\n  mail - read or send mail\n  mail \u003crecipient\u003e - send mail to someone",

@@ -22,10 +22,16 @@ import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.ui.DesktopClientFrame;
+import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import java.nio.file.Path;
 
 public final class Main {
     public static void main(String[] args) throws Exception {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Shutting down, waiting for background saves...");
+            BackgroundSaver.shutdown();
+        }, "Shutdown-Saver-Hook"));
+
         Path configPath = Path.of("config.json");
         BotConfig cfg = ConfigLoader.load(configPath);
         Path routesPath = configPath.resolveSibling("delivery-routes.json");
