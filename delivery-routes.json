@@ -1081,5 +1081,12 @@
     "location": "Gimlet\u0027s Hole Food Delicatessen on Cable Street",
     "roomId": "a6df1adb71ca9acc5007fc82443b70f683d718dc",
     "commands": []
+  },
+  {
+    "npc": "the Morporkian teacher",
+    "location": "the Ephebian Embassy",
+    "roomId": "cc341b668af320ba5fdf88814d02b6237c79d5c1",
+    "commands": [],
+    "npcOverride": "the teacher"
   }
 ]

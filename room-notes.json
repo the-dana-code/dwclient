@@ -249,6 +249,15 @@
       }
     ]
   },
+  "2e902d38f32ef10b516d79fc2da719ccebfa591e": {
+    "name": "guildhouse armoury",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "31bf3a3c04cb0009a32aee364747be7761530556": {
     "name": "Klatchian Foreign Legion outpost storage tent",
     "buttons": [
