@@ -65,6 +65,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path);
         void updateConnectionState(boolean connected);
         void setUULibraryButtonsEnabled(boolean enabled);
+        void playUULibraryReadySound();
+        void playUULibraryAlertSound();
     }
 
     private final BotConfig cfg;
@@ -181,6 +183,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             if (UULibraryService.getInstance().isActive()) {
                 UULibraryService.getInstance().clearBarriers();
                 output.updateMap("UULibrary");
+                output.playUULibraryReadySound();
             }
         } else if (UU_LIBRARY_DISTORTION_AHEAD.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
@@ -188,6 +191,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation());
                 output.updateMap("UULibrary");
+                output.playUULibraryAlertSound();
             }
         } else if (UU_LIBRARY_DISTORTION_BEHIND.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
@@ -195,6 +199,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turn180());
                 output.updateMap("UULibrary");
+                output.playUULibraryAlertSound();
             }
         } else if (UU_LIBRARY_DISTORTION_LEFT.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
@@ -202,6 +207,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnLeft());
                 output.updateMap("UULibrary");
+                output.playUULibraryAlertSound();
             }
         } else if (UU_LIBRARY_DISTORTION_RIGHT.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
@@ -209,6 +215,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 UULibraryService.getInstance().revert();
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnRight());
                 output.updateMap("UULibrary");
+                output.playUULibraryAlertSound();
             }
         }
     }

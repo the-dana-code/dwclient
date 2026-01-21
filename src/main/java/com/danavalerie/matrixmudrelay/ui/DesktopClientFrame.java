@@ -1426,6 +1426,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         SwingUtilities.invokeLater(() -> uuLibraryButtonPanel.setButtonsEnabled(enabled));
     }
 
+    @Override
+    public void playUULibraryReadySound() {
+        com.danavalerie.matrixmudrelay.util.SoundUtils.playUULibraryReadySound();
+    }
+
+    @Override
+    public void playUULibraryAlertSound() {
+        com.danavalerie.matrixmudrelay.util.SoundUtils.playUULibraryAlertSound();
+    }
+
     public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, RoomMapService routeMapService) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());

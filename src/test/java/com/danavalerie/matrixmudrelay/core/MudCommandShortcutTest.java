@@ -53,6 +53,8 @@ class MudCommandShortcutTest {
         @Override public void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path) {}
         @Override public void updateConnectionState(boolean connected) {}
         @Override public void setUULibraryButtonsEnabled(boolean enabled) {}
+        @Override public void playUULibraryReadySound() {}
+        @Override public void playUULibraryAlertSound() {}
     }
 
     static class StubMudClient extends MudClient {

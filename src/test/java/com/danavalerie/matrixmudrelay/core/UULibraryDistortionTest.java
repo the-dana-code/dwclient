@@ -18,6 +18,8 @@ class UULibraryDistortionTest {
     static class StubClientOutput implements MudCommandProcessor.ClientOutput {
         boolean buttonsEnabled = true;
         int mapUpdateCount = 0;
+        int readySoundCount = 0;
+        int alertSoundCount = 0;
 
         @Override public void appendSystem(String text) {}
         @Override public void appendCommandEcho(String text) {}
@@ -29,6 +31,8 @@ class UULibraryDistortionTest {
         @Override public void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path) {}
         @Override public void updateConnectionState(boolean connected) {}
         @Override public void setUULibraryButtonsEnabled(boolean enabled) { buttonsEnabled = enabled; }
+        @Override public void playUULibraryReadySound() { readySoundCount++; }
+        @Override public void playUULibraryAlertSound() { alertSoundCount++; }
     }
 
     private MudCommandProcessor processor;
@@ -173,5 +177,27 @@ class UULibraryDistortionTest {
         
         service.setState(1, 6, UULibraryService.Orientation.WEST);
         assertEquals("fw", service.getNextStepCommand(1, 5), "Path from 1,6 to 1,5 should NOT be blocked by barrier in 1,5");
+    }
+
+    @Test
+    void testDistortionSounds() {
+        // Ready sound
+        processor.onFullLineReceived("Cannot find \"distortion\", no match.");
+        assertEquals(1, output.readySoundCount);
+        assertEquals(0, output.alertSoundCount);
+
+        // Alert sounds
+        processor.onFullLineReceived("There is a strange distortion in space and time up ahead of you!");
+        assertEquals(1, output.readySoundCount);
+        assertEquals(1, output.alertSoundCount);
+
+        processor.onFullLineReceived("There is a strange distortion in space and time behind you!");
+        assertEquals(2, output.alertSoundCount);
+
+        processor.onFullLineReceived("There is a strange distortion in space and time to the left of you!");
+        assertEquals(3, output.alertSoundCount);
+
+        processor.onFullLineReceived("There is a strange distortion in space and time to the right of you!");
+        assertEquals(4, output.alertSoundCount);
     }
 }
