@@ -577,6 +577,15 @@
       }
     ]
   },
+  "601eae2be71c8de42345928b9a35f5a52f7bc414": {
+    "name": "unremarkable stall",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "62b681633fd6f2f5698a19595933870b0203595f": {
     "name": "town criers\u0027 announcements room",
     "notes": "You can hire town criers to advertise for you.\n\nSyntax\n  create \u003cmessage\u003e for \u003cnumber\u003e days\n  delete \u003cnumber\u003e\n  fund message \u003cnumber\u003e for \u003cnumber\u003e days\n  list \u003cname\u003e\n  list \u003call\u003e   ",
