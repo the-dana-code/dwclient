@@ -787,6 +787,15 @@
       }
     ]
   },
+  "8f5133c2d06d87053307b835f4518fc1b5af273b": {
+    "name": "seafood-scented edge of the Harbour Market",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "8fb0571296430ab92e47f0ce5d5cbc44467ec110": {
     "name": "small, smelly tannery",
     "buttons": [
