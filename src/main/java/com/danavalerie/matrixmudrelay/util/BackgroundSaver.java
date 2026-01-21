@@ -132,7 +132,7 @@ public final class BackgroundSaver {
     /**
      * Resets the executor. For testing purposes only.
      */
-    static void resetForTests() {
+    public static void resetForTests() {
         if (!executor.isShutdown()) {
             shutdown();
         }

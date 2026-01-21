@@ -21,6 +21,11 @@ class BackgroundSaverTest {
         BackgroundSaver.resetForTests();
     }
 
+    @org.junit.jupiter.api.AfterEach
+    void tearDown() {
+        BackgroundSaver.resetForTests();
+    }
+
     @Test
     void testSequentialSaving(@TempDir Path tempDir) throws Exception {
         Path path = tempDir.resolve("test.txt");

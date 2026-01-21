@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UULibraryPersistenceTest {
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
+        BackgroundSaver.resetForTests();
         UULibraryService.getInstance().reset();
     }
 

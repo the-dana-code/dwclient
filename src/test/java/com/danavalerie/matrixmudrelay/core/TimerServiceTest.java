@@ -19,6 +19,7 @@ class TimerServiceTest {
 
     @BeforeEach
     void setUp(@TempDir Path tempDir) {
+        BackgroundSaver.resetForTests();
         config = new BotConfig();
         configPath = tempDir.resolve("config.json");
         timerService = new TimerService(config, configPath);
