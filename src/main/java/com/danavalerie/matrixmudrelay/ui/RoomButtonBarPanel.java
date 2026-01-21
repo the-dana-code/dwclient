@@ -13,13 +13,14 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class RoomButtonBarPanel extends JPanel {
+public class RoomButtonBarPanel extends JPanel implements FontChangeListener {
     private final RoomNoteService roomButtonService;
     private final Consumer<String> commandSubmitter;
     private String currentRoomId;
     private String currentRoomName;
     private Color currentBg;
     private Color currentFg;
+    private Font currentFont;
 
     public RoomButtonBarPanel(RoomNoteService roomButtonService, Consumer<String> commandSubmitter) {
         super(new WrapLayout(FlowLayout.RIGHT, 0, 0));
@@ -60,6 +61,18 @@ public class RoomButtonBarPanel extends JPanel {
         refreshButtons();
     }
 
+    @Override
+    public void onFontChange(Font font) {
+        this.currentFont = font;
+        for (Component c : getComponents()) {
+            if (c instanceof JButton) {
+                c.setFont(font);
+            }
+        }
+        revalidate();
+        repaint();
+    }
+
     private void refreshButtons() {
         removeAll();
         if (currentRoomId != null) {
@@ -74,6 +87,9 @@ public class RoomButtonBarPanel extends JPanel {
                 }
                 if (currentFg != null) {
                     btn.setForeground(currentFg);
+                }
+                if (currentFont != null) {
+                    btn.setFont(currentFont);
                 }
                 
                 int index = i;

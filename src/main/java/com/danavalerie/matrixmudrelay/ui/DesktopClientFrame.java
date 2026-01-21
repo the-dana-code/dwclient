@@ -36,6 +36,7 @@ import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -167,13 +168,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         this.roomButtonService.populateMissingNames(this.routeMapService);
         this.roomButtonBarPanel = new RoomButtonBarPanel(roomButtonService, this::submitCommand);
         this.uuLibraryButtonPanel = new UULibraryButtonPanel(this::submitCommand);
+        this.roomNotePanel = new RoomNotePanel(roomButtonService);
         
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().addListener(() -> {
             SwingUtilities.invokeLater(() -> {
-                uuLibraryButtonPanel.setVisible(com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().isActive());
+                boolean active = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().isActive();
+                uuLibraryButtonPanel.setVisible(active);
+                if (active) {
+                    uuLibraryButtonPanel.rebuildLayout();
+                }
             });
         });
-        this.roomNotePanel = new RoomNotePanel(roomButtonService);
         this.mapPanel = new MapPanel(
                 resolveMapZoomPercent(),
                 this::persistMapZoomConfig,
@@ -204,6 +209,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mud.setConnectListener(commandProcessor);
         fontManager = new UiFontManager(this, outputPane.getFont());
         fontManager.registerListener(statsPanel);
+        fontManager.registerListener(roomButtonBarPanel);
+        fontManager.registerListener(uuLibraryButtonPanel);
         fontManager.registerListener(font -> updateTheme(mapPanel.isInverted()));
 
         statsPanel.setCharacterSelector(name -> {
@@ -521,9 +528,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void persistMapInvertConfig(boolean invertMap) {
         cfg.ui.invertMap = invertMap;
-        updateTheme(invertMap);
         saveConfig();
     }
+
 
     private double resolveMudMapSplitRatio() {
         Double ratio = cfg.ui.mudMapSplitRatio;
@@ -782,7 +789,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         JPanel mapContainer = new JPanel(new BorderLayout());
         mapContainer.add(mapPanel, BorderLayout.CENTER);
-        mapContainer.add(uuLibraryButtonPanel, BorderLayout.SOUTH);
+        JPanel uuLibraryContainer = new JPanel(new BorderLayout());
+        uuLibraryContainer.setOpaque(false);
+        uuLibraryContainer.add(uuLibraryButtonPanel, BorderLayout.CENTER);
+
+        mapContainer.add(uuLibraryContainer, BorderLayout.SOUTH);
 
         JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapContainer, roomInfoContent);
         mapNotesSplit.setContinuousLayout(true);

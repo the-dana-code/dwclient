@@ -14,9 +14,12 @@ public class UULibraryButtonPanelTest {
     public void testComponents() {
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("None");
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
+        // Room (3,3) has all 4 cardinal exits: north, south, east, west
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
 
         List<String> commands = new java.util.concurrent.CopyOnWriteArrayList<>();
         UULibraryButtonPanel panel = new UULibraryButtonPanel(commands::add);
+        panel.rebuildLayout();
 
         Component[] components = panel.getComponents();
         assertEquals(4, components.length);
@@ -25,13 +28,13 @@ public class UULibraryButtonPanelTest {
         assertEquals("forward", ((JLabel)components[0]).getText());
 
         assertTrue(components[1] instanceof JLabel);
-        assertEquals("left", ((JLabel)components[1]).getText());
+        assertEquals("backward", ((JLabel)components[1]).getText());
 
         assertTrue(components[2] instanceof JLabel);
         assertEquals("right", ((JLabel)components[2]).getText());
 
         assertTrue(components[3] instanceof JLabel);
-        assertEquals("backward", ((JLabel)components[3]).getText());
+        assertEquals("left", ((JLabel)components[3]).getText());
 
         JLabel forwardBtn = (JLabel) components[0];
 
@@ -83,10 +86,15 @@ public class UULibraryButtonPanelTest {
 
     @Test
     public void testColors() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
+        
         UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+        panel.rebuildLayout();
         panel.updateTheme(Color.BLACK, Color.WHITE);
 
         JLabel forwardBtn = (JLabel) panel.getComponents()[0];
+        assertEquals("forward", forwardBtn.getText());
 
         // Enabled should be red
         panel.setButtonsEnabled(true);
@@ -97,5 +105,92 @@ public class UULibraryButtonPanelTest {
         panel.setButtonsEnabled(false);
         assertEquals(Color.BLACK, forwardBtn.getBackground());
         assertEquals(Color.WHITE, forwardBtn.getForeground());
+    }
+
+    @Test
+    public void testFontChange() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("UULibrary");
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+        panel.rebuildLayout();
+
+        // Initially some default font
+        Font originalFont = panel.getComponents()[0].getFont();
+        
+        Font newFont = new Font("Serif", Font.ITALIC, 24);
+        panel.onFontChange(newFont);
+        
+        for (Component c : panel.getComponents()) {
+            if (c instanceof JLabel) {
+                assertEquals(newFont, c.getFont());
+            }
+        }
+    }
+
+    @Test
+    public void testHorizontalLayoutOrdering() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService service = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance();
+        service.setRoomId("UULibrary");
+        
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+
+        // Room (3,3) has all 4 cardinal exits: north, south, east, west
+        // NORTH orientation: forward:N(0), right:E(1), backward:S(2), left:W(3)
+        // Order {0,2,1,3} -> [0]fwd, [2]bk, [1]rt, [3]lt
+        service.setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
+        panel.rebuildLayout();
+        assertButtonOrder(panel, "forward", "backward", "right", "left");
+
+        // EAST orientation: forward:E(1), right:S(2), backward:W(3), left:N(0)
+        // Order {0,2,1,3} -> [0]lt, [2]rt, [1]fwd, [3]bk
+        service.setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.EAST);
+        panel.rebuildLayout();
+        assertButtonOrder(panel, "left", "right", "forward", "backward");
+
+        // SOUTH orientation: forward:S(2), right:W(3), backward:N(0), left:E(1)
+        // Order {0,2,1,3} -> [0]bk, [2]fwd, [1]lt, [3]rt
+        service.setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.SOUTH);
+        panel.rebuildLayout();
+        assertButtonOrder(panel, "backward", "forward", "left", "right");
+
+        // WEST orientation: forward:W(3), right:N(0), backward:E(1), left:S(2)
+        // Order {0,2,1,3} -> [0]rt, [2]lt, [1]bk, [3]fwd
+        service.setState(3, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.WEST);
+        panel.rebuildLayout();
+        assertButtonOrder(panel, "right", "left", "backward", "forward");
+    }
+
+    @Test
+    public void testHiddenButtons() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService service = com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance();
+        service.setRoomId("UULibrary");
+
+        UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
+
+        // Room (1,3) only has "east" and "west" exits.
+        // If orientation is NORTH:
+        // forward (NORTH) - unavailable
+        // right (EAST) - available
+        // backward (SOUTH) - unavailable
+        // left (WEST) - available
+        service.setState(1, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.NORTH);
+        panel.rebuildLayout();
+        assertButtonOrder(panel, "right", "left");
+
+        // If orientation is EAST:
+        // forward (EAST) - available
+        // right (SOUTH) - unavailable
+        // backward (WEST) - available
+        // left (NORTH) - unavailable
+        service.setState(1, 3, com.danavalerie.matrixmudrelay.core.UULibraryService.Orientation.EAST);
+        panel.rebuildLayout();
+        assertButtonOrder(panel, "forward", "backward");
+    }
+
+    private void assertButtonOrder(UULibraryButtonPanel panel, String... expectedLabels) {
+        Component[] components = panel.getComponents();
+        assertEquals(expectedLabels.length, components.length);
+        for (int i = 0; i < expectedLabels.length; i++) {
+            assertEquals(expectedLabels[i], ((JLabel)components[i]).getText(), "Mismatch at index " + i);
+        }
     }
 }

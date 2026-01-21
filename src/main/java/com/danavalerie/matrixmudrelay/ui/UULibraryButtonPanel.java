@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 import com.danavalerie.matrixmudrelay.core.UULibraryService;
 
-public class UULibraryButtonPanel extends JPanel {
+public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
     private final Consumer<String> commandSubmitter;
 
     private final JLabel forwardBtn;
@@ -32,24 +32,62 @@ public class UULibraryButtonPanel extends JPanel {
         leftBtn = createButton("left");
         rightBtn = createButton("right");
 
+        rebuildLayout();
+
+        setVisible(false);
+    }
+
+    public void rebuildLayout() {
+        removeAll();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
 
-        // Cross layout
-        gbc.gridx = 1; gbc.gridy = 0;
-        add(forwardBtn, gbc);
+        // Horizontal layout: order based on direction result
+        // north, south, east, west
+        UULibraryService service = UULibraryService.getInstance();
+        UULibraryService.Orientation currentOri = service.getOrientation();
 
-        gbc.gridx = 0; gbc.gridy = 1;
-        add(leftBtn, gbc);
+        JLabel[] cardinalButtons = new JLabel[4]; // 0:N, 1:E, 2:S, 3:W
 
-        gbc.gridx = 2; gbc.gridy = 1;
-        add(rightBtn, gbc);
+        if (service.canMove(currentOri)) {
+            cardinalButtons[currentOri.ordinal()] = forwardBtn;
+        }
+        if (service.canMove(currentOri.turnRight())) {
+            cardinalButtons[currentOri.turnRight().ordinal()] = rightBtn;
+        }
+        if (service.canMove(currentOri.turn180())) {
+            cardinalButtons[currentOri.turn180().ordinal()] = backwardBtn;
+        }
+        if (service.canMove(currentOri.turnLeft())) {
+            cardinalButtons[currentOri.turnLeft().ordinal()] = leftBtn;
+        }
 
-        gbc.gridx = 1; gbc.gridy = 2;
-        add(backwardBtn, gbc);
+        int col = 0;
+        // Desired order: N (0), S (2), E (1), W (3)
+        int[] order = {0, 2, 1, 3};
+        for (int idx : order) {
+            JLabel btn = cardinalButtons[idx];
+            if (btn != null) {
+                gbc.gridx = col++;
+                gbc.gridy = 0;
+                add(btn, gbc);
+            }
+        }
 
-        setVisible(false);
+        revalidate();
+        repaint();
+    }
+
+    @Override
+    public void onFontChange(Font font) {
+        forwardBtn.setFont(font);
+        backwardBtn.setFont(font);
+        leftBtn.setFont(font);
+        rightBtn.setFont(font);
+        revalidate();
+        repaint();
     }
 
     private JLabel createButton(String command) {

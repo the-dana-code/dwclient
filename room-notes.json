@@ -727,6 +727,15 @@
       }
     ]
   },
+  "7c35ae25cc389ae0226ae2b2603f2c0f8a582158": {
+    "name": "antique jewellery shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "7ee0b29ed3f90ec0dba692d18b02a69341510c54": {
     "name": "Embroidery Shop",
     "notes": "You can embroider your clothes here.\n\nSyntax\n  embroider \u003cstring\u003e on \u003cobject\u003e\n  order motif on \u003cobject\u003e",
@@ -1212,6 +1221,15 @@
       {
         "name": "Exit Vault",
         "command": "southwest"
+      }
+    ]
+  },
+  "c2d9724a029eab1db38a069311bab190132162f0": {
+    "name": "King\u0027s Way Rathskeller",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
       }
     ]
   },

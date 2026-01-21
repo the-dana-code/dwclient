@@ -76,4 +76,37 @@ public class RoomButtonBarPanelTest {
             assertNotNull(panel.getBorder(), "Panel should have a border even when empty");
         });
     }
+
+    @Test
+    public void testFontChange(@TempDir Path tempDir) throws Exception {
+        SwingUtilities.invokeAndWait(() -> {
+            RoomNoteService service = new RoomNoteService(tempDir.resolve("notes_font.json"));
+            RoomButtonBarPanel panel = new RoomButtonBarPanel(service, cmd -> {});
+            service.addButton("room1", "Room 1", new RoomButton("Button 1", "cmd 1"));
+            panel.updateRoom("room1", "Room 1");
+
+            Font newFont = new Font("Monospaced", Font.BOLD, 20);
+            panel.onFontChange(newFont);
+
+            Component[] components = panel.getComponents();
+            assertTrue(components.length > 0);
+            for (Component c : components) {
+                if (c instanceof JButton) {
+                    assertEquals(newFont, c.getFont());
+                }
+            }
+
+            // Verify that NEW buttons also get the font
+            service.addButton("room1", "Room 1", new RoomButton("Button 2", "cmd 2"));
+            panel.updateRoom("room1", "Room 1"); // This calls refreshButtons()
+
+            components = panel.getComponents();
+            assertEquals(2, components.length);
+            for (Component c : components) {
+                if (c instanceof JButton) {
+                    assertEquals(newFont, c.getFont());
+                }
+            }
+        });
+    }
 }
