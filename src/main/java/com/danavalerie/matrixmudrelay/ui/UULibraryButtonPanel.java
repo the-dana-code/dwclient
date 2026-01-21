@@ -69,13 +69,10 @@ public class UULibraryButtonPanel extends JPanel {
     }
 
     public void setButtonsEnabled(boolean enabled) {
-        UULibraryService svc = UULibraryService.getInstance();
-        UULibraryService.Orientation currentOri = svc.getOrientation();
-        
-        forwardBtn.setEnabled(enabled && svc.canMove(currentOri));
-        backwardBtn.setEnabled(enabled && svc.canMove(currentOri.turn180()));
-        leftBtn.setEnabled(enabled && svc.canMove(currentOri.turnLeft()));
-        rightBtn.setEnabled(enabled && svc.canMove(currentOri.turnRight()));
+        forwardBtn.setEnabled(enabled);
+        backwardBtn.setEnabled(enabled);
+        leftBtn.setEnabled(enabled);
+        rightBtn.setEnabled(enabled);
         
         updateButtonColors();
     }
