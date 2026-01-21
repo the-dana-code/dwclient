@@ -812,13 +812,33 @@ public final class MapPanel extends JPanel {
 
         private void drawOrientationArrow(Graphics2D g2, int centerX, int centerY, int radius) {
             UULibraryService.Orientation orientation = UULibraryService.getInstance().getOrientation();
-            g2.setColor(Color.BLUE);
-            g2.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             
-            int size = radius;
+            Color arrowColor;
+            Color borderColor;
+            if (invertMap) {
+                arrowColor = Color.CYAN;
+                borderColor = new Color(0, 0, 139); // Dark Blue
+            } else {
+                arrowColor = new Color(0, 0, 139); // Dark Blue
+                borderColor = Color.CYAN;
+            }
+
+            int size = (int)(radius * 1.5);
             int x = centerX;
             int y = centerY;
-            
+
+            // Draw border
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(8.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            drawArrowLines(g2, x, y, size, orientation);
+
+            // Draw arrow
+            g2.setColor(arrowColor);
+            g2.setStroke(new BasicStroke(4.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            drawArrowLines(g2, x, y, size, orientation);
+        }
+
+        private void drawArrowLines(Graphics2D g2, int x, int y, int size, UULibraryService.Orientation orientation) {
             switch (orientation) {
                 case NORTH:
                     g2.drawLine(x, y + size, x, y - size);

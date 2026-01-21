@@ -82,6 +82,8 @@ public class UULibraryButtonPanelTest {
 
     private void click(Component c) {
         for (MouseListener ml : c.getMouseListeners()) {
+            ml.mousePressed(new MouseEvent(c, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, 0, 0, 1, false));
+            ml.mouseReleased(new MouseEvent(c, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, 0, 0, 1, false));
             ml.mouseClicked(new MouseEvent(c, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, 0, 0, 1, false));
         }
     }
