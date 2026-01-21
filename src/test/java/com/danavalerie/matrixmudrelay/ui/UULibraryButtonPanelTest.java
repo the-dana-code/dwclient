@@ -19,53 +19,46 @@ public class UULibraryButtonPanelTest {
         UULibraryButtonPanel panel = new UULibraryButtonPanel(commands::add);
 
         Component[] components = panel.getComponents();
-        // Label, ComboBox, Button
-        assertEquals(3, components.length);
+        assertEquals(4, components.length);
 
         assertTrue(components[0] instanceof JLabel);
-        assertEquals("Target:", ((JLabel)components[0]).getText());
+        assertEquals("forward", ((JLabel)components[0]).getText());
 
-        assertTrue(components[1] instanceof JComboBox);
-        JComboBox<?> combo = (JComboBox<?>) components[1];
-        assertEquals(18, combo.getItemCount());
-        assertEquals("Exit", combo.getItemAt(0));
-        assertEquals("15", combo.getItemAt(15));
-        assertEquals("16", combo.getItemAt(16));
-        assertEquals("Gap", combo.getItemAt(17));
+        assertTrue(components[1] instanceof JLabel);
+        assertEquals("left", ((JLabel)components[1]).getText());
 
         assertTrue(components[2] instanceof JLabel);
-        JLabel stepButton = (JLabel) components[2];
-        assertEquals("Step", stepButton.getText());
+        assertEquals("right", ((JLabel)components[2]).getText());
+
+        assertTrue(components[3] instanceof JLabel);
+        assertEquals("backward", ((JLabel)components[3]).getText());
+
+        JLabel forwardBtn = (JLabel) components[0];
 
         // Test action and disabling
-        assertTrue(stepButton.isEnabled());
-        assertTrue(combo.isEnabled());
+        assertTrue(forwardBtn.isEnabled());
         
-        // Select "Gap" which is at index 16
-        combo.setSelectedIndex(16);
-        
-        click(stepButton);
+        click(forwardBtn);
         waitForCommands(commands, 2);
-        assertEquals(2, commands.size()); // step command + look distortion
+        assertEquals(2, commands.size()); // forward command + look distortion
+        assertEquals("forward", commands.get(0));
+        assertEquals("look distortion", commands.get(1));
+
         // Should be disabled now
-        assertFalse(stepButton.isEnabled());
-        assertFalse(combo.isEnabled());
+        assertFalse(forwardBtn.isEnabled());
+        assertFalse(((JLabel)components[1]).isEnabled());
 
         // Clicking again when disabled should not add commands
-        click(stepButton);
+        click(forwardBtn);
         assertEquals(2, commands.size());
 
         // Test re-enabling
         panel.setButtonsEnabled(true);
-        assertTrue(stepButton.isEnabled());
-        assertTrue(combo.isEnabled());
+        assertTrue(forwardBtn.isEnabled());
         
-        click(stepButton);
+        click(forwardBtn);
         waitForCommands(commands, 4);
         assertEquals(4, commands.size());
-        
-        assertTrue(List.of("fw", "bw", "lt", "rt").contains(commands.get(2)));
-        assertEquals("look distortion", commands.get(3));
     }
 
     private void waitForCommands(List<String> commands, int expectedCount) {
@@ -93,16 +86,16 @@ public class UULibraryButtonPanelTest {
         UULibraryButtonPanel panel = new UULibraryButtonPanel(cmd -> {});
         panel.updateTheme(Color.BLACK, Color.WHITE);
 
-        JLabel stepButton = (JLabel) panel.getComponents()[2];
+        JLabel forwardBtn = (JLabel) panel.getComponents()[0];
 
         // Enabled should be red
         panel.setButtonsEnabled(true);
-        assertEquals(Color.RED, stepButton.getBackground());
-        assertEquals(Color.WHITE, stepButton.getForeground());
+        assertEquals(Color.RED, forwardBtn.getBackground());
+        assertEquals(Color.WHITE, forwardBtn.getForeground());
 
         // Disabled should be theme background (BLACK)
         panel.setButtonsEnabled(false);
-        assertEquals(Color.BLACK, stepButton.getBackground());
-        assertEquals(Color.WHITE, stepButton.getForeground());
+        assertEquals(Color.BLACK, forwardBtn.getBackground());
+        assertEquals(Color.WHITE, forwardBtn.getForeground());
     }
 }

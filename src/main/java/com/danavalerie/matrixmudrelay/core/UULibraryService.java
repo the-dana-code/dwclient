@@ -182,18 +182,27 @@ public class UULibraryService {
                 break;
             case "backward":
             case "bw":
-                orientation = orientation.turn180();
-                move();
+                Orientation back = orientation.turn180();
+                if (canMove(back)) {
+                    orientation = back;
+                    move();
+                }
                 break;
             case "right":
             case "rt":
-                orientation = orientation.turnRight();
-                move();
+                Orientation right = orientation.turnRight();
+                if (canMove(right)) {
+                    orientation = right;
+                    move();
+                }
                 break;
             case "left":
             case "lt":
-                orientation = orientation.turnLeft();
-                move();
+                Orientation left = orientation.turnLeft();
+                if (canMove(left)) {
+                    orientation = left;
+                    move();
+                }
                 break;
         }
         if (orientation != oldOri || curRow != oldRow || curCol != oldCol) {
@@ -202,15 +211,14 @@ public class UULibraryService {
     }
 
     private void move() {
-        Room r = maze.get(curRow + "," + curCol);
-        if (r != null && r.exits != null && r.exits.contains(orientation.name)) {
+        if (canMove(orientation)) {
             int nextRow = curRow + orientation.dRow;
             int nextCol = curCol + orientation.dCol;
-            
+
             // Handle wrap-around
             if (nextCol < 1) nextCol = 8;
             if (nextCol > 8) nextCol = 1;
-            
+
             curRow = nextRow;
             curCol = nextCol;
         }
