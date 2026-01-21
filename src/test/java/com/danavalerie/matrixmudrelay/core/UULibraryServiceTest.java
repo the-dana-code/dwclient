@@ -35,21 +35,28 @@ public class UULibraryServiceTest {
     @Test
     public void testTurning() {
         UULibraryService service = UULibraryService.getInstance();
-        service.setRoomId("UULibrary"); // Reset
+        service.setRoomId("UULibrary");
         
-        assertEquals(UULibraryService.Orientation.NORTH, service.getOrientation());
-        
+        // Room (3,3) has all 4 cardinal exits. We reset position after each turn 
+        // to stay in this room and avoid hitting walls in adjacent rooms.
+        service.setState(3, 3, UULibraryService.Orientation.NORTH);
         service.processCommand("rt");
         assertEquals(UULibraryService.Orientation.EAST, service.getOrientation());
         
-        service.processCommand("rt");
+        service.setState(3, 3, UULibraryService.Orientation.NORTH);
+        service.processCommand("lt");
+        assertEquals(UULibraryService.Orientation.WEST, service.getOrientation());
+        
+        service.setState(3, 3, UULibraryService.Orientation.NORTH);
+        service.processCommand("bw");
         assertEquals(UULibraryService.Orientation.SOUTH, service.getOrientation());
         
-        service.processCommand("lt");
+        // Verify that it still moves too
+        service.setState(3, 3, UULibraryService.Orientation.NORTH);
+        service.processCommand("rt"); // Turns East and moves to (3, 4)
         assertEquals(UULibraryService.Orientation.EAST, service.getOrientation());
-        
-        service.processCommand("bw");
-        assertEquals(UULibraryService.Orientation.WEST, service.getOrientation());
+        assertEquals(3, service.getCurRow());
+        assertEquals(4, service.getCurCol());
     }
 
     @Test

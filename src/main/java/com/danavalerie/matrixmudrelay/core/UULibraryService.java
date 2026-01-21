@@ -178,31 +178,19 @@ public class UULibraryService {
         switch (cmd) {
             case "forward":
             case "fw":
-                move();
+                move(orientation);
                 break;
             case "backward":
             case "bw":
-                Orientation back = orientation.turn180();
-                if (canMove(back)) {
-                    orientation = back;
-                    move();
-                }
+                move(orientation.turn180());
                 break;
             case "right":
             case "rt":
-                Orientation right = orientation.turnRight();
-                if (canMove(right)) {
-                    orientation = right;
-                    move();
-                }
+                move(orientation.turnRight());
                 break;
             case "left":
             case "lt":
-                Orientation left = orientation.turnLeft();
-                if (canMove(left)) {
-                    orientation = left;
-                    move();
-                }
+                move(orientation.turnLeft());
                 break;
         }
         if (orientation != oldOri || curRow != oldRow || curCol != oldCol) {
@@ -210,8 +198,9 @@ public class UULibraryService {
         }
     }
 
-    private void move() {
-        if (canMove(orientation)) {
+    private void move(Orientation targetDir) {
+        if (canMove(targetDir)) {
+            orientation = targetDir;
             int nextRow = curRow + orientation.dRow;
             int nextCol = curCol + orientation.dCol;
 
