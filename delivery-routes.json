@@ -1117,5 +1117,11 @@
     "location": "the Mouldy Cellar on Chrononhotonthologos Street",
     "roomId": "778c7e260cdf5bc272c2cfda872c154b1ebf9197",
     "commands": []
+  },
+  {
+    "npc": "Dimitris",
+    "location": "Dimitris\u0027 Dummies on Dimwell Street",
+    "roomId": "96db778460ad523c0189a195f3b2db4b697504a3",
+    "commands": []
   }
 ]

@@ -117,6 +117,15 @@
       }
     ]
   },
+  "124ccffb2b83bb5d955307ac55c762e16b193618": {
+    "name": "tasteless clothes shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "1265fde9f132238c01a5f9dffa32994145de6755": {
     "name": "wedding shop",
     "buttons": [
@@ -228,6 +237,15 @@
   },
   "25f7d315e063c446f7419150bc40291f9349aa2e": {
     "name": "Xoo Xoo Ha\u0027s General Trading",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "289116726a05b872697e3867fce746b965b8e03d": {
+    "name": "Imperial Guard forge",
     "buttons": [
       {
         "name": "List Shop",
@@ -961,6 +979,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "96db778460ad523c0189a195f3b2db4b697504a3": {
+    "name": "Dimitris\u0027 Dummies",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]
@@ -1710,6 +1737,15 @@
       {
         "name": "Balance",
         "command": "balance"
+      }
+    ]
+  },
+  "fc2a716b60b91ff6e8e3f440dacfb766715413b2": {
+    "name": "Mrs Corduroy\u0027s Stuffed Animals",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
