@@ -1046,5 +1046,10 @@
     "npc": "the jolly old shopkeeper",
     "location": "the exciting toy shop on Endless Street",
     "roomId": "1c9cb347c3bcb83e299b7e56e8d467f557476a8a"
+  },
+  {
+    "npc": "Emmaline Lamb",
+    "location": "Emmaline Lamb\u0027s World of Baskets on Pleaders Row",
+    "roomId": "7e7f533917d810a1d0d78f7b380fa93fb141258c"
   }
 ]

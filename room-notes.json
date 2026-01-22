@@ -81,6 +81,15 @@
       }
     ]
   },
+  "107efc06837570d31221002636496a7308266777": {
+    "name": "Ankh-Morpork foreign real estate agency",
+    "buttons": [
+      {
+        "name": "List Properties",
+        "command": "list"
+      }
+    ]
+  },
   "108e5e762f597121a6994986373fc031c2402fba": {
     "name": "Monsieur Rosset\u0027s Beauty Parlour",
     "buttons": [
@@ -640,6 +649,15 @@
       }
     ]
   },
+  "59a4bd0c01076b87947d4b0805d06f79425a6400": {
+    "name": "Ankh-Morpork real estate agency",
+    "buttons": [
+      {
+        "name": "List Properties",
+        "command": "list"
+      }
+    ]
+  },
   "59c1b5e8574bd17addc6d82e679474c186afa527": {
     "name": "dwarfish shop",
     "buttons": [
@@ -890,6 +908,15 @@
   },
   "7c35ae25cc389ae0226ae2b2603f2c0f8a582158": {
     "name": "antique jewellery shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "7e7f533917d810a1d0d78f7b380fa93fb141258c": {
+    "name": "Emmaline Lamb\u0027s World of Baskets",
     "buttons": [
       {
         "name": "List Shop",
@@ -1342,6 +1369,15 @@
   },
   "afbc05497b3f6d1b05014d5813a4a644b8181e2f": {
     "name": "strange amphora-and-weaponry garden at the edge of the Harbour Market",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "b08b6bf8d56e96f4da6d81fd45fcbef59f6d97cd": {
+    "name": "small shop",
     "buttons": [
       {
         "name": "List Shop",
