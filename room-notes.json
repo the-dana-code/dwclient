@@ -339,6 +339,15 @@
       }
     ]
   },
+  "36fe246513d18c4e7723c89dc1f2edac2bef1c46": {
+    "name": "jewellery shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "37bd6af408da6fce7cd61f400443cfc875b1eaa9": {
     "name": "swampy green tent",
     "buttons": [
@@ -538,6 +547,15 @@
       {
         "name": "Enter Vault (A$0.30)",
         "command": "north"
+      }
+    ]
+  },
+  "549853a5d06cedc96e6a050f6e43a1f3fe30443b": {
+    "name": "musickal poster shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -1646,6 +1664,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "eb3d3dfd37ccde5622a07fef49e672ea738cf05b": {
+    "name": "Cogsworth\u0027s Clocks",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]

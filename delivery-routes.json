@@ -193,6 +193,9 @@
     "roomId": "97adbfc0c74294dc7505bb1b51255dc4cfa174f4",
     "commands": [
       "knock on door",
+      "look",
+      "look",
+      "look",
       "say {character}",
       "n"
     ]
