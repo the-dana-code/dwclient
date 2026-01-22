@@ -152,6 +152,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final TimerPanel timerPanel;
     private final RoomButtonBarPanel roomButtonBarPanel;
     private final UULibraryButtonPanel uuLibraryButtonPanel;
+    private final DiscworldTimePanel discworldTimePanel = new DiscworldTimePanel();
 
     private enum WritMenuAction {
         ITEM_INFO,
@@ -221,6 +222,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         fontManager.registerListener(statsPanel);
         fontManager.registerListener(roomButtonBarPanel);
         fontManager.registerListener(uuLibraryButtonPanel);
+        fontManager.registerListener(discworldTimePanel);
         fontManager.registerListener(font -> updateTheme(mapPanel.isInverted()));
 
         statsPanel.setCharacterSelector(name -> {
@@ -878,11 +880,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         JPanel mapContainer = new JPanel(new BorderLayout());
         mapContainer.add(mapPanel, BorderLayout.CENTER);
+
+        JPanel southContainer = new JPanel(new BorderLayout());
+        southContainer.setOpaque(false);
+        southContainer.add(discworldTimePanel, BorderLayout.NORTH);
+
         JPanel uuLibraryContainer = new JPanel(new BorderLayout());
         uuLibraryContainer.setOpaque(false);
         uuLibraryContainer.add(uuLibraryButtonPanel, BorderLayout.CENTER);
 
-        mapContainer.add(uuLibraryContainer, BorderLayout.SOUTH);
+        southContainer.add(uuLibraryContainer, BorderLayout.SOUTH);
+
+        mapContainer.add(southContainer, BorderLayout.SOUTH);
 
         JSplitPane mapNotesSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapContainer, roomInfoContent);
         mapNotesSplit.setContinuousLayout(true);
@@ -1461,6 +1470,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updateComponentTree(getContentPane(), bg, fg);
         roomButtonBarPanel.updateTheme(bg, fg);
         uuLibraryButtonPanel.updateTheme(bg, fg);
+        discworldTimePanel.updateTheme(bg, fg);
         roomNotePanel.updateTheme(bg, fg);
         timerPanel.updateTheme(bg, fg);
         inputField.setCaretColor(fg);
@@ -1481,7 +1491,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void updateComponentTree(Component c, Color bg, Color fg) {
         if (c instanceof MapPanel || c instanceof MudOutputPane || c instanceof ChitchatPane || c instanceof StatsPanel
-                || c instanceof RoomButtonBarPanel || c instanceof UULibraryButtonPanel || c instanceof RoomNotePanel || c instanceof TimerPanel) {
+                || c instanceof RoomButtonBarPanel || c instanceof UULibraryButtonPanel || c instanceof DiscworldTimePanel || c instanceof RoomNotePanel || c instanceof TimerPanel) {
             return;
         }
         if (c instanceof JPanel || c instanceof JSplitPane || c instanceof JScrollPane || c instanceof JViewport) {
