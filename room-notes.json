@@ -469,6 +469,15 @@
       }
     ]
   },
+  "50313fc0ba13b043c63d8979b9803f700528905a": {
+    "name": "shoe shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "512bbcac133fc29a17ed3cd719347e601ec80b71": {
     "name": "Madame Bertie\u0027s Ladies\u0027 Apparel",
     "buttons": [
@@ -1120,6 +1129,15 @@
   },
   "ac76e8b109eacf1b1184c92ef157d6cffcf4fa62": {
     "name": "Maestro Music",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "adef8379d080af980955bc50fc9c7ec8647ade18": {
+    "name": "small equipment shop",
     "buttons": [
       {
         "name": "List Shop",
