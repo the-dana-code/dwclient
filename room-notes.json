@@ -1037,6 +1037,15 @@
       }
     ]
   },
+  "97adbfc0c74294dc7505bb1b51255dc4cfa174f4": {
+    "name": "Bligh Earcrusher\u0027s exclusive shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "97c0216ddba02e73e8d44bbfe7277e1820b4845e": {
     "name": "wine lounge",
     "buttons": [
