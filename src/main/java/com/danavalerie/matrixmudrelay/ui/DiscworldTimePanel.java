@@ -3,6 +3,8 @@ package com.danavalerie.matrixmudrelay.ui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.Instant;
 
 public class DiscworldTimePanel extends JPanel implements FontChangeListener {
@@ -24,6 +26,7 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
     private final JLabel seasonLabel;
     private final JLabel timeLabel;
     private final Timer refreshTimer;
+    private String lastTooltip;
 
     public DiscworldTimePanel() {
         setLayout(new BorderLayout());
@@ -36,6 +39,23 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
 
         add(seasonLabel, BorderLayout.CENTER);
         add(timeLabel, BorderLayout.EAST);
+
+        MouseAdapter tooltipExtender = new MouseAdapter() {
+            private int originalDelay;
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                originalDelay = ToolTipManager.sharedInstance().getDismissDelay();
+                ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                ToolTipManager.sharedInstance().setDismissDelay(originalDelay);
+            }
+        };
+        seasonLabel.addMouseListener(tooltipExtender);
+        timeLabel.addMouseListener(tooltipExtender);
 
         refreshTimer = new Timer(1000, e -> updateTime());
         refreshTimer.start();
@@ -102,8 +122,11 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
         
         String fullDate = String.format("%s %d%s %s, %d %s", dayName, dayInMonth, getOrdinal(dayInMonth), monthName, years, cycleName);
         String tooltip = String.format("<html><b>Date:</b> %s<br><b>Time:</b> %s<br><b>Season:</b> %s</html>", fullDate, timeStr, season);
-        seasonLabel.setToolTipText(tooltip);
-        timeLabel.setToolTipText(tooltip);
+        if (!tooltip.equals(lastTooltip)) {
+            seasonLabel.setToolTipText(tooltip);
+            timeLabel.setToolTipText(tooltip);
+            lastTooltip = tooltip;
+        }
     }
 
     private String getOrdinal(long day) {
