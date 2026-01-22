@@ -40,7 +40,7 @@ public class RoomMapServiceTest {
 
     @Test
     public void testReproduction() throws Exception {
-        RoomMapService service = new RoomMapService("database.db");
+        RoomMapService service = new RoomMapService(new MapDataService());
         
         // Drum teleport room ID
         String drumRoomId = "4b11616f93c94e3c766bb5ad9cba3b61dcc73979";
@@ -58,7 +58,7 @@ public class RoomMapServiceTest {
 
     @Test
     public void testInterMapShortPath() throws Exception {
-        RoomMapService service = new RoomMapService("database.db");
+        RoomMapService service = new RoomMapService(new MapDataService());
 
         // bridge over Lancre Gorge (Map 32)
         String bridgeRoomId = "01343c88667e057f6c3cb2ee57c70218bcab5abf";
@@ -79,7 +79,7 @@ public class RoomMapServiceTest {
     
     @Test
     public void testRenderDarkMap() throws Exception {
-        RoomMapService service = new RoomMapService("database.db");
+        RoomMapService service = new RoomMapService(new MapDataService());
         // Drum teleport room ID
         String roomInAm = "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"; 
         

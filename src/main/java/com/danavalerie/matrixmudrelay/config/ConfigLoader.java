@@ -114,13 +114,13 @@ public final class ConfigLoader {
                     }
                 }
             }
-        } catch (java.sql.SQLException e) {
+        } catch (Exception e) {
             System.err.println("Error during config coordinate conversion: " + e.getMessage());
         }
         return changed;
     }
 
-    private static boolean convertBookmarksToRoomIds(List<BotConfig.Bookmark> bookmarks, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) throws java.sql.SQLException {
+    private static boolean convertBookmarksToRoomIds(List<BotConfig.Bookmark> bookmarks, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
         boolean changed = false;
         for (BotConfig.Bookmark b : bookmarks) {
             if (b.roomId == null && b.target != null && b.target.length >= 3) {
@@ -155,7 +155,7 @@ public final class ConfigLoader {
                     newEntries.add(entry);
                 }
             }
-        } catch (java.sql.SQLException e) {
+        } catch (Exception e) {
             System.err.println("Error during routes coordinate conversion: " + e.getMessage());
             return routes;
         }

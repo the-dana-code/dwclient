@@ -72,7 +72,7 @@ class UULibraryPersistenceTest {
         charInfo.addProperty("capname", "TestChar");
         mud.cri.update("char.info", charInfo);
 
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
         MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
 
         UULibraryService service = UULibraryService.getInstance();
@@ -134,7 +134,7 @@ class UULibraryPersistenceTest {
         charInfo.addProperty("capname", "Walker");
         mud.cri.update("char.info", charInfo);
 
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
         MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
         UULibraryService service = UULibraryService.getInstance();
 
@@ -181,7 +181,7 @@ class UULibraryPersistenceTest {
         charCfg.uuLibrary = new BotConfig.UULibraryState(10, 20, "SOUTH");
         cfg.characters.put("LateChar", charCfg);
 
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
         MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
         UULibraryService service = UULibraryService.getInstance();
 

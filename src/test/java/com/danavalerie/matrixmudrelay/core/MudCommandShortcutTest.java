@@ -91,7 +91,7 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
@@ -109,7 +109,7 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
@@ -124,7 +124,7 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
@@ -145,7 +145,7 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
@@ -177,11 +177,11 @@ class MudCommandShortcutTest {
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
-        // Room ID for the Mended Drum from database.db
+        // Room ID for the Mended Drum from rooms.json
         String drumRoomId = "4b11616f93c94e3c766bb5ad9cba3b61dcc73979";
         JsonObject roomInfo = new JsonObject();
         roomInfo.addProperty("identifier", drumRoomId);
@@ -190,7 +190,7 @@ class MudCommandShortcutTest {
         mud.cri.update("room.info", roomInfo);
         processor.onGmcp(new TelnetDecoder.GmcpMessage("room.info", roomInfo));
 
-        // The name should be looked up from the database
+        // The name should be looked up from the JSON data
         assertEquals(1, output.roomUpdates.size());
         assertEquals(drumRoomId + ":north end of Short Street outside the Mended Drum", output.roomUpdates.get(0));
     }
@@ -210,7 +210,7 @@ class MudCommandShortcutTest {
         DeliveryRouteMappings routeMappings = new DeliveryRouteMappings(List.of(
                 new DeliveryRouteMappings.RouteEntry(npc, loc, "room1", null, List.of(), "the teacher")
         ));
-        RoomMapService mapService = new RoomMapService("database.db");
+        RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, writTracker, new StoreInventoryTracker(), timerService, () -> routeMappings, output);
 

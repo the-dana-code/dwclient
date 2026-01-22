@@ -37,8 +37,10 @@ public final class Main {
         Path routesPath = configPath.resolveSibling("delivery-routes.json");
         DeliveryRouteMappings routes = ConfigLoader.loadRoutes(routesPath);
 
+        com.danavalerie.matrixmudrelay.core.MapDataService dataService =
+                new com.danavalerie.matrixmudrelay.core.MapDataService();
         com.danavalerie.matrixmudrelay.core.RoomMapService mapService =
-                new com.danavalerie.matrixmudrelay.core.RoomMapService("database.db");
+                new com.danavalerie.matrixmudrelay.core.RoomMapService(dataService);
 
         boolean cfgChanged = ConfigLoader.convertCoordinatesToRoomIds(cfg, mapService);
         if (cfgChanged) {

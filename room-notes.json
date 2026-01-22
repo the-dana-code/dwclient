@@ -705,6 +705,15 @@
       }
     ]
   },
+  "679726f8c952194073d524c451fc3c6b71b1b396": {
+    "name": "Costlee Coffee on Market Street",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "6a23a422360bfbba06738708d2fa10e400c282f7": {
     "name": "Bologna shop",
     "buttons": [
@@ -1074,6 +1083,15 @@
   },
   "9a3a449db93764f190366394aaf2768a0e11cc64": {
     "name": "Elt On Wong\u0027s Wig-O-Rama",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "9dfff49f5615df117b3a64daa8e6f77b0fb861d2": {
+    "name": "blacksmith\u0027s shop",
     "buttons": [
       {
         "name": "List Shop",

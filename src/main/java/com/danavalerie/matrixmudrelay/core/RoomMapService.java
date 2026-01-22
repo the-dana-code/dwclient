@@ -18,6 +18,9 @@
 
 package com.danavalerie.matrixmudrelay.core;
 
+import com.danavalerie.matrixmudrelay.core.data.ItemData;
+import com.danavalerie.matrixmudrelay.core.data.NpcData;
+import com.danavalerie.matrixmudrelay.core.data.RoomData;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -25,13 +28,9 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +40,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -52,138 +52,131 @@ public class RoomMapService {
     private static final int ROOM_PIXEL_OFFSET_Y = IMAGE_SCALE;
     private static final int IMAGE_SPAN = 250;
     private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
-    private final String dbPath;
-    private final boolean driverAvailable;
+    private final MapDataService dataService;
     private final Map<String, Optional<BufferedImage>> backgroundCache = new HashMap<>();
     private BaseImageCache baseImageCache;
 
-    public RoomMapService(String dbPath) {
-        this.dbPath = dbPath;
-        boolean loaded = false;
-        try {
-            Class.forName("org.sqlite.JDBC");
-            loaded = true;
-        } catch (ClassNotFoundException e) {
-            loaded = false;
-        }
-        this.driverAvailable = loaded;
+    public RoomMapService(MapDataService dataService) {
+        this.dataService = dataService;
     }
 
-    public MapImage renderMapImage(String currentRoomId) throws SQLException, MapLookupException, IOException {
+    private RoomRecord toRecord(RoomData data) {
+        if (data == null) return null;
+        return new RoomRecord(data.getRoomId(), data.getMapId(), data.getXpos(), data.getYpos(), data.getRoomShort(), data.getRoomType());
+    }
+
+    private Map<String, RoomRecord> loadRoomsInArea(int mapId, int minX, int maxX, int minY, int maxY) {
+        return dataService.getRooms().values().stream()
+                .filter(r -> r.getMapId() == mapId && r.getXpos() >= minX && r.getXpos() <= maxX && r.getYpos() >= minY && r.getYpos() <= maxY)
+                .collect(Collectors.toMap(RoomData::getRoomId, this::toRecord));
+    }
+
+    public MapImage renderMapImage(String currentRoomId) throws MapLookupException, IOException {
         return renderMapImage(currentRoomId, false);
     }
 
-    public MapImage renderMapImage(String currentRoomId, boolean isDark) throws SQLException, MapLookupException, IOException {
+    public MapImage renderMapImage(String currentRoomId, boolean isDark) throws MapLookupException, IOException {
         if (currentRoomId != null && "UULibrary".equalsIgnoreCase(currentRoomId.trim())) {
             return renderMapByMapId(47, isDark);
         }
         if (currentRoomId == null || currentRoomId.isBlank()) {
             throw new MapLookupException("No room info available yet.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
+
+        RoomRecord current = loadRoom(currentRoomId);
+        if (current == null) {
+            throw new MapLookupException("Current room not found in map database.");
+        }
+        if (baseImageCache != null && (baseImageCache.mapId != current.mapId || baseImageCache.isDark != isDark)) {
+            baseImageCache = null;
         }
 
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
-            RoomRecord current = loadRoom(conn, currentRoomId);
-            if (current == null) {
-                throw new MapLookupException("Current room not found in map database.");
-            }
-            if (baseImageCache != null && (baseImageCache.mapId != current.mapId || baseImageCache.isDark != isDark)) {
-                baseImageCache = null;
-            }
-
-            BufferedImage backgroundImage = loadMapBackground(current.mapId, isDark);
-            int minX;
-            int maxX;
-            int minY;
-            int maxY;
-            int imageWidth;
-            int imageHeight;
-            if (backgroundImage == null) {
-                BaseImageCache cached = baseImageCache;
-                if (cached != null && cached.mapId == current.mapId && cached.isDark == isDark && cached.containsRoom(current)) {
-                    minX = cached.minX;
-                    maxX = cached.maxX;
-                    minY = cached.minY;
-                    maxY = cached.maxY;
-                    imageWidth = cached.imageWidth;
-                    imageHeight = cached.imageHeight;
-                } else {
-                    minX = current.xpos - IMAGE_HALF_SPAN;
-                    maxX = minX + IMAGE_SPAN - 1;
-                    minY = current.ypos - IMAGE_HALF_SPAN;
-                    maxY = minY + IMAGE_SPAN - 1;
-                    imageWidth = IMAGE_SPAN * IMAGE_SCALE;
-                    imageHeight = IMAGE_SPAN * IMAGE_SCALE;
-                }
+        BufferedImage backgroundImage = loadMapBackground(current.mapId, isDark);
+        int minX;
+        int maxX;
+        int minY;
+        int maxY;
+        int imageWidth;
+        int imageHeight;
+        if (backgroundImage == null) {
+            BaseImageCache cached = baseImageCache;
+            if (cached != null && cached.mapId == current.mapId && cached.isDark == isDark && cached.containsRoom(current)) {
+                minX = cached.minX;
+                maxX = cached.maxX;
+                minY = cached.minY;
+                maxY = cached.maxY;
+                imageWidth = cached.imageWidth;
+                imageHeight = cached.imageHeight;
             } else {
-                minX = 0;
-                minY = 0;
-                maxX = backgroundImage.getWidth() - 1;
-                maxY = backgroundImage.getHeight() - 1;
-                imageWidth = backgroundImage.getWidth() * IMAGE_SCALE;
-                imageHeight = backgroundImage.getHeight() * IMAGE_SCALE;
+                minX = current.xpos - IMAGE_HALF_SPAN;
+                maxX = minX + IMAGE_SPAN - 1;
+                minY = current.ypos - IMAGE_HALF_SPAN;
+                maxY = minY + IMAGE_SPAN - 1;
+                imageWidth = IMAGE_SPAN * IMAGE_SCALE;
+                imageHeight = IMAGE_SPAN * IMAGE_SCALE;
             }
-
-            BaseImageCache cachedBase = baseImageCache;
-            boolean reuseBase = cachedBase != null
-                    && cachedBase.matches(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight, isDark);
-            byte[] data = null;
-            if (!reuseBase) {
-                BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2 = image.createGraphics();
-                g2.setColor(isDark ? new Color(12, 12, 18) : new Color(240, 240, 245));
-                g2.fillRect(0, 0, imageWidth, imageHeight);
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                g2.setStroke(new BasicStroke(IMAGE_SCALE));
-
-                if (backgroundImage != null) {
-                    drawMapBackground(backgroundImage, g2);
-                }
-
-                g2.dispose();
-                baseImageCache = new BaseImageCache(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,
-                        image, isDark);
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                ImageIO.write(image, "png", out);
-                data = out.toByteArray();
-            }
-
-            int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
-            int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
-
-            String mapName = getMapDisplayName(current.mapId);
-            return new MapImage(
-                    data,
-                    imageWidth,
-                    imageHeight,
-                    "image/png",
-                    mapName,
-                    currentX,
-                    currentY,
-                    reuseBase,
-                    current.mapId,
-                    minX,
-                    minY,
-                    IMAGE_SCALE,
-                    ROOM_PIXEL_OFFSET_X,
-                    ROOM_PIXEL_OFFSET_Y,
-                    current.roomId,
-                    current.xpos,
-                    current.ypos,
-                    current.roomShort,
-                    isDark
-            );
+        } else {
+            minX = 0;
+            minY = 0;
+            maxX = backgroundImage.getWidth() - 1;
+            maxY = backgroundImage.getHeight() - 1;
+            imageWidth = backgroundImage.getWidth() * IMAGE_SCALE;
+            imageHeight = backgroundImage.getHeight() * IMAGE_SCALE;
         }
+
+        BaseImageCache cachedBase = baseImageCache;
+        boolean reuseBase = cachedBase != null
+                && cachedBase.matches(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight, isDark);
+        byte[] data = null;
+        if (!reuseBase) {
+            BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = image.createGraphics();
+            g2.setColor(isDark ? new Color(12, 12, 18) : new Color(240, 240, 245));
+            g2.fillRect(0, 0, imageWidth, imageHeight);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            g2.setStroke(new BasicStroke(IMAGE_SCALE));
+
+            if (backgroundImage != null) {
+                drawMapBackground(backgroundImage, g2);
+            }
+
+            g2.dispose();
+            baseImageCache = new BaseImageCache(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,
+                    image, isDark);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", out);
+            data = out.toByteArray();
+        }
+
+        int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
+        int currentY = (current.ypos - minY) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_Y;
+
+        String mapName = getMapDisplayName(current.mapId);
+        return new MapImage(
+                data,
+                imageWidth,
+                imageHeight,
+                "image/png",
+                mapName,
+                currentX,
+                currentY,
+                reuseBase,
+                current.mapId,
+                minX,
+                minY,
+                IMAGE_SCALE,
+                ROOM_PIXEL_OFFSET_X,
+                ROOM_PIXEL_OFFSET_Y,
+                current.roomId,
+                current.xpos,
+                current.ypos,
+                current.roomShort,
+                isDark
+        );
     }
 
-    public MapImage renderMapByMapId(int mapId, boolean isDark) throws SQLException, MapLookupException, IOException {
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
-
+    public MapImage renderMapByMapId(int mapId, boolean isDark) throws MapLookupException, IOException {
         BufferedImage backgroundImage = loadMapBackground(mapId, isDark);
         if (backgroundImage == null) {
             throw new MapLookupException("No background image for map " + mapId);
@@ -294,57 +287,30 @@ public class RoomMapService {
         return areas;
     }
 
-    public String findRepresentativeRoomId(int mapId) throws SQLException, MapLookupException {
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
-        String sql = "select room_id from rooms where map_id = ? order by room_id limit 1";
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, mapId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("room_id");
-                }
-            }
-        }
-        return null;
+    public String findRepresentativeRoomId(int mapId) {
+        return dataService.getRooms().values().stream()
+                .filter(r -> r.getMapId() == mapId)
+                .map(RoomData::getRoomId)
+                .sorted()
+                .findFirst()
+                .orElse(null);
     }
 
-    public List<RoomSearchResult> searchRoomsByName(String term, int limit) throws SQLException, MapLookupException {
+    public List<RoomSearchResult> searchRoomsByName(String term, int limit) throws MapLookupException {
         if (term == null || term.isBlank()) {
             throw new MapLookupException("Search term cannot be blank.");
-        }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
         }
         String trimmed = term.trim().toLowerCase();
         String normalized = stripLeadingRoomArticle(trimmed);
         if (normalized.isBlank()) {
             throw new MapLookupException("Search term cannot be blank.");
         }
-        String sql = "select room_id, map_id, xpos, ypos, room_short, room_type " +
-                "from rooms where lower(room_short) like ? order by room_short, map_id, room_id limit ?";
-        List<RoomSearchResult> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + normalized + "%");
-            stmt.setInt(2, limit);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    results.add(new RoomSearchResult(
-                            rs.getString("room_id"),
-                            rs.getInt("map_id"),
-                            rs.getInt("xpos"),
-                            rs.getInt("ypos"),
-                            rs.getString("room_short"),
-                            rs.getString("room_type"),
-                            null
-                    ));
-                }
-            }
-        }
-        return results;
+        return dataService.getRooms().values().stream()
+                .filter(r -> r.getRoomShort().toLowerCase().contains(normalized))
+                .map(r -> new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), null))
+                .sorted(Comparator.comparing(RoomSearchResult::roomShort).thenComparing(RoomSearchResult::mapId).thenComparing(RoomSearchResult::roomId))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
     private static String stripLeadingRoomArticle(String term) {
@@ -357,232 +323,193 @@ public class RoomMapService {
         return term;
     }
 
-    public List<NpcSearchResult> searchNpcsByName(String term, int limit) throws SQLException, MapLookupException {
+    public List<NpcSearchResult> searchNpcsByName(String term, int limit) throws MapLookupException {
         if (term == null || term.isBlank()) {
             throw new MapLookupException("Search term cannot be blank.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
         String trimmed = term.trim().toLowerCase();
-        String sql = "select npc_info.npc_id, npc_info.npc_name, rooms.room_id, rooms.map_id, " +
-                "rooms.xpos, rooms.ypos, rooms.room_short, rooms.room_type " +
-                "from npc_info join rooms on npc_info.room_id = rooms.room_id " +
-                "where lower(npc_info.npc_name) like ? " +
-                "order by lower(npc_info.npc_name), rooms.map_id, rooms.room_id " +
-                "limit ?";
-        List<NpcSearchResult> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + trimmed + "%");
-            stmt.setInt(2, limit);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    results.add(new NpcSearchResult(
-                            rs.getString("npc_id"),
-                            rs.getString("npc_name"),
-                            rs.getString("room_id"),
-                            rs.getInt("map_id"),
-                            rs.getInt("xpos"),
-                            rs.getInt("ypos"),
-                            rs.getString("room_short"),
-                            rs.getString("room_type")
-                    ));
-                }
-            }
-        }
-        return results;
+        return dataService.getNpcs().values().stream()
+                .filter(n -> n.getNpcName().toLowerCase().contains(trimmed))
+                .map(n -> {
+                    RoomData r = dataService.getRoom(n.getRoomId());
+                    if (r == null) return null;
+                    return new NpcSearchResult(n.getNpcId(), n.getNpcName(), r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType());
+                })
+                .filter(java.util.Objects::nonNull)
+                .sorted(Comparator.comparing(NpcSearchResult::npcName).thenComparing(NpcSearchResult::mapId).thenComparing(NpcSearchResult::roomId))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
-    public List<ItemSearchResult> searchItemsByName(String term, int limit) throws SQLException, MapLookupException {
+    public List<ItemSearchResult> searchItemsByName(String term, int limit) throws MapLookupException {
         if (term == null || term.isBlank()) {
             throw new MapLookupException("Search term cannot be blank.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
         String trimmed = term.trim().toLowerCase();
-        String sql = "select item_name from items where lower(item_name) like ? order by lower(item_name) limit ?";
-        List<ItemSearchResult> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, "%" + trimmed + "%");
-            stmt.setInt(2, limit);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    results.add(new ItemSearchResult(rs.getString("item_name")));
-                }
-            }
-        }
-        return results;
+        return dataService.getItems().values().stream()
+                .filter(i -> i.getItemName().toLowerCase().contains(trimmed))
+                .map(i -> new ItemSearchResult(i.getItemName()))
+                .sorted(Comparator.comparing(ItemSearchResult::itemName))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
-    public List<ItemSearchResult> searchItemsByExactName(String term, int limit) throws SQLException, MapLookupException {
+    public List<ItemSearchResult> searchItemsByExactName(String term, int limit) throws MapLookupException {
         if (term == null || term.isBlank()) {
             throw new MapLookupException("Search term cannot be blank.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
         String trimmed = term.trim().toLowerCase();
-        String sql = "select item_name from items where lower(item_name) = ? order by lower(item_name) limit ?";
-        List<ItemSearchResult> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, trimmed);
-            stmt.setInt(2, limit);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    results.add(new ItemSearchResult(rs.getString("item_name")));
-                }
-            }
-        }
-        return results;
+        return dataService.getItems().values().stream()
+                .filter(i -> i.getItemName().equalsIgnoreCase(trimmed))
+                .map(i -> new ItemSearchResult(i.getItemName()))
+                .sorted(Comparator.comparing(ItemSearchResult::itemName))
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
-    public List<RoomSearchResult> searchRoomsByItemName(String itemName, int limit) throws SQLException, MapLookupException {
+    public List<RoomSearchResult> searchRoomsByItemName(String itemName, int limit) throws MapLookupException {
         if (itemName == null || itemName.isBlank()) {
             throw new MapLookupException("Item name cannot be blank.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
-        String sql = "select rooms.room_id, rooms.map_id, rooms.xpos, rooms.ypos, rooms.room_short, rooms.room_type, refs.source_info " +
-                "from rooms join ( " +
-                "  select room_id, 'Shop' as source_info from shop_items where lower(item_name) = ? " +
-                "  union " +
-                "  select npc_info.room_id, 'NPC: ' || npc_info.npc_name as source_info from npc_items join npc_info on npc_items.npc_id = npc_info.npc_id " +
-                "  where lower(npc_items.item_name) = ? " +
-                "  union " +
-                "  select special_find_note as room_id, 'Special' as source_info from items " +
-                "  where lower(item_name) = ? and special_find_note <> ''" +
-                ") refs on rooms.room_id = refs.room_id " +
-                "order by (case " +
-                "  when refs.source_info = 'Shop' then 0 " +
-                "  when refs.source_info = 'Special' then 1 " +
-                "  when refs.source_info like 'NPC:%' then 2 " +
-                "  else 3 " +
-                "end), rooms.map_id, rooms.room_short, rooms.room_id " +
-                "limit ?";
+        String trimmed = itemName.trim().toLowerCase();
         List<RoomSearchResult> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            String lowered = itemName.trim().toLowerCase();
-            stmt.setString(1, lowered);
-            stmt.setString(2, lowered);
-            stmt.setString(3, lowered);
-            stmt.setInt(4, limit);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    results.add(new RoomSearchResult(
-                            rs.getString("room_id"),
-                            rs.getInt("map_id"),
-                            rs.getInt("xpos"),
-                            rs.getInt("ypos"),
-                            rs.getString("room_short"),
-                            rs.getString("room_type"),
-                            rs.getString("source_info")
-                    ));
-                }
-            }
-        }
-        return results;
+
+        // Search in shops
+        dataService.getRooms().values().stream()
+                .filter(r -> r.getShopItems().keySet().stream().anyMatch(i -> i.equalsIgnoreCase(trimmed)))
+                .forEach(r -> results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "Shop")));
+
+        // Search in NPCs
+        dataService.getNpcs().values().stream()
+                .filter(n -> n.getItems().keySet().stream().anyMatch(i -> i.equalsIgnoreCase(trimmed)))
+                .forEach(n -> {
+                    RoomData r = dataService.getRoom(n.getRoomId());
+                    if (r != null) {
+                        results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "NPC: " + n.getNpcName()));
+                    }
+                });
+
+        // Search in items (special find note)
+        dataService.getItems().values().stream()
+                .filter(i -> i.getItemName().equalsIgnoreCase(trimmed) && i.getSpecialFindNote() != null && !i.getSpecialFindNote().isBlank())
+                .forEach(i -> {
+                    RoomData r = dataService.getRoom(i.getSpecialFindNote());
+                    if (r != null) {
+                        results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "Special"));
+                    }
+                });
+
+        return results.stream()
+                .sorted((a, b) -> {
+                    int rankA = getSourceRank(a.sourceInfo());
+                    int rankB = getSourceRank(b.sourceInfo());
+                    if (rankA != rankB) return rankA - rankB;
+                    int c = Integer.compare(a.mapId(), b.mapId());
+                    if (c != 0) return c;
+                    c = a.roomShort().compareTo(b.roomShort());
+                    if (c != 0) return c;
+                    return a.roomId().compareTo(b.roomId());
+                })
+                .limit(limit)
+                .collect(Collectors.toList());
     }
 
-    public RouteResult findRoute(String startRoomId, String targetRoomId) throws SQLException, MapLookupException {
+    private int getSourceRank(String sourceInfo) {
+        if (sourceInfo == null) return 3;
+        if (sourceInfo.equals("Shop")) return 0;
+        if (sourceInfo.equals("Special")) return 1;
+        if (sourceInfo.startsWith("NPC:")) return 2;
+        return 3;
+    }
+
+    public RouteResult findRoute(String startRoomId, String targetRoomId) throws MapLookupException {
         return findRoute(startRoomId, targetRoomId, true, null);
     }
 
     public RouteResult findRoute(String startRoomId, String targetRoomId, boolean useTeleports)
-            throws SQLException, MapLookupException {
+            throws MapLookupException {
         return findRoute(startRoomId, targetRoomId, useTeleports, null);
     }
 
     public RouteResult findRoute(String startRoomId, String targetRoomId, boolean useTeleports, String characterName)
-            throws SQLException, MapLookupException {
+            throws MapLookupException {
         if (startRoomId == null || startRoomId.isBlank()) {
             throw new MapLookupException("Start room not available.");
         }
         if (targetRoomId == null || targetRoomId.isBlank()) {
             throw new MapLookupException("Target room not available.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
+
+        RoomRecord start = loadRoom(startRoomId);
+        if (start == null) {
+            throw new MapLookupException("Start room not found in map database.");
         }
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
-            RoomRecord start = loadRoom(conn, startRoomId);
-            if (start == null) {
-                throw new MapLookupException("Start room not found in map database.");
-            }
-            RoomRecord target = loadRoom(conn, targetRoomId);
-            if (target == null) {
-                throw new MapLookupException("Target room not found in map database.");
-            }
-            if (start.roomId.equals(target.roomId)) {
-                return new RouteResult(List.of());
-            }
-            Map<String, RoomRecord> roomCache = new HashMap<>();
-            roomCache.put(start.roomId, start);
-            roomCache.put(target.roomId, target);
+        RoomRecord target = loadRoom(targetRoomId);
+        if (target == null) {
+            throw new MapLookupException("Target room not found in map database.");
+        }
+        if (start.roomId.equals(target.roomId)) {
+            return new RouteResult(List.of());
+        }
+        Map<String, RoomRecord> roomCache = new HashMap<>();
+        roomCache.put(start.roomId, start);
+        roomCache.put(target.roomId, target);
 
-            Map<String, Integer> gScore = new HashMap<>();
-            Map<String, PreviousStep> cameFrom = new HashMap<>();
-            PriorityQueue<RouteNode> open = new PriorityQueue<>(Comparator.comparingDouble(RouteNode::fScore));
-            gScore.put(start.roomId, 0);
-            open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
-            TeleportRegistry.CharacterTeleports characterTeleports = TeleportRegistry.forCharacter(characterName);
-            boolean teleportsReliable = characterTeleports.reliable();
+        Map<String, Integer> gScore = new HashMap<>();
+        Map<String, PreviousStep> cameFrom = new HashMap<>();
+        PriorityQueue<RouteNode> open = new PriorityQueue<>(Comparator.comparingDouble(RouteNode::fScore));
+        gScore.put(start.roomId, 0);
+        open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
+        TeleportRegistry.CharacterTeleports characterTeleports = TeleportRegistry.forCharacter(characterName);
+        boolean teleportsReliable = characterTeleports.reliable();
 
-            if (useTeleports) {
-                List<ResolvedTeleport> teleports = resolveTeleports(conn, roomCache, characterTeleports.teleports());
-                for (ResolvedTeleport teleport : teleports) {
-                    if (teleport.roomId.equals(start.roomId)) {
-                        continue;
-                    }
-                    int tentativeScore = TELEPORT_START_COST;
-                    Integer bestScore = gScore.get(teleport.roomId);
-                    if (bestScore == null || tentativeScore < bestScore) {
-                        cameFrom.put(teleport.roomId, new PreviousStep(start.roomId, teleport.command()));
-                        gScore.put(teleport.roomId, tentativeScore);
-                        double fScore = tentativeScore + estimateDistance(teleport.room, target);
-                        open.add(new RouteNode(teleport.roomId, fScore));
-                    }
+        if (useTeleports) {
+            List<ResolvedTeleport> teleports = resolveTeleports(roomCache, characterTeleports.teleports());
+            for (ResolvedTeleport teleport : teleports) {
+                if (teleport.roomId.equals(start.roomId)) {
+                    continue;
+                }
+                int tentativeScore = TELEPORT_START_COST;
+                Integer bestScore = gScore.get(teleport.roomId);
+                if (bestScore == null || tentativeScore < bestScore) {
+                    cameFrom.put(teleport.roomId, new PreviousStep(start.roomId, teleport.command()));
+                    gScore.put(teleport.roomId, tentativeScore);
+                    double fScore = tentativeScore + estimateDistance(teleport.room, target);
+                    open.add(new RouteNode(teleport.roomId, fScore));
                 }
             }
+        }
 
-            try (PreparedStatement stmt = conn.prepareStatement(
-                    "select connect_id, exit from room_exits where room_id = ?")) {
-                while (!open.isEmpty()) {
-                    RouteNode current = open.poll();
-                    if (current.roomId.equals(target.roomId)) {
-                        List<RouteStep> steps = reconstructRoute(cameFrom, target.roomId);
-                        if (useTeleports && !teleportsReliable) {
-                            steps = applyUnreliableTeleportRule(steps);
-                        }
-                        return new RouteResult(steps);
-                    }
-                    Integer currentScore = gScore.get(current.roomId);
-                    if (currentScore == null) {
+        while (!open.isEmpty()) {
+            RouteNode current = open.poll();
+            if (current.roomId.equals(target.roomId)) {
+                List<RouteStep> steps = reconstructRoute(cameFrom, target.roomId);
+                if (useTeleports && !teleportsReliable) {
+                    steps = applyUnreliableTeleportRule(steps);
+                }
+                return new RouteResult(steps);
+            }
+            Integer currentScore = gScore.get(current.roomId);
+            if (currentScore == null) {
+                continue;
+            }
+
+            RoomData currentData = dataService.getRoom(current.roomId);
+            if (currentData != null) {
+                for (Map.Entry<String, String> entry : currentData.getExits().entrySet()) {
+                    String exit = entry.getKey();
+                    String neighborId = entry.getValue();
+                    RoomRecord neighbor = getRoomCached(neighborId, roomCache);
+                    if (neighbor == null) {
                         continue;
                     }
-                    stmt.setString(1, current.roomId);
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            String neighborId = rs.getString("connect_id");
-                            String exit = rs.getString("exit");
-                            RoomRecord neighbor = getRoomCached(conn, neighborId, roomCache);
-                            if (neighbor == null) {
-                                continue;
-                            }
-                            int tentativeScore = currentScore + 1;
-                            Integer bestScore = gScore.get(neighborId);
-                            if (bestScore == null || tentativeScore < bestScore) {
-                                cameFrom.put(neighborId, new PreviousStep(current.roomId, exit));
-                                gScore.put(neighborId, tentativeScore);
-                                double fScore = tentativeScore + estimateDistance(neighbor, target);
-                                open.add(new RouteNode(neighborId, fScore));
-                            }
-                        }
+                    int tentativeScore = currentScore + 1;
+                    Integer bestScore = gScore.get(neighborId);
+                    if (bestScore == null || tentativeScore < bestScore) {
+                        cameFrom.put(neighborId, new PreviousStep(current.roomId, exit));
+                        gScore.put(neighborId, tentativeScore);
+                        double fScore = tentativeScore + estimateDistance(neighbor, target);
+                        open.add(new RouteNode(neighborId, fScore));
                     }
                 }
             }
@@ -594,167 +521,79 @@ public class RoomMapService {
         return MapBackground.displayNameFor(mapId);
     }
 
-    public RoomLocation lookupRoomLocation(String roomId) throws SQLException, MapLookupException {
+    public RoomLocation lookupRoomLocation(String roomId) throws MapLookupException {
         if (roomId != null && "UULibrary".equalsIgnoreCase(roomId.trim())) {
             return new RoomLocation("UULibrary", 47, 165, 4810, "Unseen University Library");
         }
         if (roomId == null || roomId.isBlank()) {
             throw new MapLookupException("No room info available yet.");
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
+        RoomRecord room = loadRoom(roomId);
+        if (room == null) {
+            throw new MapLookupException("Current room not found in map database.");
         }
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
-            RoomRecord room = loadRoom(conn, roomId);
-            if (room == null) {
-                throw new MapLookupException("Current room not found in map database.");
-            }
-            return new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort);
-        }
+        return new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort);
     }
 
-    public List<RoomLocation> lookupRoomLocations(List<String> roomIds) throws SQLException, MapLookupException {
+    public List<RoomLocation> lookupRoomLocations(List<String> roomIds) {
         if (roomIds == null || roomIds.isEmpty()) {
             return List.of();
         }
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
         List<RoomLocation> results = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath)) {
-            for (String roomId : roomIds) {
-                if (roomId == null || roomId.isBlank()) {
-                    results.add(null);
-                    continue;
-                }
-                RoomRecord room = loadRoom(conn, roomId);
-                if (room == null) {
-                    results.add(null);
-                    continue;
-                }
-                results.add(new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort));
+        for (String roomId : roomIds) {
+            if (roomId == null || roomId.isBlank()) {
+                results.add(null);
+                continue;
             }
+            RoomRecord room = loadRoom(roomId);
+            if (room == null) {
+                results.add(null);
+                continue;
+            }
+            results.add(new RoomLocation(room.roomId, room.mapId, room.xpos, room.ypos, room.roomShort));
         }
         return results;
     }
 
-    public String findRoomIdByCoordinates(int mapId, int x, int y) throws SQLException {
-        if (!driverAvailable) {
-            return null;
-        }
-        String sql = "select room_id from rooms where map_id = ? and xpos = ? and ypos = ?";
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, mapId);
-            stmt.setInt(2, x);
-            stmt.setInt(3, y);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("room_id");
-                }
-            }
-        }
-        return null;
+    public String findRoomIdByCoordinates(int mapId, int x, int y) {
+        return dataService.getRooms().values().stream()
+                .filter(r -> r.getMapId() == mapId && r.getXpos() == x && r.getYpos() == y)
+                .map(RoomData::getRoomId)
+                .findFirst()
+                .orElse(null);
     }
 
-    public RoomLocation findNearestRoom(int mapId, int x, int y) throws SQLException, MapLookupException {
-        if (!driverAvailable) {
-            throw new MapLookupException("SQLite driver not available.");
-        }
-        String sql = "select room_id, map_id, xpos, ypos, room_short " +
-                "from rooms where map_id = ? " +
-                "order by ((xpos - ?) * (xpos - ?) + (ypos - ?) * (ypos - ?)) asc limit 1";
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, mapId);
-            stmt.setInt(2, x);
-            stmt.setInt(3, x);
-            stmt.setInt(4, y);
-            stmt.setInt(5, y);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new RoomLocation(
-                            rs.getString("room_id"),
-                            rs.getInt("map_id"),
-                            rs.getInt("xpos"),
-                            rs.getInt("ypos"),
-                            rs.getString("room_short")
-                    );
-                }
-            }
-        }
-        return null;
+    public RoomLocation findNearestRoom(int mapId, int x, int y) {
+        return dataService.getRooms().values().stream()
+                .filter(r -> r.getMapId() == mapId)
+                .min(Comparator.comparingDouble(r -> Math.hypot(r.getXpos() - x, r.getYpos() - y)))
+                .map(r -> new RoomLocation(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort()))
+                .orElse(null);
     }
 
-    private RoomRecord loadRoom(Connection conn, String roomId) throws SQLException {
-        String sql = "select room_id, map_id, xpos, ypos, room_short, room_type from rooms where room_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, roomId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (!rs.next()) {
-                    return null;
-                }
-                return new RoomRecord(
-                        rs.getString("room_id"),
-                        rs.getInt("map_id"),
-                        rs.getInt("xpos"),
-                        rs.getInt("ypos"),
-                        rs.getString("room_short"),
-                        rs.getString("room_type")
-                );
-            }
-        }
+    private RoomRecord loadRoom(String roomId) {
+        return toRecord(dataService.getRoom(roomId));
     }
 
-    private Map<String, RoomRecord> loadRoomsInArea(Connection conn, int mapId, int minX, int maxX, int minY, int maxY)
-            throws SQLException {
-        String sql = "select room_id, map_id, xpos, ypos, room_short, room_type " +
-                "from rooms where map_id = ? and xpos between ? and ? and ypos between ? and ?";
-        Map<String, RoomRecord> rooms = new HashMap<>();
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, mapId);
-            stmt.setInt(2, minX);
-            stmt.setInt(3, maxX);
-            stmt.setInt(4, minY);
-            stmt.setInt(5, maxY);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    RoomRecord room = new RoomRecord(
-                            rs.getString("room_id"),
-                            rs.getInt("map_id"),
-                            rs.getInt("xpos"),
-                            rs.getInt("ypos"),
-                            rs.getString("room_short"),
-                            rs.getString("room_type")
-                    );
-                    rooms.put(room.roomId, room);
-                }
-            }
-        }
-        return rooms;
-    }
-
-    private RoomRecord getRoomCached(Connection conn, String roomId, Map<String, RoomRecord> cache) throws SQLException {
+    private RoomRecord getRoomCached(String roomId, Map<String, RoomRecord> cache) {
         RoomRecord cached = cache.get(roomId);
         if (cached != null) {
             return cached;
         }
-        RoomRecord loaded = loadRoom(conn, roomId);
+        RoomRecord loaded = loadRoom(roomId);
         if (loaded != null) {
             cache.put(roomId, loaded);
         }
         return loaded;
     }
 
-    private List<ResolvedTeleport> resolveTeleports(Connection conn,
-                                                    Map<String, RoomRecord> cache,
-                                                    List<TeleportRegistry.TeleportLocation> teleportsToResolve)
-            throws SQLException {
+    private List<ResolvedTeleport> resolveTeleports(Map<String, RoomRecord> cache,
+                                                    List<TeleportRegistry.TeleportLocation> teleportsToResolve) {
         List<ResolvedTeleport> teleports = new ArrayList<>();
         for (TeleportRegistry.TeleportLocation teleport : teleportsToResolve) {
             String roomId = teleport.roomId();
             if (roomId == null) continue;
-            RoomRecord room = getRoomCached(conn, roomId, cache);
+            RoomRecord room = getRoomCached(roomId, cache);
             if (room == null) {
                 continue;
             }
@@ -822,46 +661,6 @@ public class RoomMapService {
         g2.drawImage(source, 0, 0, destRight, destBottom, 0, 0, source.getWidth(), source.getHeight(), null);
     }
 
-    private void drawConnectionsImage(Connection conn, Map<String, RoomRecord> rooms, int minX, int minY, Graphics2D g2)
-            throws SQLException {
-        if (rooms.isEmpty()) {
-            return;
-        }
-        List<String> ids = new ArrayList<>(rooms.keySet());
-        StringBuilder placeholders = new StringBuilder();
-        for (int i = 0; i < ids.size(); i++) {
-            if (i > 0) placeholders.append(',');
-            placeholders.append('?');
-        }
-        String sql = "select room_id, connect_id from room_exits where room_id in (" + placeholders + ")";
-        g2.setColor(new Color(80, 90, 120));
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (int i = 0; i < ids.size(); i++) {
-                stmt.setString(i + 1, ids.get(i));
-            }
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    RoomRecord from = rooms.get(rs.getString("room_id"));
-                    RoomRecord to = rooms.get(rs.getString("connect_id"));
-                    if (from == null || to == null) {
-                        continue;
-                    }
-                    int fromX = (from.xpos - minX) * IMAGE_SCALE;
-                    int fromY = (from.ypos - minY) * IMAGE_SCALE;
-                    int toX = (to.xpos - minX) * IMAGE_SCALE;
-                    int toY = (to.ypos - minY) * IMAGE_SCALE;
-                    drawConnectionLine(
-                            g2,
-                            fromX + ROOM_PIXEL_OFFSET_X,
-                            fromY + ROOM_PIXEL_OFFSET_Y,
-                            toX + ROOM_PIXEL_OFFSET_X,
-                            toY + ROOM_PIXEL_OFFSET_Y
-                    );
-                }
-            }
-        }
-    }
-
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
     }
 
@@ -892,48 +691,6 @@ public class RoomMapService {
         public RouteResult {
             steps = List.copyOf(steps);
         }
-    }
-
-    private static void drawRoomSquare(Graphics2D g2, int px, int py, boolean isCurrent, int imageWidth, int imageHeight) {
-        if (isCurrent) {
-            drawCurrentRoom(g2, px, py, imageWidth, imageHeight);
-            return;
-        }
-        int half = ROOM_PIXEL_SIZE / 2;
-        int topLeftX = px - half;
-        int topLeftY = py - half;
-        int startX = Math.max(0, topLeftX);
-        int startY = Math.max(0, topLeftY);
-        int endX = Math.min(imageWidth, topLeftX + ROOM_PIXEL_SIZE);
-        int endY = Math.min(imageHeight, topLeftY + ROOM_PIXEL_SIZE);
-        int width = endX - startX;
-        int height = endY - startY;
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-        g2.setColor(new Color(208, 212, 230));
-        g2.fillRect(startX, startY, width, height);
-    }
-
-    private static void drawCurrentRoom(Graphics2D g2, int px, int py, int imageWidth, int imageHeight) {
-        // Current room marker is drawn as an animated overlay in the UI.
-    }
-
-    private static void drawConnectionLine(Graphics2D g2, int fromX, int fromY, int toX, int toY) {
-        int dx = toX - fromX;
-        int dy = toY - fromY;
-        if (dx == 0 && dy == 0) {
-            return;
-        }
-        double length = Math.hypot(dx, dy);
-        double ux = dx / length;
-        double uy = dy / length;
-        double offset = (ROOM_PIXEL_SIZE + IMAGE_SCALE) / 2.0;
-        int startX = (int) Math.round(fromX + ux * offset);
-        int startY = (int) Math.round(fromY + uy * offset);
-        int endX = (int) Math.round(toX - ux * offset);
-        int endY = (int) Math.round(toY - uy * offset);
-        g2.drawLine(startX, startY, endX, endY);
     }
 
     public record MapImage(byte[] data,

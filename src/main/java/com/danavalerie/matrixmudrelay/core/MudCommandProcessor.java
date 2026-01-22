@@ -1044,7 +1044,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private RoomMapService.RouteResult calculateSpeedwalkRoute(String currentRoomId,
                                                                String targetRoomId,
                                                                String characterName)
-            throws RoomMapService.MapLookupException, java.sql.SQLException {
+            throws RoomMapService.MapLookupException {
         RoomMapService.RouteResult route = mapService.findRoute(
                 currentRoomId,
                 targetRoomId,
@@ -1079,7 +1079,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         try {
             List<RoomMapService.RoomLocation> locations = mapService.lookupRoomLocations(roomIds);
             output.updateSpeedwalkPath(locations);
-        } catch (RoomMapService.MapLookupException | java.sql.SQLException e) {
+        } catch (Exception e) {
             log.warn("speedwalk path lookup failed err={}", e.toString());
             output.updateSpeedwalkPath(List.of());
         }

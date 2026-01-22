@@ -69,7 +69,7 @@ public final class MapPanel extends JPanel {
     private static final int ZOOM_MAX = 200;
     private static final int ZOOM_DEFAULT = 100;
     private static final RoomMapService.MapArea NONE_AREA = new RoomMapService.MapArea(-1, "<None>");
-    private final RoomMapService mapService = new RoomMapService("database.db");
+    private final RoomMapService mapService;
     private final JComboBox<RoomMapService.MapArea> areaComboBox;
     private final DefaultComboBoxModel<RoomMapService.MapArea> areaComboBoxModel;
     private final Map<Integer, RoomMapService.MapArea> areaOptions = new HashMap<>();
@@ -99,10 +99,12 @@ public final class MapPanel extends JPanel {
     private Timer animationTimer;
     private boolean updatingAreaSelection;
 
-    public MapPanel(int initialZoomPercent,
+    public MapPanel(RoomMapService mapService,
+                    int initialZoomPercent,
                     IntConsumer zoomChangeListener,
                     boolean initialInvertMap,
                     Consumer<Boolean> invertChangeListener) {
+        this.mapService = mapService;
         this.zoomPercent = sanitizeZoom(initialZoomPercent);
         this.zoomChangeListener = zoomChangeListener;
         this.invertMap = initialInvertMap;
@@ -556,8 +558,6 @@ public final class MapPanel extends JPanel {
                 return;
             }
             updateSelectedRoom(nearest, mapImage);
-        } catch (RoomMapService.MapLookupException e) {
-            showMessage("Map error: " + e.getMessage());
         } catch (Exception e) {
             showMessage("Map error: Unable to update selection.");
         }
@@ -730,8 +730,6 @@ public final class MapPanel extends JPanel {
             } else {
                 updateMap(roomId);
             }
-        } catch (RoomMapService.MapLookupException e) {
-            showMessage("Map error: " + e.getMessage());
         } catch (Exception e) {
             showMessage("Map error: Unable to load selected map.");
         }

@@ -1118,5 +1118,11 @@
     "location": "Dimitris\u0027 Dummies on Dimwell Street",
     "roomId": "96db778460ad523c0189a195f3b2db4b697504a3",
     "commands": []
+  },
+  {
+    "npc": "Mrs Armitage",
+    "location": "the embroidery shop on Loom Alley",
+    "roomId": "95fa584ac5118e028a5274ca6253f3aaac20c865",
+    "commands": []
   }
 ]

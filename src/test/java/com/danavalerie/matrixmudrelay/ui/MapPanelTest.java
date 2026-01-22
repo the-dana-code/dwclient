@@ -33,7 +33,7 @@ public class MapPanelTest {
 
     @Test
     public void testBuildScaledSpeedwalkPathNullElements() throws Exception {
-        MapPanel mapPanel = new MapPanel(100, zoom -> {}, false, invert -> {});
+        MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, zoom -> {}, false, invert -> {});
         
         // Prepare speedwalkPath with locations on different maps to trigger adding null to points
         RoomMapService.RoomLocation loc1 = new RoomMapService.RoomLocation("1", 1, 10, 10, "Room 1");
@@ -62,7 +62,7 @@ public class MapPanelTest {
 
     @Test
     public void testToggleInvertChangesImage() throws Exception {
-        MapPanel mapPanel = new MapPanel(100, zoom -> {}, false, invert -> {});
+        MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, zoom -> {}, false, invert -> {});
         
         // Create a simple test image
         BufferedImage testImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
@@ -108,12 +108,13 @@ public class MapPanelTest {
 
     @Test
     public void testMapBackgroundColors() {
+        RoomMapService rms = new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService());
         // Inverted (true) should now be DARK (BACKGROUND_DARK = 12, 12, 18)
-        MapPanel mapPanelInverted = new MapPanel(100, z -> {}, true, i -> {});
+        MapPanel mapPanelInverted = new MapPanel(rms, 100, z -> {}, true, i -> {});
         org.junit.jupiter.api.Assertions.assertEquals(new Color(12, 12, 18), mapPanelInverted.getBackground());
 
         // Not inverted (false) should now be LIGHT (BACKGROUND_LIGHT = 245, 245, 240)
-        MapPanel mapPanelNotInverted = new MapPanel(100, z -> {}, false, i -> {});
+        MapPanel mapPanelNotInverted = new MapPanel(rms, 100, z -> {}, false, i -> {});
         org.junit.jupiter.api.Assertions.assertEquals(new Color(245, 245, 240), mapPanelNotInverted.getBackground());
         
         System.out.println("[DEBUG_LOG] testMapBackgroundColors passed");
@@ -121,7 +122,7 @@ public class MapPanelTest {
 
     @Test
     public void testMapLabelBackgroundMatchesTheme() throws Exception {
-        MapPanel mapPanel = new MapPanel(100, z -> {}, false, invert -> {});
+        MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, z -> {}, false, invert -> {});
         
         java.lang.reflect.Field mapLabelField = MapPanel.class.getDeclaredField("mapLabel");
         mapLabelField.setAccessible(true);
@@ -145,7 +146,7 @@ public class MapPanelTest {
     }
     @Test
     public void testButtonBackgroundMatchesTheme() throws Exception {
-        MapPanel mapPanel = new MapPanel(100, z -> {}, false, invert -> {});
+        MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, z -> {}, false, invert -> {});
         
         java.lang.reflect.Field invertButtonField = MapPanel.class.getDeclaredField("invertButton");
         invertButtonField.setAccessible(true);
@@ -164,7 +165,7 @@ public class MapPanelTest {
 
     @Test
     public void testCenterButtonExistenceAndState() throws Exception {
-        MapPanel mapPanel = new MapPanel(100, z -> {}, false, invert -> {});
+        MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, z -> {}, false, invert -> {});
         
         java.lang.reflect.Field centerButtonField = MapPanel.class.getDeclaredField("centerButton");
         centerButtonField.setAccessible(true);

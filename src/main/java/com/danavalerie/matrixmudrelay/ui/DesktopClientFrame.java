@@ -186,6 +186,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             });
         });
         this.mapPanel = new MapPanel(
+                routeMapService,
                 resolveMapZoomPercent(),
                 this::persistMapZoomConfig,
                 resolveMapInvert(),
