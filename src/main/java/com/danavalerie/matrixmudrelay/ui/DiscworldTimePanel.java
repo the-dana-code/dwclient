@@ -23,48 +23,10 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
 
     private static final String[] CYCLES = {"Prime", "Secundus"};
 
-    // --- In-game clock mapping (per existing code) ---
-    // 18 real seconds = 1 in-game minute
-    private static final long REAL_SECONDS_PER_IG_MINUTE = 18L;
-    private static final long IG_MINUTES_PER_DAY = 24L * 60L;
-    private static final long REAL_SECONDS_PER_IG_DAY = REAL_SECONDS_PER_IG_MINUTE * IG_MINUTES_PER_DAY; // 25920
-    private static final int DAYS_PER_YEAR = 400;
-
-    // --- Sunrise/sunset model (single-harmonic 400-day sinusoid) ---
-    // Minutes after midnight (0..1439). These coefficients were derived from the observed table.
-    // Sunrise here means "sun fully up" (end message). Sunset means "sun fully gone" (end message).
-    private static final double SUNRISE_BASE = 328.4;
-    private static final double SUNRISE_COS = 163.6;
-    private static final double SUNRISE_SIN = 11.2;
-
-    private static final double SUNSET_BASE = 1274.4;
-    private static final double SUNSET_COS = -162.3;
-    private static final double SUNSET_SIN = -24.1;
-
-    public enum SunEventType { SUNRISE, SUNSET }
-
-    public static final class NextSunEvent {
-        public final SunEventType type;
-        public final long secondsUntil;      // real seconds until event
-        public final long igMinutesUntil;    // in-game minutes until event
-        public final int eventMinuteOfDay;   // in-game minute-of-day (0..1439) for the event
-        public final int eventDayOfYear;     // 0..399 day index when event occurs
-
-        private NextSunEvent(SunEventType type, long secondsUntil, long igMinutesUntil,
-                             int eventMinuteOfDay, int eventDayOfYear) {
-            this.type = type;
-            this.secondsUntil = secondsUntil;
-            this.igMinutesUntil = igMinutesUntil;
-            this.eventMinuteOfDay = eventMinuteOfDay;
-            this.eventDayOfYear = eventDayOfYear;
-        }
-    }
-
     private final JLabel seasonLabel;
     private final JLabel timeLabel;
     private final Timer refreshTimer;
     private String lastTooltip;
-    private boolean isDarkMode;
 
     public DiscworldTimePanel() {
         setLayout(new BorderLayout());
@@ -155,26 +117,15 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
         String cycleName = CYCLES[(int) cycle];
         String season = getSeason(cycle, dayInYear);
 
-        int sunriseToday = sunriseMinuteOfDay((int) dayInYear);
-        int sunsetToday = sunsetMinuteOfDay((int) dayInYear);
-        long igMinuteOfDay = hours * 60 + minutes;
-        boolean isDay = igMinuteOfDay >= sunriseToday && igMinuteOfDay < sunsetToday;
-        String sunMoon = isDay ? "\u2600" : "\uD83C\uDF19";
-        String symbolColor = isDay ? (isDarkMode ? "yellow" : "orange") : (isDarkMode ? "white" : "black");
-
         seasonLabel.setText(season);
-        timeLabel.setText("<html>" + timeStr + " <font color='" + symbolColor + "'>" + sunMoon + "</font></html>");
+        timeLabel.setText(timeStr);
 
         String fullDate = String.format("%s %d%s %s, %d %s",
                 dayName, dayInMonth, getOrdinal(dayInMonth), monthName, years, cycleName);
 
-        // Optional: include next sunrise/sunset info in tooltip without changing any public API.
-        NextSunEvent next = getNextSunEvent(unixSeconds);
-        String nextStr = formatNextSunEvent(next);
-
         String tooltip = String.format(
-                "<html><font face='monospaced'><b>%7s</b> %s<br><b>%7s</b> %s<br><b>%7s</b> %s<br><b>%7s</b> %s</font></html>",
-                "Date:", fullDate, "Time:", timeStr, "Season:", season, "Next:", nextStr
+                "<html><font face='monospaced'><b>%7s</b> %s<br><b>%7s</b> %s<br><b>%7s</b> %s</font></html>",
+                "Date:", fullDate, "Time:", timeStr, "Season:", season
         ).replace(" ", "&nbsp;");
 
         if (!tooltip.equals(lastTooltip)) {
@@ -202,159 +153,7 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
     public void updateTheme(Color bg, Color fg) {
         seasonLabel.setForeground(fg);
         timeLabel.setForeground(fg);
-        this.isDarkMode = bg.equals(MapPanel.BACKGROUND_DARK);
         updateTime();
     }
 
-    // --------------------------------------------------------------------------------------------
-    // NEW FUNCTIONALITY (does not change or remove any existing public method)
-    // --------------------------------------------------------------------------------------------
-
-    /** Returns time until the next sunrise or sunset (whichever occurs first). */
-    public NextSunEvent getNextSunEvent() {
-        return getNextSunEvent(Instant.now().getEpochSecond());
-    }
-
-    /** Returns real seconds until the next sunrise (sun fully up). */
-    public long getSecondsUntilNextSunrise() {
-        return getSecondsUntilNextSpecificEvent(Instant.now().getEpochSecond(), SunEventType.SUNRISE);
-    }
-
-    /** Returns real seconds until the next sunset (sun fully gone). */
-    public long getSecondsUntilNextSunset() {
-        return getSecondsUntilNextSpecificEvent(Instant.now().getEpochSecond(), SunEventType.SUNSET);
-    }
-
-    /** Convenience: returns a short human-readable string for the next sun event. */
-    public String getNextSunEventSummary() {
-        return formatNextSunEvent(getNextSunEvent());
-    }
-
-    // --------------------------------------------------------------------------------------------
-    // Internals for sunrise/sunset calculations
-    // --------------------------------------------------------------------------------------------
-
-    private NextSunEvent getNextSunEvent(long unixSeconds) {
-        int dayOfYear = (int) ((unixSeconds % (REAL_SECONDS_PER_IG_DAY * DAYS_PER_YEAR)) / REAL_SECONDS_PER_IG_DAY);
-        long secondsIntoDay = unixSeconds % REAL_SECONDS_PER_IG_DAY;
-
-        // Exact in-game minute position within the day (integer minutes) + leftover real seconds.
-        long igMinuteOfDay = secondsIntoDay / REAL_SECONDS_PER_IG_MINUTE; // 0..1439
-        long leftoverRealSeconds = secondsIntoDay % REAL_SECONDS_PER_IG_MINUTE; // 0..17
-
-        int sunriseToday = sunriseMinuteOfDay(dayOfYear);
-        int sunsetToday = sunsetMinuteOfDay(dayOfYear);
-
-        // Determine next event.
-        SunEventType type;
-        int eventDay = dayOfYear;
-        int eventMinute;
-
-        if (igMinuteOfDay < sunriseToday) {
-            type = SunEventType.SUNRISE;
-            eventMinute = sunriseToday;
-        } else if (igMinuteOfDay < sunsetToday) {
-            type = SunEventType.SUNSET;
-            eventMinute = sunsetToday;
-        } else {
-            type = SunEventType.SUNRISE;
-            eventDay = (dayOfYear + 1) % DAYS_PER_YEAR;
-            eventMinute = sunriseMinuteOfDay(eventDay);
-        }
-
-        long igMinutesUntil;
-        if (eventDay == dayOfYear) {
-            igMinutesUntil = (long) eventMinute - igMinuteOfDay;
-        } else {
-            igMinutesUntil = (IG_MINUTES_PER_DAY - igMinuteOfDay) + eventMinute;
-        }
-
-        // Convert to real seconds until the event, accounting for partial in-game minute.
-        long secondsUntil = igMinutesUntil * REAL_SECONDS_PER_IG_MINUTE - leftoverRealSeconds;
-        if (secondsUntil < 0) secondsUntil = 0;
-
-        return new NextSunEvent(type, secondsUntil, igMinutesUntil, eventMinute, eventDay);
-    }
-
-    private long getSecondsUntilNextSpecificEvent(long unixSeconds, SunEventType want) {
-        int dayOfYear = (int) ((unixSeconds % (REAL_SECONDS_PER_IG_DAY * DAYS_PER_YEAR)) / REAL_SECONDS_PER_IG_DAY);
-        long secondsIntoDay = unixSeconds % REAL_SECONDS_PER_IG_DAY;
-        long igMinuteOfDay = secondsIntoDay / REAL_SECONDS_PER_IG_MINUTE;
-        long leftoverRealSeconds = secondsIntoDay % REAL_SECONDS_PER_IG_MINUTE;
-
-        int todayMinute = (want == SunEventType.SUNRISE)
-                ? sunriseMinuteOfDay(dayOfYear)
-                : sunsetMinuteOfDay(dayOfYear);
-
-        int eventDay = dayOfYear;
-        int eventMinute = todayMinute;
-
-        if (igMinuteOfDay >= todayMinute) {
-            // Next occurrence is tomorrow.
-            eventDay = (dayOfYear + 1) % DAYS_PER_YEAR;
-            eventMinute = (want == SunEventType.SUNRISE)
-                    ? sunriseMinuteOfDay(eventDay)
-                    : sunsetMinuteOfDay(eventDay);
-        }
-
-        long igMinutesUntil;
-        if (eventDay == dayOfYear) {
-            igMinutesUntil = (long) eventMinute - igMinuteOfDay;
-        } else {
-            igMinutesUntil = (IG_MINUTES_PER_DAY - igMinuteOfDay) + eventMinute;
-        }
-
-        long secondsUntil = igMinutesUntil * REAL_SECONDS_PER_IG_MINUTE - leftoverRealSeconds;
-        return Math.max(0L, secondsUntil);
-    }
-
-    private int sunriseMinuteOfDay(int dayOfYear) {
-        return clampMinute((int) Math.round(harmonic(dayOfYear, SUNRISE_BASE, SUNRISE_COS, SUNRISE_SIN)));
-    }
-
-    private int sunsetMinuteOfDay(int dayOfYear) {
-        return clampMinute((int) Math.round(harmonic(dayOfYear, SUNSET_BASE, SUNSET_COS, SUNSET_SIN)));
-    }
-
-    private double harmonic(int dayOfYear, double base, double cosAmp, double sinAmp) {
-        double theta = (2.0 * Math.PI * (double) dayOfYear) / (double) DAYS_PER_YEAR;
-        return base + cosAmp * Math.cos(theta) + sinAmp * Math.sin(theta);
-    }
-
-    private int clampMinute(int minute) {
-        if (minute < 0) return 0;
-        if (minute > 1439) return 1439;
-        return minute;
-    }
-
-    private String formatNextSunEvent(NextSunEvent next) {
-        String type = (next.type == SunEventType.SUNRISE) ? "Sunrise" : "Sunset";
-        long totalRealMinutes = next.secondsUntil / 60;
-        String eventTime = formatMinuteOfDay(next.eventMinuteOfDay);
-
-        long h = totalRealMinutes / 60;
-        long m = totalRealMinutes % 60;
-        String duration;
-        if (h > 0) {
-            duration = h + " hour" + (h == 1 ? "" : "s") + " " + m + " minute" + (m == 1 ? "" : "s");
-        } else {
-            duration = m + " minute" + (m == 1 ? "" : "s");
-        }
-
-        return String.format(
-                "%s at %s (in %s RW)",
-                type, eventTime, duration
-        );
-    }
-
-    private String formatMinuteOfDay(int minuteOfDay) {
-        int h24 = minuteOfDay / 60;
-        int m = minuteOfDay % 60;
-
-        int h12 = h24 % 12;
-        if (h12 == 0) h12 = 12;
-        String ampm = (h24 >= 12) ? "pm" : "am";
-
-        return String.format("%d:%02d%s", h12, m, ampm);
-    }
 }
