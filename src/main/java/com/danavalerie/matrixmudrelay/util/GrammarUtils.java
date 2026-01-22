@@ -113,7 +113,10 @@ public final class GrammarUtils {
         }
         
         if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
-            tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
+            if (lower.endsWith("ses") || lower.endsWith("xes") || lower.endsWith("zes") ||
+                    lower.endsWith("ches") || lower.endsWith("shes")) {
+                tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
+            }
         }
         if (!lower.endsWith("ss")) {
             tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
