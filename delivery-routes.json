@@ -12,8 +12,7 @@
   {
     "npc": "Alfred Musqrat",
     "location": "the paint shop on Sheer Street",
-    "roomId": "d66f61833f7df3dbb5e170e6ae82ebb2dc55e1b2",
-    "commands": []
+    "roomId": "d66f61833f7df3dbb5e170e6ae82ebb2dc55e1b2"
   },
   {
     "npc": "Anita Hurpley",
@@ -33,8 +32,7 @@
   {
     "npc": "Argule Wibbley",
     "location": "Argule Wibbley\u0027s Pottery Shop on Cockbill Street",
-    "roomId": "203466df2147c19c149e3050b20dfc25284e7d9c",
-    "commands": []
+    "roomId": "203466df2147c19c149e3050b20dfc25284e7d9c"
   },
   {
     "npc": "Arlof",
@@ -49,20 +47,17 @@
   {
     "npc": "Baldwin the Disemboweler MacAvrik",
     "location": "the smithy on Filigree Street",
-    "roomId": "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d",
-    "commands": []
+    "roomId": "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d"
   },
   {
     "npc": "Baldwin\u0027s apprentice",
     "location": "the smithy on Filigree Street",
-    "roomId": "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d",
-    "commands": []
+    "roomId": "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d"
   },
   {
     "npc": "Bernita",
     "location": "Bernita\u0027s Flower Shop on Treacle Street",
-    "roomId": "422f29229cedd5d0fb40eb0c1f293bf59621f7ce",
-    "commands": []
+    "roomId": "422f29229cedd5d0fb40eb0c1f293bf59621f7ce"
   },
   {
     "npc": "Bligh Earcrusher",
@@ -87,8 +82,7 @@
   {
     "npc": "Brerand",
     "location": "the well stocked armoury on Tenth Egg Street",
-    "roomId": "3d8164d64324a2b14d89a9752ece648e160c2b63",
-    "commands": []
+    "roomId": "3d8164d64324a2b14d89a9752ece648e160c2b63"
   },
   {
     "npc": "Carnelia Palm",
@@ -98,20 +92,17 @@
   {
     "npc": "Cecilia",
     "location": "the musickal poster shop on Phedre Road",
-    "roomId": "549853a5d06cedc96e6a050f6e43a1f3fe30443b",
-    "commands": []
+    "roomId": "549853a5d06cedc96e6a050f6e43a1f3fe30443b"
   },
   {
     "npc": "Chester Copperpot",
     "location": "Chester Copperpot\u0027s Tattoo Parlour on Endless Street",
-    "roomId": "3dd62038d45a79f9873cf97f976a4473d5edd83c",
-    "commands": []
+    "roomId": "3dd62038d45a79f9873cf97f976a4473d5edd83c"
   },
   {
     "npc": "Claro Cliff",
     "location": "Claro Cliff\u0027s Pottery Shoppe on Clay Lane",
-    "roomId": "a2e17e2903f4abd1b5a273291072143275000c9c",
-    "commands": []
+    "roomId": "a2e17e2903f4abd1b5a273291072143275000c9c"
   },
   {
     "npc": "Coffin\u0027 Joe",
@@ -121,14 +112,12 @@
   {
     "npc": "Cubert Eiche",
     "location": "the shed on Goose Gate",
-    "roomId": "11317a4baae84a5e41106430330d4dd2fb36f524",
-    "commands": []
+    "roomId": "11317a4baae84a5e41106430330d4dd2fb36f524"
   },
   {
     "npc": "Cutankle Quaffpint",
     "location": "Cutankle Quaffpint\u0027s Irone Shoppe on Cable Street",
-    "roomId": "4ab7a88f2a9b07e72db5185aa9d11b251ff0e296",
-    "commands": []
+    "roomId": "4ab7a88f2a9b07e72db5185aa9d11b251ff0e296"
   },
   {
     "npc": "Cynthia Potts",
@@ -143,14 +132,12 @@
   {
     "npc": "Danlin",
     "location": "the Groaning Platter Tavern on Flood Walk",
-    "roomId": "72f7ed3a6b023c275a53468236a0292a27af1279",
-    "commands": []
+    "roomId": "72f7ed3a6b023c275a53468236a0292a27af1279"
   },
   {
     "npc": "Derek Wadley",
     "location": "the musty cheese shop on Alguinna Alley",
-    "roomId": "a7954efe47db2102664aa8aa277ef9f84c99e304",
-    "commands": []
+    "roomId": "a7954efe47db2102664aa8aa277ef9f84c99e304"
   },
   {
     "npc": "Dhraz Shaftrubble",
@@ -165,32 +152,27 @@
   {
     "npc": "Dimitris",
     "location": "Dimitris\u0027 Dummies on Dimwell Street",
-    "roomId": "96db778460ad523c0189a195f3b2db4b697504a3",
-    "commands": []
+    "roomId": "96db778460ad523c0189a195f3b2db4b697504a3"
   },
   {
     "npc": "Dunstan Tichenor",
     "location": "Dunstan Tichenor\u0027s Travel Agency on Street of Bookkeepers",
-    "roomId": "dbe4ea262a6a5c77e75aa1ce780d1ab16c34a0e2",
-    "commands": []
+    "roomId": "dbe4ea262a6a5c77e75aa1ce780d1ab16c34a0e2"
   },
   {
     "npc": "Duzbun Opposite",
     "location": "Opposite\u0027s all-night apothecary on Pigsty Hill",
-    "roomId": "22f97fe6057d4dc344b43341a302162d2bc1d6b9",
-    "commands": []
+    "roomId": "22f97fe6057d4dc344b43341a302162d2bc1d6b9"
   },
   {
     "npc": "Ella Montigue",
     "location": "the claustrophobically pink shop on Dolly Sisters",
-    "roomId": "93e7c961a6556586f40b21b13726658fef7ed88b",
-    "commands": []
+    "roomId": "93e7c961a6556586f40b21b13726658fef7ed88b"
   },
   {
     "npc": "Elsie Flurb",
     "location": "Elsie\u0027s Clothing Shop in the Under Docks",
-    "roomId": "22f326e3649c67b9eb54f030055444fce724a231",
-    "commands": []
+    "roomId": "22f326e3649c67b9eb54f030055444fce724a231"
   },
   {
     "npc": "Fat Sandra",
@@ -215,14 +197,12 @@
   {
     "npc": "Frank Gnaby",
     "location": "Gnaby Party Supplies",
-    "roomId": "ec3ef3c51c8e53352ec4fd6ea8b6e98b3938983a",
-    "commands": []
+    "roomId": "ec3ef3c51c8e53352ec4fd6ea8b6e98b3938983a"
   },
   {
     "npc": "Fred Sylver",
     "location": "Sylver\u0027s on Washer Way",
-    "roomId": "5763028abd18c89f9240d159d672e9cd06016485",
-    "commands": []
+    "roomId": "5763028abd18c89f9240d159d672e9cd06016485"
   },
   {
     "npc": "Georg Festrunk",
@@ -232,32 +212,27 @@
   {
     "npc": "George",
     "location": "the glassmaking shop on Street of Cunning Artificers",
-    "roomId": "c950a4e37be3bc124add6505e1c708dfd5a8670e",
-    "commands": []
+    "roomId": "c950a4e37be3bc124add6505e1c708dfd5a8670e"
   },
   {
     "npc": "Georgio",
     "location": "Georgio\u0027s pizza place on Artorollo Alley",
-    "roomId": "c722a6320db00226f0c56fafe92d9be7a02a0dc6",
-    "commands": []
+    "roomId": "c722a6320db00226f0c56fafe92d9be7a02a0dc6"
   },
   {
     "npc": "Gertrude",
     "location": "Gertrude\u0027s Perfumery in the Flintwick Building",
-    "roomId": "3159ce4dcfacc07ee2006db42fac3016235bb263",
-    "commands": []
+    "roomId": "3159ce4dcfacc07ee2006db42fac3016235bb263"
   },
   {
     "npc": "Gervais",
     "location": "Monsieur Rosset\u0027s Beauty Parlour on Pseudopolis Yard",
-    "roomId": "108e5e762f597121a6994986373fc031c2402fba",
-    "commands": []
+    "roomId": "108e5e762f597121a6994986373fc031c2402fba"
   },
   {
     "npc": "Gimlet",
     "location": "Gimlet\u0027s Hole Food Delicatessen on Cable Street",
-    "roomId": "a6df1adb71ca9acc5007fc82443b70f683d718dc",
-    "commands": []
+    "roomId": "a6df1adb71ca9acc5007fc82443b70f683d718dc"
   },
   {
     "npc": "Gladys",
@@ -277,26 +252,22 @@
   {
     "npc": "Greldik Marlinslayer",
     "location": "the O-fish-ial Fishermen\u0027s Guild Shoppe on the waterfront",
-    "roomId": "e69b79381d2f0ce799a046a3888fc1c327c3fef7",
-    "commands": []
+    "roomId": "e69b79381d2f0ce799a046a3888fc1c327c3fef7"
   },
   {
     "npc": "Grog Ablewhyte",
     "location": "Grog\u0027s Groceries on Fast Lane",
-    "roomId": "18eafc34b62459cb092413dc2e19f29c7d6bd83e",
-    "commands": []
+    "roomId": "18eafc34b62459cb092413dc2e19f29c7d6bd83e"
   },
   {
     "npc": "Halley Toomer",
     "location": "Toomer Stationers on Scoone Avenue",
-    "roomId": "20cc8d9987ae4a818d9d8bfcdb2e89c1b886af9c",
-    "commands": []
+    "roomId": "20cc8d9987ae4a818d9d8bfcdb2e89c1b886af9c"
   },
   {
     "npc": "Harmony Stardancer",
     "location": "Harmony Stardancer\u0027s Magical Shoppe on Treacle Street",
-    "roomId": "147e6d0328572991709e74040c841fbe8aa339c6",
-    "commands": []
+    "roomId": "147e6d0328572991709e74040c841fbe8aa339c6"
   },
   {
     "npc": "Harold the locksmith",
@@ -306,20 +277,17 @@
   {
     "npc": "Hatty Lillington",
     "location": "the milliner\u0027s shop on Pallant Street",
-    "roomId": "3bfb58c6574f18685c872839be139f19e95bdc3a",
-    "commands": []
+    "roomId": "3bfb58c6574f18685c872839be139f19e95bdc3a"
   },
   {
     "npc": "Herbert",
     "location": "Bologna Shop on God Street",
-    "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7",
-    "commands": []
+    "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7"
   },
   {
     "npc": "Hibiscus Dunelm",
     "location": "the bar of the Mended Drum",
-    "roomId": "964ea3c5f971d538232e683612cd41900c232bdd",
-    "commands": []
+    "roomId": "964ea3c5f971d538232e683612cd41900c232bdd"
   },
   {
     "npc": "Hobliet the Unnecessary",
@@ -329,8 +297,7 @@
   {
     "npc": "Hurple",
     "location": "Hurple\u0027s towel shop on Cockbill Street",
-    "roomId": "1d91446442858d15da04669a52e3a95950c0347e",
-    "commands": []
+    "roomId": "1d91446442858d15da04669a52e3a95950c0347e"
   },
   {
     "npc": "Jabez Clamber",
@@ -340,8 +307,7 @@
   {
     "npc": "Jacinthe Bockxse",
     "location": "Batchev\u0027s World of Maps on Ankh Street",
-    "roomId": "1868a42594ca6312ceb74e540d8af08e6b50499e",
-    "commands": []
+    "roomId": "1868a42594ca6312ceb74e540d8af08e6b50499e"
   },
   {
     "npc": "Jack Bank",
@@ -351,8 +317,7 @@
   {
     "npc": "Jake Elwood",
     "location": "Jake Elwood\u0027s T-shirt Shop on Sticken Place",
-    "roomId": "d0b73665e82d194c1c5ba4b17cb496f39d9cb389",
-    "commands": []
+    "roomId": "d0b73665e82d194c1c5ba4b17cb496f39d9cb389"
   },
   {
     "npc": "Jenny Tawdry",
@@ -362,20 +327,17 @@
   {
     "npc": "Jonas",
     "location": "an opulent office on The Ridings",
-    "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337",
-    "commands": []
+    "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337"
   },
   {
     "npc": "Jorodin",
     "location": "Jorodin\u0027s small and rather friendly-looking shop on Short Street",
-    "roomId": "26a79fa779221c335e38e4f90bf297f1527b9bb3",
-    "commands": []
+    "roomId": "26a79fa779221c335e38e4f90bf297f1527b9bb3"
   },
   {
     "npc": "Jotu Icta",
     "location": "the Laughing Falafel, All Nite Grocery",
-    "roomId": "9bb171a2bec0a87b4fd6a9ccfc7990225995cbe6",
-    "commands": []
+    "roomId": "9bb171a2bec0a87b4fd6a9ccfc7990225995cbe6"
   },
   {
     "npc": "Kernab",
@@ -385,14 +347,12 @@
   {
     "npc": "Kervin Whistler",
     "location": "Mr. K. Whistler\u0027s Bakery on Pigsty Hill",
-    "roomId": "72792e2f6568b0fa8aedc0e408c8e9f1f4b500b3",
-    "commands": []
+    "roomId": "72792e2f6568b0fa8aedc0e408c8e9f1f4b500b3"
   },
   {
     "npc": "Krazzander",
     "location": "Krazzander\u0027s Magic Tricks on Filigree Street",
-    "roomId": "047d2c350046d2613c5adecd189edaf639ddafcb",
-    "commands": []
+    "roomId": "047d2c350046d2613c5adecd189edaf639ddafcb"
   },
   {
     "npc": "Kurr Ency",
@@ -402,26 +362,22 @@
   {
     "npc": "Lars",
     "location": "the Traveller\u0027s Inn on Dimwell Street",
-    "roomId": "c9bdfd62f1b3c5c4f23671669fa9d090619e1fd7",
-    "commands": []
+    "roomId": "c9bdfd62f1b3c5c4f23671669fa9d090619e1fd7"
   },
   {
     "npc": "Lilith Z. Dharienne",
     "location": "Karma \u0027R\u0027 Us on Body Street",
-    "roomId": "a7541eae658e3f823d81dce93b24d7f11263bbd6",
-    "commands": []
+    "roomId": "a7541eae658e3f823d81dce93b24d7f11263bbd6"
   },
   {
     "npc": "Linny",
     "location": "the Royal Art Museum gift shop",
-    "roomId": "e1fa9369feaf08ee13000a74b304bb967bef1588",
-    "commands": []
+    "roomId": "e1fa9369feaf08ee13000a74b304bb967bef1588"
   },
   {
     "npc": "Lolinda Lovelace",
     "location": "Lolinda\u0027s Lovely Leather on Endless Street",
-    "roomId": "2af0886fd4c6aa0f5418186c1993893ba701d0a4",
-    "commands": []
+    "roomId": "2af0886fd4c6aa0f5418186c1993893ba701d0a4"
   },
   {
     "npc": "Lorst N\u0027Fund",
@@ -441,8 +397,7 @@
   {
     "npc": "Maria",
     "location": "the opera poster shop on Phedre Road",
-    "roomId": "d1f0681c36e87017084b0e771f5636a604de6cf3",
-    "commands": []
+    "roomId": "d1f0681c36e87017084b0e771f5636a604de6cf3"
   },
   {
     "npc": "Master Nimbledrit",
@@ -452,8 +407,7 @@
   {
     "npc": "Miss Anna",
     "location": "the colourful furniture shop on Phedre Road",
-    "roomId": "74b7669c3678635bd8dc3b2ebc382c1d98e1562b",
-    "commands": []
+    "roomId": "74b7669c3678635bd8dc3b2ebc382c1d98e1562b"
   },
   {
     "npc": "Miss Grangrid",
@@ -463,20 +417,17 @@
   {
     "npc": "Mr Bommel",
     "location": "Bommel\u0027s Livings on Rime Street",
-    "roomId": "46e8d8d9616a306bd6446364a128a23daa57430f",
-    "commands": []
+    "roomId": "46e8d8d9616a306bd6446364a128a23daa57430f"
   },
   {
     "npc": "Mr Calleretti",
     "location": "the Stab in the Back pub on Pseudopolis Yard",
-    "roomId": "040b76b86b9ed01e635a40daeea5470cbf45bc5e",
-    "commands": []
+    "roomId": "040b76b86b9ed01e635a40daeea5470cbf45bc5e"
   },
   {
     "npc": "Mr Fiddley",
     "location": "Fiddley\u0027s Music Shop on Seven Sleepers",
-    "roomId": "ca679a04ebf851ef96d9ee9c42429e4d943909be",
-    "commands": []
+    "roomId": "ca679a04ebf851ef96d9ee9c42429e4d943909be"
   },
   {
     "npc": "Mr Graves",
@@ -486,8 +437,7 @@
   {
     "npc": "Mr Lumiere",
     "location": "the shabby stall on Market Street",
-    "roomId": "3801f737a4c089bc2c674ae3f6a9753207fa0a3a",
-    "commands": []
+    "roomId": "3801f737a4c089bc2c674ae3f6a9753207fa0a3a"
   },
   {
     "npc": "Mr Odie",
@@ -497,20 +447,17 @@
   {
     "npc": "Mr Reedle",
     "location": "the Happy Cabbage on Lobbin Clout",
-    "roomId": "ff34ccb5f7ac48254fc3e221ffd83443be17724f",
-    "commands": []
+    "roomId": "ff34ccb5f7ac48254fc3e221ffd83443be17724f"
   },
   {
     "npc": "Mr Rendtnor",
     "location": "Rendtnor\u0027s Jewellery Shop on Plaza of Broken Moons",
-    "roomId": "bb97d14f936216eeb7d6457dc4c9bb514ebc0b0d",
-    "commands": []
+    "roomId": "bb97d14f936216eeb7d6457dc4c9bb514ebc0b0d"
   },
   {
     "npc": "Mr Scoonwinkle",
     "location": "Scoonwinkle\u0027s Shoe Store on Hopper Street",
-    "roomId": "6ac5b81620fb80bc095df1eca95f590a4a60a5f8",
-    "commands": []
+    "roomId": "6ac5b81620fb80bc095df1eca95f590a4a60a5f8"
   },
   {
     "npc": "Mr Strumplott",
@@ -520,8 +467,7 @@
   {
     "npc": "Mr or Ms Twonky",
     "location": "Twonky\u0027s Clocks on Nonesuch Street",
-    "roomId": "dc8e6278a0b11a57718a265a082af8d6da647a49",
-    "commands": []
+    "roomId": "dc8e6278a0b11a57718a265a082af8d6da647a49"
   },
   {
     "npc": "Mr. D\u0027abdry",
@@ -536,44 +482,37 @@
   {
     "npc": "Mrs Armitage",
     "location": "the embroidery shop on Loom Alley",
-    "roomId": "95fa584ac5118e028a5274ca6253f3aaac20c865",
-    "commands": []
+    "roomId": "95fa584ac5118e028a5274ca6253f3aaac20c865"
   },
   {
     "npc": "Mrs B\u0027cket",
     "location": "the bucket shop on King\u0027s Down",
-    "roomId": "df1f1f7d38ff74d74b5ff5d565460899daeb5cbf",
-    "commands": []
+    "roomId": "df1f1f7d38ff74d74b5ff5d565460899daeb5cbf"
   },
   {
     "npc": "Mrs Confectionairre",
     "location": "Confections De Confectionairre on Salis Street",
-    "roomId": "41630c8d7e024a632d5ba1071766d1b57ed5eb5b",
-    "commands": []
+    "roomId": "41630c8d7e024a632d5ba1071766d1b57ed5eb5b"
   },
   {
     "npc": "Mrs Corduroy",
     "location": "Mrs Corduroy\u0027s Stuffed Animals on Chrononhotonthologos Street",
-    "roomId": "fc2a716b60b91ff6e8e3f440dacfb766715413b2",
-    "commands": []
+    "roomId": "fc2a716b60b91ff6e8e3f440dacfb766715413b2"
   },
   {
     "npc": "Mrs Dimmles",
     "location": "Mrs. Dimmles\u0027 Open-All-Hours Cafe on Dimwell Street",
-    "roomId": "a26a7d37bb46c8726226a9237cf84c79f90c79dd",
-    "commands": []
+    "roomId": "a26a7d37bb46c8726226a9237cf84c79f90c79dd"
   },
   {
     "npc": "Mrs Dodger",
     "location": "the canteen in the Pseudopolis Yard Watch House",
-    "roomId": "38e0caedf0ff789f97b6d7e8e2a18fad9ab0f2fd",
-    "commands": []
+    "roomId": "38e0caedf0ff789f97b6d7e8e2a18fad9ab0f2fd"
   },
   {
     "npc": "Mrs Green",
     "location": "the second hand shop on Zephire Street",
-    "roomId": "30bbe19b1270967df3cd052d670df665be9ea610",
-    "commands": []
+    "roomId": "30bbe19b1270967df3cd052d670df665be9ea610"
   },
   {
     "npc": "Ms Estible",
@@ -583,14 +522,12 @@
   {
     "npc": "Ms Holbrook",
     "location": "Holbrook\u0027s General Shop",
-    "roomId": "5d9424fdf6460e22b40dc8effd4840d03abc9599",
-    "commands": []
+    "roomId": "5d9424fdf6460e22b40dc8effd4840d03abc9599"
   },
   {
     "npc": "Murgatroyd Listey",
     "location": "the souvenir shop on Humble Street",
-    "roomId": "29513e283b52340aa1fb58314fe1c3bf22cb0b22",
-    "commands": []
+    "roomId": "29513e283b52340aa1fb58314fe1c3bf22cb0b22"
   },
   {
     "npc": "Nathan",
@@ -600,26 +537,22 @@
   {
     "npc": "Nella",
     "location": "Nella\u0027s vault",
-    "roomId": "53da665ea8ddaf7cf38287d1343d92963f3f1b98",
-    "commands": []
+    "roomId": "53da665ea8ddaf7cf38287d1343d92963f3f1b98"
   },
   {
     "npc": "Nese Stenzelle",
     "location": "Nese\u0027s Fine Decor on Phedre Road",
-    "roomId": "0e2cb0fd91508ed05773c487e22f21079b804c50",
-    "commands": []
+    "roomId": "0e2cb0fd91508ed05773c487e22f21079b804c50"
   },
   {
     "npc": "No. 1 Son",
     "location": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids on Heroes Street",
-    "roomId": "552ae47ec4c644e729f2c1b2777689ae5624d61d",
-    "commands": []
+    "roomId": "552ae47ec4c644e729f2c1b2777689ae5624d61d"
   },
   {
     "npc": "Nuhakme Icta",
     "location": "the Laughing Falafel, Klatchian Takeaway",
-    "roomId": "5cc6162f633df45d189cda9c8b8202397bb38a85",
-    "commands": []
+    "roomId": "5cc6162f633df45d189cda9c8b8202397bb38a85"
   },
   {
     "npc": "Oliver Eliawan",
@@ -629,14 +562,12 @@
   {
     "npc": "Olson Shinbiter",
     "location": "Olson\u0027s Iron Shop on Water Street",
-    "roomId": "fd010238f538b57bb00f8ad023078b18885bbe0c",
-    "commands": []
+    "roomId": "fd010238f538b57bb00f8ad023078b18885bbe0c"
   },
   {
     "npc": "Opp Donnderson",
     "location": "the goldsmith on Grunefair",
-    "roomId": "4de1c3a3bab4df881463912298353828b4583d99",
-    "commands": []
+    "roomId": "4de1c3a3bab4df881463912298353828b4583d99"
   },
   {
     "npc": "Patrice Le Clair",
@@ -664,20 +595,17 @@
   {
     "npc": "Rebecca Palm",
     "location": "Rebecca Palm\u0027s Clothing in the Magic Emporium",
-    "roomId": "8edd2b9a65f2533cecc14305fafffbb722464931",
-    "commands": []
+    "roomId": "8edd2b9a65f2533cecc14305fafffbb722464931"
   },
   {
     "npc": "Renee Palm",
     "location": "Djinn\u0027s Famous Flying Carpets on Scoone Avenue",
-    "roomId": "5b4e1f39a5c37a17844bdc5658303b4171f15aca",
-    "commands": []
+    "roomId": "5b4e1f39a5c37a17844bdc5658303b4171f15aca"
   },
   {
     "npc": "Rinaldo",
     "location": "the Mouldy Cellar on Chrononhotonthologos Street",
-    "roomId": "778c7e260cdf5bc272c2cfda872c154b1ebf9197",
-    "commands": []
+    "roomId": "778c7e260cdf5bc272c2cfda872c154b1ebf9197"
   },
   {
     "npc": "Rosa Jollity",
@@ -687,8 +615,7 @@
   {
     "npc": "Salter Rhogain",
     "location": "Salter Rhogain\u0027s Legibles in the Magic Emporium",
-    "roomId": "e59e946db969b09f78c4acef1c1699fbcd06e2fa",
-    "commands": []
+    "roomId": "e59e946db969b09f78c4acef1c1699fbcd06e2fa"
   },
   {
     "npc": "Sandra",
@@ -698,8 +625,7 @@
   {
     "npc": "Sanguine Asphyxia",
     "location": "the rat shop on Lobbin Clout",
-    "roomId": "45847af6a8e6b8f350115f97474db7211e576347",
-    "commands": []
+    "roomId": "45847af6a8e6b8f350115f97474db7211e576347"
   },
   {
     "npc": "Scheda Carte",
@@ -709,8 +635,7 @@
   {
     "npc": "Scott Dorf",
     "location": "the dusty furniture shop in the underdocks",
-    "roomId": "f4cfac130550d11f61a66f161d8bc56dd8fe287c",
-    "commands": []
+    "roomId": "f4cfac130550d11f61a66f161d8bc56dd8fe287c"
   },
   {
     "npc": "Secumin Soom",
@@ -720,26 +645,22 @@
   {
     "npc": "Seymour Convecks",
     "location": "the Optometrist\u0027s on Cheesemongers Yard",
-    "roomId": "247f472ac99121d9fecb8ff31646c2f43ee200a3",
-    "commands": []
+    "roomId": "247f472ac99121d9fecb8ff31646c2f43ee200a3"
   },
   {
     "npc": "Sigsbee H. Waddington",
     "location": "the Shelf Shock Shop on Pallant Street",
-    "roomId": "70102b7c64f25ff79524eeabced2fd68ef0ab69c",
-    "commands": []
+    "roomId": "70102b7c64f25ff79524eeabced2fd68ef0ab69c"
   },
   {
     "npc": "Starspirit Moonfire",
     "location": "Krazzander\u0027s Magik Shoppe on Cockbill Street",
-    "roomId": "925880da85a8d01ee4bcb302949f8eef099bb195",
-    "commands": []
+    "roomId": "925880da85a8d01ee4bcb302949f8eef099bb195"
   },
   {
     "npc": "Stuck",
     "location": "Stuck\u0027s Bar on Speedwell Street",
-    "roomId": "48b5df180d837e76c09bc13a5caf8965a2013e60",
-    "commands": []
+    "roomId": "48b5df180d837e76c09bc13a5caf8965a2013e60"
   },
   {
     "npc": "Tarquin Houlian",
@@ -749,26 +670,22 @@
   {
     "npc": "Tim La Raude",
     "location": "La Raude\u0027s Shelf shop on Street of Cunning Artificers",
-    "roomId": "f1c5ff18dacac3c8566baf41def204db9c3db062",
-    "commands": []
+    "roomId": "f1c5ff18dacac3c8566baf41def204db9c3db062"
   },
   {
     "npc": "Tim Wemple",
     "location": "Rainbow Homeopaths Incorporated on Body Street",
-    "roomId": "5866d8a516396687f101201bfb70af0feb3d968e",
-    "commands": []
+    "roomId": "5866d8a516396687f101201bfb70af0feb3d968e"
   },
   {
     "npc": "Tom Boit",
     "location": "Tom Boit\u0027s Box and Barrel Shop on Ankh Street",
-    "roomId": "e1d514626dbfa0d521125c29622a747c52cbc7d0",
-    "commands": []
+    "roomId": "e1d514626dbfa0d521125c29622a747c52cbc7d0"
   },
   {
     "npc": "Tony Dorf",
     "location": "the dark wood workshop below the waterfront",
-    "roomId": "c19252b174716e3767d0ad6bfb77a00169c3f262",
-    "commands": []
+    "roomId": "c19252b174716e3767d0ad6bfb77a00169c3f262"
   },
   {
     "npc": "Trioll Negurney",
@@ -783,8 +700,7 @@
   {
     "npc": "Ulora Icta",
     "location": "the Laughing Falafel, All Nite Grocery",
-    "roomId": "9bb171a2bec0a87b4fd6a9ccfc7990225995cbe6",
-    "commands": []
+    "roomId": "9bb171a2bec0a87b4fd6a9ccfc7990225995cbe6"
   },
   {
     "npc": "Valerianne",
@@ -794,14 +710,12 @@
   {
     "npc": "Victoria Grotle",
     "location": "the Get \u0027em while we still got \u0027em shop on Plaza of Broken Moons",
-    "roomId": "5f065d44f883d89852acc7e7712f950f81e68d09",
-    "commands": []
+    "roomId": "5f065d44f883d89852acc7e7712f950f81e68d09"
   },
   {
     "npc": "Warty Mick",
     "location": "the underdocks general shop on the waterfront",
-    "roomId": "4de8d1c541ecb413d2dc7ce6e6137d3c0bd01f7c",
-    "commands": []
+    "roomId": "4de8d1c541ecb413d2dc7ce6e6137d3c0bd01f7c"
   },
   {
     "npc": "William Cobbler",
@@ -811,14 +725,12 @@
   {
     "npc": "William Morgan",
     "location": "Somethynge-or-Other Licenced Caffe on Endless Street",
-    "roomId": "65ae5d46000d389f7bfad626558aa0848b99c47c",
-    "commands": []
+    "roomId": "65ae5d46000d389f7bfad626558aa0848b99c47c"
   },
   {
     "npc": "Wilma",
     "location": "Wilma\u0027s Worlde of Whigges on Merchants Street",
-    "roomId": "3b38bee40ed738024fcb088aba9b9c1e17e72808",
-    "commands": []
+    "roomId": "3b38bee40ed738024fcb088aba9b9c1e17e72808"
   },
   {
     "npc": "Woo Hun Ling",
@@ -833,8 +745,7 @@
   {
     "npc": "Wun Phul Mouth",
     "location": "Wun Phul Mouth\u0027s Hunghungese Restaurant",
-    "roomId": "886e1da4dd53a0b6f43c4248d014bd2838265bee",
-    "commands": []
+    "roomId": "886e1da4dd53a0b6f43c4248d014bd2838265bee"
   },
   {
     "npc": "Wynter Silverfyre",
@@ -844,20 +755,17 @@
   {
     "npc": "Xillma",
     "location": "the gem stall on Dock Road",
-    "roomId": "5d9315396d55a98bf8f26481d3e9d7d3bb71edbd",
-    "commands": []
+    "roomId": "5d9315396d55a98bf8f26481d3e9d7d3bb71edbd"
   },
   {
     "npc": "Yortuk Festrunk",
     "location": "Festrunk Brothers on Prouts",
-    "roomId": "70f88d649cd3de500d64caacad14de76c4127827",
-    "commands": []
+    "roomId": "70f88d649cd3de500d64caacad14de76c4127827"
   },
   {
     "npc": "real estate receptionist",
     "location": "Ankh-Morpork foreign real estate agency",
-    "roomId": "59a4bd0c01076b87947d4b0805d06f79425a6400",
-    "commands": []
+    "roomId": "59a4bd0c01076b87947d4b0805d06f79425a6400"
   },
   {
     "npc": "stallholder Bernie",
@@ -868,21 +776,18 @@
     "npc": "the Ephebian teacher in the Ephebian Embassy",
     "location": "the small classroom in The Ephebian Embassy",
     "roomId": "9639b7d243afe55b07220f0acf30b09c5da8a1e8",
-    "commands": [],
     "npcOverride": "the teacher"
   },
   {
     "npc": "the Morporkian teacher",
     "location": "the Ephebian Embassy",
     "roomId": "cc341b668af320ba5fdf88814d02b6237c79d5c1",
-    "commands": [],
     "npcOverride": "the teacher"
   },
   {
     "npc": "the baker",
     "location": "Dione Street Bakery",
-    "roomId": "b87a93ae03d7e4781093215984cba0949776467b",
-    "commands": []
+    "roomId": "b87a93ae03d7e4781093215984cba0949776467b"
   },
   {
     "npc": "the barmaid",
@@ -892,14 +797,12 @@
   {
     "npc": "the barman",
     "location": "the Bunch Of Grapes on Easy Street",
-    "roomId": "5fe9d82f0aab303a084eadd1be086790aa16e4e2",
-    "commands": []
+    "roomId": "5fe9d82f0aab303a084eadd1be086790aa16e4e2"
   },
   {
     "npc": "the butcher",
     "location": "the butcher\u0027s shop on God\u0027s Collar",
-    "roomId": "cd883977cdc00627a4a65b04af9e8f65d3feadfe",
-    "commands": []
+    "roomId": "cd883977cdc00627a4a65b04af9e8f65d3feadfe"
   },
   {
     "npc": "the cafe attendant",
@@ -909,14 +812,12 @@
   {
     "npc": "the drunken shopkeeper",
     "location": "the Wine Shop on Washer Way",
-    "roomId": "983209db2066dc4975f2d9ffef21bb3862abd0e2",
-    "commands": []
+    "roomId": "983209db2066dc4975f2d9ffef21bb3862abd0e2"
   },
   {
     "npc": "the elderly man",
     "location": "Little Agatea",
-    "roomId": "634ec474418e42dee92acefe86d16e47a84c4f13",
-    "commands": []
+    "roomId": "634ec474418e42dee92acefe86d16e47a84c4f13"
   },
   {
     "npc": "the elderly woman",
@@ -926,20 +827,17 @@
   {
     "npc": "the gallery assistant",
     "location": "the art gallery on Butts Treat",
-    "roomId": "f5098e2d4ef339752ecf946a14189836c72202cc",
-    "commands": []
+    "roomId": "f5098e2d4ef339752ecf946a14189836c72202cc"
   },
   {
     "npc": "the grinning priest",
     "location": "the chapel on Short Street",
-    "roomId": "6a0cfba8cf826e91bba2fde162432bf9d2e6dc2c",
-    "commands": []
+    "roomId": "6a0cfba8cf826e91bba2fde162432bf9d2e6dc2c"
   },
   {
     "npc": "the little old lady",
     "location": "the sonky shop on Myrtle Street",
-    "roomId": "b08b6bf8d56e96f4da6d81fd45fcbef59f6d97cd",
-    "commands": []
+    "roomId": "b08b6bf8d56e96f4da6d81fd45fcbef59f6d97cd"
   },
   {
     "npc": "the maitre d\u0027",
@@ -952,14 +850,12 @@
   {
     "npc": "the neat secretary",
     "location": "the Dentist Office reception area in the Flintwick Building",
-    "roomId": "a77b8b58e1605ad5c4f5af2b2f47e6115e6a9deb",
-    "commands": []
+    "roomId": "a77b8b58e1605ad5c4f5af2b2f47e6115e6a9deb"
   },
   {
     "npc": "the owner",
     "location": "Brookless Bakery",
-    "roomId": "23101ac0bc74913d7b8727335316fd8f140f2145",
-    "commands": []
+    "roomId": "23101ac0bc74913d7b8727335316fd8f140f2145"
   },
   {
     "npc": "the proprietor",
@@ -974,14 +870,12 @@
   {
     "npc": "the receptionist",
     "location": "the AM Daily Reception Area on Rime Street",
-    "roomId": "d03431232176bbe1ba56152d6d3486b842ddac73",
-    "commands": []
+    "roomId": "d03431232176bbe1ba56152d6d3486b842ddac73"
   },
   {
     "npc": "the receptionist",
     "location": "the Psychiatrist reception area on Short Street",
-    "roomId": "66d482ef115caa98f0aed044e3cca5e49b95d93a",
-    "commands": []
+    "roomId": "66d482ef115caa98f0aed044e3cca5e49b95d93a"
   },
   {
     "npc": "the sales assistant",
@@ -991,8 +885,7 @@
   {
     "npc": "the sales assistant",
     "location": "the fur shop on God\u0027s Collar",
-    "roomId": "0046b3694d138aae8b757805d7dbb64269a8629a",
-    "commands": []
+    "roomId": "0046b3694d138aae8b757805d7dbb64269a8629a"
   },
   {
     "npc": "the salesgolem",
@@ -1002,8 +895,7 @@
   {
     "npc": "the salesman",
     "location": "the coffee table shop on Salis Street",
-    "roomId": "e305b628de902cbbdbeb6fb11305a6585ba3b158",
-    "commands": []
+    "roomId": "e305b628de902cbbdbeb6fb11305a6585ba3b158"
   },
   {
     "npc": "the salesperson",
@@ -1023,8 +915,7 @@
   {
     "npc": "the shop assistant",
     "location": "the exclusive hat boutique on Cheesemongers Yard",
-    "roomId": "2aea9e4f9b102c10623ee9955786fa776b6f72e8",
-    "commands": []
+    "roomId": "2aea9e4f9b102c10623ee9955786fa776b6f72e8"
   },
   {
     "npc": "the shop owner",
@@ -1034,20 +925,17 @@
   {
     "npc": "the shopkeeper",
     "location": "Little Seriph\u0027s on Short Street",
-    "roomId": "a07a429d405c77be0868abd75e2354cd5866fdcc",
-    "commands": []
+    "roomId": "a07a429d405c77be0868abd75e2354cd5866fdcc"
   },
   {
     "npc": "the shopkeeper",
     "location": "the Ankh-Morpork Apothecary on Prouts",
-    "roomId": "ee8c809bf50e4aad42351c7d8ec8079f3f47b568",
-    "commands": []
+    "roomId": "ee8c809bf50e4aad42351c7d8ec8079f3f47b568"
   },
   {
     "npc": "the shopkeeper",
     "location": "the Light Under Glass store on Salis Street",
-    "roomId": "bd6b07a3d2ffba9bc90122cf0e299aca3437deb5",
-    "commands": []
+    "roomId": "bd6b07a3d2ffba9bc90122cf0e299aca3437deb5"
   },
   {
     "npc": "the shopkeeper",
@@ -1057,8 +945,7 @@
   {
     "npc": "the shopkeeper",
     "location": "the clothing stall on Plaza of Broken Moons",
-    "roomId": "3ab8bca1335dc47b9fb580b42c92481c2b14aa24",
-    "commands": []
+    "roomId": "3ab8bca1335dc47b9fb580b42c92481c2b14aa24"
   },
   {
     "npc": "the shopkeeper",
@@ -1068,8 +955,7 @@
   {
     "npc": "the small bell boy",
     "location": "the Ankh Post Office entrance foyer on The Soake",
-    "roomId": "389d2899f6b190772a5494cbab3536019e1ccd83",
-    "commands": []
+    "roomId": "389d2899f6b190772a5494cbab3536019e1ccd83"
   },
   {
     "npc": "the smart usher",
@@ -1079,8 +965,7 @@
   {
     "npc": "the stall owner",
     "location": "the magic stall on the rimbank on God\u0027s Collar",
-    "roomId": "c5912fb38f70e71c2d805f80b180d2fdd7567866",
-    "commands": []
+    "roomId": "c5912fb38f70e71c2d805f80b180d2fdd7567866"
   },
   {
     "npc": "the starving artist",
@@ -1100,8 +985,7 @@
   {
     "npc": "the whiny shop assistant",
     "location": "W\u0026B Chocolatiers on Zephire Street",
-    "roomId": "b576234237a54014a56677c8bab759f66ae34046",
-    "commands": []
+    "roomId": "b576234237a54014a56677c8bab759f66ae34046"
   },
   {
     "npc": "the young lady",
@@ -1111,14 +995,12 @@
   {
     "npc": "the young lady",
     "location": "the conch shop on Cockbill Street",
-    "roomId": "cbb6e2edae5a31a1be57a8524247df93560577a7",
-    "commands": []
+    "roomId": "cbb6e2edae5a31a1be57a8524247df93560577a7"
   },
   {
     "npc": "the young wizard",
     "location": "the wizard\u0027s tent on Street of Cunning Artificers",
-    "roomId": "6544a6185c5b6aaf62554ecde584f40965e7f65f",
-    "commands": []
+    "roomId": "6544a6185c5b6aaf62554ecde584f40965e7f65f"
   },
   {
     "npc": "the young woman",

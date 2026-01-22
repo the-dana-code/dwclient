@@ -3,8 +3,8 @@ package com.danavalerie.matrixmudrelay.core;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 import com.danavalerie.matrixmudrelay.core.data.RoomNoteData;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import com.danavalerie.matrixmudrelay.util.GsonUtils;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,7 +24,7 @@ import java.util.TreeMap;
 
 public class RoomNoteService {
     private static final Logger logger = LoggerFactory.getLogger(RoomNoteService.class);
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = GsonUtils.getGson();
     private final Path storagePath;
     private final Map<String, RoomNoteData> roomButtonsMap = new TreeMap<>();
 

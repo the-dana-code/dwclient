@@ -4,8 +4,8 @@ import com.danavalerie.matrixmudrelay.core.data.ItemData;
 import com.danavalerie.matrixmudrelay.core.data.NpcData;
 import com.danavalerie.matrixmudrelay.core.data.RoomData;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
+import com.danavalerie.matrixmudrelay.util.GsonUtils;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.TreeMap;
 
 public class MapDataService {
     private static final Logger logger = LoggerFactory.getLogger(MapDataService.class);
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = GsonUtils.getGson();
 
     private Map<String, RoomData> rooms = new TreeMap<>();
     private Map<String, ItemData> items = new TreeMap<>();

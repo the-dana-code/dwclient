@@ -20,8 +20,8 @@ package com.danavalerie.matrixmudrelay.config;
 
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap;
+import com.danavalerie.matrixmudrelay.util.GsonUtils;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 
@@ -34,11 +34,10 @@ import java.util.List;
 import java.util.Map;
 
 public final class ConfigLoader {
-    private static final Gson GSON = new GsonBuilder()
+    private static final Gson GSON = GsonUtils.getDefaultBuilder()
             .registerTypeAdapter(BotConfig.TimerData.class, new TimerDataAdapter())
             .registerTypeAdapter(new TypeToken<Map<String, BotConfig.CharacterConfig>>() {}.getType(),
                     (InstanceCreator<Map<String, BotConfig.CharacterConfig>>) type -> new CaseInsensitiveLinkedHashMap<>())
-            .setPrettyPrinting()
             .create();
 
     private ConfigLoader() {}

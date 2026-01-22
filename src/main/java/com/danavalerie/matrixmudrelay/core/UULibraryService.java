@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
+import com.danavalerie.matrixmudrelay.util.GsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -87,7 +88,7 @@ public class UULibraryService {
 
     private void loadMap() {
         try (InputStream is = Files.newInputStream(Paths.get("uu_library.json"))) {
-            Gson gson = new Gson();
+            Gson gson = GsonUtils.getGson();
             Type listType = new TypeToken<List<Room>>() {}.getType();
             List<Room> rooms = gson.fromJson(new InputStreamReader(is), listType);
             for (Room r : rooms) {
@@ -107,7 +108,7 @@ public class UULibraryService {
                     r.exits.sort(String::compareTo);
                 }
             }
-            Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+            Gson gson = GsonUtils.getGson();
             String json = gson.toJson(rooms);
             Files.writeString(Paths.get("uu_library.json"), json);
         } catch (Exception e) {
