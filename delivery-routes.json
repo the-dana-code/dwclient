@@ -1021,5 +1021,10 @@
     "npc": "Velveta",
     "location": "the High Life on Phedre Road",
     "roomId": "e9acbc0b489c83ce0cf6cae37637ce6f3ed2145a"
+  },
+  {
+    "npc": "the barman",
+    "location": "the large tent on the waterfront",
+    "roomId": "2d1426d5ad377603a5865d256a94d7faa39bab34"
   }
 ]

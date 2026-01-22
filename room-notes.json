@@ -938,6 +938,15 @@
       }
     ]
   },
+  "8f3d1098e249d7f177685584f434312cd9f419af": {
+    "name": "warehouse",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "8f5133c2d06d87053307b835f4518fc1b5af273b": {
     "name": "seafood-scented edge of the Harbour Market",
     "buttons": [
@@ -1597,6 +1606,15 @@
       }
     ]
   },
+  "dc8e6278a0b11a57718a265a082af8d6da647a49": {
+    "name": "Twonky\u0027s Clocks",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "dd73061f5252980cac11a758e449136cf1a3907b": {
     "name": "priest clothing shop",
     "buttons": [
@@ -1657,6 +1675,15 @@
   },
   "e4889c7fe573289e63211238c6d15d85cc5ae836": {
     "name": "Havlik\u0027s Dwarf Bar",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "e5526dbae7e456e744ba86fe34a723ba686f9f09": {
+    "name": "Golden Dragon",
     "buttons": [
       {
         "name": "List Menu",
