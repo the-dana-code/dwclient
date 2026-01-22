@@ -88,7 +88,6 @@ public class UULibraryMapGenerator {
             }
             json.append("]");
             if (r.table) json.append(",\n    \"table\": true");
-            if (r.number > 0) json.append(",\n    \"number\": ").append(r.number);
             json.append("\n  }");
             if (i < rooms.size() - 1) json.append(",");
             json.append("\n");

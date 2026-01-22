@@ -51,7 +51,6 @@ public class VerifyLibraryJsonTest {
         assertFalse(r26.exits.contains("north"), "(2,6) should NOT have north exit");
         assertEquals(3, r26.exits.size(), "(2,6) should have exactly 3 exits");
         assertFalse(r26.table, "(2,6) should have no table");
-        assertEquals(1, r26.number, "(2,6) should have room number 1");
 
         // (3,3) has exits west, south, east, north (i.e. all 4 exits), HAS a table, and has no room number
         Room r33 = map.get("3,3");
