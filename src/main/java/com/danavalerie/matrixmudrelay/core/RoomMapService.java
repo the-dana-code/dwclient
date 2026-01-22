@@ -21,6 +21,7 @@ package com.danavalerie.matrixmudrelay.core;
 import com.danavalerie.matrixmudrelay.core.data.ItemData;
 import com.danavalerie.matrixmudrelay.core.data.NpcData;
 import com.danavalerie.matrixmudrelay.core.data.RoomData;
+import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -376,7 +377,7 @@ public class RoomMapService {
 
         // Search in shops
         dataService.getRooms().values().stream()
-                .filter(r -> r.getShopItems().keySet().stream().anyMatch(i -> i.equalsIgnoreCase(trimmed)))
+                .filter(r -> r.getShopItems().stream().anyMatch(si -> si.getName().equalsIgnoreCase(trimmed)))
                 .forEach(r -> results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "Shop")));
 
         // Search in NPCs
@@ -402,6 +403,20 @@ public class RoomMapService {
                 })
                 .limit(limit)
                 .collect(Collectors.toList());
+    }
+
+    public Optional<ShopItem> findShopItem(String roomId, String itemName) {
+        if (roomId == null || itemName == null) {
+            return Optional.empty();
+        }
+        RoomData room = dataService.getRoom(roomId);
+        if (room == null || room.getShopItems() == null) {
+            return Optional.empty();
+        }
+        String trimmed = itemName.trim().toLowerCase();
+        return room.getShopItems().stream()
+                .filter(si -> si.getName().equalsIgnoreCase(trimmed))
+                .findFirst();
     }
 
     private int getSourceRank(String sourceInfo) {

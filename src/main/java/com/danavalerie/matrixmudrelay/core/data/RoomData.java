@@ -1,5 +1,7 @@
 package com.danavalerie.matrixmudrelay.core.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -11,7 +13,7 @@ public class RoomData {
     private String roomShort;
     private String roomType;
     private Map<String, String> exits = new TreeMap<>();
-    private Map<String, String> shopItems = new TreeMap<>();
+    private List<ShopItem> shopItems = new ArrayList<>();
 
     public RoomData() {}
 
@@ -45,6 +47,6 @@ public class RoomData {
     public Map<String, String> getExits() { return exits; }
     public void setExits(Map<String, String> exits) { this.exits = exits; }
 
-    public Map<String, String> getShopItems() { return shopItems; }
-    public void setShopItems(Map<String, String> shopItems) { this.shopItems = shopItems; }
+    public List<ShopItem> getShopItems() { return shopItems; }
+    public void setShopItems(List<ShopItem> shopItems) { this.shopItems = shopItems; }
 }

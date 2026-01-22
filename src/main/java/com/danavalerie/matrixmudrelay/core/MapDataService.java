@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay.core;
 import com.danavalerie.matrixmudrelay.core.data.ItemData;
 import com.danavalerie.matrixmudrelay.core.data.NpcData;
 import com.danavalerie.matrixmudrelay.core.data.RoomData;
+import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import com.danavalerie.matrixmudrelay.util.GsonUtils;
 import com.google.gson.Gson;
@@ -45,7 +46,7 @@ public class MapDataService {
         if (rooms != null) {
             rooms.values().forEach(r -> {
                 if (r.getShopItems() != null) {
-                    r.getShopItems().keySet().forEach(this::addItemIfAbsent);
+                    r.getShopItems().forEach(si -> addItemIfAbsent(si.getName()));
                 }
             });
         }

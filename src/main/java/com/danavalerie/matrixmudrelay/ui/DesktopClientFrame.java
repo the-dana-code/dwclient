@@ -24,6 +24,7 @@ import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
+import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.TimerService;
 import com.danavalerie.matrixmudrelay.core.RoomNoteService;
@@ -118,6 +119,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private DeliveryRouteMappings routeMappings;
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
+    private String currentRoomId;
     private final TimerService timerService;
     private final BotConfig cfg;
     private final Path configPath;
@@ -834,14 +836,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             itemName = singulars.get(0);
         }
 
+        String searchName = routeMapService.findShopItem(currentRoomId, itemName)
+                .map(ShopItem::getShopName)
+                .orElse(itemName);
+
         if (storeInventoryTracker.isNameListed()) {
             for (int i = 0; i < quantity; i++) {
-                submitCommand("buy " + itemName);
+                submitCommand("buy " + searchName);
             }
             return;
         }
         String finalItemName = itemName;
-        storeInventoryTracker.findMatch(requirement.item()).ifPresentOrElse(item ->
+        storeInventoryTracker.findMatch(searchName).ifPresentOrElse(item ->
                         buyItemById(item.id(), quantity),
                 () -> outputPane.appendErrorText("Store inventory does not list \"" + finalItemName + "\"."));
     }
@@ -1188,6 +1194,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void updateCurrentRoom(String roomId, String roomName) {
+        this.currentRoomId = roomId;
         mapPanel.updateCurrentRoom(roomId);
         roomButtonBarPanel.updateRoom(roomId, roomName);
         roomNotePanel.updateRoom(roomId, roomName);

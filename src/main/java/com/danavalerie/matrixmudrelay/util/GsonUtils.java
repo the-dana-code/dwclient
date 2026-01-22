@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.util;
 
+import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -78,6 +79,7 @@ public class GsonUtils {
 
     public static GsonBuilder getDefaultBuilder() {
         return new GsonBuilder()
+                .registerTypeAdapter(ShopItem.class, new ShopItem.Adapter())
                 .registerTypeAdapterFactory(EMPTY_TO_NULL_FACTORY)
                 .setPrettyPrinting();
     }
