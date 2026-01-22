@@ -1041,5 +1041,10 @@
     "npc": "Patty",
     "location": "Dessert Animals on Street of Cunning Artificers",
     "roomId": "aebbd1e03b0bd507f4af1fd85756af039e0fbb20"
+  },
+  {
+    "npc": "the jolly old shopkeeper",
+    "location": "the exciting toy shop on Endless Street",
+    "roomId": "1c9cb347c3bcb83e299b7e56e8d467f557476a8a"
   }
 ]

@@ -32,23 +32,32 @@ public final class GrammarUtils {
             return List.of();
         }
         List<String> phrases = new ArrayList<>();
+        String lower = phrase.toLowerCase(Locale.ROOT);
+
+        String[][] containerPatterns = {
+                {"pairs of ", "pair of "},
+                {"sets of ", "set of "},
+                {"packets of ", "packet of "},
+                {"tubes of ", "tube of "},
+                {"games of ", "game of "}
+        };
+
+        for (String[] pattern : containerPatterns) {
+            if (lower.startsWith(pattern[0]) || lower.startsWith(pattern[1])) {
+                String s = replacePrefix(phrase, pattern[0], pattern[1]);
+                if (s != null) {
+                    phrases.add(s);
+                }
+                return phrases;
+            }
+        }
+
         String s;
-        if ((s = replacePrefix(phrase, "pairs of ", "pair of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "sets of ", "set of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "packets of ", "packet of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "tubes of ", "tube of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "games of ", "game of ")) != null) {
-            phrases.add(s);
-        } else if ((s = replacePrefix(phrase, "petits fours", "petit fours")) != null) {
+        if ((s = replacePrefix(phrase, "petits fours", "petit fours")) != null) {
             phrases.add(s);
         } else if ((s = replacePrefix(phrase, "mains gauches", "main gauche")) != null) {
             phrases.add(s);
         } else {
-            String lower = phrase.toLowerCase(Locale.ROOT);
             for (String prep : new String[]{" with ", " of ", " in ", " for ", " to "}) {
                 int idx = lower.indexOf(prep);
                 if (idx > 0) {

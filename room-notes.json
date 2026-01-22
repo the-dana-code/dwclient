@@ -135,6 +135,15 @@
       }
     ]
   },
+  "12c9613b6af6492909722f3497788c51f57bc2a1": {
+    "name": "Kernab\u0027s weaponry store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "13c33a2610639d0964b07ea27c650c46c2bb2434": {
     "name": "relic shop",
     "buttons": [
@@ -146,6 +155,15 @@
   },
   "1953162a25f312a0f60df63e3d956c07fdccb72f": {
     "name": "backroom of Madame Dawning\u0027s Palliaments",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "1c9cb347c3bcb83e299b7e56e8d467f557476a8a": {
+    "name": "exciting toy shop",
     "buttons": [
       {
         "name": "List Shop",

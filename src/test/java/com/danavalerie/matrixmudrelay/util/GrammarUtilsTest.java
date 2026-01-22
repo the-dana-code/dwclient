@@ -37,6 +37,11 @@ class GrammarUtilsTest {
         assertEquals(List.of("box of chocolates", "boxe of chocolates"), GrammarUtils.singularizePhrase("boxes of chocolates"));
         assertEquals(List.of("key to the door"), GrammarUtils.singularizePhrase("keys to the door"));
         assertEquals(List.of("bluebird of happiness bathing suit"), GrammarUtils.singularizePhrase("bluebird of happiness bathing suits"));
+        
+        // Ensure "set of" and "pair of" don't over-singularize the tail
+        assertEquals(List.of(), GrammarUtils.singularizePhrase("set of shiny gold handcuffs"));
+        assertEquals(List.of("set of shiny gold handcuffs"), GrammarUtils.singularizePhrase("sets of shiny gold handcuffs"));
+        assertEquals(List.of(), GrammarUtils.singularizePhrase("pair of airy white cotton trousers"));
     }
 
     @Test
