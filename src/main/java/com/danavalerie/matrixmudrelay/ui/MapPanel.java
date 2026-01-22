@@ -29,7 +29,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -65,7 +64,7 @@ public final class MapPanel extends JPanel {
     public static final Color FOREGROUND_DARK = new Color(35, 35, 35);
     public static final Color BACKGROUND_DARK = new Color(12, 12, 18);
     public static final Color FOREGROUND_LIGHT = new Color(220, 220, 220);
-    private static final int ZOOM_MIN = 50;
+    private static final int ZOOM_MIN = 20;
     private static final int ZOOM_MAX = 200;
     private static final int ZOOM_DEFAULT = 100;
     private static final RoomMapService.MapArea NONE_AREA = new RoomMapService.MapArea(-1, "<None>");
@@ -77,11 +76,8 @@ public final class MapPanel extends JPanel {
     private final JScrollPane scrollPane;
     private final AtomicReference<String> lastRoomId = new AtomicReference<>();
     private final AtomicReference<BufferedImage> baseImageCache = new AtomicReference<>();
-    private final JSlider zoomSlider;
-    private final JLabel zoomLabel = new JLabel();
     private final IntConsumer zoomChangeListener;
     private final Consumer<Boolean> invertChangeListener;
-    private final JButton invertButton = new JButton("Invert");
     private volatile boolean invertMap;
     private Consumer<RoomMapService.RoomLocation> speedwalkHandler;
     private final JButton speedWalkButton = new JButton("Speed Walk");
@@ -129,7 +125,6 @@ public final class MapPanel extends JPanel {
         centerButton.setToolTipText("Center on current room");
         centerButton.setMargin(new Insets(2, 4, 2, 4));
         centerButton.addActionListener(event -> handleCenterAction());
-        invertButton.addActionListener(event -> toggleInvert());
         JPanel titlePanel = new JPanel(new BorderLayout());
         JPanel titleActions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 2));
         titleActions.setOpaque(false);
@@ -140,19 +135,6 @@ public final class MapPanel extends JPanel {
         scrollPane = new JScrollPane(mapLabel);
         add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        zoomSlider = new JSlider(ZOOM_MIN, ZOOM_MAX, this.zoomPercent);
-        zoomSlider.setPaintTicks(true);
-        zoomSlider.setMajorTickSpacing(25);
-        zoomSlider.setMinorTickSpacing(5);
-        zoomSlider.addChangeListener(event -> onZoomChanged());
-        updateZoomLabel();
-        JPanel zoomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
-        JLabel zoomTitleLabel = new JLabel("Zoom:");
-        zoomPanel.add(zoomTitleLabel);
-        zoomPanel.add(zoomSlider);
-        zoomPanel.add(zoomLabel);
-        zoomPanel.add(invertButton);
-        add(zoomPanel, BorderLayout.SOUTH);
         updateColors();
         mapLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -162,8 +144,9 @@ public final class MapPanel extends JPanel {
         });
     }
 
-    private void toggleInvert() {
-        invertMap = !invertMap;
+    public void setInverted(boolean inverted) {
+        if (this.invertMap == inverted) return;
+        this.invertMap = inverted;
         updateColors();
 
         String roomId = lastRoomId.get();
@@ -227,9 +210,6 @@ public final class MapPanel extends JPanel {
             c.setBackground(bg);
         } else if (c instanceof JComboBox) {
             c.setForeground(fg);
-        } else if (c instanceof JSlider) {
-            c.setForeground(fg);
-            c.setBackground(bg);
         } else if (c instanceof JButton) {
             c.setForeground(fg);
             c.setBackground(bg);
@@ -446,21 +426,16 @@ public final class MapPanel extends JPanel {
         return (invertMap && !mapImage.isDark()) ? DarkThemeConverter.toDarkTheme(image) : image;
     }
 
-    private void onZoomChanged() {
-        int newValue = sanitizeZoom(zoomSlider.getValue());
-        if (newValue == zoomPercent) {
+    public void setZoomPercent(int zoomPercent) {
+        int newValue = sanitizeZoom(zoomPercent);
+        if (newValue == this.zoomPercent) {
             return;
         }
-        zoomPercent = newValue;
-        updateZoomLabel();
+        this.zoomPercent = newValue;
         updateDisplayedImage();
-        if (!zoomSlider.getValueIsAdjusting() && zoomChangeListener != null) {
-            zoomChangeListener.accept(zoomPercent);
+        if (zoomChangeListener != null) {
+            zoomChangeListener.accept(this.zoomPercent);
         }
-    }
-
-    private void updateZoomLabel() {
-        zoomLabel.setText(zoomPercent + "%");
     }
 
     private static int sanitizeZoom(int zoomPercent) {

@@ -36,7 +36,9 @@ import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -48,6 +50,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
@@ -312,13 +315,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(connectionItem);
 
         mainMenu.addSeparator();
-        JMenuItem fontItem = new JMenuItem("Output Font...");
-        if (currentBg != null && currentFg != null) {
-            updateMenuTheme(fontItem, currentBg, currentFg);
-        }
-        fontItem.addActionListener(event -> showFontDialog());
-        mainMenu.add(fontItem);
-
         JMenuItem sendPasswordItem = new JMenuItem("Send Password");
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(sendPasswordItem, currentBg, currentFg);
@@ -345,6 +341,48 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         addBookmarksToMenu(quickLinksMenu, cfg.bookmarks);
         menuBar.add(quickLinksMenu);
+        
+        JMenu viewMenu = new JMenu("View");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(viewMenu, currentBg, currentFg);
+        }
+
+        JMenuItem fontItem = new JMenuItem("Output Font...");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(fontItem, currentBg, currentFg);
+        }
+        fontItem.addActionListener(event -> showFontDialog());
+        viewMenu.add(fontItem);
+        viewMenu.addSeparator();
+
+        JCheckBoxMenuItem invertItem = new JCheckBoxMenuItem("Invert Map", resolveMapInvert());
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(invertItem, currentBg, currentFg);
+        }
+        invertItem.addActionListener(event -> mapPanel.setInverted(invertItem.isSelected()));
+        viewMenu.add(invertItem);
+
+        viewMenu.addSeparator();
+
+        JMenu zoomSubMenu = new JMenu("Zoom");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(zoomSubMenu, currentBg, currentFg);
+        }
+        ButtonGroup zoomGroup = new ButtonGroup();
+        int currentZoom = resolveMapZoomPercent();
+        for (int z = 20; z <= 200; z += 20) {
+            final int zoomVal = z;
+            JRadioButtonMenuItem zoomItem = new JRadioButtonMenuItem(z + "%", z == currentZoom);
+            if (currentBg != null && currentFg != null) {
+                updateMenuTheme(zoomItem, currentBg, currentFg);
+            }
+            zoomItem.addActionListener(event -> mapPanel.setZoomPercent(zoomVal));
+            zoomSubMenu.add(zoomItem);
+            zoomGroup.add(zoomItem);
+        }
+        viewMenu.add(zoomSubMenu);
+        menuBar.add(viewMenu);
+
         menuBar.add(buildHelpMenu());
 
         return menuBar;

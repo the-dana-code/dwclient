@@ -82,11 +82,8 @@ public class MapPanelTest {
         field.set(mapPanel, testImage);
         
         // Initial state: not inverted
-        java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
-        toggleMethod.setAccessible(true);
-        
         // Toggle once: should be converted to dark theme
-        toggleMethod.invoke(mapPanel);
+        mapPanel.setInverted(true);
         
         BufferedImage resultImage = (BufferedImage) field.get(mapPanel);
         org.junit.jupiter.api.Assertions.assertNotSame(testImage, resultImage);
@@ -99,7 +96,7 @@ public class MapPanelTest {
         org.junit.jupiter.api.Assertions.assertSame(testImage, cache.get());
         
         // Toggle again: should be back to original
-        toggleMethod.invoke(mapPanel);
+        mapPanel.setInverted(false);
         org.junit.jupiter.api.Assertions.assertSame(testImage, field.get(mapPanel));
         org.junit.jupiter.api.Assertions.assertEquals(originalColor, ((BufferedImage)field.get(mapPanel)).getRGB(0, 0));
         
@@ -136,9 +133,7 @@ public class MapPanelTest {
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, scrollPane.getBackground());
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, scrollPane.getViewport().getBackground());
 
-        java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
-        toggleMethod.setAccessible(true);
-        toggleMethod.invoke(mapPanel);
+        mapPanel.setInverted(true);
 
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, mapLabel.getBackground());
         org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, scrollPane.getBackground());
@@ -148,19 +143,17 @@ public class MapPanelTest {
     public void testButtonBackgroundMatchesTheme() throws Exception {
         MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, z -> {}, false, invert -> {});
         
-        java.lang.reflect.Field invertButtonField = MapPanel.class.getDeclaredField("invertButton");
-        invertButtonField.setAccessible(true);
-        javax.swing.JButton invertButton = (javax.swing.JButton) invertButtonField.get(mapPanel);
+        java.lang.reflect.Field centerButtonField = MapPanel.class.getDeclaredField("centerButton");
+        centerButtonField.setAccessible(true);
+        javax.swing.JButton centerButton = (javax.swing.JButton) centerButtonField.get(mapPanel);
 
         // Light mode
-        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, invertButton.getBackground());
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_LIGHT, centerButton.getBackground());
 
         // Toggle to dark mode
-        java.lang.reflect.Method toggleMethod = MapPanel.class.getDeclaredMethod("toggleInvert");
-        toggleMethod.setAccessible(true);
-        toggleMethod.invoke(mapPanel);
+        mapPanel.setInverted(true);
 
-        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, invertButton.getBackground());
+        org.junit.jupiter.api.Assertions.assertEquals(MapPanel.BACKGROUND_DARK, centerButton.getBackground());
     }
 
     @Test
