@@ -5,7 +5,6 @@ import java.util.TreeMap;
 
 public class NpcData {
     private String npcId;
-    private int mapId;
     private String npcName;
     private String roomId;
     private Map<String, NpcItemData> items = new TreeMap<>();
@@ -14,9 +13,6 @@ public class NpcData {
 
     public String getNpcId() { return npcId; }
     public void setNpcId(String npcId) { this.npcId = npcId; }
-
-    public int getMapId() { return mapId; }
-    public void setMapId(int mapId) { this.mapId = mapId; }
 
     public String getNpcName() { return npcName; }
     public void setNpcName(String npcName) { this.npcName = npcName; }

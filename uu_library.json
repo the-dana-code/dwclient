@@ -2,6522 +2,10529 @@
   {
     "row": 1,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 1,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 2,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 2,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 2,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 2,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 2,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 2,
     "col": 6,
-    "exits": ["south", "east", "west"],
-    "number": 1
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 2,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 2,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 3,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 3,
     "col": 2,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 3,
     "col": 3,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 3,
     "col": 4,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 3,
     "col": 5,
-    "exits": ["north", "west"],
-    "number": 2
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 3,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 3,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 3,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 4,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 4,
     "col": 2,
-    "exits": ["south"],
-    "number": 3
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 4,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 4,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 4,
     "col": 5,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 4,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 4,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 4,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 5,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 5,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 5,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 5,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 5,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 5,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 5,
     "col": 7,
-    "exits": ["south"],
-    "number": 4
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 5,
     "col": 8,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 6,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 6,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 6,
     "col": 3,
-    "exits": ["north", "east"],
-    "table": true,
-    "number": 5
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 6,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 6,
     "col": 5,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 6,
     "col": 6,
-    "exits": ["south"],
-    "number": 6
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 6,
     "col": 7,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 6,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 7,
     "col": 1,
-    "exits": ["east"],
-    "number": 7
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 7,
     "col": 2,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 7,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 7,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 7,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 7,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 7,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 7,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 8,
     "col": 1,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 8,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 9,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 9,
     "col": 2,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 9,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 9,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 9,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 9,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 9,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 1,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 10,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 5,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 10,
     "col": 8,
-    "exits": ["north"],
-    "number": 8
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 11,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 11,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 11,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 11,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 11,
     "col": 5,
-    "exits": ["east"],
-    "number": 9
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 11,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 11,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 11,
     "col": 8,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 12,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 12,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 12,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 12,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 12,
     "col": 5,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 12,
     "col": 6,
-    "exits": ["west"],
-    "number": 10
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 12,
     "col": 7,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 12,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 13,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 13,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 13,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 13,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 13,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 13,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 13,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 13,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 14,
     "col": 1,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 14,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 14,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 14,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 14,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 14,
     "col": 6,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 14,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 14,
     "col": 8,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 15,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 15,
     "col": 2,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 15,
     "col": 3,
-    "exits": ["east"],
-    "number": 11
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 15,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 15,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 15,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 15,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 15,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 16,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 16,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 16,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 16,
     "col": 4,
-    "exits": ["south"],
-    "number": 12
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 16,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 16,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 16,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 16,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 17,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 17,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 17,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 17,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 17,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 17,
     "col": 6,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 17,
     "col": 7,
-    "exits": ["north"],
-    "number": 13
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 17,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 18,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 18,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 18,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 18,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 18,
     "col": 5,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 18,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 18,
     "col": 7,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 18,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 19,
     "col": 1,
-    "exits": ["east"],
-    "number": 14
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 19,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 19,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 19,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 19,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 19,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 19,
     "col": 7,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 19,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 20,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 21,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 21,
     "col": 2,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 21,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 21,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 21,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 21,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 21,
     "col": 7,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 21,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 1,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 5,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 6,
-    "exits": ["east"],
-    "number": 15
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 22,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 22,
     "col": 8,
-    "exits": ["east"],
-    "number": 16
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 23,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 23,
     "col": 2,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 23,
     "col": 3,
-    "exits": ["east"],
-    "number": 17
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 23,
     "col": 4,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 23,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 23,
     "col": 6,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 23,
     "col": 7,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 23,
     "col": 8,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 24,
     "col": 1,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 24,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 24,
     "col": 3,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 24,
     "col": 5,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 24,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 24,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 24,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 25,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 25,
     "col": 2,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 25,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 25,
     "col": 4,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 25,
     "col": 5,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 25,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 25,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 25,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 26,
     "col": 1,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 5,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 26,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 27,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 27,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 27,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 27,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 27,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 27,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 27,
     "col": 7,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 27,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 28,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 28,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 28,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 28,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 28,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 28,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 28,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 29,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 29,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 29,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 29,
     "col": 4,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 29,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 29,
     "col": 6,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 29,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 29,
     "col": 8,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 30,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 30,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 30,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 30,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 30,
     "col": 7,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 30,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 31,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 31,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 31,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 31,
     "col": 4,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 31,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 31,
     "col": 6,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 31,
     "col": 8,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 32,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 32,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 32,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 32,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 32,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 32,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 32,
     "col": 7,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 32,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 33,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 33,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 33,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 33,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 33,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 33,
     "col": 6,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 33,
     "col": 7,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 33,
     "col": 8,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 34,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 34,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 34,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 34,
     "col": 4,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 34,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 34,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 34,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 34,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 35,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 35,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 35,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 35,
     "col": 5,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 35,
     "col": 6,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 35,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 35,
     "col": 8,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 36,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 36,
     "col": 2,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 36,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 36,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 36,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 36,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 36,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 36,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 37,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 37,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 37,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 37,
     "col": 4,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 37,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 37,
     "col": 6,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 37,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 37,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 38,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 38,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 38,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 38,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 38,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 38,
     "col": 6,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 38,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 38,
     "col": 8,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 39,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 39,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 39,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 39,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 39,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 39,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 39,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 39,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 40,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 40,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 40,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 40,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 40,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 40,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 40,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 40,
     "col": 8,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 41,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 41,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 41,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 41,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 41,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 41,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 41,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 41,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 42,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 42,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 42,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 42,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 42,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 42,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 42,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 42,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 43,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 43,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 43,
     "col": 3,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 43,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 43,
     "col": 5,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 43,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 43,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 43,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 44,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 44,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 44,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 44,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 44,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 44,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 44,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 44,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 45,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 45,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 45,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 45,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 45,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 45,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 45,
     "col": 8,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 46,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 47,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 47,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 47,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 47,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 47,
     "col": 5,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 47,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 47,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 47,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 48,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 48,
     "col": 2,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 48,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 48,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 48,
     "col": 5,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 48,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 48,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 48,
     "col": 8,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 49,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 49,
     "col": 2,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 49,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 49,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 49,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 49,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 49,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 49,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 50,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 50,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 50,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 50,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 50,
     "col": 5,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 50,
     "col": 7,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 50,
     "col": 8,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 51,
     "col": 4,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 6,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 7,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 51,
     "col": 8,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 52,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 52,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 52,
     "col": 3,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 52,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 52,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 52,
     "col": 6,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 52,
     "col": 7,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 52,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 53,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 53,
     "col": 2,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 53,
     "col": 3,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 53,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 53,
     "col": 5,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 53,
     "col": 6,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 53,
     "col": 7,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 53,
     "col": 8,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 54,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 54,
     "col": 2,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 54,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 54,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 54,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 54,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 54,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 54,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 55,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 55,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 55,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 55,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 55,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 55,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 55,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 55,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 56,
     "col": 1,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 56,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 56,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 56,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 56,
     "col": 5,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 56,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 56,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 57,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 57,
     "col": 2,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 57,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 57,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 57,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 57,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 57,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 58,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 58,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 58,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 58,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 58,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 58,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 58,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 58,
     "col": 8,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 59,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 59,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 59,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 59,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 59,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 59,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 59,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 60,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 60,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 60,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 60,
     "col": 4,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 60,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 60,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 60,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 60,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 61,
     "col": 1,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 61,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 61,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 61,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 61,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 61,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 61,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 61,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 62,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 62,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 62,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 62,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 62,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 62,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 62,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 62,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 63,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 63,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 63,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 63,
     "col": 4,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 63,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 63,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 63,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 63,
     "col": 8,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 1,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 5,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 64,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 65,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 65,
     "col": 2,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 65,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 65,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 65,
     "col": 5,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 65,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 65,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 65,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 66,
     "col": 1,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 66,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 66,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 66,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 66,
     "col": 5,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 66,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 66,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 66,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 67,
     "col": 1,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 67,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 67,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 67,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 67,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 67,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 67,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 67,
     "col": 8,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 68,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 68,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 68,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 68,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 68,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 68,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 68,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 68,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 69,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 69,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 69,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 69,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 69,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 69,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 69,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 69,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 70,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 70,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 70,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 70,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 70,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 70,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 70,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 70,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 71,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 71,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 71,
     "col": 3,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 71,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 71,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 71,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 71,
     "col": 7,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 71,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 72,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 72,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 72,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 72,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 72,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 72,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 72,
     "col": 8,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 73,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 73,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 73,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 73,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 73,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 73,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 73,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 73,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 74,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 74,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 74,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 74,
     "col": 4,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 74,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 74,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 74,
     "col": 7,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 74,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 75,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 75,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 75,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 75,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 75,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 75,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 75,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 75,
     "col": 8,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 76,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 76,
     "col": 2,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 76,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 76,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 76,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 76,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 76,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 76,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 77,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 77,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 77,
     "col": 3,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 77,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 77,
     "col": 5,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 77,
     "col": 6,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 77,
     "col": 7,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 77,
     "col": 8,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 78,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 78,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 78,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 78,
     "col": 4,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 78,
     "col": 5,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 78,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 78,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 78,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 79,
     "col": 1,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 79,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 79,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 79,
     "col": 4,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 79,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 79,
     "col": 6,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 79,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 79,
     "col": 8,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 80,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 80,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 80,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 80,
     "col": 4,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 80,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 80,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 80,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 80,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 81,
     "col": 1,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 81,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 81,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 81,
     "col": 4,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 81,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 81,
     "col": 6,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 81,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 81,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 82,
     "col": 1,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 82,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 82,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 82,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 82,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 82,
     "col": 6,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 82,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 82,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 83,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 83,
     "col": 2,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 83,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 83,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 83,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 83,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 83,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 83,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 84,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 84,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 84,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 84,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 84,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 84,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 84,
     "col": 8,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 85,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 85,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 85,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 85,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 85,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 85,
     "col": 6,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 85,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 85,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 86,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 86,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 86,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 86,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 86,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 86,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 86,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 87,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 87,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 87,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 87,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 87,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 87,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 87,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 87,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 88,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 88,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 88,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 88,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 88,
     "col": 5,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 88,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 88,
     "col": 7,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 88,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 89,
     "col": 1,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 89,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 89,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 89,
     "col": 4,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 89,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 89,
     "col": 6,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 89,
     "col": 7,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 89,
     "col": 8,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 90,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 90,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 90,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 90,
     "col": 4,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 90,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 90,
     "col": 6,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 90,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 90,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 91,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 91,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 91,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 91,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 91,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 91,
     "col": 6,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 91,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 91,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 92,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 92,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 92,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 92,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 92,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 92,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 92,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 92,
     "col": 8,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 93,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 93,
     "col": 2,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 93,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 93,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 93,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 93,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 93,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 93,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 94,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 94,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 94,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 94,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 94,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 94,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 94,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 95,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 95,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 95,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 95,
     "col": 4,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 95,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 95,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 95,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 95,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 96,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 96,
     "col": 2,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 96,
     "col": 3,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 96,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 96,
     "col": 5,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 96,
     "col": 6,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 96,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 96,
     "col": 8,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 97,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 97,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 97,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 97,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 97,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 97,
     "col": 6,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 97,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 97,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 98,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 5,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 7,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 98,
     "col": 8,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 99,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 99,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 99,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 99,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 99,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 99,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 99,
     "col": 7,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 99,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 100,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 100,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 100,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 100,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 100,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 100,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 100,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 100,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 101,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 101,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 101,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 101,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 101,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 101,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 101,
     "col": 7,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 101,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 102,
     "col": 1,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 102,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 102,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 102,
     "col": 4,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 102,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 102,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 102,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 103,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 103,
     "col": 2,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 103,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 103,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 103,
     "col": 6,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 103,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 103,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 104,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 104,
     "col": 2,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 104,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 104,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 104,
     "col": 5,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 104,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 104,
     "col": 7,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 104,
     "col": 8,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 105,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 105,
     "col": 2,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 105,
     "col": 3,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 105,
     "col": 4,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 105,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 105,
     "col": 6,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 105,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 105,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 1,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 5,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 6,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 106,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 106,
     "col": 8,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 107,
     "col": 1,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 107,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 107,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 107,
     "col": 4,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 107,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 107,
     "col": 6,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 107,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 107,
     "col": 8,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 108,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 108,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 108,
     "col": 3,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 108,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 108,
     "col": 5,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 108,
     "col": 6,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 108,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 108,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 109,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 109,
     "col": 2,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 109,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 109,
     "col": 4,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 109,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 109,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 109,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 109,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 110,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 110,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 110,
     "col": 3,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 110,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 110,
     "col": 5,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 110,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 110,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 110,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 111,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 111,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 111,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 111,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 111,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 111,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 111,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 111,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 112,
     "col": 1,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 112,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 112,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 112,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 112,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 112,
     "col": 6,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 112,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 112,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 113,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 113,
     "col": 2,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 113,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 113,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 113,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 113,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 113,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 113,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 114,
     "col": 1,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 114,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 114,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 114,
     "col": 4,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 114,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 114,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 114,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 114,
     "col": 8,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 115,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 115,
     "col": 2,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 115,
     "col": 3,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 115,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 115,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 115,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 115,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 115,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 116,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 116,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 116,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 116,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 116,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 116,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 116,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 116,
     "col": 8,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 117,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 117,
     "col": 2,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 117,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 117,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 117,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 117,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 118,
     "col": 1,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 118,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 118,
     "col": 3,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 118,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 118,
     "col": 7,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 118,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 119,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 119,
     "col": 2,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 119,
     "col": 3,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 119,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 119,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 119,
     "col": 6,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 119,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 119,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 120,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 120,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 120,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 120,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 120,
     "col": 5,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 120,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 120,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 120,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 121,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 121,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 121,
     "col": 3,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 121,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 121,
     "col": 5,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 121,
     "col": 6,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 121,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 121,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 122,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 122,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 122,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 122,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 122,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 122,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 122,
     "col": 7,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 122,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 123,
     "col": 1,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 123,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 123,
     "col": 3,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 123,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 123,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 123,
     "col": 6,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 123,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 123,
     "col": 8,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 124,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 124,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 124,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 124,
     "col": 4,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 124,
     "col": 5,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 124,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 124,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 124,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 125,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 125,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 125,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 125,
     "col": 4,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 125,
     "col": 5,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 125,
     "col": 6,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 125,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 125,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 126,
     "col": 1,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 126,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 126,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 126,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 126,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 126,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 126,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 126,
     "col": 8,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 127,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 127,
     "col": 2,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 127,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 127,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 127,
     "col": 5,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 127,
     "col": 6,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 127,
     "col": 7,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 127,
     "col": 8,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 128,
     "col": 1,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 128,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 128,
     "col": 3,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 128,
     "col": 5,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 128,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 128,
     "col": 7,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 128,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 129,
     "col": 1,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 129,
     "col": 2,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 129,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 129,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 129,
     "col": 5,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 129,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 129,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 129,
     "col": 8,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 130,
     "col": 1,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 130,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 130,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 130,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 130,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 130,
     "col": 6,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 130,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 130,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 131,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 131,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 131,
     "col": 3,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 131,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 131,
     "col": 5,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 131,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 131,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 131,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 132,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 132,
     "col": 2,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 132,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 132,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 132,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 132,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 132,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 132,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 133,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 133,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 133,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 133,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 133,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 133,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 133,
     "col": 7,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 133,
     "col": 8,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 134,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 134,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 134,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 134,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 134,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 134,
     "col": 6,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 134,
     "col": 7,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 134,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 135,
     "col": 2,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 135,
     "col": 3,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 135,
     "col": 4,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 135,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 135,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 135,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 135,
     "col": 8,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 136,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 136,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 136,
     "col": 3,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 136,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 136,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 136,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 136,
     "col": 7,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 136,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 137,
     "col": 1,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 137,
     "col": 2,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 137,
     "col": 3,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 137,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 137,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 137,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 137,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 137,
     "col": 8,
-    "exits": ["north", "south", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 138,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 138,
     "col": 2,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 138,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 138,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 138,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 138,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 138,
     "col": 7,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 138,
     "col": 8,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 139,
     "col": 1,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 139,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 139,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 139,
     "col": 4,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 139,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 139,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 139,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 139,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 140,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 140,
     "col": 2,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 140,
     "col": 3,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 140,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 140,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 140,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 140,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 140,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 141,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 141,
     "col": 2,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 141,
     "col": 3,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 141,
     "col": 4,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 141,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 141,
     "col": 6,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 141,
     "col": 7,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 141,
     "col": 8,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 142,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 142,
     "col": 2,
-    "exits": ["west"]
+    "exits": [
+      "west"
+    ]
   },
   {
     "row": 142,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 142,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 142,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 142,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 142,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 143,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 143,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 143,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 143,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 143,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 143,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 143,
     "col": 7,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 143,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 144,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 144,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 144,
     "col": 3,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 144,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 144,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 144,
     "col": 6,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 144,
     "col": 7,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 144,
     "col": 8,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 145,
     "col": 1,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 145,
     "col": 2,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 145,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 145,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 145,
     "col": 5,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 145,
     "col": 6,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 145,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 145,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 146,
     "col": 1,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 146,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 146,
     "col": 3,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 146,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 146,
     "col": 5,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 146,
     "col": 6,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 146,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 146,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 147,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 147,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 147,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 147,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 147,
     "col": 5,
-    "exits": ["south"]
+    "exits": [
+      "south"
+    ]
   },
   {
     "row": 147,
     "col": 6,
-    "exits": ["north", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 147,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 147,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 148,
     "col": 1,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 148,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 148,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 148,
     "col": 5,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 148,
     "col": 6,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 148,
     "col": 7,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 148,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 149,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 149,
     "col": 2,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 149,
     "col": 3,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 149,
     "col": 4,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 149,
     "col": 5,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 149,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 149,
     "col": 7,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 149,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 150,
     "col": 1,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 150,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 150,
     "col": 3,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 150,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 150,
     "col": 5,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 150,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 150,
     "col": 7,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 151,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 151,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 151,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 151,
     "col": 4,
-    "exits": ["north", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 151,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 151,
     "col": 6,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 151,
     "col": 7,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 151,
     "col": 8,
-    "exits": ["north", "west"],
-    "table": true
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 152,
     "col": 1,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 152,
     "col": 2,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 152,
     "col": 3,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 152,
     "col": 4,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 152,
     "col": 5,
-    "exits": ["east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 152,
     "col": 6,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 152,
     "col": 7,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 152,
     "col": 8,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 153,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 153,
     "col": 2,
-    "exits": ["north", "south"],
-    "table": true
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 153,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 153,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 153,
     "col": 5,
-    "exits": ["east"]
+    "exits": [
+      "east"
+    ]
   },
   {
     "row": 153,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 153,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 153,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 154,
     "col": 1,
-    "exits": ["south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 154,
     "col": 2,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 154,
     "col": 3,
-    "exits": ["south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 154,
     "col": 4,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 154,
     "col": 5,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 154,
     "col": 6,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 154,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 155,
     "col": 1,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 155,
     "col": 2,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 155,
     "col": 3,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 155,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 155,
     "col": 5,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 155,
     "col": 6,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 155,
     "col": 7,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 155,
     "col": 8,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 156,
     "col": 1,
-    "exits": ["north", "south", "east"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 156,
     "col": 2,
-    "exits": ["north", "east", "west"]
+    "exits": [
+      "east",
+      "north",
+      "west"
+    ]
   },
   {
     "row": 156,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 156,
     "col": 4,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 156,
     "col": 5,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 156,
     "col": 6,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 156,
     "col": 7,
-    "exits": ["north", "south"]
+    "exits": [
+      "north",
+      "south"
+    ]
   },
   {
     "row": 156,
     "col": 8,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 157,
     "col": 1,
-    "exits": ["north", "south", "east", "west"],
-    "table": true
+    "exits": [
+      "east",
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 157,
     "col": 2,
-    "exits": ["south", "west"],
-    "table": true
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 157,
     "col": 3,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 157,
     "col": 4,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 157,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 157,
     "col": 6,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 157,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 157,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 158,
     "col": 1,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 158,
     "col": 2,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 158,
     "col": 3,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 158,
     "col": 4,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 158,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 158,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 158,
     "col": 7,
-    "exits": ["north", "west"]
+    "exits": [
+      "north",
+      "west"
+    ]
   },
   {
     "row": 158,
     "col": 8,
-    "exits": ["north"]
+    "exits": [
+      "north"
+    ]
   },
   {
     "row": 159,
     "col": 1,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 159,
     "col": 2,
-    "exits": ["north", "south", "east"]
+    "exits": [
+      "east",
+      "north",
+      "south"
+    ]
   },
   {
     "row": 159,
     "col": 3,
-    "exits": ["north", "south", "west"]
+    "exits": [
+      "north",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 159,
     "col": 4,
-    "exits": ["north", "east"]
+    "exits": [
+      "east",
+      "north"
+    ]
   },
   {
     "row": 159,
     "col": 5,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 159,
     "col": 6,
-    "exits": ["east", "west"]
+    "exits": [
+      "east",
+      "west"
+    ]
   },
   {
     "row": 159,
     "col": 7,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   },
   {
     "row": 159,
     "col": 8,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 160,
     "col": 1,
-    "exits": ["south", "east"]
+    "exits": [
+      "east",
+      "south"
+    ]
   },
   {
     "row": 160,
     "col": 2,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 160,
     "col": 3,
-    "exits": ["south", "east", "west"]
+    "exits": [
+      "east",
+      "south",
+      "west"
+    ]
   },
   {
     "row": 160,
     "col": 4,
-    "exits": ["south", "west"]
+    "exits": [
+      "south",
+      "west"
+    ]
   }
 ]

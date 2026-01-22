@@ -41,8 +41,6 @@ public class UULibraryService {
 
     public static class Room {
         public int row, col;
-        public boolean table;
-        public int number = -1;
         public List<String> exits;
     }
 
@@ -95,6 +93,23 @@ public class UULibraryService {
             for (Room r : rooms) {
                 maze.put(r.row + "," + r.col, r);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void saveMap() {
+        try {
+            List<Room> rooms = new ArrayList<>(maze.values());
+            rooms.sort(Comparator.comparingInt((Room r) -> r.row).thenComparingInt(r -> r.col));
+            for (Room r : rooms) {
+                if (r.exits != null) {
+                    r.exits.sort(String::compareTo);
+                }
+            }
+            Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(rooms);
+            Files.writeString(Paths.get("uu_library.json"), json);
         } catch (Exception e) {
             e.printStackTrace();
         }
