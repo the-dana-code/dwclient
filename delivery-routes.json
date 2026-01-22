@@ -1026,5 +1026,10 @@
     "npc": "the barman",
     "location": "the large tent on the waterfront",
     "roomId": "2d1426d5ad377603a5865d256a94d7faa39bab34"
+  },
+  {
+    "npc": "Henufi Icta",
+    "location": "the Laughing Falafel, Klatchian Takeaway",
+    "roomId": "5cc6162f633df45d189cda9c8b8202397bb38a85"
   }
 ]

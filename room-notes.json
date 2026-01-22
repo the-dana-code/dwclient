@@ -920,6 +920,15 @@
       }
     ]
   },
+  "886e1da4dd53a0b6f43c4248d014bd2838265bee": {
+    "name": "Wun Phul Mouth\u0027s Hunghungese Restaurant",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "8b1530c0a3bf7f49b1d015e750b3b06fcee9aa1d": {
     "name": "smithy",
     "buttons": [
@@ -1277,6 +1286,15 @@
       }
     ]
   },
+  "ae95ccd8d44c2a9da5c7619bbbccd9abed63b4ea": {
+    "name": "House of High Fashion",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "aebbd1e03b0bd507f4af1fd85756af039e0fbb20": {
     "name": "Dessert Animals",
     "buttons": [
@@ -1384,6 +1402,15 @@
   "bb97d14f936216eeb7d6457dc4c9bb514ebc0b0d": {
     "name": "Rendtnor\u0027s Jewellery Shop",
     "notes": "restore cost \u003cjewellery\u003e\nrestore \u003cjewellery\u003e",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "bd6b07a3d2ffba9bc90122cf0e299aca3437deb5": {
+    "name": "Light Under Glass store",
     "buttons": [
       {
         "name": "List Shop",

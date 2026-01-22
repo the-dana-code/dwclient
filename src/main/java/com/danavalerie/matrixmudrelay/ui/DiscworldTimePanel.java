@@ -173,9 +173,9 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
         String nextStr = formatNextSunEvent(next);
 
         String tooltip = String.format(
-                "<html><b>Date:</b> %s<br><b>Time:</b> %s<br><b>Season:</b> %s<br><b>Next:</b> %s</html>",
-                fullDate, timeStr, season, nextStr
-        );
+                "<html><font face='monospaced'><b>%7s</b> %s<br><b>%7s</b> %s<br><b>%7s</b> %s<br><b>%7s</b> %s</font></html>",
+                "Date:", fullDate, "Time:", timeStr, "Season:", season, "Next:", nextStr
+        ).replace(" ", "&nbsp;");
 
         if (!tooltip.equals(lastTooltip)) {
             seasonLabel.setToolTipText(tooltip);
@@ -329,20 +329,21 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
 
     private String formatNextSunEvent(NextSunEvent next) {
         String type = (next.type == SunEventType.SUNRISE) ? "Sunrise" : "Sunset";
-
-        long igH = next.igMinutesUntil / 60;
-        long igM = next.igMinutesUntil % 60;
-
-        long realSeconds = next.secondsUntil;
-        long realH = realSeconds / 3600;
-        long realM = (realSeconds % 3600) / 60;
-        long realS = realSeconds % 60;
-
+        long totalRealMinutes = next.secondsUntil / 60;
         String eventTime = formatMinuteOfDay(next.eventMinuteOfDay);
 
+        long h = totalRealMinutes / 60;
+        long m = totalRealMinutes % 60;
+        String duration;
+        if (h > 0) {
+            duration = h + " hour" + (h == 1 ? "" : "s") + " " + m + " minute" + (m == 1 ? "" : "s");
+        } else {
+            duration = m + " minute" + (m == 1 ? "" : "s");
+        }
+
         return String.format(
-                "%s at %s (in %d:%02d in-game; %d:%02d:%02d real)",
-                type, eventTime, igH, igM, realH, realM, realS
+                "%s at %s (in %s RW)",
+                type, eventTime, duration
         );
     }
 
