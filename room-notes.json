@@ -330,6 +330,15 @@
       }
     ]
   },
+  "34db50754bdad223de0a5cfdd07de96099c6764e": {
+    "name": "Master Nimbledrit\u0027s Shop of Crafting Equipment",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "35b575259dca6b651bf4d2765548b0c14e0f57be": {
     "name": "sulphurous shoproom",
     "buttons": [
@@ -359,6 +368,15 @@
   },
   "398ce8b182f8cd52d8d10d8106963ecd8dd00045": {
     "name": "Argle\u0027s Bakery",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "3ab8bca1335dc47b9fb580b42c92481c2b14aa24": {
+    "name": "clothing stall",
     "buttons": [
       {
         "name": "List Shop",
@@ -944,6 +962,15 @@
       {
         "name": "Attack Pumpkin",
         "command": "attack pumpkin"
+      }
+    ]
+  },
+  "925880da85a8d01ee4bcb302949f8eef099bb195": {
+    "name": "Krazzander\u0027s Magik Shoppe",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
       }
     ]
   },
@@ -1675,6 +1702,15 @@
   },
   "e946896bb5407b99f7a58bf4c007a403af7877c8": {
     "name": "Woo Hun Ling\u0027s Auriental Exotica and Martial Aids",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "e9acbc0b489c83ce0cf6cae37637ce6f3ed2145a": {
+    "name": "High Life",
     "buttons": [
       {
         "name": "List Shop",

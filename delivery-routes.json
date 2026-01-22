@@ -1006,5 +1006,20 @@
     "npc": "the young woman",
     "location": "the clothing shop on Cockbill Street",
     "roomId": "3e3dc92b2ce0c6222b165f4101483a9846b41c2a"
+  },
+  {
+    "npc": "Doss Chiderdoss",
+    "location": "the Temporary Sign south of the Guild of Alchemists",
+    "roomId": "4607c78a633d49199aea78bde282ea707c30366a"
+  },
+  {
+    "npc": "Gunther",
+    "location": "Costlee Coffee on Market Street",
+    "roomId": "679726f8c952194073d524c451fc3c6b71b1b396"
+  },
+  {
+    "npc": "Velveta",
+    "location": "the High Life on Phedre Road",
+    "roomId": "e9acbc0b489c83ce0cf6cae37637ce6f3ed2145a"
   }
 ]
