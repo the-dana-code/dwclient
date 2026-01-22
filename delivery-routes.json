@@ -280,7 +280,12 @@
   {
     "npc": "Dhraz Shaftrubble",
     "location": "the Iron Helmet on Welcome Soap",
-    "roomId": "d10c02b1ef81cbbe09f4d8effdc6c4338732e919"
+    "roomId": "578c49a984d252e2ea376ff0db3c1ff9b227049f",
+    "commands": [
+      "crawl slow",
+      "south",
+      "crawl off"
+    ]
   },
   {
     "npc": "Pierre Grepe",
@@ -1105,6 +1110,12 @@
     "npc": "Gertrude",
     "location": "Gertrude\u0027s Perfumery in the Flintwick Building",
     "roomId": "3159ce4dcfacc07ee2006db42fac3016235bb263",
+    "commands": []
+  },
+  {
+    "npc": "Rinaldo",
+    "location": "the Mouldy Cellar on Chrononhotonthologos Street",
+    "roomId": "778c7e260cdf5bc272c2cfda872c154b1ebf9197",
     "commands": []
   }
 ]

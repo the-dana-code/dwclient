@@ -235,6 +235,15 @@
       }
     ]
   },
+  "29f6ea0f255582c3f84ae9033e7c83000144442d": {
+    "name": "shady stall",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "2aea9e4f9b102c10623ee9955786fa776b6f72e8": {
     "name": "exclusive hat boutique",
     "buttons": [
@@ -823,6 +832,15 @@
       }
     ]
   },
+  "81bd27292a0b5519d5b2db9a80cfa7f4fcbad0ee": {
+    "name": "Alab\u0027s Leatherorama",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "82ad539ebda22f80ccee441dae6e09113eb10d34": {
     "name": "southwest corner of the town square",
     "buttons": [
@@ -1033,6 +1051,15 @@
       {
         "name": "Leave Hut",
         "command": "out"
+      }
+    ]
+  },
+  "a26a7d37bb46c8726226a9237cf84c79f90c79dd": {
+    "name": "Mrs Dimmles\u0027 Open-All-Hours Cafe",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
       }
     ]
   },
@@ -1390,6 +1417,15 @@
       }
     ]
   },
+  "d10c02b1ef81cbbe09f4d8effdc6c4338732e919": {
+    "name": "Iron Helmet",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "d216295f2d9da67baeb309e36c25fe1025b4edf3": {
     "name": "Mrs Cosmopilite\u0027s clothes store",
     "buttons": [
@@ -1524,6 +1560,15 @@
       }
     ]
   },
+  "e59e946db969b09f78c4acef1c1699fbcd06e2fa": {
+    "name": "Salter Rhogain\u0027s Legibles",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "e697f73ed0afc0d65ca9fe2778291ce89f3ea938": {
     "name": "Mr D\u0027abdry\u0027s towel shop",
     "buttons": [
@@ -1574,6 +1619,15 @@
     "buttons": [
       {
         "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "ee7e5451ed8075b6ea1ebeb6defba64a47bd9810": {
+    "name": "smoky basement shop",
+    "buttons": [
+      {
+        "name": "List Shop",
         "command": "list"
       }
     ]
