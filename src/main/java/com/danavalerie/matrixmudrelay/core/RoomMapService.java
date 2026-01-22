@@ -389,16 +389,6 @@ public class RoomMapService {
                     }
                 });
 
-        // Search in items (special find note)
-        dataService.getItems().values().stream()
-                .filter(i -> i.getItemName().equalsIgnoreCase(trimmed) && i.getSpecialFindNote() != null && !i.getSpecialFindNote().isBlank())
-                .forEach(i -> {
-                    RoomData r = dataService.getRoom(i.getSpecialFindNote());
-                    if (r != null) {
-                        results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "Special"));
-                    }
-                });
-
         return results.stream()
                 .sorted((a, b) -> {
                     int rankA = getSourceRank(a.sourceInfo());
@@ -415,11 +405,10 @@ public class RoomMapService {
     }
 
     private int getSourceRank(String sourceInfo) {
-        if (sourceInfo == null) return 3;
+        if (sourceInfo == null) return 2;
         if (sourceInfo.equals("Shop")) return 0;
-        if (sourceInfo.equals("Special")) return 1;
-        if (sourceInfo.startsWith("NPC:")) return 2;
-        return 3;
+        if (sourceInfo.startsWith("NPC:")) return 1;
+        return 2;
     }
 
     public RouteResult findRoute(String startRoomId, String targetRoomId) throws MapLookupException {

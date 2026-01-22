@@ -253,6 +253,15 @@
       }
     ]
   },
+  "29513e283b52340aa1fb58314fe1c3bf22cb0b22": {
+    "name": "souvenir shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "29f6ea0f255582c3f84ae9033e7c83000144442d": {
     "name": "shady stall",
     "buttons": [
@@ -1223,6 +1232,15 @@
       },
       {
         "name": "List Jobs",
+        "command": "list"
+      }
+    ]
+  },
+  "a6df1adb71ca9acc5007fc82443b70f683d718dc": {
+    "name": "Gimlet\u0027s Hole Food Delicatessen",
+    "buttons": [
+      {
+        "name": "List Menu",
         "command": "list"
       }
     ]

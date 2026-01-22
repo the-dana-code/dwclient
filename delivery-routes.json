@@ -1031,5 +1031,15 @@
     "npc": "Henufi Icta",
     "location": "the Laughing Falafel, Klatchian Takeaway",
     "roomId": "5cc6162f633df45d189cda9c8b8202397bb38a85"
+  },
+  {
+    "npc": "Darren Spangler",
+    "location": "Darren Spangler\u0027s Accessories in the Magic Emporium",
+    "roomId": "aaa543f80c41c287dd736fd8a190afca2bebf48a"
+  },
+  {
+    "npc": "Patty",
+    "location": "Dessert Animals on Street of Cunning Artificers",
+    "roomId": "aebbd1e03b0bd507f4af1fd85756af039e0fbb20"
   }
 ]

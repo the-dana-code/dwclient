@@ -33,10 +33,37 @@ public class MapDataService {
 
     private void loadAll() {
         rooms = loadJson("rooms.json", new TypeToken<TreeMap<String, RoomData>>() {}.getType());
-        items = loadJson("items.json", new TypeToken<TreeMap<String, ItemData>>() {}.getType());
         npcs = loadJson("npcs.json", new TypeToken<TreeMap<String, NpcData>>() {}.getType());
         userData = loadJson("user_data.json", new TypeToken<TreeMap<String, String>>() {}.getType());
         roomDescriptions = loadJson("room_descriptions.json", new TypeToken<TreeMap<String, String>>() {}.getType());
+
+        deriveItems();
+    }
+
+    private void deriveItems() {
+        items = new TreeMap<>();
+        if (rooms != null) {
+            rooms.values().forEach(r -> {
+                if (r.getShopItems() != null) {
+                    r.getShopItems().keySet().forEach(this::addItemIfAbsent);
+                }
+            });
+        }
+        if (npcs != null) {
+            npcs.values().forEach(n -> {
+                if (n.getItems() != null) {
+                    n.getItems().keySet().forEach(this::addItemIfAbsent);
+                }
+            });
+        }
+    }
+
+    private void addItemIfAbsent(String itemName) {
+        items.computeIfAbsent(itemName, k -> {
+            ItemData id = new ItemData();
+            id.setItemName(k);
+            return id;
+        });
     }
 
     private <T> T loadJson(String filename, Type type) {
@@ -59,7 +86,6 @@ public class MapDataService {
 
     public synchronized void saveAll() {
         saveJson("rooms.json", rooms);
-        saveJson("items.json", items);
         saveJson("npcs.json", npcs);
         saveJson("user_data.json", userData);
         saveJson("room_descriptions.json", roomDescriptions);
