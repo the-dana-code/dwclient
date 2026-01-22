@@ -68,8 +68,7 @@
   {
     "row": 2,
     "col": 6,
-    "exits": ["south", "east", "west"],
-    "number": 1
+    "exits": ["south", "east", "west"]
   },
   {
     "row": 2,
@@ -107,8 +106,7 @@
   {
     "row": 3,
     "col": 5,
-    "exits": ["north", "west"],
-    "number": 2
+    "exits": ["north", "west"]
   },
   {
     "row": 3,
@@ -133,8 +131,7 @@
   {
     "row": 4,
     "col": 2,
-    "exits": ["south"],
-    "number": 3
+    "exits": ["south"]
   },
   {
     "row": 4,
@@ -200,8 +197,7 @@
   {
     "row": 5,
     "col": 7,
-    "exits": ["south"],
-    "number": 4
+    "exits": ["south"]
   },
   {
     "row": 5,
@@ -223,8 +219,7 @@
     "row": 6,
     "col": 3,
     "exits": ["north", "east"],
-    "table": true,
-    "number": 5
+    "table": true
   },
   {
     "row": 6,
@@ -241,8 +236,7 @@
   {
     "row": 6,
     "col": 6,
-    "exits": ["south"],
-    "number": 6
+    "exits": ["south"]
   },
   {
     "row": 6,
@@ -259,8 +253,7 @@
   {
     "row": 7,
     "col": 1,
-    "exits": ["east"],
-    "number": 7
+    "exits": ["east"]
   },
   {
     "row": 7,
@@ -421,8 +414,7 @@
   {
     "row": 10,
     "col": 8,
-    "exits": ["north"],
-    "number": 8
+    "exits": ["north"]
   },
   {
     "row": 11,
@@ -448,8 +440,7 @@
   {
     "row": 11,
     "col": 5,
-    "exits": ["east"],
-    "number": 9
+    "exits": ["east"]
   },
   {
     "row": 11,
@@ -498,8 +489,7 @@
   {
     "row": 12,
     "col": 6,
-    "exits": ["west"],
-    "number": 10
+    "exits": ["west"]
   },
   {
     "row": 12,
@@ -609,8 +599,7 @@
   {
     "row": 15,
     "col": 3,
-    "exits": ["east"],
-    "number": 11
+    "exits": ["east"]
   },
   {
     "row": 15,
@@ -655,8 +644,7 @@
   {
     "row": 16,
     "col": 4,
-    "exits": ["south"],
-    "number": 12
+    "exits": ["south"]
   },
   {
     "row": 16,
@@ -712,8 +700,7 @@
   {
     "row": 17,
     "col": 7,
-    "exits": ["north"],
-    "number": 13
+    "exits": ["north"]
   },
   {
     "row": 17,
@@ -766,8 +753,7 @@
   {
     "row": 19,
     "col": 1,
-    "exits": ["east"],
-    "number": 14
+    "exits": ["east"]
   },
   {
     "row": 19,
@@ -917,8 +903,7 @@
   {
     "row": 22,
     "col": 6,
-    "exits": ["east"],
-    "number": 15
+    "exits": ["east"]
   },
   {
     "row": 22,
@@ -928,8 +913,7 @@
   {
     "row": 22,
     "col": 8,
-    "exits": ["east"],
-    "number": 16
+    "exits": ["east"]
   },
   {
     "row": 23,
@@ -945,8 +929,7 @@
   {
     "row": 23,
     "col": 3,
-    "exits": ["east"],
-    "number": 17
+    "exits": ["east"]
   },
   {
     "row": 23,
