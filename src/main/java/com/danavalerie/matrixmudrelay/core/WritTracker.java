@@ -54,6 +54,13 @@ public final class WritTracker {
         return List.copyOf(requirements);
     }
 
+    public synchronized void setRequirements(List<WritRequirement> requirements) {
+        this.requirements.clear();
+        if (requirements != null) {
+            this.requirements.addAll(requirements);
+        }
+    }
+
     private boolean ingestLine(String line) {
         if (line == null) {
             return false;
@@ -157,6 +164,13 @@ public final class WritTracker {
 
     public record WritRequirement(int quantity, String item, String npc,
                                   String locationName, String locationSuffix) {
+        public WritRequirement {
+            item = item == null ? "" : item;
+            npc = npc == null ? "" : npc;
+            locationName = locationName == null ? "" : locationName;
+            locationSuffix = locationSuffix == null ? "" : locationSuffix;
+        }
+
         public String locationDisplay() {
             if (locationSuffix == null || locationSuffix.isBlank()) {
                 return locationName;

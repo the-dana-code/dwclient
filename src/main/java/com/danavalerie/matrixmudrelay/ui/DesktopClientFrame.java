@@ -21,7 +21,10 @@ package com.danavalerie.matrixmudrelay.ui;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
+import com.danavalerie.matrixmudrelay.core.ContextualResultList;
+import com.danavalerie.matrixmudrelay.core.MenuPersistenceService;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
+import com.danavalerie.matrixmudrelay.core.WritMenuAction;
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
 import com.danavalerie.matrixmudrelay.core.data.ShopItem;
@@ -156,18 +159,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomButtonBarPanel roomButtonBarPanel;
     private final UULibraryButtonPanel uuLibraryButtonPanel;
     private final DiscworldTimePanel discworldTimePanel = new DiscworldTimePanel();
+    private final MenuPersistenceService menuPersistenceService;
 
-    private enum WritMenuAction {
-        ITEM_INFO,
-        LIST_STORE,
-        BUY_ITEM,
-        BUY_ONE_ITEM,
-        BUY_TWO_ITEMS,
-        NPC_INFO,
-        LOCATION_INFO,
-        ADD_ROUTE,
-        DELIVER
-    }
 
     public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
         super("Lesa's Discworld MUD Client");
@@ -203,6 +196,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         writTracker = new WritTracker();
         storeInventoryTracker = new StoreInventoryTracker();
         timerService = new TimerService(cfg, configPath);
+        menuPersistenceService = new MenuPersistenceService(configPath.resolveSibling("menus.json"));
+
+        MenuPersistenceService.SavedMenus saved = menuPersistenceService.load();
+        if (saved != null) {
+            this.writCharacterName = saved.writCharacterName();
+            if (saved.writRequirements() != null) {
+                this.writRequirements.addAll(saved.writRequirements());
+                this.writTracker.setRequirements(saved.writRequirements());
+            }
+            if (saved.writMenuVisits() != null) {
+                this.writMenuVisits.putAll(saved.writMenuVisits());
+            }
+        }
 
         mud = new MudClient(
                 cfg.mud,
@@ -262,6 +268,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         setPreferredSize(new Dimension(1200, 800));
         setLayout(new BorderLayout());
         setJMenuBar(buildMenuBar());
+        rebuildWritMenus();
+        updateResultsMenu(currentResults);
         add(buildSplitLayout(), BorderLayout.CENTER);
         add(statsPanel, BorderLayout.SOUTH);
         applyConfiguredFont();
@@ -694,6 +702,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         ConfigLoader.save(configPath, cfg);
     }
 
+    private void saveMenus() {
+        menuPersistenceService.save(writRequirements, writCharacterName, writMenuVisits);
+    }
+
 
     void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
         boolean resetVisits = !Objects.equals(writRequirements, requirements);
@@ -705,6 +717,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             writMenuVisits.clear();
         }
         rebuildWritMenus();
+        saveMenus();
     }
 
     private void rebuildWritMenus() {
@@ -767,8 +780,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     () -> submitCommand("/writ " + (index + 1) + " npc"));
             writMenu.add(npcInfo);
 
-            String locationText = req.locationName()
-                    + (req.locationSuffix().isBlank() ? "" : " " + req.locationSuffix());
+            String locationText = req.locationDisplay();
             JMenuItem locInfo = buildWritMenuItem(index, WritMenuAction.LOCATION_INFO,
                     "Location: " + locationText,
                     () -> submitCommand("/writ " + (index + 1) + " loc"));
@@ -799,6 +811,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updateTheme(mapPanel.isInverted());
         menuBar.revalidate();
         menuBar.repaint();
+        saveMenus();
     }
 
     private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
@@ -823,6 +836,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void markWritMenuVisited(int index, WritMenuAction action) {
         writMenuVisits.computeIfAbsent(index, ignored -> EnumSet.noneOf(WritMenuAction.class)).add(action);
+        saveMenus();
     }
 
     private void handleMudLine(String line) {
@@ -1274,14 +1288,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     int resultIndex = index;
                     if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
                         item.addActionListener(event -> {
-                            resultsMenuVisits.add(resultIndex);
+                            markResultVisited(resultIndex);
                             item.setText(formatResultsMenuLabel(true, result.label()));
                             submitCommand(result.mapCommand());
                             showSpeedWalkPrompt(result.command());
                         });
                     } else {
                         item.addActionListener(event -> {
-                            resultsMenuVisits.add(resultIndex);
+                            markResultVisited(resultIndex);
                             item.setText(formatResultsMenuLabel(true, result.label()));
                             submitCommand(result.command());
                         });
@@ -1310,6 +1324,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         for (JMenu menu : resultsMenus) {
             menuBar.add(menu);
         }
+    }
+
+    private void markResultVisited(int index) {
+        resultsMenuVisits.add(index);
     }
 
     private String formatResultsMenuLabel(boolean visited, String label) {

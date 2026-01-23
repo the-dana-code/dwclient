@@ -25,10 +25,18 @@ public record ContextualResultList(String title,
                                    String emptyMessage,
                                    String footer) {
     public ContextualResultList {
+        title = title == null ? "" : title;
         results = results == null ? List.of() : List.copyOf(results);
+        emptyMessage = emptyMessage == null ? "" : emptyMessage;
+        footer = footer == null ? "" : footer;
     }
 
     public record ContextualResult(String label, String command, String mapCommand) {
+        public ContextualResult {
+            label = label == null ? "" : label;
+            command = command == null ? "" : command;
+            mapCommand = mapCommand == null ? "" : mapCommand;
+        }
     }
 }
 

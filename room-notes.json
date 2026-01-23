@@ -216,6 +216,15 @@
       }
     ]
   },
+  "203466df2147c19c149e3050b20dfc25284e7d9c": {
+    "name": "Argule Wibbley\u0027s Pottery Shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "22f326e3649c67b9eb54f030055444fce724a231": {
     "name": "Elsie\u0027s Clothing Shop",
     "buttons": [
