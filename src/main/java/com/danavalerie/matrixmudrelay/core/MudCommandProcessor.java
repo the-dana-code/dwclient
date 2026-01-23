@@ -253,10 +253,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT"));
                 String timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " GMT";
                 String logEntry = timestamp + " | " + line + System.lineSeparator();
-                Files.write(Paths.get("sun.log"), logEntry.getBytes(StandardCharsets.UTF_8),
+                String pathStr = System.getProperty("SUNLOG_PATH", "sun.log");
+                Files.write(Paths.get(pathStr), logEntry.getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             } catch (IOException e) {
-                log.error("Failed to write to sun.log", e);
+                log.error("Failed to write to " + System.getProperty("SUNLOG_PATH", "sun.log"), e);
             }
         }
     }

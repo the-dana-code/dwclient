@@ -1862,6 +1862,15 @@
       }
     ]
   },
+  "e3af8b330f58281722012211b525aa3d43aaec87": {
+    "name": "Sidney Clancy and Son",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "e4889c7fe573289e63211238c6d15d85cc5ae836": {
     "name": "Havlik\u0027s Dwarf Bar",
     "buttons": [

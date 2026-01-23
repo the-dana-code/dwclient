@@ -3,28 +3,32 @@ package com.danavalerie.matrixmudrelay.core;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SunLogTest {
-    private Path sunLogPath = Paths.get("sun.log");
+    @TempDir
+    Path tempDir;
+
+    private Path sunLogPath;
 
     @BeforeEach
-    void setUp() throws IOException {
-        Files.deleteIfExists(sunLogPath);
+    void setUp() {
+        sunLogPath = tempDir.resolve("sun.log");
+        System.setProperty("SUNLOG_PATH", sunLogPath.toString());
         System.clearProperty("SUNLOG");
     }
 
     @AfterEach
-    void tearDown() throws IOException {
-        Files.deleteIfExists(sunLogPath);
+    void tearDown() {
         System.clearProperty("SUNLOG");
+        System.clearProperty("SUNLOG_PATH");
     }
 
     @Test
