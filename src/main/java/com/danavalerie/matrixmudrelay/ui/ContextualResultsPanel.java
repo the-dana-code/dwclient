@@ -138,7 +138,13 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
             html.append("<div class=\"muted\">").append(escape(empty)).append("</div>");
         } else {
             html.append("<ol>");
+            int itemCount = 0;
             for (ContextualResultList.ContextualResult result : currentResults.results()) {
+                if (result.isSeparator()) {
+                    html.append("</ol><hr/><ol start=\"").append(itemCount + 1).append("\">");
+                    continue;
+                }
+                itemCount++;
                 String href = "cmd:" + encode(result.command());
                 if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
                     String mapHref = "cmd:" + encode(result.mapCommand());

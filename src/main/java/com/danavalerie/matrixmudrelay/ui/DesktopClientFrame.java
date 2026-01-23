@@ -1297,6 +1297,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 for (int index = start; index < end; index++) {
                     com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result =
                             resultsList.get(index);
+                    if (result.isSeparator()) {
+                        menu.addSeparator();
+                        continue;
+                    }
                     boolean visited = resultsMenuVisits.contains(index);
                     JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
                     int resultIndex = index;

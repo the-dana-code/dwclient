@@ -31,11 +31,19 @@ public record ContextualResultList(String title,
         footer = footer == null ? "" : footer;
     }
 
-    public record ContextualResult(String label, String command, String mapCommand) {
+    public record ContextualResult(String label, String command, String mapCommand, boolean isSeparator) {
         public ContextualResult {
             label = label == null ? "" : label;
             command = command == null ? "" : command;
             mapCommand = mapCommand == null ? "" : mapCommand;
+        }
+
+        public ContextualResult(String label, String command, String mapCommand) {
+            this(label, command, mapCommand, false);
+        }
+
+        public static ContextualResult separator() {
+            return new ContextualResult("", "", "", true);
         }
     }
 }

@@ -1066,5 +1066,10 @@
     "npc": "the mad hatter",
     "location": "Keffel\u0027s Hats on Pleaders Row",
     "roomId": "b160cdf9b4936d84daaecb927fedefe40210eea8"
+  },
+  {
+    "npc": "Marvin",
+    "location": "Marvin\u0027s Mantels on Street of Cunning Artificers",
+    "roomId": "a551cf0ad1aa0137b4e0095c2f348e221f2b2b51"
   }
 ]

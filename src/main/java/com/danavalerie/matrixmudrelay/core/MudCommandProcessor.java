@@ -1183,6 +1183,13 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         List<ContextualResultList.ContextualResult> list = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
             RoomMapService.RoomSearchResult result = results.get(i);
+            if (i > 0) {
+                RoomMapService.RoomSearchResult prev = results.get(i - 1);
+                if ("Shop".equals(prev.sourceInfo()) &&
+                        result.sourceInfo() != null && result.sourceInfo().startsWith("NPC:")) {
+                    list.add(ContextualResultList.ContextualResult.separator());
+                }
+            }
             String label = (result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
                     + mapService.getMapDisplayName(result.mapId())
                     + ": "
