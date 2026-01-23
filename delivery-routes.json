@@ -1071,5 +1071,20 @@
     "npc": "Marvin",
     "location": "Marvin\u0027s Mantels on Street of Cunning Artificers",
     "roomId": "a551cf0ad1aa0137b4e0095c2f348e221f2b2b51"
+  },
+  {
+    "npc": "Veebeel",
+    "location": "Veebeel\u0027s fortune telling booth on Street of Cunning Artificers",
+    "roomId": "5e43278594d022db10e9b229cdfbf587be3d1136"
+  },
+  {
+    "npc": "the ice cream troll",
+    "location": "Ye Olde Ice Cream Parlour on Sator Square",
+    "roomId": "5fa7d4cfd9fba5a041454b3c7eba53e0eacc0372"
+  },
+  {
+    "npc": "the proprietor",
+    "location": "the Jewelled Ring Store on Grunefair",
+    "roomId": "8cbb55ceba2fbf33c0cf82e67ae2b4514a2d00f5"
   }
 ]

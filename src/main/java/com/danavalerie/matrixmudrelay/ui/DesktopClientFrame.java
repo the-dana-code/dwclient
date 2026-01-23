@@ -773,6 +773,24 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         () -> handleStoreBuy(index, req.quantity()));
                 writMenu.add(buyItem);
             }
+
+            if (hasRoute) {
+                JMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
+                        "Route",
+                        () -> handleRoute(index));
+                writMenu.add(routeItem);
+            } else if (canWriteRoutes) {
+                JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
+                        "Add Current Room", "Confirm",
+                        () -> handleAddRoute(index));
+                writMenu.add(addRouteMenu);
+            }
+
+            JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
+                    "Deliver",
+                    () -> submitCommand("/writ " + (index + 1) + " deliver"));
+            writMenu.add(deliverItem);
+
             writMenu.addSeparator();
 
             JMenu npcMenu = buildWritSubMenu(index, WritMenuAction.NPC_INFO,
@@ -785,25 +803,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     "Location: " + locationText, "Search",
                     () -> submitCommand("/writ " + (index + 1) + " loc"));
             writMenu.add(locMenu);
-
-            if (!hasRoute && canWriteRoutes) {
-                JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
-                        "Add Current Room", "Confirm",
-                        () -> handleAddRoute(index));
-                writMenu.add(addRouteMenu);
-            }
-
-            if (hasRoute) {
-                JMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
-                        "Route",
-                        () -> handleRoute(index));
-                writMenu.add(routeItem);
-            }
-
-            JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
-                    "Deliver",
-                    () -> submitCommand("/writ " + (index + 1) + " deliver"));
-            writMenu.add(deliverItem);
             writMenus.add(writMenu);
             menuBar.add(writMenu);
         }

@@ -189,6 +189,15 @@
       }
     ]
   },
+  "19c7a4dec0b8c6d26020b92fb8ce632555c82d4a": {
+    "name": "clothing stall",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "1c9cb347c3bcb83e299b7e56e8d467f557476a8a": {
     "name": "exciting toy shop",
     "buttons": [
@@ -759,6 +768,15 @@
   },
   "5f065d44f883d89852acc7e7712f950f81e68d09": {
     "name": "\"Get \u0027em while we still got \u0027em\" shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "5fa7d4cfd9fba5a041454b3c7eba53e0eacc0372": {
+    "name": "Ye Olde Ice Cream Parlour",
     "buttons": [
       {
         "name": "List Shop",
