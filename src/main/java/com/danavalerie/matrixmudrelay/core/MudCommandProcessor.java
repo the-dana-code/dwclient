@@ -29,13 +29,22 @@ import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class MudCommandProcessor implements MudClient.MudGmcpListener, MudClient.MudConnectListener {
@@ -46,6 +55,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private static final Pattern UU_LIBRARY_DISTORTION_BEHIND = Pattern.compile("^There is a strange distortion in space and time behind you!.*");
     private static final Pattern UU_LIBRARY_DISTORTION_LEFT = Pattern.compile("^There is a strange distortion in space and time to the left of you!.*");
     private static final Pattern UU_LIBRARY_DISTORTION_RIGHT = Pattern.compile("^There is a strange distortion in space and time to the right of you!.*");
+    private static final Set<String> SUN_MESSAGES = Set.of(
+            "The turnwise sky starts to lighten as the sun peeks over the horizon.",
+            "The sun rises further above the turnwise horizon lightening the sky as morning arrives.",
+            "The sun rises above the turnwise horizon and greets you for a new day.",
+            "The sun starts to set slowly on the widdershins horizon.",
+            "The sun sinks further below the widdershins horizon.",
+            "The sun disappears from view below the widdershins horizon."
+    );
 
     public interface ClientOutput {
         void appendSystem(String text);
@@ -179,6 +196,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     public void onFullLineReceived(String line) {
+        checkSunLog(line);
         if (UU_LIBRARY_RE_ENABLE_PATTERN.matcher(line).matches()) {
             output.setUULibraryButtonsEnabled(true);
             output.setUULibraryDistortion(false);
@@ -222,6 +240,23 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 UULibraryService.getInstance().addBarrier(UULibraryService.getInstance().getOrientation().turnRight());
                 output.updateMap("UULibrary");
                 // output.playUULibraryAlertSound();
+            }
+        }
+    }
+    
+    private void checkSunLog(String line) {
+        if (System.getProperty("SUNLOG") == null) {
+            return;
+        }
+        if (SUN_MESSAGES.contains(line)) {
+            try {
+                ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT"));
+                String timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " GMT";
+                String logEntry = timestamp + " " + line + System.lineSeparator();
+                Files.write(Paths.get("sun.log"), logEntry.getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                log.error("Failed to write to sun.log", e);
             }
         }
     }
