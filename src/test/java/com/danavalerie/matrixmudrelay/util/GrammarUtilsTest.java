@@ -68,6 +68,8 @@ class GrammarUtilsTest {
     void testSpecialCases() {
         assertEquals(List.of("petit fours"), GrammarUtils.singularizePhrase("petits fours"));
         assertEquals(List.of("main gauche"), GrammarUtils.singularizePhrase("mains gauches"));
+        assertEquals(List.of("blue fluffy blanket with fluffy bunnies on"), 
+                GrammarUtils.singularizePhrase("blue fluffy blankets with fluffy bunnies on them"));
     }
 }
 

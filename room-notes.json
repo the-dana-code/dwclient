@@ -577,6 +577,15 @@
       }
     ]
   },
+  "4ab7a88f2a9b07e72db5185aa9d11b251ff0e296": {
+    "name": "Cutankle Quaffpint\u0027s Irone Shoppe",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "4b11616f93c94e3c766bb5ad9cba3b61dcc73979": {
     "name": "north end of Short Street outside the Mended Drum",
     "buttons": [

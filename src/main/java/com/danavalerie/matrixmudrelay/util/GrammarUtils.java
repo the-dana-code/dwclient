@@ -57,6 +57,8 @@ public final class GrammarUtils {
             phrases.add(s);
         } else if ((s = replacePrefix(phrase, "mains gauches", "main gauche")) != null) {
             phrases.add(s);
+        } else if ((s = replacePrefix(phrase, "blue fluffy blankets with fluffy bunnies on them", "blue fluffy blanket with fluffy bunnies on")) != null) {
+            phrases.add(s);
         } else {
             for (String prep : new String[]{" with ", " of ", " in ", " for ", " to "}) {
                 int idx = lower.indexOf(prep);
