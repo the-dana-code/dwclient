@@ -137,6 +137,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<JMenu> writMenus = new ArrayList<>();
     private final List<JMenu> resultsMenus = new ArrayList<>();
     private final StringBuilder writLineBuffer = new StringBuilder();
+    private String writCharacterName = null;
     private final AnsiColorParser writParser = new AnsiColorParser();
     private final StringBuilder writPendingEntity = new StringBuilder();
     private String writPendingTail = "";
@@ -726,6 +727,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean canWriteRoutes = Files.isWritable(routesPath);
             int index = i;
             JMenu writMenu = new JMenu("W" + (i + 1));
+
+            if (writCharacterName != null && !writCharacterName.isBlank()) {
+                JMenuItem charItem = new JMenuItem("Character: " + writCharacterName);
+                charItem.setEnabled(false);
+                writMenu.add(charItem);
+                writMenu.addSeparator();
+            }
 
             JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
                     "Item: " + req.quantity() + " " + req.item(),
@@ -1358,7 +1366,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         if (updated) {
             var requirements = writTracker.getRequirements();
-            SwingUtilities.invokeLater(() -> updateWritMenus(requirements));
+            String charName = mud.getCurrentRoomSnapshot().characterName();
+            SwingUtilities.invokeLater(() -> {
+                writCharacterName = charName;
+                updateWritMenus(requirements);
+            });
         }
     }
 
