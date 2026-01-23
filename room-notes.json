@@ -171,6 +171,15 @@
       }
     ]
   },
+  "147e6d0328572991709e74040c841fbe8aa339c6": {
+    "name": "Harmony Stardancer\u0027s Magical Shoppe",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "1953162a25f312a0f60df63e3d956c07fdccb72f": {
     "name": "backroom of Madame Dawning\u0027s Palliaments",
     "buttons": [
@@ -712,6 +721,15 @@
       }
     ]
   },
+  "5d645c89ba938203031f23ccdbaf262d7552314e": {
+    "name": "gothic clothing shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "5d9424fdf6460e22b40dc8effd4840d03abc9599": {
     "name": "Holbrook\u0027s General Shop",
     "buttons": [
@@ -832,6 +850,15 @@
   },
   "6a23a422360bfbba06738708d2fa10e400c282f7": {
     "name": "Bologna shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "6ac5b81620fb80bc095df1eca95f590a4a60a5f8": {
+    "name": "Scoonwinkle\u0027s Shoe Store",
     "buttons": [
       {
         "name": "List Shop",

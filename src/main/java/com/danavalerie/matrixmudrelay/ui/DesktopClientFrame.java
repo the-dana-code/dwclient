@@ -775,22 +775,22 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
             writMenu.addSeparator();
 
-            JMenuItem npcInfo = buildWritMenuItem(index, WritMenuAction.NPC_INFO,
-                    "Deliver to: " + req.npc(),
+            JMenu npcMenu = buildWritSubMenu(index, WritMenuAction.NPC_INFO,
+                    "Deliver to: " + req.npc(), "Search",
                     () -> submitCommand("/writ " + (index + 1) + " npc"));
-            writMenu.add(npcInfo);
+            writMenu.add(npcMenu);
 
             String locationText = req.locationDisplay();
-            JMenuItem locInfo = buildWritMenuItem(index, WritMenuAction.LOCATION_INFO,
-                    "Location: " + locationText,
+            JMenu locMenu = buildWritSubMenu(index, WritMenuAction.LOCATION_INFO,
+                    "Location: " + locationText, "Search",
                     () -> submitCommand("/writ " + (index + 1) + " loc"));
-            writMenu.add(locInfo);
+            writMenu.add(locMenu);
 
             if (!hasRoute && canWriteRoutes) {
-                JMenuItem addRouteItem = buildWritMenuItem(index, WritMenuAction.ADD_ROUTE,
-                        "Add Current Room",
+                JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
+                        "Add Current Room", "Confirm",
                         () -> handleAddRoute(index));
-                writMenu.add(addRouteItem);
+                writMenu.add(addRouteMenu);
             }
 
             if (hasRoute) {
@@ -823,6 +823,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             onSelect.run();
         });
         return item;
+    }
+
+    private JMenu buildWritSubMenu(int index, WritMenuAction action, String menuLabel, String itemLabel, Runnable onSelect) {
+        boolean visited = isWritMenuVisited(index, action);
+        JMenu menu = new JMenu(formatWritMenuLabel(visited, menuLabel));
+        JMenuItem item = new JMenuItem(formatWritMenuLabel(visited, itemLabel));
+        item.addActionListener(event -> {
+            markWritMenuVisited(index, action);
+            menu.setText(formatWritMenuLabel(true, menuLabel));
+            item.setText(formatWritMenuLabel(true, itemLabel));
+            onSelect.run();
+        });
+        menu.add(item);
+        return menu;
     }
 
     private String formatWritMenuLabel(boolean visited, String label) {
