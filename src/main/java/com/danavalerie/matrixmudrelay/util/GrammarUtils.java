@@ -124,10 +124,17 @@ public final class GrammarUtils {
         if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
             if (lower.endsWith("ses") || lower.endsWith("xes") || lower.endsWith("zes") ||
                     lower.endsWith("ches") || lower.endsWith("shes")) {
-                tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
+                // In Discworld MUD (and British English), items ending in "axes" are almost always
+                // singularized to "axe" (e.g., wooden axes -> wooden axe, pickaxes -> pickaxe).
+                // Words like "taxes" and "faxes" are exceptions that singularize to "tax" and "fax".
+                if (lower.endsWith("axes") && !lower.endsWith("taxes") && !lower.endsWith("faxes") && !lower.endsWith("maxes")) {
+                    tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
+                } else {
+                    tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
+                }
             }
         }
-        if (!lower.endsWith("ss")) {
+        if (!lower.endsWith("ss") && !lower.endsWith("is")) {
             tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
         }
         return new ArrayList<>(candidates);

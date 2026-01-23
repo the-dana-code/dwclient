@@ -1051,5 +1051,10 @@
     "npc": "Emmaline Lamb",
     "location": "Emmaline Lamb\u0027s World of Baskets on Pleaders Row",
     "roomId": "7e7f533917d810a1d0d78f7b380fa93fb141258c"
+  },
+  {
+    "npc": "Humbugs McBah",
+    "location": "the Guild of Alchemists\u0027 supply shop",
+    "roomId": "d3e28db0be0d5a1b7f402784f0e5d41551876ccb"
   }
 ]

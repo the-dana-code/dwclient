@@ -37,6 +37,11 @@ class GrammarUtilsTest {
         assertEquals(List.of("box of chocolates", "boxe of chocolates"), GrammarUtils.singularizePhrase("boxes of chocolates"));
         assertEquals(List.of("key to the door"), GrammarUtils.singularizePhrase("keys to the door"));
         assertEquals(List.of("bluebird of happiness bathing suit"), GrammarUtils.singularizePhrase("bluebird of happiness bathing suits"));
+        assertEquals(List.of("wooden axe"), GrammarUtils.singularizePhrase("wooden axes"));
+        assertEquals(List.of("iron pickaxe"), GrammarUtils.singularizePhrase("iron pickaxes"));
+        assertEquals(List.of("tax", "taxe"), GrammarUtils.singularizePhrase("taxes"));
+        assertEquals(List.of("box", "boxe"), GrammarUtils.singularizePhrase("boxes"));
+        assertEquals(List.of(), GrammarUtils.singularizePhrase("bronze sagaris"));
         
         // Ensure "set of" and "pair of" don't over-singularize the tail
         assertEquals(List.of(), GrammarUtils.singularizePhrase("set of shiny gold handcuffs"));
@@ -52,6 +57,7 @@ class GrammarUtilsTest {
         assertTrue(GrammarUtils.singularizeWord("firemen").contains("fireman"));
         assertTrue(GrammarUtils.singularizeWord("auloi").contains("aulos"));
         assertTrue(GrammarUtils.singularizeWord("xiphoi").contains("xiphos"));
+        assertFalse(GrammarUtils.singularizeWord("sagaris").contains("sagari"));
         
         // Case preservation
         assertTrue(GrammarUtils.singularizeWord("Xiphoi").contains("Xiphos"));

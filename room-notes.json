@@ -348,6 +348,15 @@
       }
     ]
   },
+  "30b6a1b1813f4e9c1e78908056f5616f2712ae76": {
+    "name": "Queen P\u0027s Wholesale Enticing Furniture",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "31bf3a3c04cb0009a32aee364747be7761530556": {
     "name": "Klatchian Foreign Legion outpost storage tent",
     "buttons": [
@@ -703,6 +712,15 @@
       }
     ]
   },
+  "619048da2bed852c66ddf1b6d93070f7cf62a2af": {
+    "name": "iron furniture shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "62b681633fd6f2f5698a19595933870b0203595f": {
     "name": "town criers\u0027 announcements room",
     "notes": "You can hire town criers to advertise for you.\n\nSyntax\n  create \u003cmessage\u003e for \u003cnumber\u003e days\n  delete \u003cnumber\u003e\n  fund message \u003cnumber\u003e for \u003cnumber\u003e days\n  list \u003cname\u003e\n  list \u003call\u003e   ",
@@ -877,6 +895,15 @@
   },
   "792cd0be7f3ae1005766e7c9b6507fcc4dc2bc54": {
     "name": "tailor\u0027s shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "7a78ec47428c2c27de544d90ab9ec056665a65a2": {
+    "name": "Auriental food store",
     "buttons": [
       {
         "name": "List Shop",
@@ -1385,6 +1412,15 @@
       }
     ]
   },
+  "b24bf3991ed3820cfa7653e5f4fe1fa7726dcd27": {
+    "name": "Sartorn and Son Scabbard Store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "b2cbb10ce3aac6299eca31664ee4e8f7590f8376": {
     "name": "Playwrights Guild office",
     "buttons": [
@@ -1562,6 +1598,15 @@
       }
     ]
   },
+  "c622c8f9e9b225037b304360a7c809c73bb74bdb": {
+    "name": "back section of the Stationery Warehouse",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "List"
+      }
+    ]
+  },
   "c722a6320db00226f0c56fafe92d9be7a02a0dc6": {
     "name": "Georgio\u0027s pizza place",
     "buttons": [
@@ -1622,6 +1667,15 @@
   },
   "cac9b0d4268de02d644ebbb771e8db270d83af8c": {
     "name": "Bolly\u0027s Boot Boutique",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "cd883977cdc00627a4a65b04af9e8f65d3feadfe": {
+    "name": "butcher\u0027s shop",
     "buttons": [
       {
         "name": "List Shop",
