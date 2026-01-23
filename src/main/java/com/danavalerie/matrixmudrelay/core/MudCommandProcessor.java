@@ -251,8 +251,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         if (SUN_MESSAGES.contains(line)) {
             try {
                 ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT"));
-                String timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " GMT";
-                String logEntry = timestamp + " " + line + System.lineSeparator();
+                String timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " GMT";
+                String logEntry = timestamp + " | " + line + System.lineSeparator();
                 Files.write(Paths.get("sun.log"), logEntry.getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             } catch (IOException e) {

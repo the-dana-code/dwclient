@@ -72,6 +72,15 @@
       }
     ]
   },
+  "0ed78c3b40bc5dcdd3d7989ac5df0418211fc26b": {
+    "name": "Pfabi Djai\u0027s",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "0ffffdbc050cb424566fae5e4ca0cf5d2782b0a2": {
     "name": "Plaza Tobacconist\u0027s",
     "buttons": [
@@ -252,6 +261,15 @@
       }
     ]
   },
+  "247f472ac99121d9fecb8ff31646c2f43ee200a3": {
+    "name": "Optometrist\u0027s",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "24b2ffde15897df53f685128b8cc6fe22a534c51": {
     "name": "Bes Pelargic money changers",
     "notes": "You can exchange money here.\n\nExamples:\n  buy from Ankh-Morpork with 10 rhinu\n  sell 5 dollars  ",
@@ -380,6 +398,15 @@
     "buttons": [
       {
         "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "356b43df2a2e49d0bee09052afbf506eddb139c4": {
+    "name": "Sensei\u0027s Rest",
+    "buttons": [
+      {
+        "name": "List Menu",
         "command": "list"
       }
     ]
@@ -1801,6 +1828,15 @@
   },
   "df1f1f7d38ff74d74b5ff5d565460899daeb5cbf": {
     "name": "bucket shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "e222cf581aebd6ed711dd4d0a2d6f00b105410e2": {
+    "name": "Talula\u0027s Titillating Toys",
     "buttons": [
       {
         "name": "List Shop",

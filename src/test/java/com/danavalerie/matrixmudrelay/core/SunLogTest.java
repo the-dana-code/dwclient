@@ -54,8 +54,11 @@ class SunLogTest {
         assertTrue(Files.exists(sunLogPath), "sun.log should be created");
         List<String> lines = Files.readAllLines(sunLogPath);
         assertEquals(1, lines.size());
-        assertTrue(lines.get(0).endsWith(sunriseMessage));
-        assertTrue(lines.get(0).contains("GMT"));
+        String logLine = lines.get(0);
+        assertTrue(logLine.endsWith(sunriseMessage));
+        assertTrue(logLine.contains("GMT"));
+        assertTrue(logLine.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} GMT \\| .*"),
+                "Log line should match the expected format with milliseconds and separator");
     }
 
     @Test
@@ -112,6 +115,12 @@ class SunLogTest {
         assertTrue(Files.exists(sunLogPath));
         List<String> lines = Files.readAllLines(sunLogPath);
         assertEquals(2, lines.size());
+        
+        for (String line : lines) {
+            assertTrue(line.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} GMT \\| .*"),
+                    "Log line should match the expected format with milliseconds and separator");
+        }
+        
         assertTrue(lines.get(0).endsWith("The turnwise sky starts to lighten as the sun peeks over the horizon."));
         assertTrue(lines.get(1).endsWith("The sun sinks further below the widdershins horizon."));
     }
