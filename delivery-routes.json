@@ -1061,5 +1061,10 @@
     "npc": "Mr Cheese",
     "location": "the bar on Gleam Street",
     "roomId": "e89a6907fe04cf9f53649706214794717defbf7c"
+  },
+  {
+    "npc": "the mad hatter",
+    "location": "Keffel\u0027s Hats on Pleaders Row",
+    "roomId": "b160cdf9b4936d84daaecb927fedefe40210eea8"
   }
 ]

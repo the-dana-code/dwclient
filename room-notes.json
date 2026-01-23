@@ -1457,6 +1457,15 @@
       }
     ]
   },
+  "b1c92bb1b0aac24ec54f968cd58ca3c187bbbeaf": {
+    "name": "inside the Emerald Necklace coaching inn",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "b24bf3991ed3820cfa7653e5f4fe1fa7726dcd27": {
     "name": "Sartorn and Son Scabbard Store",
     "buttons": [
