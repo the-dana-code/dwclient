@@ -9,5 +9,6 @@ public enum WritMenuAction {
     NPC_INFO,
     LOCATION_INFO,
     ADD_ROUTE,
+    ROUTE,
     DELIVER
 }

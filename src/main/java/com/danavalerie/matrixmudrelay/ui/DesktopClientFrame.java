@@ -793,16 +793,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 writMenu.add(addRouteItem);
             }
 
+            if (hasRoute) {
+                JMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
+                        "Route",
+                        () -> handleRoute(index));
+                writMenu.add(routeItem);
+            }
+
             JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
-                    hasRoute ? "Route and Deliver" : "Deliver",
-                    () -> routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).ifPresentOrElse(plan -> {
-                        List<String> commands = new ArrayList<>(plan.commands());
-                        commands.add("/writ " + (index + 1) + " deliver");
-                        commandProcessor.speedwalkToThenCommands(
-                                plan.target().roomId(),
-                                commands
-                        );
-                    }, () -> submitCommand("/writ " + (index + 1) + " deliver")));
+                    "Deliver",
+                    () -> submitCommand("/writ " + (index + 1) + " deliver"));
             writMenu.add(deliverItem);
             writMenus.add(writMenu);
             menuBar.add(writMenu);
@@ -883,7 +883,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void handleRoute(int index) {
         WritTracker.WritRequirement requirement = writRequirements.get(index);
         routeMappings.findRoutePlan(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(plan -> {
-            commandProcessor.speedwalkTo(plan.target().roomId());
+            commandProcessor.speedwalkToThenCommands(plan.target().roomId(), plan.commands());
         }, () -> outputPane.appendErrorText("No route mapping for \"" + requirement.npc()
                 + "\" at \"" + requirement.locationDisplay() + "\"."));
     }

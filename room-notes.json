@@ -1394,6 +1394,15 @@
       }
     ]
   },
+  "aaa543f80c41c287dd736fd8a190afca2bebf48a": {
+    "name": "Darren Spangler\u0027s Accessories",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "ac76e8b109eacf1b1184c92ef157d6cffcf4fa62": {
     "name": "Maestro Music",
     "buttons": [
@@ -1918,6 +1927,15 @@
   },
   "e69b79381d2f0ce799a046a3888fc1c327c3fef7": {
     "name": "O-fish-ial Fishermen\u0027s Guild Shoppe",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "e823407a1b5fbac32c54cbef4f8267d286ac6f8c": {
+    "name": "Ankh Bridge Imports",
     "buttons": [
       {
         "name": "List Shop",
