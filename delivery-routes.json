@@ -1056,5 +1056,10 @@
     "npc": "Humbugs McBah",
     "location": "the Guild of Alchemists\u0027 supply shop",
     "roomId": "d3e28db0be0d5a1b7f402784f0e5d41551876ccb"
+  },
+  {
+    "npc": "Mr Cheese",
+    "location": "the bar on Gleam Street",
+    "roomId": "e89a6907fe04cf9f53649706214794717defbf7c"
   }
 ]
