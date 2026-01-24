@@ -951,65 +951,85 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         teleportsMenu.addSeparator();
 
         if (charCfg != null && charCfg.teleports != null && charCfg.teleports.locations != null) {
-            for (BotConfig.TeleportLocation loc : charCfg.teleports.locations) {
-                String displayName = loc.name;
-                if (displayName == null || displayName.isBlank()) {
-                    displayName = loc.roomId;
-                    try {
-                        RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(loc.roomId);
-                        if (roomLoc != null) {
-                            displayName = roomLoc.roomShort();
-                        }
-                    } catch (Exception ignored) {}
-                }
-
-                JMenu tpSubMenu = new JMenu(displayName);
-                if (currentBg != null && currentFg != null) {
-                    updateMenuTheme(tpSubMenu, currentBg, currentFg);
-                }
-
-                JMenuItem tpNow = new JMenuItem("Speedwalk Now");
-                if (currentBg != null && currentFg != null) {
-                    updateMenuTheme(tpNow, currentBg, currentFg);
-                }
-                tpNow.addActionListener(e -> submitCommand(loc.command, true));
-                tpSubMenu.add(tpNow);
-
-                tpSubMenu.addSeparator();
-
-                JMenuItem editTp = new JMenuItem("Edit...");
-                editTp.addActionListener(e -> showEditTeleportDialog(loc));
-                tpSubMenu.add(editTp);
-
-                JMenuItem deleteTp = new JMenuItem("Delete...");
-                deleteTp.addActionListener(e -> {
-                    Object[] options = {"Yes", "No"};
-                    int choice = JOptionPane.showOptionDialog(
-                            this,
-                            "Are you sure you want to delete teleport to " + tpSubMenu.getText() + "?",
-                            "Confirm Delete",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.WARNING_MESSAGE,
-                            null,
-                            options,
-                            options[1]
-                    );
-                    if (choice == 0) { // Index of "Yes"
-                        charCfg.teleports.locations.remove(loc);
-                        com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
-                        saveConfig();
-                        refreshTeleportsMenu();
+            List<BotConfig.TeleportLocation> locations = charCfg.teleports.locations;
+            if (locations.size() > 15) {
+                for (int i = 0; i < locations.size(); i += 15) {
+                    int pageNum = (i / 15) + 1;
+                    int end = Math.min(i + 15, locations.size());
+                    JMenu pageMenu = new JMenu("Page " + pageNum);
+                    if (currentBg != null && currentFg != null) {
+                        updateMenuTheme(pageMenu, currentBg, currentFg);
                     }
-                });
-                tpSubMenu.add(deleteTp);
-
-                teleportsMenu.add(tpSubMenu);
+                    for (int j = i; j < end; j++) {
+                        pageMenu.add(createTeleportSubMenu(locations.get(j), charCfg));
+                    }
+                    teleportsMenu.add(pageMenu);
+                }
+            } else {
+                for (BotConfig.TeleportLocation loc : locations) {
+                    teleportsMenu.add(createTeleportSubMenu(loc, charCfg));
+                }
             }
         }
 
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(teleportsMenu, currentBg, currentFg);
         }
+    }
+
+    private JMenu createTeleportSubMenu(BotConfig.TeleportLocation loc, BotConfig.CharacterConfig charCfg) {
+        String displayName = loc.name;
+        if (displayName == null || displayName.isBlank()) {
+            displayName = loc.roomId;
+            try {
+                RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(loc.roomId);
+                if (roomLoc != null) {
+                    displayName = roomLoc.roomShort();
+                }
+            } catch (Exception ignored) {}
+        }
+
+        JMenu tpSubMenu = new JMenu(displayName);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(tpSubMenu, currentBg, currentFg);
+        }
+
+        JMenuItem tpNow = new JMenuItem("Speedwalk Now");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(tpNow, currentBg, currentFg);
+        }
+        tpNow.addActionListener(e -> submitCommand(loc.command, true));
+        tpSubMenu.add(tpNow);
+
+        tpSubMenu.addSeparator();
+
+        JMenuItem editTp = new JMenuItem("Edit...");
+        editTp.addActionListener(e -> showEditTeleportDialog(loc));
+        tpSubMenu.add(editTp);
+
+        JMenuItem deleteTp = new JMenuItem("Delete...");
+        deleteTp.addActionListener(e -> {
+            Object[] options = {"Yes", "No"};
+            int choice = JOptionPane.showOptionDialog(
+                    this,
+                    "Are you sure you want to delete teleport to " + tpSubMenu.getText() + "?",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    options,
+                    options[1]
+            );
+            if (choice == 0) { // Index of "Yes"
+                charCfg.teleports.locations.remove(loc);
+                com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+                saveConfig();
+                refreshTeleportsMenu();
+            }
+        });
+        tpSubMenu.add(deleteTp);
+
+        return tpSubMenu;
     }
 
     private void refreshBookmarksMenu() {
