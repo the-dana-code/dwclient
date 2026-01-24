@@ -162,6 +162,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     public void handleInput(String input) {
+        handleInput(input, false);
+    }
+
+    public void handleInput(String input, boolean fromSystem) {
         if (input == null) {
             return;
         }
@@ -172,7 +176,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
 
         output.addToHistory(trimmed);
-        checkAndShowTeleportBanner(trimmed);
+        if (fromSystem) {
+            checkAndShowTeleportBanner(trimmed);
+        }
 
         String lower = trimmed.toLowerCase(Locale.ROOT);
 
@@ -754,6 +760,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return true;
         }
         boolean maskEcho = "#password".equalsIgnoreCase(trigger);
+        for (String line : lines) {
+            checkAndShowTeleportBanner(line);
+        }
         sendToMud(lines, maskEcho);
         return true;
     }
@@ -1103,7 +1112,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             if (characterName != null && !characterName.isBlank()) {
                 resolved = resolved.replace("{character}", characterName);
             }
-            handleInput(resolved);
+            handleInput(resolved, true);
         }
     }
 
@@ -1307,9 +1316,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             if (tp.command().equalsIgnoreCase(command)) {
                 String targetName = tp.name();
                 try {
-                    RoomMapService.RoomLocation loc = mapService.lookupRoomLocation(tp.roomId());
-                    if (loc != null) {
-                        targetName = loc.roomShort();
+                    if (mapService != null) {
+                        RoomMapService.RoomLocation loc = mapService.lookupRoomLocation(tp.roomId());
+                        if (loc != null) {
+                            targetName = loc.roomShort();
+                        }
                     }
                 } catch (Exception ignored) {
                 }

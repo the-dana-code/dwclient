@@ -863,7 +863,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 JMenu tpSubMenu = new JMenu(displayName);
 
                 JMenuItem tpNow = new JMenuItem("Teleport Now");
-                tpNow.addActionListener(e -> submitCommand(loc.command));
+                tpNow.addActionListener(e -> submitCommand(loc.command, true));
                 tpSubMenu.add(tpNow);
 
                 tpSubMenu.addSeparator();
@@ -1304,13 +1304,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void submitCommand(String text) {
+        submitCommand(text, false);
+    }
+
+    private void submitCommand(String text, boolean fromSystem) {
         outputPane.scrollToBottom();
         outputScroll.setBorder(AutoScrollScrollPane.BLACK_BORDER);
         if (text == null) {
             historyIndex = -1;
             return;
         }
-        commandProcessor.handleInput(text);
+        commandProcessor.handleInput(text, fromSystem);
     }
 
     @Override
