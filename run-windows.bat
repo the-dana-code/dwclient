@@ -1,5 +1,6 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
 REM Check if Java is installed
 java -version >nul 2>&1

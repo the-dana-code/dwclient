@@ -269,6 +269,7 @@ public final class MapPanel extends JPanel {
         } catch (RoomMapService.MapLookupException e) {
             showMessage("Map error: " + e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             showMessage("Map error: Unable to render map.");
         }
     }

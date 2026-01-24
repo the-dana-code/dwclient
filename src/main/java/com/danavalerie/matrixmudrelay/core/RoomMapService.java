@@ -642,12 +642,24 @@ public class RoomMapService {
         if (isDark) {
             int dot = filename.lastIndexOf('.');
             String darkFilename = filename.substring(0, dot) + "_dark" + filename.substring(dot);
+            
+            // Try filesystem
             Path darkPath = Path.of("map-backgrounds", darkFilename);
             if (Files.exists(darkPath)) {
                 BufferedImage loaded = ImageIO.read(darkPath.toFile());
                 backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
                 return loaded;
             }
+            
+            // Try resource
+            try (InputStream is = getClass().getResourceAsStream("/map-backgrounds/" + darkFilename)) {
+                if (is != null) {
+                    BufferedImage loaded = ImageIO.read(is);
+                    backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
+                    return loaded;
+                }
+            }
+
             // Fallback: load light version and convert it
             BufferedImage light = loadMapBackground(mapId, false);
             if (light == null) {
@@ -659,10 +671,25 @@ public class RoomMapService {
             return dark;
         }
 
+        // Try filesystem
         Path backgroundPath = Path.of("map-backgrounds", filename);
-        BufferedImage loaded = ImageIO.read(backgroundPath.toFile());
-        backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
-        return loaded;
+        if (Files.exists(backgroundPath)) {
+            BufferedImage loaded = ImageIO.read(backgroundPath.toFile());
+            backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
+            return loaded;
+        }
+        
+        // Try resource
+        try (InputStream is = getClass().getResourceAsStream("/map-backgrounds/" + filename)) {
+            if (is != null) {
+                BufferedImage loaded = ImageIO.read(is);
+                backgroundCache.put(cacheKey, Optional.ofNullable(loaded));
+                return loaded;
+            }
+        }
+
+        backgroundCache.put(cacheKey, Optional.empty());
+        return null;
     }
 
     private void drawMapBackground(BufferedImage source, Graphics2D g2) {
