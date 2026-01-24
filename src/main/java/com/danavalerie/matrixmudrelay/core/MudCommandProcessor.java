@@ -310,6 +310,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
 
         if (charName != null && !charName.isBlank() && !charName.equals(currentCharacterName)) {
             currentCharacterName = charName;
+            if (!cfg.characters.containsKey(charName)) {
+                cfg.characters.put(charName, new BotConfig.CharacterConfig());
+                ConfigLoader.save(configPath, cfg);
+            }
             output.onCharacterChanged(charName);
         }
 

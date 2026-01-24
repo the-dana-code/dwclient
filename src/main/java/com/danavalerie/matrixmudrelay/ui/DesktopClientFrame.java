@@ -802,7 +802,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     public void onCharacterChanged(String characterName) {
         if (!Objects.equals(this.currentCharacterName, characterName)) {
             this.currentCharacterName = characterName;
-            SwingUtilities.invokeLater(this::refreshTeleportsMenu);
+            SwingUtilities.invokeLater(() -> {
+                if (cfg.characters != null) {
+                    statsPanel.setConfigCharacters(new ArrayList<>(cfg.characters.keySet()));
+                }
+                refreshTeleportsMenu();
+            });
         }
     }
 
