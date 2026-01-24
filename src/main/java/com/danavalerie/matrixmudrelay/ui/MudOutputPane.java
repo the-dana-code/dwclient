@@ -52,7 +52,15 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
                     Color.RED,
                     true,
                     () -> Toolkit.getDefaultToolkit().beep(),
-                    true
+                    false
+            ),
+            new AlertPattern(
+                    Pattern.compile("^When you open the .* you think you can hear a faint rumbling sound from it\\.$"),
+                    Color.WHITE,
+                    Color.RED,
+                    true,
+                    () -> Toolkit.getDefaultToolkit().beep(),
+                    false
             ),
             new AlertPattern(
                     Pattern.compile("^Your divine protection is weakening\\.$"),

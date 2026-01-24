@@ -82,6 +82,77 @@ public class MudOutputPaneTest {
     }
 
     @Test
+    public void testRumblingAlert() throws BadLocationException {
+        MudOutputPane pane = new MudOutputPane();
+        java.util.List<String> chitchatMessages = new java.util.ArrayList<>();
+        pane.setChitchatListener((text, color) -> chitchatMessages.add(text));
+
+        StyledDocument doc = (StyledDocument) pane.getDocument();
+
+        String rumblingLine = "When you open the mysterious cardboard door you think you can hear a faint rumbling sound from it.\n";
+        pane.appendMudText(rumblingLine);
+
+        try {
+            javax.swing.SwingUtilities.invokeAndWait(() -> {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        AttributeSet attributes = doc.getCharacterElement(0).getAttributes();
+
+        Color fg = (Color) attributes.getAttribute(StyleConstants.Foreground);
+        Color bg = (Color) attributes.getAttribute(StyleConstants.Background);
+        Boolean bold = (Boolean) attributes.getAttribute(StyleConstants.Bold);
+
+        assertEquals(Color.WHITE, fg, "Foreground color should be WHITE for rumbling lines");
+        assertEquals(Color.RED, bg, "Background color should be RED for rumbling lines");
+        assertTrue(bold != null && bold, "Text should be bold for rumbling lines");
+
+        assertTrue(chitchatMessages.isEmpty(), "Rumbling line should NOT be sent to chitchat");
+    }
+
+    @Test
+    public void testRumblingAlertWildcard() throws BadLocationException {
+        MudOutputPane pane = new MudOutputPane();
+        StyledDocument doc = (StyledDocument) pane.getDocument();
+
+        String rumblingLine = "When you open the burning piece of fur you think you can hear a faint rumbling sound from it.\n";
+        pane.appendMudText(rumblingLine);
+
+        try {
+            javax.swing.SwingUtilities.invokeAndWait(() -> {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        AttributeSet attributes = doc.getCharacterElement(0).getAttributes();
+
+        Color fg = (Color) attributes.getAttribute(StyleConstants.Foreground);
+        Color bg = (Color) attributes.getAttribute(StyleConstants.Background);
+
+        assertEquals(Color.WHITE, fg, "Foreground color should be WHITE for rumbling lines with wildcard");
+        assertEquals(Color.RED, bg, "Background color should be RED for rumbling lines with wildcard");
+    }
+
+    @Test
+    public void testWhoopsNoLongerSentToChitchat() throws BadLocationException {
+        MudOutputPane pane = new MudOutputPane();
+        java.util.List<String> chitchatMessages = new java.util.ArrayList<>();
+        pane.setChitchatListener((text, color) -> chitchatMessages.add(text));
+
+        String fumbleLine = "Whoops!  You tried to carry too many things and fumbled a heavy iron key.\n";
+        pane.appendMudText(fumbleLine);
+
+        try {
+            javax.swing.SwingUtilities.invokeAndWait(() -> {});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertTrue(chitchatMessages.isEmpty(), "Whoops line should NOT be sent to chitchat");
+    }
+
+    @Test
     public void testAppendCommandEchoEmpty() throws BadLocationException {
         MudOutputPane pane = new MudOutputPane();
         Document doc = pane.getDocument();
