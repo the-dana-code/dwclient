@@ -1822,6 +1822,15 @@
       }
     ]
   },
+  "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585": {
+    "name": "Lancrastian Farmers\u0027 Cooperative Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      }
+    ]
+  },
   "ca679a04ebf851ef96d9ee9c42429e4d943909be": {
     "name": "Fiddley\u0027s Music Shop",
     "buttons": [

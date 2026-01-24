@@ -418,6 +418,16 @@ public class RoomMapService {
                 .findFirst();
     }
 
+    public List<ShopItem> findShopItemsGlobally(String itemName) {
+        if (itemName == null) return List.of();
+        String trimmed = itemName.trim().toLowerCase();
+        return dataService.getRooms().values().stream()
+                .filter(r -> r.getShopItems() != null)
+                .flatMap(r -> r.getShopItems().stream())
+                .filter(si -> si.getName().equalsIgnoreCase(trimmed))
+                .collect(Collectors.toList());
+    }
+
     private int getSourceRank(String sourceInfo) {
         if (sourceInfo == null) return 2;
         if (sourceInfo.equals("Shop")) return 0;

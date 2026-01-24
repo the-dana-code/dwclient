@@ -1101,5 +1101,10 @@
     "npc": "Arlof Eetmmot",
     "location": "Arlof Eetmmot\u0027s Bakery on Plaza of the Moons",
     "roomId": "aa63e6764c9931dadc245b3c2d1aef1df0bfb363"
+  },
+  {
+    "npc": "Fred",
+    "location": "the big clothing shop on Endless Street",
+    "roomId": "23d53fcd7c676a24bd8b0aa1397661018056f11f"
   }
 ]

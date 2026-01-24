@@ -1166,10 +1166,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (!singulars.isEmpty()) {
             itemName = singulars.get(0);
         }
+        final String lookupName = itemName;
 
-        String searchName = routeMapService.findShopItem(currentRoomId, itemName)
+        String searchName = routeMapService.findShopItem(currentRoomId, lookupName)
                 .map(ShopItem::getShopName)
-                .orElse(itemName);
+                .orElseGet(() -> {
+                    for (ShopItem si : routeMapService.findShopItemsGlobally(lookupName)) {
+                        if (storeInventoryTracker.findMatch(si.getShopName()).isPresent()) {
+                            return si.getShopName();
+                        }
+                    }
+                    return lookupName;
+                });
 
         if (storeInventoryTracker.isNameListed()) {
             for (int i = 0; i < quantity; i++) {
@@ -1177,10 +1185,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
             return;
         }
-        String finalItemName = itemName;
         storeInventoryTracker.findMatch(searchName).ifPresentOrElse(item ->
                         buyItemById(item.id(), quantity),
-                () -> outputPane.appendErrorText("Store inventory does not list \"" + finalItemName + "\"."));
+                () -> outputPane.appendErrorText("Store inventory does not list \"" + lookupName + "\"."));
     }
 
     private void buyItemById(String itemId, int quantity) {
