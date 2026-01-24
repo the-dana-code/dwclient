@@ -140,6 +140,9 @@ public final class GrammarUtils {
                 // Words like "taxes" and "faxes" are exceptions that singularize to "tax" and "fax".
                 if (lower.endsWith("axes") && !lower.endsWith("taxes") && !lower.endsWith("faxes") && !lower.endsWith("maxes")) {
                     tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
+                } else if (lower.endsWith("ses") && !lower.endsWith("sses")) {
+                    tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
+                    tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
                 } else {
                     tryReplaceSuffix(word, lower, "es", new String[]{""}, candidates);
                 }

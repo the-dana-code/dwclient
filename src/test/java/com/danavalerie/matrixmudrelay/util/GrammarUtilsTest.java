@@ -43,6 +43,8 @@ class GrammarUtilsTest {
         assertEquals(List.of("box", "boxe"), GrammarUtils.singularizePhrase("boxes"));
         assertEquals(List.of("iron cross", "iron crosse"), GrammarUtils.singularizePhrase("iron crosses"));
         assertEquals(List.of("iron cross"), GrammarUtils.singularizePhrase("iron cross"));
+        assertEquals(List.of("porcelain vase", "porcelain vas"), GrammarUtils.singularizePhrase("porcelain vases"));
+        assertEquals(List.of("porcelain vase"), GrammarUtils.singularizePhrase("porcelain vase"));
         assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphos"));
         assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphoi"));
         assertEquals(List.of("bronze sagaris"), GrammarUtils.singularizePhrase("bronze sagaris"));

@@ -1742,6 +1742,15 @@
       }
     ]
   },
+  "c79abae6d5d1ee87413e8a2d233cf68d4c9fde8d": {
+    "name": "Sklurtch\u0027s House of Bathing Accoutrements",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "c81d328377224f5281740eff52e5eae6a780ed0b": {
     "name": "smithy",
     "buttons": [
@@ -1757,6 +1766,32 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "c892f2464117eca48ca0e6c66289164a0f513e7f": {
+    "name": "magical transport stall",
+    "notes": "You can travel around the Disc from here for a fee.",
+    "buttons": [
+      {
+        "name": "Djelibeybi (A$20)",
+        "command": "travel to djelibeybi"
+      },
+      {
+        "name": "Ephebe (A$20)",
+        "command": "travel to Ephebe"
+      },
+      {
+        "name": "Lancre (A$20)",
+        "command": "travel to lancre"
+      },
+      {
+        "name": "Genua (A$20)",
+        "command": "travel to genua"
+      },
+      {
+        "name": "Bes Pelargic (A$20)",
+        "command": "travel to bes pelargic"
       }
     ]
   },

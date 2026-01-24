@@ -1091,5 +1091,10 @@
     "npc": "Blackboard",
     "location": "Ye Olde Rum Shoppe on the waterfront",
     "roomId": "f8671122b3fd966867c40d6d71ac4f76786fc2c7"
+  },
+  {
+    "npc": "Ham Burgner",
+    "location": "Burgner\u0027s Coffee on the Maul",
+    "roomId": "86547e8b388cfcc746e6dd0a7cb4649d88310e46"
   }
 ]
