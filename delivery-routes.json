@@ -1106,5 +1106,10 @@
     "npc": "Fred",
     "location": "the big clothing shop on Endless Street",
     "roomId": "23d53fcd7c676a24bd8b0aa1397661018056f11f"
+  },
+  {
+    "npc": "Millenia Starchild",
+    "location": "the occult jewellery stall on Plaza of Broken Moons",
+    "roomId": "2ff4a31c72f3a2b5690097250cdc1dd20704a977"
   }
 ]
