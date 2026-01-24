@@ -459,31 +459,63 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return menuBar;
     }
 
-    private void addBookmarksToMenu(Container menu, List<BotConfig.Bookmark> bookmarks, List<BotConfig.Bookmark> parentList) {
+    @SuppressWarnings("unchecked")
+    private void addBookmarksToMenu(Container menu, List<BotConfig.Bookmark> bookmarks) {
         if (bookmarks == null) {
             return;
         }
-        for (BotConfig.Bookmark link : bookmarks) {
-            String displayName = link.name;
-            if (displayName == null || displayName.isBlank()) {
-                displayName = link.roomId;
+
+        // Use a TreeMap to keep categories sorted
+        Map<String, Object> hierarchy = new java.util.TreeMap<>();
+
+        for (BotConfig.Bookmark b : bookmarks) {
+            String name = b.name;
+            if (name == null || name.isBlank()) {
+                name = b.roomId;
                 try {
-                    RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(link.roomId);
+                    RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(b.roomId);
                     if (roomLoc != null) {
-                        displayName = roomLoc.roomShort();
+                        name = roomLoc.roomShort();
                     }
                 } catch (Exception ignored) {}
             }
 
-            if (link.bookmarks != null && !link.bookmarks.isEmpty()) {
-                JMenu subMenu = new JMenu(displayName);
+            String[] parts = name.split("/");
+            Map<String, Object> currentLevel = hierarchy;
+            for (int i = 0; i < parts.length - 1; i++) {
+                String part = parts[i];
+                if (part.isBlank()) continue;
+                Object existing = currentLevel.get(part);
+                if (!(existing instanceof Map)) {
+                    existing = new java.util.TreeMap<String, Object>();
+                    currentLevel.put(part, existing);
+                }
+                currentLevel = (Map<String, Object>) existing;
+            }
+            String leafName = parts[parts.length - 1];
+            if (!(currentLevel.get(leafName) instanceof Map)) {
+                currentLevel.put(leafName, b);
+            }
+        }
+
+        buildMenuFromHierarchy(menu, hierarchy);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void buildMenuFromHierarchy(Container menu, Map<String, Object> level) {
+        for (Map.Entry<String, Object> entry : level.entrySet()) {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+
+            if (value instanceof Map) {
+                JMenu subMenu = new JMenu(name);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(subMenu, currentBg, currentFg);
                 }
-                addBookmarksToMenu(subMenu, link.bookmarks, link.bookmarks);
+                buildMenuFromHierarchy(subMenu, (Map<String, Object>) value);
                 menu.add(subMenu);
-            } else {
-                JMenu bmSubMenu = new JMenu(displayName);
+            } else if (value instanceof BotConfig.Bookmark link) {
+                JMenu bmSubMenu = new JMenu(name);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(bmSubMenu, currentBg, currentFg);
                 }
@@ -524,7 +556,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                             options[1]
                     );
                     if (choice == 0) { // Index of "Yes"
-                        parentList.remove(link);
+                        cfg.bookmarks.remove(link);
                         saveConfig();
                         refreshBookmarksMenu();
                     }
@@ -995,7 +1027,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         bookmarksMenu.addSeparator();
 
-        addBookmarksToMenu(bookmarksMenu, cfg.bookmarks, cfg.bookmarks);
+        addBookmarksToMenu(bookmarksMenu, cfg.bookmarks);
 
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(bookmarksMenu, currentBg, currentFg);

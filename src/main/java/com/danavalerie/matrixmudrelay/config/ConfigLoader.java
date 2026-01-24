@@ -62,6 +62,14 @@ public final class ConfigLoader {
             migrated = true;
         }
 
+        if (cfg.bookmarks != null && !cfg.bookmarks.isEmpty()) {
+            List<BotConfig.Bookmark> flat = new ArrayList<>();
+            if (migrateBookmarks(cfg.bookmarks, null, flat)) {
+                cfg.bookmarks = flat;
+                migrated = true;
+            }
+        }
+
         validate(cfg);
 
         if (migrated) {
@@ -119,6 +127,26 @@ public final class ConfigLoader {
         return changed;
     }
 
+    private static boolean migrateBookmarks(List<BotConfig.Bookmark> source, String prefix, List<BotConfig.Bookmark> target) {
+        boolean migrated = false;
+        for (BotConfig.Bookmark b : source) {
+            String currentName = (b.name != null) ? b.name : "";
+            String fullName = (prefix == null || prefix.isEmpty()) ? currentName : prefix + "/" + currentName;
+
+            if (b.bookmarks != null && !b.bookmarks.isEmpty()) {
+                migrated = true;
+                migrateBookmarks(b.bookmarks, fullName, target);
+            }
+
+            if (b.roomId != null || b.target != null) {
+                b.name = fullName;
+                b.bookmarks = null;
+                target.add(b);
+            }
+        }
+        return migrated;
+    }
+
     private static boolean convertBookmarksToRoomIds(List<BotConfig.Bookmark> bookmarks, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
         boolean changed = false;
         for (BotConfig.Bookmark b : bookmarks) {
@@ -129,9 +157,6 @@ public final class ConfigLoader {
                     b.target = null;
                     changed = true;
                 }
-            }
-            if (b.bookmarks != null) {
-                changed |= convertBookmarksToRoomIds(b.bookmarks, mapService);
             }
         }
         return changed;

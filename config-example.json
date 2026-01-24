@@ -26,35 +26,20 @@
       "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7"
     },
     {
-      "name": "Transport",
-      "bookmarks": [
-        {
-          "name": "Ankh-Morpork -\u003e Foreign Lands",
-          "roomId": "c892f2464117eca48ca0e6c66289164a0f513e7f"
-        }
-      ]
+      "name": "Transport/Ankh-Morpork -\u003e Foreign Lands",
+      "roomId": "c892f2464117eca48ca0e6c66289164a0f513e7f"
     },
     {
-      "name": "Witch",
-      "bookmarks": [
-        {
-          "name": "Gennie Applebottom\u0027s (Ankh-Morpork)",
-          "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
-        },
-        {
-          "name": "Granny Weatherwax (Bad Ass)",
-          "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
-        }
-      ]
+      "name": "Witch/Gennie Applebottom\u0027s (Ankh-Morpork)",
+      "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
     },
     {
-      "name": "Wizard",
-      "bookmarks": [
-        {
-          "name": "UU Library",
-          "roomId": "d13059580c4af9f874ed8d832d1b347cdf962855"
-        }
-      ]
+      "name": "Witch/Granny Weatherwax (Bad Ass)",
+      "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
+    },
+    {
+      "name": "Wizard/UU Library",
+      "roomId": "d13059580c4af9f874ed8d832d1b347cdf962855"
     }
   ]
 }

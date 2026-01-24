@@ -153,14 +153,14 @@ class ConfigLoaderTest {
 
         BotConfig cfg = ConfigLoader.load(configPath);
         assertNotNull(cfg);
+        // Should be flattened to 2 bookmarks
         assertEquals(2, cfg.bookmarks.size());
+        assertEquals("Mended Drum", cfg.bookmarks.get(0).name);
         assertEquals("drum_id", cfg.bookmarks.get(0).roomId);
-        
-        BotConfig.Bookmark category = cfg.bookmarks.get(1);
-        assertEquals("Witches", category.name);
-        assertNotNull(category.bookmarks);
-        assertEquals(1, category.bookmarks.size());
-        assertEquals("weatherwax_id", category.bookmarks.get(0).roomId);
+
+        assertEquals("Witches/Granny Weatherwax", cfg.bookmarks.get(1).name);
+        assertEquals("weatherwax_id", cfg.bookmarks.get(1).roomId);
+        assertNull(cfg.bookmarks.get(1).bookmarks);
     }
 }
 
