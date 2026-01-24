@@ -59,11 +59,13 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -748,15 +750,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         teleportsMenu.removeAll();
 
+        String charName = currentCharacterName;
+        BotConfig.CharacterConfig charCfg = (charName != null) ? cfg.characters.get(charName) : null;
+
+        JMenu optionsMenu = new JMenu("Options");
+
         JCheckBoxMenuItem useTpItem = new JCheckBoxMenuItem("Use Teleports for Speedwalking", cfg.useTeleports);
         useTpItem.addActionListener(e -> {
             cfg.useTeleports = useTpItem.isSelected();
             saveConfig();
         });
-        teleportsMenu.add(useTpItem);
-
-        String charName = currentCharacterName;
-        BotConfig.CharacterConfig charCfg = (charName != null) ? cfg.characters.get(charName) : null;
+        optionsMenu.add(useTpItem);
 
         JCheckBoxMenuItem reliableTpItem = new JCheckBoxMenuItem("Reliable Teleports");
         if (charCfg != null && charCfg.teleports != null) {
@@ -771,7 +775,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 saveConfig();
             }
         });
-        teleportsMenu.add(reliableTpItem);
+        optionsMenu.add(reliableTpItem);
+
+        JMenuItem penaltyItem = new JMenuItem("Speedwalking Teleport Penalty...");
+        if (charCfg != null && charCfg.teleports != null) {
+            penaltyItem.addActionListener(e -> showSpeedwalkingPenaltyDialog(charCfg.teleports));
+        } else {
+            penaltyItem.setEnabled(false);
+        }
+        optionsMenu.add(penaltyItem);
+
+        teleportsMenu.add(optionsMenu);
 
         JMenuItem addTpItem = new JMenuItem("Add Teleport...");
         addTpItem.addActionListener(e -> showAddTeleportDialog());
@@ -917,6 +931,34 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
             saveConfig();
             refreshTeleportsMenu();
+        }
+    }
+
+    private void showSpeedwalkingPenaltyDialog(BotConfig.CharacterTeleports teleportsCfg) {
+        JPanel panel = new JPanel(new BorderLayout(5, 5));
+        panel.add(new JLabel("Penalty:"), BorderLayout.NORTH);
+
+        JSlider slider = new JSlider(0, 100, teleportsCfg.speedwalkingPenalty);
+        slider.setMajorTickSpacing(20);
+        slider.setMinorTickSpacing(5);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+
+        JLabel valueLabel = new JLabel(String.valueOf(teleportsCfg.speedwalkingPenalty), SwingConstants.CENTER);
+        slider.addChangeListener(e -> valueLabel.setText(String.valueOf(slider.getValue())));
+
+        panel.add(slider, BorderLayout.CENTER);
+        panel.add(valueLabel, BorderLayout.SOUTH);
+
+        if (currentBg != null && currentFg != null) {
+            updateComponentTree(panel, currentBg, currentFg);
+        }
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Speedwalking Penalty", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            teleportsCfg.speedwalkingPenalty = slider.getValue();
+            com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+            saveConfig();
         }
     }
 

@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 public class RoomMapService {
-    private static final int TELEPORT_START_COST = 8;
     private static final int IMAGE_SCALE = 2;
     private static final int ROOM_PIXEL_SIZE = 5 * IMAGE_SCALE;
     private static final int ROOM_PIXEL_OFFSET_X = IMAGE_SCALE;
@@ -473,7 +472,7 @@ public class RoomMapService {
                 if (teleport.roomId.equals(start.roomId)) {
                     continue;
                 }
-                int tentativeScore = TELEPORT_START_COST;
+                int tentativeScore = characterTeleports.speedwalkingPenalty();
                 Integer bestScore = gScore.get(teleport.roomId);
                 if (bestScore == null || tentativeScore < bestScore) {
                     cameFrom.put(teleport.roomId, new PreviousStep(start.roomId, teleport.command()));
