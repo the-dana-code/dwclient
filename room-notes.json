@@ -1109,6 +1109,15 @@
       }
     ]
   },
+  "8cbb55ceba2fbf33c0cf82e67ae2b4514a2d00f5": {
+    "name": "Grunefair Jewelled Ring Store",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "8edd2b9a65f2533cecc14305fafffbb722464931": {
     "name": "Rebecca Palm\u0027s Clothing",
     "buttons": [
