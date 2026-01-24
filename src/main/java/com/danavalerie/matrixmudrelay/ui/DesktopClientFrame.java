@@ -69,6 +69,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -145,6 +147,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<JMenu> writMenus = new ArrayList<>();
     private final List<JMenu> resultsMenus = new ArrayList<>();
     private JMenu teleportsMenu;
+    private JMenuItem repeatLastSpeedwalkItem;
     private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private String writCharacterName = null;
@@ -354,11 +357,36 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(exitItem);
 
         menuBar.add(mainMenu);
-
+        
         JMenu quickLinksMenu = new JMenu("Navigate");
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
+        
+        repeatLastSpeedwalkItem = new JMenuItem();
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
+        }
+        updateRepeatLastSpeedwalkItem();
+        repeatLastSpeedwalkItem.addActionListener(e -> submitCommand("/restart"));
+        quickLinksMenu.add(repeatLastSpeedwalkItem);
+        quickLinksMenu.addSeparator();
+
+        quickLinksMenu.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                updateRepeatLastSpeedwalkItem();
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+            }
+        });
+
         addBookmarksToMenu(quickLinksMenu, cfg.bookmarks);
         
         quickLinksMenu.addSeparator();
@@ -722,6 +750,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         menuPersistenceService.save(writRequirements, writCharacterName, writMenuVisits);
     }
 
+
+    private void updateRepeatLastSpeedwalkItem() {
+        if (repeatLastSpeedwalkItem == null) return;
+        boolean hasLast = commandProcessor.hasLastSpeedwalk();
+        repeatLastSpeedwalkItem.setEnabled(hasLast);
+        if (hasLast) {
+            String name = commandProcessor.getLastSpeedwalkTargetName();
+            repeatLastSpeedwalkItem.setText("Repeat: " + (name != null ? name : "Unknown"));
+        } else {
+            repeatLastSpeedwalkItem.setText("Repeat: N/A");
+        }
+    }
 
     void updateWritMenus(List<WritTracker.WritRequirement> requirements) {
         boolean resetVisits = !Objects.equals(writRequirements, requirements);

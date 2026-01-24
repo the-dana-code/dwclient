@@ -105,6 +105,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private volatile String lastRoomName = null;
     private String currentCharacterName = null;
     private boolean isRestoring = false;
+    private String lastSpeedwalkTargetRoomId = null;
+    private List<String> lastSpeedwalkPostCommands = null;
     private String uuLibraryRestoredForChar = null;
 
     public MudCommandProcessor(BotConfig cfg,
@@ -446,6 +448,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             handleHelp();
             return;
         }
+        if ("restart".equals(subcommand)) {
+            handleRestart();
+            return;
+        }
         if ("connect".equals(subcommand)) {
             handleConnect();
             return;
@@ -529,11 +535,44 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         output.appendSystem("Unknown command. Type /help for help.");
     }
 
+    private void handleRestart() {
+        if (lastSpeedwalkTargetRoomId == null) {
+            output.appendSystem("Error: No previous speedwalk available to restart.");
+            return;
+        }
+        if (lastSpeedwalkPostCommands != null) {
+            speedwalkToThenCommands(lastSpeedwalkTargetRoomId, lastSpeedwalkPostCommands);
+        } else {
+            speedwalkTo(lastSpeedwalkTargetRoomId);
+        }
+    }
+
+    public boolean hasLastSpeedwalk() {
+        return lastSpeedwalkTargetRoomId != null;
+    }
+
+    public String getLastSpeedwalkTargetName() {
+        if (lastSpeedwalkTargetRoomId == null) {
+            return null;
+        }
+        if (mapService != null) {
+            try {
+                RoomMapService.RoomLocation location = mapService.lookupRoomLocation(lastSpeedwalkTargetRoomId);
+                if (location != null && location.roomShort() != null && !location.roomShort().isBlank()) {
+                    return location.roomShort();
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return lastSpeedwalkTargetRoomId;
+    }
+
     private void handleHelp() {
         //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Available slash commands:\n");
         sb.append("  /loc            - Show current location and room ID\n");
         sb.append("  /help           - Show this help message\n");
+        sb.append("  /restart        - Repeat last speedwalk\n");
         sb.append("  /connect        - Connect to the MUD\n");
         sb.append("  /disconnect     - Disconnect from the MUD\n");
         sb.append("  /status         - Show connection status\n");
@@ -1012,6 +1051,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     public void speedwalkTo(String roomId) {
+        lastSpeedwalkTargetRoomId = roomId;
+        lastSpeedwalkPostCommands = null;
         try {
             performSpeedwalk(roomId);
         } catch (Exception e) {
@@ -1021,10 +1062,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     public void speedwalkToThenCommand(String roomId, String command) {
-        speedwalkToThenCommands(roomId, List.of(command));
+        speedwalkToThenCommands(roomId, command == null ? null : List.of(command));
     }
 
     public void speedwalkToThenCommands(String roomId, List<String> commands) {
+        lastSpeedwalkTargetRoomId = roomId;
+        lastSpeedwalkPostCommands = commands;
         try {
             performSpeedwalk(roomId);
         } catch (Exception e) {
