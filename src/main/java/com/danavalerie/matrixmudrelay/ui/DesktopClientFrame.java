@@ -372,12 +372,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
 
-        teleportsMenu = new JMenu("Teleports");
+        repeatLastSpeedwalkItem = new JMenuItem();
         if (currentBg != null && currentFg != null) {
-            updateMenuTheme(teleportsMenu, currentBg, currentFg);
+            updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
         }
-        quickLinksMenu.add(teleportsMenu);
-        refreshTeleportsMenu();
+        updateRepeatLastSpeedwalkItem();
+        repeatLastSpeedwalkItem.addActionListener(e -> submitCommand("/restart"));
+        quickLinksMenu.add(repeatLastSpeedwalkItem);
+
+        quickLinksMenu.addSeparator();
 
         bookmarksMenu = new JMenu("Bookmarks...");
         if (currentBg != null && currentFg != null) {
@@ -386,15 +389,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         quickLinksMenu.add(bookmarksMenu);
         refreshBookmarksMenu();
 
-        quickLinksMenu.addSeparator();
-
-        repeatLastSpeedwalkItem = new JMenuItem();
+        teleportsMenu = new JMenu("Teleports");
         if (currentBg != null && currentFg != null) {
-            updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
+            updateMenuTheme(teleportsMenu, currentBg, currentFg);
         }
-        updateRepeatLastSpeedwalkItem();
-        repeatLastSpeedwalkItem.addActionListener(e -> submitCommand("/restart"));
-        quickLinksMenu.add(repeatLastSpeedwalkItem);
+        quickLinksMenu.add(teleportsMenu);
+        refreshTeleportsMenu();
 
         quickLinksMenu.addMenuListener(new MenuListener() {
             @Override
