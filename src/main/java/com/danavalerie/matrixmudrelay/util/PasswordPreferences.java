@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.util;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class PasswordPreferences {
@@ -16,9 +17,18 @@ public class PasswordPreferences {
         } else {
             prefs.put(PASSWORD_KEY, password);
         }
+        flushPrefs();
     }
 
     public static boolean hasPassword() {
         return getPassword() != null;
+    }
+
+    private static void flushPrefs() {
+        try {
+            prefs.flush();
+        } catch (BackingStoreException e) {
+            System.err.println("Failed to persist password preferences: " + e.getMessage());
+        }
     }
 }
