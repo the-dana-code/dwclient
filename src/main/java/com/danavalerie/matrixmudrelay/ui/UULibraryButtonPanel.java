@@ -42,6 +42,16 @@ public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
         setVisible(false);
     }
 
+    private Border createButtonBorder(Color color) {
+        if (color == null) {
+            return BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right);
+        }
+        return BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(color),
+                BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right)
+        );
+    }
+
     public void rebuildLayout() {
         UULibraryService service = UULibraryService.getInstance();
         UULibraryService.Orientation currentOri = service.getOrientation();
@@ -71,14 +81,22 @@ public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
             }
         }
 
+        Color bg = distortion ? Color.RED : themeBg;
+        Color fg = distortion ? Color.BLACK : themeFg;
+        Border border = distortion ? createButtonBorder(Color.BLACK) : btnBorder;
+
+        this.setBackground(bg);
+
         for (int i = 0; i < 4; i++) {
             JLabel btn = slots[i];
             btn.setVisible(true); // Always visible to take space
             btn.setEnabled(buttonsEnabled);
+            btn.setBackground(bg);
             if (buttonsEnabled && i < sortedLabels.size()) {
                 btn.setText(sortedLabels.get(i));
                 btn.setOpaque(true);
-                btn.setBorder(btnBorder);
+                btn.setBorder(border);
+                btn.setForeground(fg);
             } else {
                 btn.setText("");
                 btn.setOpaque(false);
@@ -153,30 +171,17 @@ public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
 
     public void setDistortion(boolean distortion) {
         this.distortion = distortion;
-        Color bg = distortion ? Color.RED : themeBg;
-        this.setBackground(bg);
-        for (JLabel btn : slots) {
-            btn.setBackground(bg);
-        }
+        rebuildLayout();
     }
 
     public void updateTheme(Color bg, Color fg) {
         this.themeBg = bg;
         this.themeFg = fg;
-        this.setBackground(distortion ? Color.RED : bg);
         this.setForeground(fg);
         
-        btnBorder = BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(fg),
-                BorderFactory.createEmptyBorder(BUTTON_MARGIN.top, BUTTON_MARGIN.left, BUTTON_MARGIN.bottom, BUTTON_MARGIN.right)
-        );
-        
-        for (JLabel btn : slots) {
-            btn.setBackground(distortion ? Color.RED : bg);
-            btn.setForeground(fg);
-        }
+        btnBorder = createButtonBorder(fg);
         
         updateButtonSizes();
-        rebuildLayout(); // To apply new border and visibility
+        rebuildLayout(); // To apply new colors, border and visibility
     }
 }
