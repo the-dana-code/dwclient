@@ -41,12 +41,17 @@ class GrammarUtilsTest {
         assertEquals(List.of("iron pickaxe"), GrammarUtils.singularizePhrase("iron pickaxes"));
         assertEquals(List.of("tax", "taxe"), GrammarUtils.singularizePhrase("taxes"));
         assertEquals(List.of("box", "boxe"), GrammarUtils.singularizePhrase("boxes"));
-        assertEquals(List.of(), GrammarUtils.singularizePhrase("bronze sagaris"));
+        assertEquals(List.of("iron cross", "iron crosse"), GrammarUtils.singularizePhrase("iron crosses"));
+        assertEquals(List.of("iron cross"), GrammarUtils.singularizePhrase("iron cross"));
+        assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphos"));
+        assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphoi"));
+        assertEquals(List.of("bronze sagaris"), GrammarUtils.singularizePhrase("bronze sagaris"));
         
         // Ensure "set of" and "pair of" don't over-singularize the tail
-        assertEquals(List.of(), GrammarUtils.singularizePhrase("set of shiny gold handcuffs"));
+        assertEquals(List.of("set of shiny gold handcuffs"), GrammarUtils.singularizePhrase("set of shiny gold handcuffs"));
         assertEquals(List.of("set of shiny gold handcuffs"), GrammarUtils.singularizePhrase("sets of shiny gold handcuffs"));
-        assertEquals(List.of(), GrammarUtils.singularizePhrase("pair of airy white cotton trousers"));
+        assertEquals(List.of("pair of airy white cotton trousers"), GrammarUtils.singularizePhrase("pair of airy white cotton trousers"));
+        assertEquals(List.of("pair of red socks"), GrammarUtils.singularizePhrase("pair of red socks"));
     }
 
     @Test

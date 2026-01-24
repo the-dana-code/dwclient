@@ -47,6 +47,8 @@ public final class GrammarUtils {
                 String s = replacePrefix(phrase, pattern[0], pattern[1]);
                 if (s != null) {
                     phrases.add(s);
+                } else {
+                    phrases.add(phrase);
                 }
                 return phrases;
             }
@@ -66,10 +68,14 @@ public final class GrammarUtils {
                     String head = phrase.substring(0, idx);
                     String tail = phrase.substring(idx);
                     List<String> singularHeads = singularizePhrase(head);
-                    if (!singularHeads.isEmpty()) {
-                        for (String sHead : singularHeads) {
+                    boolean anyChanged = false;
+                    for (String sHead : singularHeads) {
+                        if (!sHead.equalsIgnoreCase(head)) {
                             phrases.add(sHead + tail);
+                            anyChanged = true;
                         }
+                    }
+                    if (anyChanged) {
                         return phrases;
                     }
                 }
@@ -92,6 +98,9 @@ public final class GrammarUtils {
                     phrases.add(String.join(" ", newParts));
                 }
             }
+        }
+        if (phrases.isEmpty()) {
+            phrases.add(phrase);
         }
         return phrases;
     }
@@ -136,7 +145,7 @@ public final class GrammarUtils {
                 }
             }
         }
-        if (!lower.endsWith("ss") && !lower.endsWith("is")) {
+        if (!lower.endsWith("ss") && !lower.endsWith("is") && !lower.endsWith("os")) {
             tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
         }
         return new ArrayList<>(candidates);
