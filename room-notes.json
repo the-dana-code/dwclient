@@ -721,6 +721,15 @@
       }
     ]
   },
+  "57dcfd48f3128a35be489a2a69f0245f70b3b888": {
+    "name": "clothing shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "58ec926d89fc8b43ec311749ecbead2a1dc0df02": {
     "name": "bakery of Bestiality Carter",
     "buttons": [

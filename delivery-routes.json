@@ -1096,5 +1096,10 @@
     "npc": "Ham Burgner",
     "location": "Burgner\u0027s Coffee on the Maul",
     "roomId": "86547e8b388cfcc746e6dd0a7cb4649d88310e46"
+  },
+  {
+    "npc": "Arlof Eetmmot",
+    "location": "Arlof Eetmmot\u0027s Bakery on Plaza of the Moons",
+    "roomId": "aa63e6764c9931dadc245b3c2d1aef1df0bfb363"
   }
 ]

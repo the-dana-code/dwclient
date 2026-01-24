@@ -5,8 +5,8 @@ public class TeleportBannerUtils {
         StringBuilder sb = new StringBuilder();
         sb.append("################################################################################\n");
         sb.append("#  Teleporting...                                                              #\n");
-        sb.append(String.format("#  Target:  %-66s #\n", truncate(targetName, 66)));
         sb.append(String.format("#  Command: %-66s #\n", truncate(command, 66)));
+        sb.append(String.format("#  Target:  %-66s #\n", truncate(targetName, 66)));
         sb.append("################################################################################\n");
         return sb.toString();
     }
