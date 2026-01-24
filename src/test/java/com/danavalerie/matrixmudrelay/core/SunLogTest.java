@@ -53,6 +53,7 @@ class SunLogTest {
             @Override public void onCharacterChanged(String characterName) {}
             @Override public void updateRepeatLastSpeedwalkItem() {}
             @Override public void appendTeleportBanner(String banner) {}
+            @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
         };
         MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
 
@@ -90,6 +91,7 @@ class SunLogTest {
             @Override public void onCharacterChanged(String characterName) {}
             @Override public void updateRepeatLastSpeedwalkItem() {}
             @Override public void appendTeleportBanner(String banner) {}
+            @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
         };
         MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
 
@@ -120,6 +122,7 @@ class SunLogTest {
             @Override public void onCharacterChanged(String characterName) {}
             @Override public void updateRepeatLastSpeedwalkItem() {}
             @Override public void appendTeleportBanner(String banner) {}
+            @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
         };
         MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
 

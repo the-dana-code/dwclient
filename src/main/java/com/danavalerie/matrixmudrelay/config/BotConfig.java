@@ -27,9 +27,6 @@ import java.util.Map;
 public final class BotConfig {
     public Mud mud = new Mud();
 
-    // trigger -> list of lines to send to MUD (may include secrets)
-    public Map<String, List<String>> aliases = new LinkedHashMap<>();
-
     public boolean useTeleports = true;
 
     public Ui ui = new Ui();

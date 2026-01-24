@@ -23,7 +23,10 @@ import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
+import com.danavalerie.matrixmudrelay.util.PasswordPreferences;
+import com.danavalerie.matrixmudrelay.util.TeleportBannerUtils;
 import com.google.gson.JsonObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,10 +45,17 @@ class MudCommandShortcutTest {
         UULibraryService.getInstance().reset();
     }
 
+    @AfterEach
+    void tearDown() {
+        PasswordPreferences.setPassword(null);
+    }
+
     static class StubClientOutput implements MudCommandProcessor.ClientOutput {
         List<String> systemMessages = new ArrayList<>();
         List<String> commandEchoes = new ArrayList<>();
         List<String> roomUpdates = new ArrayList<>();
+        boolean showEditPasswordDialogCalled = false;
+        Runnable onPasswordStoredCallback = null;
 
         @Override public void appendSystem(String text) { systemMessages.add(text); }
         @Override public void appendCommandEcho(String text) { commandEchoes.add(text); }
@@ -65,6 +75,10 @@ class MudCommandShortcutTest {
         @Override public void onCharacterChanged(String characterName) {}
         @Override public void updateRepeatLastSpeedwalkItem() {}
         @Override public void appendTeleportBanner(String banner) {}
+        @Override public void showEditPasswordDialog(Runnable onPasswordStored) {
+            showEditPasswordDialogCalled = true;
+            onPasswordStoredCallback = onPasswordStored;
+        }
     }
 
     static class StubMudClient extends MudClient {
@@ -95,7 +109,7 @@ class MudCommandShortcutTest {
     @Test
     void testPwShortcut() {
         BotConfig cfg = new BotConfig();
-        cfg.aliases.put("#password", List.of("supersecret"));
+        PasswordPreferences.setPassword("supersecret");
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
@@ -113,7 +127,7 @@ class MudCommandShortcutTest {
     @Test
     void testMmPasswordSubcommand() {
         BotConfig cfg = new BotConfig();
-        cfg.aliases.put("#password", List.of("supersecret"));
+        PasswordPreferences.setPassword("supersecret");
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
@@ -125,6 +139,30 @@ class MudCommandShortcutTest {
         processor.handleInput("/password");
         
         assertTrue(mud.sentLines.contains("supersecret"), "Password should have been sent to MUD via /password");
+    }
+
+    @Test
+    void testPasswordShortcutTriggersDialog() {
+        BotConfig cfg = new BotConfig();
+        PasswordPreferences.setPassword(null);
+
+        StubMudClient mud = new StubMudClient();
+        StubClientOutput output = new StubClientOutput();
+        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        RoomMapService mapService = new RoomMapService(new MapDataService());
+
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+
+        processor.handleInput("/pw");
+
+        assertTrue(output.showEditPasswordDialogCalled, "Dialog should have been shown");
+        assertTrue(mud.sentLines.isEmpty(), "No password should have been sent yet");
+
+        // Simulate user entering password and confirming
+        PasswordPreferences.setPassword("newsecret");
+        output.onPasswordStoredCallback.run();
+
+        assertTrue(mud.sentLines.contains("newsecret"), "Password should have been sent after dialog confirmation");
     }
 
     @Test

@@ -35,6 +35,7 @@ class TeleportBannerTest {
         @Override public void onCharacterChanged(String characterName) {}
         @Override public void updateRepeatLastSpeedwalkItem() {}
         @Override public void appendTeleportBanner(String banner) { teleportBanners.add(banner); }
+        @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
     }
 
     static class StubMudClient extends MudClient {
@@ -96,24 +97,6 @@ class TeleportBannerTest {
     void testSystemTeleportCommandTriggersBanner() {
         processor.handleInput("tp home", true);
         assertFalse(output.teleportBanners.isEmpty(), "Banner SHOULD be triggered by system");
-        assertTrue(output.teleportBanners.get(0).contains("Home"));
-    }
-
-    @Test
-    void testAliasTriggersBanner() {
-        // Setup alias: "h" -> "tp home"
-        cfg.aliases.put("h", List.of("tp home"));
-        
-        // Re-initialize registry (it's already done in setUp but good to be sure)
-        TeleportRegistry.initialize(cfg.characters);
-
-        // We need to re-create processor because aliases are loaded in constructor
-        processor = new MudCommandProcessor(
-                cfg, Paths.get("config.json"), mudClient, null, null, null, null, () -> null, output
-        );
-
-        processor.handleInput("h"); // User types "h"
-        assertFalse(output.teleportBanners.isEmpty(), "Banner SHOULD be triggered by alias");
         assertTrue(output.teleportBanners.get(0).contains("Home"));
     }
 

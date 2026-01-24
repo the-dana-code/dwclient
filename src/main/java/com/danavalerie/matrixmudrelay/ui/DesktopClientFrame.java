@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
+import com.danavalerie.matrixmudrelay.util.PasswordPreferences;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -344,6 +345,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         sendPasswordItem.addActionListener(event -> submitCommand("/pw"));
         mainMenu.add(sendPasswordItem);
+
+        JMenuItem editPasswordItem = new JMenuItem("Edit Password...");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(editPasswordItem, currentBg, currentFg);
+        }
+        editPasswordItem.addActionListener(event -> showEditPasswordDialog(null));
+        mainMenu.add(editPasswordItem);
 
         mainMenu.addSeparator();
         JMenuItem exitItem = new JMenuItem("Exit");
@@ -1014,6 +1022,69 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
             saveConfig();
         }
+    }
+
+    @Override
+    public void showEditPasswordDialog(Runnable onPasswordStored) {
+        String currentPassword = PasswordPreferences.getPassword();
+        JDialog dialog = new JDialog(this, "Edit Password", true);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 5, 0);
+        panel.add(new JLabel("Enter MUD Password:"), gbc);
+
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        JTextField passwordField = new JTextField(currentPassword != null ? currentPassword : "", 20);
+        panel.add(passwordField, gbc);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton okButton = new JButton("OK");
+        JButton cancelButton = new JButton("Cancel");
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+
+        dialog.add(panel, BorderLayout.CENTER);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        Runnable onOk = () -> {
+            String password = passwordField.getText();
+            PasswordPreferences.setPassword(password);
+            dialog.dispose();
+            if (onPasswordStored != null) {
+                onPasswordStored.run();
+            }
+        };
+
+        Runnable onCancel = dialog::dispose;
+
+        okButton.addActionListener(e -> onOk.run());
+        cancelButton.addActionListener(e -> onCancel.run());
+
+        passwordField.addActionListener(e -> onOk.run());
+
+        passwordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    onCancel.run();
+                }
+            }
+        });
+
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        
+        passwordField.requestFocusInWindow();
+        
+        dialog.setVisible(true);
     }
 
     private void rebuildWritMenus() {

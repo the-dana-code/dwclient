@@ -26,6 +26,7 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.DiscworldTimeUtils;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
+import com.danavalerie.matrixmudrelay.util.PasswordPreferences;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import com.danavalerie.matrixmudrelay.util.TeleportBannerUtils;
 import org.slf4j.Logger;
@@ -90,6 +91,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void onCharacterChanged(String characterName);
         void updateRepeatLastSpeedwalkItem();
         void appendTeleportBanner(String banner);
+        void showEditPasswordDialog(Runnable onPasswordStored);
     }
 
     private final BotConfig cfg;
@@ -197,10 +199,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
 
         if (lower.equals("mm") || lower.startsWith("mm ")) {
             output.appendSystem("Note: Internal commands now use slashes (e.g., /room) instead of 'mm'. Type /help for help.");
-            return;
-        }
-
-        if (tryAlias(trimmed)) {
             return;
         }
 
@@ -490,7 +488,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return;
         }
         if ("password".equals(subcommand) || "pw".equals(subcommand)) {
-            tryAlias("#password");
+            handlePasswordCommand();
             return;
         }
         if ("item".equals(subcommand)) {
@@ -535,14 +533,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
         if ("reset".equals(subcommand)) {
             handleReset();
-            return;
-        }
-        try {
-            if (tryAlias("#" + trimmed)) {
-                return;
-            }
-        } catch (IllegalStateException e) {
-            output.appendSystem("Error: " + e.getMessage());
             return;
         }
         output.appendSystem("Unknown command. Type /help for help.");
@@ -752,22 +742,16 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         sendToMud(lines);
     }
 
-
-    private boolean tryAlias(String trigger) {
-        Map<String, List<String>> aliases = cfg.aliases;
-        if (aliases == null || !aliases.containsKey(trigger)) {
-            return false;
+    private void handlePasswordCommand() {
+        if (PasswordPreferences.hasPassword()) {
+            sendToMud(List.of(PasswordPreferences.getPassword()), true);
+        } else {
+            output.showEditPasswordDialog(() -> {
+                if (PasswordPreferences.hasPassword()) {
+                    sendToMud(List.of(PasswordPreferences.getPassword()), true);
+                }
+            });
         }
-        List<String> lines = aliases.get(trigger);
-        if (lines == null || lines.isEmpty()) {
-            return true;
-        }
-        boolean maskEcho = "#password".equalsIgnoreCase(trigger);
-        for (String line : lines) {
-            checkAndShowTeleportBanner(line);
-        }
-        sendToMud(lines, maskEcho);
-        return true;
     }
 
     private void handleRoomSearchQuery(String query) {

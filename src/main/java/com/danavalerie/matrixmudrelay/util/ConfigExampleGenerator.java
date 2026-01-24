@@ -20,11 +20,6 @@ public class ConfigExampleGenerator {
             config.characters.clear();
             config.teleports = null;
 
-            // Placeholder password
-            if (config.aliases.containsKey("#password")) {
-                config.aliases.put("#password", List.of("Put your password here"));
-            }
-
             // Remove splitpane stored location info and other transient UI state
             if (config.ui != null) {
                 config.ui.mudMapSplitRatio = null;

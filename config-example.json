@@ -5,11 +5,6 @@
     "charset": "UTF-8",
     "connectTimeoutMs": 10000
   },
-  "aliases": {
-    "#password": [
-      "Put your password here"
-    ]
-  },
   "useTeleports": true,
   "ui": {
     "fontFamily": "Monospaced",
