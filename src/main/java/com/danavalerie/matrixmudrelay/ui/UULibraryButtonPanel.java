@@ -48,16 +48,16 @@ public class UULibraryButtonPanel extends JPanel implements FontChangeListener {
 
         // Map relative directions to cardinal orientations
         Map<UULibraryService.Orientation, String> available = new LinkedHashMap<>();
-        if (service.canMove(currentOri)) {
+        if (service.hasExit(currentOri)) {
             available.put(currentOri, "forward");
         }
-        if (service.canMove(currentOri.turn180())) {
+        if (service.hasExit(currentOri.turn180())) {
             available.put(currentOri.turn180(), "backward");
         }
-        if (service.canMove(currentOri.turnLeft())) {
+        if (service.hasExit(currentOri.turnLeft())) {
             available.put(currentOri.turnLeft(), "left");
         }
-        if (service.canMove(currentOri.turnRight())) {
+        if (service.hasExit(currentOri.turnRight())) {
             available.put(currentOri.turnRight(), "right");
         }
 

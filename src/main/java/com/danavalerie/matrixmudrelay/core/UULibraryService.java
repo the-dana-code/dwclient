@@ -178,6 +178,12 @@ public class UULibraryService {
         return cellBarriers == null || !cellBarriers.contains(dir);
     }
 
+    public boolean hasExit(Orientation dir) {
+        if (!active) return false;
+        Room r = maze.get(curRow + "," + curCol);
+        return r != null && r.exits != null && r.exits.contains(dir.name);
+    }
+
     public void revert() {
         if (!active) return;
         this.curRow = prevRow;
