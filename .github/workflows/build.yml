@@ -35,12 +35,12 @@ jobs:
         cp config-example.json dist/config.json
         cp delivery-routes.json dist/delivery-routes.json
         cp uu_library.json dist/uu_library.json
-        cp npcs.json dist/room-notes.json
-        cp rooms.json dist/room-notes.json
+        cp npcs.json dist/npcs.json
+        cp rooms.json dist/rooms.json
         cp room-notes.json dist/room-notes.json
         cp LICENSE dist/LICENSE
         RELEASE_NAME="dwclient"
-        ZIP_NAME="dwclient-${{ github.ref_name }}.zip"
+        ZIP_NAME="dwclient.zip"
         cd dist && zip -r "../$ZIP_NAME" .
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
         echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
