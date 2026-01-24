@@ -10,10 +10,21 @@
       "Put your password here"
     ]
   },
+  "useTeleports": true,
   "ui": {
     "fontFamily": "Monospaced",
     "fontSize": 20,
-    "invertMap": true
+    "mapZoomPercent": 100,
+    "invertMap": true,
+    "mudMapSplitRatio": 0.8216145833333334,
+    "mapNotesSplitRatio": 0.621822033898305,
+    "chitchatTimerSplitRatio": 0.6899618805590851,
+    "outputSplitRatio": 0.25749167591564925,
+    "timerColumnWidths": [
+      322,
+      322,
+      322
+    ]
   },
   "bookmarks": [
     {
@@ -29,7 +40,16 @@
       "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7"
     },
     {
-      "name": "Witches",
+      "name": "Transport",
+      "bookmarks": [
+        {
+          "name": "Ankh-Morpork -\u003e Foreign Lands",
+          "roomId": "c892f2464117eca48ca0e6c66289164a0f513e7f"
+        }
+      ]
+    },
+    {
+      "name": "Witch",
       "bookmarks": [
         {
           "name": "Gennie Applebottom\u0027s (Ankh-Morpork)",
@@ -40,12 +60,22 @@
           "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
         }
       ]
+    },
+    {
+      "name": "Wizard",
+      "bookmarks": [
+        {
+          "name": "UU Library",
+          "roomId": "d13059580c4af9f874ed8d832d1b347cdf962855"
+        }
+      ]
     }
   ],
   "characters": {
     "Lesa": {
       "teleports": {
         "reliable": true,
+        "speedwalkingPenalty": 8,
         "locations": [
           {
             "command": "tp am-fiddleys-music",
@@ -264,19 +294,114 @@
             "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
           }
         ]
-      }
+      },
+      "timers": {
+        "Foreign Goods": {
+          "expirationTime": 1769267735784,
+          "durationMs": 3600000
+        }
+      },
+      "gpRateSamples": [
+        4,
+        5,
+        4,
+        4,
+        3
+      ],
+      "hpRateSamples": [
+        4,
+        5,
+        4,
+        4,
+        4
+      ]
     },
     "Maemot": {
       "teleports": {
         "reliable": false,
-        "locations": []
-      }
+        "speedwalkingPenalty": 30,
+        "locations": [
+          {
+            "name": "Ankh-Morpork (Mended Drum)",
+            "command": "tp drum",
+            "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
+          },
+          {
+            "name": "Djelibeybi (Market Crossroads)",
+            "command": "tp dj",
+            "roomId": "4ed9b9006731e04ade1ed9c34d41861fbe8ae1b1"
+          },
+          {
+            "name": "Ephebe (Glaxos)",
+            "command": "tp glaxos",
+            "roomId": "c4ef5a570d4d747808791e2181c848fc7443fefe"
+          },
+          {
+            "name": "Bes Pelargic (Middle Bridge)",
+            "command": "tp bp",
+            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
+          },
+          {
+            "name": "Ankh-Morpork (Five Ways)",
+            "command": "tp fiveways",
+            "roomId": "5d05e86948b486a3d01a21ded57ba1c1b2ba3d4c"
+          },
+          {
+            "name": "Genua (Genua National Bank)",
+            "command": "tp genua",
+            "roomId": "35ea94550b0f3b7a800e5141e1f0251278ecfe3c"
+          }
+        ]
+      },
+      "timers": {
+        "Foreign Goods": {
+          "expirationTime": 1769268895795,
+          "durationMs": 3600000
+        },
+        "Rare Items": {
+          "expirationTime": 1769267191620,
+          "durationMs": 3600000
+        }
+      },
+      "gpRateSamples": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "hpRateSamples": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
     },
     "Ngao": {
       "teleports": {
         "reliable": false,
-        "locations": []
+        "speedwalkingPenalty": 8
+      },
+      "timers": {
+        "Foreign Goods": {
+          "expirationTime": 1769269638800,
+          "durationMs": 3600000
+        }
       }
+    },
+    "Bpla": {
+      "teleports": {
+        "reliable": true,
+        "speedwalkingPenalty": 8
+      },
+      "gpRateSamples": [
+        -1,
+        -1,
+        -1,
+        3,
+        3
+      ]
     }
   }
 }

@@ -24,6 +24,7 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.google.gson.JsonObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
@@ -35,6 +36,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MudCommandShortcutTest {
+
+    @BeforeEach
+    void setUp() {
+        UULibraryService.getInstance().reset();
+    }
 
     static class StubClientOutput implements MudCommandProcessor.ClientOutput {
         List<String> systemMessages = new ArrayList<>();

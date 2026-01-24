@@ -29,6 +29,7 @@ class SunLogTest {
     void tearDown() {
         System.clearProperty("SUNLOG");
         System.clearProperty("SUNLOG_PATH");
+        UULibraryService.getInstance().reset();
     }
 
     @Test

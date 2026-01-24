@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +11,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UULibraryButtonPanelTest {
+    @BeforeEach
+    public void setUp() {
+        com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().reset();
+    }
+
     @Test
     public void testComponents() {
         com.danavalerie.matrixmudrelay.core.UULibraryService.getInstance().setRoomId("None");

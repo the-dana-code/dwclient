@@ -54,6 +54,7 @@ class TeleportBannerTest {
 
     @BeforeEach
     void setUp() {
+        UULibraryService.getInstance().reset();
         cfg = new BotConfig();
         BotConfig.CharacterConfig charCfg = new BotConfig.CharacterConfig();
         charCfg.teleports = new BotConfig.CharacterTeleports();

@@ -76,6 +76,10 @@ public class UULibraryService {
         listeners.add(listener);
     }
 
+    public void removeListener(Runnable listener) {
+        listeners.remove(listener);
+    }
+
     private void notifyListeners() {
         for (Runnable listener : listeners) {
             listener.run();

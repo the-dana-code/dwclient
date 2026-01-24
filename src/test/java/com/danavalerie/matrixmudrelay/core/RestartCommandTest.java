@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.BotConfig;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -10,6 +11,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RestartCommandTest {
+    @BeforeEach
+    void setUp() {
+        UULibraryService.getInstance().reset();
+    }
 
     static class MockOutput implements MudCommandProcessor.ClientOutput {
         List<String> systemMessages = new ArrayList<>();

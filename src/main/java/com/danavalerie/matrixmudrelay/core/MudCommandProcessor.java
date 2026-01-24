@@ -111,6 +111,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private String lastSpeedwalkTargetRoomId = null;
     private List<String> lastSpeedwalkPostCommands = null;
     private String uuLibraryRestoredForChar = null;
+    private final Runnable uuLibraryListener = this::saveUULibraryState;
 
     public MudCommandProcessor(BotConfig cfg,
                                Path configPath,
@@ -131,10 +132,11 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         this.routeMappingsSupplier = routeMappingsSupplier;
         this.output = output;
 
-        UULibraryService.getInstance().addListener(this::saveUULibraryState);
+        UULibraryService.getInstance().addListener(uuLibraryListener);
     }
 
     private void saveUULibraryState() {
+        if (mud == null) return;
         UULibraryService service = UULibraryService.getInstance();
         if (isRestoring && service.isActive()) return;
 
@@ -159,6 +161,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     public void shutdown() {
+        UULibraryService.getInstance().removeListener(uuLibraryListener);
     }
 
     public void handleInput(String input) {
