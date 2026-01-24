@@ -994,7 +994,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(tpSubMenu, currentBg, currentFg);
         }
 
-        JMenuItem tpNow = new JMenuItem("Speedwalk Now");
+        JMenuItem tpNow = new JMenuItem("Teleport Now");
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(tpNow, currentBg, currentFg);
         }
