@@ -836,8 +836,23 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void showEditTeleportDialog(BotConfig.TeleportLocation loc) {
+        String roomName = loc.roomId;
+        try {
+            RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(loc.roomId);
+            if (roomLoc != null) {
+                roomName = roomLoc.roomShort();
+            }
+        } catch (Exception ignored) {}
+
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-        panel.add(new JLabel("Room: " + loc.roomId));
+
+        JPanel roomPanel = new JPanel(new BorderLayout(5, 0));
+        roomPanel.add(new JLabel("Room: " + roomName), BorderLayout.CENTER);
+        JButton showOnMapBtn = new JButton("Show on Map");
+        showOnMapBtn.addActionListener(e -> updateMap(loc.roomId));
+        roomPanel.add(showOnMapBtn, BorderLayout.EAST);
+        panel.add(roomPanel);
+
         panel.add(new JLabel("Name (optional):"));
         JTextField nameField = new JTextField(loc.name);
         panel.add(nameField);
