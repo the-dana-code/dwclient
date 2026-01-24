@@ -760,6 +760,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
+    @Override
+    public void appendTeleportBanner(String banner) {
+        outputPane.appendErrorText(banner);
+    }
+
     private void updateRepeatLastSpeedwalkItemUI() {
         if (repeatLastSpeedwalkItem == null) return;
         boolean hasLast = commandProcessor.hasLastSpeedwalk();

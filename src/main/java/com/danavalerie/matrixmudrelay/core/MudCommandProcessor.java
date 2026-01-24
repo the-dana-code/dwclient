@@ -27,6 +27,7 @@ import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.DiscworldTimeUtils;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
+import com.danavalerie.matrixmudrelay.util.TeleportBannerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void playUULibraryAlertSound();
         void onCharacterChanged(String characterName);
         void updateRepeatLastSpeedwalkItem();
+        void appendTeleportBanner(String banner);
     }
 
     private final BotConfig cfg;
@@ -170,6 +172,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
 
         output.addToHistory(trimmed);
+        checkAndShowTeleportBanner(trimmed);
 
         String lower = trimmed.toLowerCase(Locale.ROOT);
 
@@ -1038,6 +1041,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             if (exits.isEmpty()) {
                 out.append("\nAlready there.");
             } else {
+                for (RoomMapService.RouteStep step : route.steps()) {
+                    checkAndShowTeleportBanner(step.exit());
+                }
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
                 String aliasName = "LesaClientSpeedwalk";
@@ -1127,6 +1133,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         if (exits.isEmpty()) {
             output.appendSystem("Already there.");
         } else {
+            for (RoomMapService.RouteStep step : route.steps()) {
+                checkAndShowTeleportBanner(step.exit());
+            }
             String aliasName = "LesaClientSpeedwalk";
             String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
             sendToMud(List.of(aliasCommand, aliasName));
@@ -1284,5 +1293,31 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         return new ContextualResultList(title, list, empty, footer);
     }
 
+    private void checkAndShowTeleportBanner(String command) {
+        if (command == null || command.isBlank() || mud == null) {
+            return;
+        }
+        CurrentRoomInfo.Snapshot snapshot = mud.getCurrentRoomSnapshot();
+        if (snapshot == null) {
+            return;
+        }
+        String characterName = snapshot.characterName();
+        TeleportRegistry.CharacterTeleports characterTeleports = TeleportRegistry.forCharacter(characterName);
+        for (TeleportRegistry.TeleportLocation tp : characterTeleports.teleports()) {
+            if (tp.command().equalsIgnoreCase(command)) {
+                String targetName = tp.name();
+                try {
+                    RoomMapService.RoomLocation loc = mapService.lookupRoomLocation(tp.roomId());
+                    if (loc != null) {
+                        targetName = loc.roomShort();
+                    }
+                } catch (Exception ignored) {
+                }
+                String banner = TeleportBannerUtils.generateBanner(targetName, command);
+                output.appendTeleportBanner(banner);
+                return;
+            }
+        }
+    }
 }
 

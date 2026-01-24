@@ -47,6 +47,7 @@ class UULibraryPersistenceTest {
         @Override public void playUULibraryAlertSound() {}
         @Override public void onCharacterChanged(String characterName) {}
         @Override public void updateRepeatLastSpeedwalkItem() {}
+        @Override public void appendTeleportBanner(String banner) {}
     }
 
     static class StubMudClient extends MudClient {

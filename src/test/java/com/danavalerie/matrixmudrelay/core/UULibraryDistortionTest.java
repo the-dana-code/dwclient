@@ -37,6 +37,7 @@ class UULibraryDistortionTest {
         @Override public void playUULibraryAlertSound() { alertSoundCount++; }
         @Override public void onCharacterChanged(String characterName) {}
         @Override public void updateRepeatLastSpeedwalkItem() {}
+        @Override public void appendTeleportBanner(String banner) {}
     }
 
     private MudCommandProcessor processor;
