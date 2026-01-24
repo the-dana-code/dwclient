@@ -40,6 +40,10 @@
     {
       "name": "Wizard/UU Library",
       "roomId": "d13059580c4af9f874ed8d832d1b347cdf962855"
+    },
+    {
+      "name": "Wizard/Student Lounge",
+      "roomId": "3e2a6d718998453da8181c9f75c3a5efa612df99"
     }
   ]
 }
