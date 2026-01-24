@@ -49,6 +49,7 @@ class SunLogTest {
             @Override public void setUULibraryDistortion(boolean distortion) {}
             @Override public void playUULibraryReadySound() {}
             @Override public void playUULibraryAlertSound() {}
+            @Override public void onCharacterChanged(String characterName) {}
         };
         MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
 
@@ -83,6 +84,7 @@ class SunLogTest {
             @Override public void setUULibraryDistortion(boolean distortion) {}
             @Override public void playUULibraryReadySound() {}
             @Override public void playUULibraryAlertSound() {}
+            @Override public void onCharacterChanged(String characterName) {}
         };
         MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
 
@@ -110,6 +112,7 @@ class SunLogTest {
             @Override public void setUULibraryDistortion(boolean distortion) {}
             @Override public void playUULibraryReadySound() {}
             @Override public void playUULibraryAlertSound() {}
+            @Override public void onCharacterChanged(String characterName) {}
         };
         MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
 

@@ -35,6 +35,7 @@ class UULibraryDistortionTest {
         @Override public void setUULibraryDistortion(boolean distortion) { this.distortion = distortion; }
         @Override public void playUULibraryReadySound() { readySoundCount++; }
         @Override public void playUULibraryAlertSound() { alertSoundCount++; }
+        @Override public void onCharacterChanged(String characterName) {}
     }
 
     private MudCommandProcessor processor;

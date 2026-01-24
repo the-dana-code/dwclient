@@ -52,6 +52,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -76,6 +77,7 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.image.BufferedImage;
@@ -123,6 +125,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final WritTracker writTracker;
     private final StoreInventoryTracker storeInventoryTracker;
     private String currentRoomId;
+    private String currentRoomName;
     private final TimerService timerService;
     private final BotConfig cfg;
     private final Path configPath;
@@ -139,6 +142,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final Map<Integer, EnumSet<WritMenuAction>> writMenuVisits = new HashMap<>();
     private final List<JMenu> writMenus = new ArrayList<>();
     private final List<JMenu> resultsMenus = new ArrayList<>();
+    private JMenu teleportsMenu;
+    private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private String writCharacterName = null;
     private final AnsiColorParser writParser = new AnsiColorParser();
@@ -353,6 +358,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
         addBookmarksToMenu(quickLinksMenu, cfg.bookmarks);
+        
+        quickLinksMenu.addSeparator();
+        teleportsMenu = new JMenu("Teleports");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(teleportsMenu, currentBg, currentFg);
+        }
+        quickLinksMenu.add(teleportsMenu);
+        refreshTeleportsMenu();
+        
         menuBar.add(quickLinksMenu);
         
         JMenu viewMenu = new JMenu("View");
@@ -718,6 +732,177 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         rebuildWritMenus();
         saveMenus();
+    }
+
+    @Override
+    public void onCharacterChanged(String characterName) {
+        if (!Objects.equals(this.currentCharacterName, characterName)) {
+            this.currentCharacterName = characterName;
+            SwingUtilities.invokeLater(this::refreshTeleportsMenu);
+        }
+    }
+
+    private void refreshTeleportsMenu() {
+        if (teleportsMenu == null) {
+            return;
+        }
+        teleportsMenu.removeAll();
+
+        JCheckBoxMenuItem useTpItem = new JCheckBoxMenuItem("Use Teleports for Speedwalking", cfg.useTeleports);
+        useTpItem.addActionListener(e -> {
+            cfg.useTeleports = useTpItem.isSelected();
+            saveConfig();
+        });
+        teleportsMenu.add(useTpItem);
+
+        String charName = currentCharacterName;
+        BotConfig.CharacterConfig charCfg = (charName != null) ? cfg.characters.get(charName) : null;
+
+        JCheckBoxMenuItem reliableTpItem = new JCheckBoxMenuItem("Reliable Teleports");
+        if (charCfg != null && charCfg.teleports != null) {
+            reliableTpItem.setSelected(charCfg.teleports.reliable);
+        } else {
+            reliableTpItem.setEnabled(false);
+        }
+        reliableTpItem.addActionListener(e -> {
+            if (charCfg != null && charCfg.teleports != null) {
+                charCfg.teleports.reliable = reliableTpItem.isSelected();
+                com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+                saveConfig();
+            }
+        });
+        teleportsMenu.add(reliableTpItem);
+
+        JMenuItem addTpItem = new JMenuItem("Add Teleport...");
+        addTpItem.addActionListener(e -> showAddTeleportDialog());
+        teleportsMenu.add(addTpItem);
+
+        teleportsMenu.addSeparator();
+
+        if (charCfg != null && charCfg.teleports != null && charCfg.teleports.locations != null) {
+            for (BotConfig.TeleportLocation loc : charCfg.teleports.locations) {
+                String displayName = loc.name;
+                if (displayName == null || displayName.isBlank()) {
+                    displayName = loc.roomId;
+                    try {
+                        RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(loc.roomId);
+                        if (roomLoc != null) {
+                            displayName = roomLoc.roomShort();
+                        }
+                    } catch (Exception ignored) {}
+                }
+
+                JMenu tpSubMenu = new JMenu(displayName);
+
+                JMenuItem tpNow = new JMenuItem("Teleport Now");
+                tpNow.addActionListener(e -> submitCommand(loc.command));
+                tpSubMenu.add(tpNow);
+
+                tpSubMenu.addSeparator();
+
+                JMenuItem editTp = new JMenuItem("Edit...");
+                editTp.addActionListener(e -> showEditTeleportDialog(loc));
+                tpSubMenu.add(editTp);
+
+                JMenuItem deleteTp = new JMenuItem("Delete...");
+                deleteTp.addActionListener(e -> {
+                    Object[] options = {"Yes", "No"};
+                    int choice = JOptionPane.showOptionDialog(
+                            this,
+                            "Are you sure you want to delete teleport to " + tpSubMenu.getText() + "?",
+                            "Confirm Delete",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            options,
+                            options[1]
+                    );
+                    if (choice == 0) { // Index of "Yes"
+                        charCfg.teleports.locations.remove(loc);
+                        com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+                        saveConfig();
+                        refreshTeleportsMenu();
+                    }
+                });
+                tpSubMenu.add(deleteTp);
+
+                teleportsMenu.add(tpSubMenu);
+            }
+        }
+
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(teleportsMenu, currentBg, currentFg);
+        }
+    }
+
+    private void showEditTeleportDialog(BotConfig.TeleportLocation loc) {
+        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
+        panel.add(new JLabel("Room: " + loc.roomId));
+        panel.add(new JLabel("Name (optional):"));
+        JTextField nameField = new JTextField(loc.name);
+        panel.add(nameField);
+        panel.add(new JLabel("Teleport Command:"));
+        JTextField commandField = new JTextField(loc.command);
+        panel.add(commandField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Edit Teleport", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            String command = commandField.getText().trim();
+            if (command.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Command cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            loc.name = name.isEmpty() ? null : name;
+            loc.command = command;
+            com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+            saveConfig();
+            refreshTeleportsMenu();
+        }
+    }
+
+    private void showAddTeleportDialog() {
+        String roomId = currentRoomId;
+        String roomName = currentRoomName;
+
+        if (roomId == null || roomId.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Current room unknown. Cannot add teleport.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
+        panel.add(new JLabel("Current Room: " + (roomName != null ? roomName : roomId)));
+        panel.add(new JLabel("Name (optional):"));
+        JTextField nameField = new JTextField();
+        panel.add(nameField);
+        panel.add(new JLabel("Teleport Command:"));
+        JTextField commandField = new JTextField();
+        panel.add(commandField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Add Teleport", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            String command = commandField.getText().trim();
+            if (command.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Command cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (currentCharacterName == null) {
+                JOptionPane.showMessageDialog(this, "No character logged in.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(currentCharacterName, k -> new BotConfig.CharacterConfig());
+            if (charCfg.teleports == null) {
+                charCfg.teleports = new BotConfig.CharacterTeleports();
+            }
+            charCfg.teleports.locations.add(new BotConfig.TeleportLocation(name.isEmpty() ? null : name, command, roomId));
+            com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+            saveConfig();
+            refreshTeleportsMenu();
+        }
     }
 
     private void rebuildWritMenus() {
@@ -1230,6 +1415,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     @Override
     public void updateCurrentRoom(String roomId, String roomName) {
         this.currentRoomId = roomId;
+        this.currentRoomName = roomName;
         mapPanel.updateCurrentRoom(roomId);
         roomButtonBarPanel.updateRoom(roomId, roomName);
         roomNotePanel.updateRoom(roomId, roomName);

@@ -56,6 +56,7 @@ class MudCommandShortcutTest {
         @Override public void setUULibraryDistortion(boolean distortion) {}
         @Override public void playUULibraryReadySound() {}
         @Override public void playUULibraryAlertSound() {}
+        @Override public void onCharacterChanged(String characterName) {}
     }
 
     static class StubMudClient extends MudClient {

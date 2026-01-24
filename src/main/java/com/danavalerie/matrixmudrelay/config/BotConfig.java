@@ -30,6 +30,8 @@ public final class BotConfig {
     // trigger -> list of lines to send to MUD (may include secrets)
     public Map<String, List<String>> aliases = new LinkedHashMap<>();
 
+    public boolean useTeleports = true;
+
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();
 
@@ -110,12 +112,19 @@ public final class BotConfig {
     }
 
     public static final class TeleportLocation {
+        public String name;
         public String command;
         public String roomId;
         public int[] target;
 
         public TeleportLocation() {}
         public TeleportLocation(String command, String roomId) {
+            this.command = command;
+            this.roomId = roomId;
+        }
+
+        public TeleportLocation(String name, String command, String roomId) {
+            this.name = name;
             this.command = command;
             this.roomId = roomId;
         }

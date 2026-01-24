@@ -86,6 +86,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void setUULibraryDistortion(boolean distortion);
         void playUULibraryReadySound();
         void playUULibraryAlertSound();
+        void onCharacterChanged(String characterName);
     }
 
     private final BotConfig cfg;
@@ -100,9 +101,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
 
     private List<RoomMapService.RoomSearchResult> lastRoomSearchResults = List.of();
     private List<RoomMapService.ItemSearchResult> lastItemSearchResults = List.of();
-    private boolean useTeleports = true;
     private volatile String lastRoomId = null;
     private volatile String lastRoomName = null;
+    private String currentCharacterName = null;
     private boolean isRestoring = false;
     private String uuLibraryRestoredForChar = null;
 
@@ -292,6 +293,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         CurrentRoomInfo.Snapshot snapshot = mud.getCurrentRoomSnapshot();
         String roomId = snapshot.roomId();
         String roomName = snapshot.roomName();
+        String charName = snapshot.characterName();
+
+        if (charName != null && !charName.isBlank() && !charName.equals(currentCharacterName)) {
+            currentCharacterName = charName;
+            output.onCharacterChanged(charName);
+        }
 
         if (roomName == null && roomId != null && !roomId.isBlank()) {
             try {
@@ -311,7 +318,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     if (!wasActive) {
                         uuLibraryRestoredForChar = null;
                     }
-                    String charName = snapshot.characterName();
                     if (charName != null && !charName.equals(uuLibraryRestoredForChar)) {
                         BotConfig.CharacterConfig charCfg = cfg.characters.get(charName);
                         if (charCfg != null && charCfg.uuLibrary != null) {
@@ -499,12 +505,12 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return;
         }
         if ("tp".equals(subcommand)) {
-            useTeleports = true;
+            cfg.useTeleports = true;
             output.appendSystem("Teleport-assisted routing enabled.");
             return;
         }
         if ("notp".equals(subcommand)) {
-            useTeleports = false;
+            cfg.useTeleports = false;
             output.appendSystem("Teleport-assisted routing disabled.");
             return;
         }
@@ -1086,7 +1092,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         RoomMapService.RouteResult route = mapService.findRoute(
                 currentRoomId,
                 targetRoomId,
-                useTeleports,
+                cfg.useTeleports,
                 characterName
         );
         updateSpeedwalkPath(currentRoomId, route);
