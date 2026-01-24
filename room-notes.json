@@ -1511,6 +1511,15 @@
       }
     ]
   },
+  "b160cdf9b4936d84daaecb927fedefe40210eea8": {
+    "name": "Keffel\u0027s Hats",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "b1c92bb1b0aac24ec54f968cd58ca3c187bbbeaf": {
     "name": "inside the Emerald Necklace coaching inn",
     "buttons": [

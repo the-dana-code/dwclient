@@ -24,6 +24,7 @@ import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
+import com.danavalerie.matrixmudrelay.util.DiscworldTimeUtils;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import org.slf4j.Logger;
@@ -252,7 +253,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             try {
                 ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT"));
                 String timestamp = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")) + " GMT";
-                String logEntry = timestamp + " | " + line + System.lineSeparator();
+                String dwTime = DiscworldTimeUtils.getCurrentDiscworldTime();
+                String logEntry = timestamp + " | " + dwTime + " | " + line + System.lineSeparator();
                 String pathStr = System.getProperty("SUNLOG_PATH", "sun.log");
                 Files.write(Paths.get(pathStr), logEntry.getBytes(StandardCharsets.UTF_8),
                         StandardOpenOption.CREATE, StandardOpenOption.APPEND);

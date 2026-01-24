@@ -1,5 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.util.DiscworldTimeUtils;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -81,12 +83,7 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
     private void updateTime() {
         long unixSeconds = Instant.now().getEpochSecond();
 
-        long minutes = (unixSeconds % (18 * 60)) / 18;
-        long hours = (unixSeconds % (18 * 60 * 24)) / (18 * 60);
-        long hoursTwelve = hours % 12;
-        if (hoursTwelve == 0) hoursTwelve = 12;
-        String ampm = hours > 11 ? "pm" : "am";
-        String timeStr = String.format("%d:%02d%s", hoursTwelve, minutes, ampm);
+        String timeStr = DiscworldTimeUtils.formatDiscworldTime(unixSeconds);
 
         long dayInYear = (unixSeconds % (18L * 60 * 24 * 400)) / (18L * 60 * 24);
         long dayInWeek = ((unixSeconds + (18L * 60 * 24 * 5)) % (18L * 60 * 24 * 8)) / (18L * 60 * 24);

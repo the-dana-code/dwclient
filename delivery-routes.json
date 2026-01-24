@@ -1086,5 +1086,10 @@
     "npc": "the proprietor",
     "location": "the Jewelled Ring Store on Grunefair",
     "roomId": "8cbb55ceba2fbf33c0cf82e67ae2b4514a2d00f5"
+  },
+  {
+    "npc": "Blackboard",
+    "location": "Ye Olde Rum Shoppe on the waterfront",
+    "roomId": "f8671122b3fd966867c40d6d71ac4f76786fc2c7"
   }
 ]

@@ -61,8 +61,8 @@ class SunLogTest {
         String logLine = lines.get(0);
         assertTrue(logLine.endsWith(sunriseMessage));
         assertTrue(logLine.contains("GMT"));
-        assertTrue(logLine.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} GMT \\| .*"),
-                "Log line should match the expected format with milliseconds and separator");
+        assertTrue(logLine.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} GMT \\| \\d{1,2}:\\d{2}(?:am|pm) \\| .*"),
+                "Log line should match the expected format with milliseconds, in-game time and separators");
     }
 
     @Test
@@ -121,8 +121,8 @@ class SunLogTest {
         assertEquals(2, lines.size());
         
         for (String line : lines) {
-            assertTrue(line.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} GMT \\| .*"),
-                    "Log line should match the expected format with milliseconds and separator");
+            assertTrue(line.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3} GMT \\| \\d{1,2}:\\d{2}(?:am|pm) \\| .*"),
+                    "Log line should match the expected format with milliseconds, in-game time and separators");
         }
         
         assertTrue(lines.get(0).endsWith("The turnwise sky starts to lighten as the sun peeks over the horizon."));
