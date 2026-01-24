@@ -578,11 +578,6 @@
     ]
   },
   {
-    "npc": "Petra Protest",
-    "location": "the King\u0027s Way Rathskeller",
-    "roomId": "01635c1a831a93361073678b2e6776c709ee7dcd"
-  },
-  {
     "npc": "Pierre Grepe",
     "location": "Vino pour la Femme et le Homme on God\u0027s Collar",
     "roomId": "0a8a448280ffe496b40230fe3c7527e37b875f02"
@@ -1111,5 +1106,10 @@
     "npc": "Millenia Starchild",
     "location": "the occult jewellery stall on Plaza of Broken Moons",
     "roomId": "2ff4a31c72f3a2b5690097250cdc1dd20704a977"
+  },
+  {
+    "npc": "Petra Protest",
+    "location": "the King\u0027s Way Rathskeller",
+    "roomId": "c2d9724a029eab1db38a069311bab190132162f0"
   }
 ]
