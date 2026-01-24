@@ -483,6 +483,15 @@
       }
     ]
   },
+  "3c079ab765809ee3244d10759bda907e9d2535e7": {
+    "name": "small jewellery stall",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "3d71496a59f5a866a7642874033154019f7f7aca": {
     "name": "south part of the gallery",
     "buttons": [
