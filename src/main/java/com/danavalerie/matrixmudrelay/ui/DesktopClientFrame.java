@@ -148,6 +148,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<JMenu> writMenus = new ArrayList<>();
     private final List<JMenu> resultsMenus = new ArrayList<>();
     private JMenu teleportsMenu;
+    private JMenu bookmarksMenu;
     private JMenuItem repeatLastSpeedwalkItem;
     private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
@@ -370,7 +371,23 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
-        
+
+        teleportsMenu = new JMenu("Teleports");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(teleportsMenu, currentBg, currentFg);
+        }
+        quickLinksMenu.add(teleportsMenu);
+        refreshTeleportsMenu();
+
+        bookmarksMenu = new JMenu("Bookmarks...");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(bookmarksMenu, currentBg, currentFg);
+        }
+        quickLinksMenu.add(bookmarksMenu);
+        refreshBookmarksMenu();
+
+        quickLinksMenu.addSeparator();
+
         repeatLastSpeedwalkItem = new JMenuItem();
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
@@ -378,7 +395,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updateRepeatLastSpeedwalkItem();
         repeatLastSpeedwalkItem.addActionListener(e -> submitCommand("/restart"));
         quickLinksMenu.add(repeatLastSpeedwalkItem);
-        quickLinksMenu.addSeparator();
 
         quickLinksMenu.addMenuListener(new MenuListener() {
             @Override
@@ -394,16 +410,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             public void menuCanceled(MenuEvent e) {
             }
         });
-
-        addBookmarksToMenu(quickLinksMenu, cfg.bookmarks);
-        
-        quickLinksMenu.addSeparator();
-        teleportsMenu = new JMenu("Teleports");
-        if (currentBg != null && currentFg != null) {
-            updateMenuTheme(teleportsMenu, currentBg, currentFg);
-        }
-        quickLinksMenu.add(teleportsMenu);
-        refreshTeleportsMenu();
         
         menuBar.add(quickLinksMenu);
         
@@ -453,28 +459,79 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return menuBar;
     }
 
-    private void addBookmarksToMenu(Container menu, List<BotConfig.Bookmark> bookmarks) {
+    private void addBookmarksToMenu(Container menu, List<BotConfig.Bookmark> bookmarks, List<BotConfig.Bookmark> parentList) {
         if (bookmarks == null) {
             return;
         }
         for (BotConfig.Bookmark link : bookmarks) {
+            String displayName = link.name;
+            if (displayName == null || displayName.isBlank()) {
+                displayName = link.roomId;
+                try {
+                    RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(link.roomId);
+                    if (roomLoc != null) {
+                        displayName = roomLoc.roomShort();
+                    }
+                } catch (Exception ignored) {}
+            }
+
             if (link.bookmarks != null && !link.bookmarks.isEmpty()) {
-                JMenu subMenu = new JMenu(link.name);
+                JMenu subMenu = new JMenu(displayName);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(subMenu, currentBg, currentFg);
                 }
-                addBookmarksToMenu(subMenu, link.bookmarks);
+                addBookmarksToMenu(subMenu, link.bookmarks, link.bookmarks);
                 menu.add(subMenu);
             } else {
-                JMenuItem linkItem = new JMenuItem(link.name);
+                JMenu bmSubMenu = new JMenu(displayName);
                 if (currentBg != null && currentFg != null) {
-                    updateMenuTheme(linkItem, currentBg, currentFg);
+                    updateMenuTheme(bmSubMenu, currentBg, currentFg);
                 }
-                linkItem.addActionListener(event -> {
+
+                JMenuItem speedwalkNow = new JMenuItem("Speedwalk Now");
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(speedwalkNow, currentBg, currentFg);
+                }
+                speedwalkNow.addActionListener(event -> {
                     commandProcessor.speedwalkTo(link.roomId);
                     submitCommand(null); // Just reset history index if we're not recording navigation
                 });
-                menu.add(linkItem);
+                bmSubMenu.add(speedwalkNow);
+
+                bmSubMenu.addSeparator();
+
+                JMenuItem editBm = new JMenuItem("Edit...");
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(editBm, currentBg, currentFg);
+                }
+                editBm.addActionListener(e -> showEditBookmarkDialog(link));
+                bmSubMenu.add(editBm);
+
+                JMenuItem deleteBm = new JMenuItem("Delete...");
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(deleteBm, currentBg, currentFg);
+                }
+                deleteBm.addActionListener(e -> {
+                    Object[] options = {"Yes", "No"};
+                    int choice = JOptionPane.showOptionDialog(
+                            this,
+                            "Are you sure you want to delete bookmark to " + bmSubMenu.getText() + "?",
+                            "Confirm Delete",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            options,
+                            options[1]
+                    );
+                    if (choice == 0) { // Index of "Yes"
+                        parentList.remove(link);
+                        saveConfig();
+                        refreshBookmarksMenu();
+                    }
+                });
+                bmSubMenu.add(deleteBm);
+
+                menu.add(bmSubMenu);
             }
         }
     }
@@ -807,6 +864,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     statsPanel.setConfigCharacters(new ArrayList<>(cfg.characters.keySet()));
                 }
                 refreshTeleportsMenu();
+                refreshBookmarksMenu();
             });
         }
     }
@@ -874,8 +932,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
 
                 JMenu tpSubMenu = new JMenu(displayName);
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(tpSubMenu, currentBg, currentFg);
+                }
 
-                JMenuItem tpNow = new JMenuItem("Teleport Now");
+                JMenuItem tpNow = new JMenuItem("Speedwalk Now");
+                if (currentBg != null && currentFg != null) {
+                    updateMenuTheme(tpNow, currentBg, currentFg);
+                }
                 tpNow.addActionListener(e -> submitCommand(loc.command, true));
                 tpSubMenu.add(tpNow);
 
@@ -913,6 +977,83 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(teleportsMenu, currentBg, currentFg);
+        }
+    }
+
+    private void refreshBookmarksMenu() {
+        if (bookmarksMenu == null) {
+            return;
+        }
+        bookmarksMenu.removeAll();
+
+        JMenuItem addBmItem = new JMenuItem("Add Bookmark...");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(addBmItem, currentBg, currentFg);
+        }
+        addBmItem.addActionListener(e -> showAddBookmarkDialog());
+        bookmarksMenu.add(addBmItem);
+
+        bookmarksMenu.addSeparator();
+
+        addBookmarksToMenu(bookmarksMenu, cfg.bookmarks, cfg.bookmarks);
+
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(bookmarksMenu, currentBg, currentFg);
+        }
+    }
+
+    private void showEditBookmarkDialog(BotConfig.Bookmark bookmark) {
+        String roomName = bookmark.roomId;
+        try {
+            RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(bookmark.roomId);
+            if (roomLoc != null) {
+                roomName = roomLoc.roomShort();
+            }
+        } catch (Exception ignored) {}
+
+        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
+
+        JPanel roomPanel = new JPanel(new BorderLayout(5, 0));
+        roomPanel.add(new JLabel("Room: " + roomName), BorderLayout.CENTER);
+        JButton showOnMapBtn = new JButton("Show on Map");
+        showOnMapBtn.addActionListener(e -> updateMap(bookmark.roomId));
+        roomPanel.add(showOnMapBtn, BorderLayout.EAST);
+        panel.add(roomPanel);
+
+        panel.add(new JLabel("Name (optional):"));
+        JTextField nameField = new JTextField(bookmark.name);
+        panel.add(nameField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Edit Bookmark", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            bookmark.name = name.isEmpty() ? null : name;
+            saveConfig();
+            refreshBookmarksMenu();
+        }
+    }
+
+    private void showAddBookmarkDialog() {
+        String roomId = currentRoomId;
+        String roomName = currentRoomName;
+
+        if (roomId == null || roomId.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Current room unknown. Cannot add bookmark.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
+        panel.add(new JLabel("Current Room: " + (roomName != null ? roomName : roomId)));
+        panel.add(new JLabel("Name (optional):"));
+        JTextField nameField = new JTextField();
+        panel.add(nameField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Add Bookmark", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            cfg.bookmarks.add(new BotConfig.Bookmark(name.isEmpty() ? null : name, roomId));
+            saveConfig();
+            refreshBookmarksMenu();
         }
     }
 
