@@ -57,6 +57,7 @@ class MudCommandShortcutTest {
         @Override public void playUULibraryReadySound() {}
         @Override public void playUULibraryAlertSound() {}
         @Override public void onCharacterChanged(String characterName) {}
+        @Override public void updateRepeatLastSpeedwalkItem() {}
     }
 
     static class StubMudClient extends MudClient {

@@ -87,6 +87,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void playUULibraryReadySound();
         void playUULibraryAlertSound();
         void onCharacterChanged(String characterName);
+        void updateRepeatLastSpeedwalkItem();
     }
 
     private final BotConfig cfg;
@@ -1022,6 +1023,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
         try {
             RoomMapService.RouteResult route = calculateSpeedwalkRoute(currentRoomId, target.roomId(), characterName);
+            lastSpeedwalkTargetRoomId = target.roomId();
+            lastSpeedwalkPostCommands = null;
+            output.updateRepeatLastSpeedwalkItem();
             List<String> exits = route.steps().stream()
                     .map(RoomMapService.RouteStep::exit)
                     .toList();
@@ -1053,6 +1057,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     public void speedwalkTo(String roomId) {
         lastSpeedwalkTargetRoomId = roomId;
         lastSpeedwalkPostCommands = null;
+        output.updateRepeatLastSpeedwalkItem();
         try {
             performSpeedwalk(roomId);
         } catch (Exception e) {
@@ -1068,6 +1073,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     public void speedwalkToThenCommands(String roomId, List<String> commands) {
         lastSpeedwalkTargetRoomId = roomId;
         lastSpeedwalkPostCommands = commands;
+        output.updateRepeatLastSpeedwalkItem();
         try {
             performSpeedwalk(roomId);
         } catch (Exception e) {

@@ -751,7 +751,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
 
-    private void updateRepeatLastSpeedwalkItem() {
+    @Override
+    public void updateRepeatLastSpeedwalkItem() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            updateRepeatLastSpeedwalkItemUI();
+        } else {
+            SwingUtilities.invokeLater(this::updateRepeatLastSpeedwalkItemUI);
+        }
+    }
+
+    private void updateRepeatLastSpeedwalkItemUI() {
         if (repeatLastSpeedwalkItem == null) return;
         boolean hasLast = commandProcessor.hasLastSpeedwalk();
         repeatLastSpeedwalkItem.setEnabled(hasLast);
