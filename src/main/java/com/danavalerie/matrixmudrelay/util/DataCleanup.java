@@ -27,7 +27,7 @@ public class DataCleanup {
             MapDataService mapDataService = new MapDataService();
             RoomMapService roomMapService = new RoomMapService(mapDataService);
 
-            // 1. MapDataService (rooms.json, npcs.json, user_data.json, room_descriptions.json)
+            // 1. MapDataService (rooms.json, npcs.json, user_data.json)
             System.out.println("Cleaning MapData (rooms, items, npcs, etc.)...");
             mapDataService.saveAll();
 

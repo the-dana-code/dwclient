@@ -26,7 +26,6 @@ public class MapDataService {
     private Map<String, ItemData> items = new TreeMap<>();
     private Map<String, NpcData> npcs = new TreeMap<>();
     private Map<String, String> userData = new TreeMap<>();
-    private Map<String, String> roomDescriptions = new TreeMap<>();
 
     public MapDataService() {
         loadAll();
@@ -36,7 +35,6 @@ public class MapDataService {
         rooms = loadJson("rooms.json", new TypeToken<TreeMap<String, RoomData>>() {}.getType());
         npcs = loadJson("npcs.json", new TypeToken<TreeMap<String, NpcData>>() {}.getType());
         userData = loadJson("user_data.json", new TypeToken<TreeMap<String, String>>() {}.getType());
-        roomDescriptions = loadJson("room_descriptions.json", new TypeToken<TreeMap<String, String>>() {}.getType());
 
         deriveItems();
     }
@@ -89,7 +87,6 @@ public class MapDataService {
         saveJson("rooms.json", rooms);
         saveJson("npcs.json", npcs);
         saveJson("user_data.json", userData);
-        saveJson("room_descriptions.json", roomDescriptions);
     }
 
     private void saveJson(String filename, Object data) {
@@ -101,7 +98,6 @@ public class MapDataService {
     public Map<String, ItemData> getItems() { return items; }
     public Map<String, NpcData> getNpcs() { return npcs; }
     public Map<String, String> getUserData() { return userData; }
-    public Map<String, String> getRoomDescriptions() { return roomDescriptions; }
 
     public RoomData getRoom(String roomId) {
         return rooms.get(roomId);
