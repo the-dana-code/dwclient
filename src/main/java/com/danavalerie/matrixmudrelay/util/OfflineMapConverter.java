@@ -35,6 +35,9 @@ public class OfflineMapConverter {
     public static void main(String[] args) {
         Path mapsDir = Paths.get("map-backgrounds");
         if (!Files.exists(mapsDir)) {
+            mapsDir = Paths.get("src", "main", "resources", "map-backgrounds");
+        }
+        if (!Files.exists(mapsDir)) {
             System.err.println("Directory not found: " + mapsDir.toAbsolutePath());
             return;
         }

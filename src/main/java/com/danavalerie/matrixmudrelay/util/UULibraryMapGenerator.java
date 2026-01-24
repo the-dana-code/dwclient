@@ -8,7 +8,11 @@ import java.util.*;
 
 public class UULibraryMapGenerator {
     public static void main(String[] args) throws IOException {
-        BufferedImage img = ImageIO.read(new File("map-backgrounds/uu_library_full.png"));
+        File imgFile = new File("map-backgrounds/uu_library_full.png");
+        if (!imgFile.exists()) {
+            imgFile = new File("src/main/resources/map-backgrounds/uu_library_full.png");
+        }
+        BufferedImage img = ImageIO.read(imgFile);
         int width = img.getWidth();
         int height = img.getHeight();
         System.out.println("[DEBUG_LOG] Image size: " + width + "x" + height);
