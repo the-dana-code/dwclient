@@ -1116,5 +1116,10 @@
     "npc": "All Jolson",
     "location": "All Jolson\u0027s Restaurant on Turnwise Broadway",
     "roomId": "eaa8715cdf2b779c63768077765b9649cbf11350"
+  },
+  {
+    "npc": "Mr Steless",
+    "location": "Mr. T.A. Steless\u0027s World of Art on Street of Cunning Artificers",
+    "roomId": "422368239d14c936a03a7cfc2b38935c455d4df0"
   }
 ]
