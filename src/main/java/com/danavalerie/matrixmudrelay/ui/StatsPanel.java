@@ -123,6 +123,9 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         JPanel statusBar = new JPanel();
         statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
         statusBar.add(Box.createHorizontalStrut(12));
+        statusBar.add(characterLabel);
+        statusBar.add(nameMenuBar);
+        statusBar.add(Box.createHorizontalStrut(10));
         statusBar.add(buildStatGroup(hpLabel, hpBar));
         statusBar.add(Box.createHorizontalStrut(10));
         statusBar.add(buildStatGroup(gpLabel, gpBar));
@@ -130,9 +133,6 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         statusBar.add(buildStatGroup(burdenLabel, burdenBar));
         statusBar.add(Box.createHorizontalStrut(10));
         statusBar.add(buildStatGroup(xpLabel, xpBar));
-        statusBar.add(Box.createHorizontalStrut(10));
-        statusBar.add(characterLabel);
-        statusBar.add(nameMenuBar);
         statusBar.add(Box.createHorizontalGlue());
         add(statusBar, BorderLayout.CENTER);
 
