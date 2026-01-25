@@ -149,6 +149,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final List<JMenu> resultsMenus = new ArrayList<>();
     private JMenu teleportsMenu;
     private JMenu bookmarksMenu;
+    private JMenu writTopMenu;
     private JMenuItem repeatLastSpeedwalkItem;
     private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
@@ -455,6 +456,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         viewMenu.add(zoomSubMenu);
         menuBar.add(viewMenu);
+
+        writTopMenu = new JMenu("Writ");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(writTopMenu, currentBg, currentFg);
+        }
+        menuBar.add(writTopMenu);
 
         return menuBar;
     }
@@ -1257,90 +1264,95 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void rebuildWritMenus() {
+        if (writTopMenu == null) return;
+
         for (JMenu menu : resultsMenus) {
             menuBar.remove(menu);
         }
-        for (JMenu menu : writMenus) {
-            menuBar.remove(menu);
-        }
+
+        writTopMenu.removeAll();
         writMenus.clear();
+
         if (writRequirements.isEmpty()) {
-            reattachResultsMenus();
-            menuBar.revalidate();
-            menuBar.repaint();
-            return;
-        }
-        for (int i = 0; i < writRequirements.size(); i++) {
-            WritTracker.WritRequirement req = writRequirements.get(i);
-            boolean hasRoute = routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).isPresent();
-            boolean canWriteRoutes = Files.isWritable(routesPath);
-            int index = i;
-            JMenu writMenu = new JMenu("W" + (i + 1));
-
+            writTopMenu.setText("Writ");
+            JMenuItem noWritItem = new JMenuItem("No active writ");
+            noWritItem.setEnabled(false);
+            if (currentBg != null && currentFg != null) {
+                updateMenuTheme(noWritItem, currentBg, currentFg);
+            }
+            writTopMenu.add(noWritItem);
+        } else {
             if (writCharacterName != null && !writCharacterName.isBlank()) {
-                JMenuItem charItem = new JMenuItem("Character: " + writCharacterName);
-                charItem.setEnabled(false);
-                writMenu.add(charItem);
-                writMenu.addSeparator();
-            }
-
-            JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
-                    "Item: " + req.quantity() + " " + req.item(),
-                    () -> submitCommand("/item exact " + req.item()));
-            writMenu.add(itemInfo);
-
-            JMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
-                    "List Store",
-                    () -> submitCommand("list"));
-            writMenu.add(listItem);
-
-            if (req.quantity() == 2) {
-                JMenuItem buyOneItem = buildWritMenuItem(index, WritMenuAction.BUY_ONE_ITEM,
-                        "Buy 1 Item",
-                        () -> handleStoreBuy(index, 1));
-                writMenu.add(buyOneItem);
-                JMenuItem buyTwoItems = buildWritMenuItem(index, WritMenuAction.BUY_TWO_ITEMS,
-                        "Buy 2 Items",
-                        () -> handleStoreBuy(index, 2));
-                writMenu.add(buyTwoItems);
+                writTopMenu.setText("Writ:" + writCharacterName);
             } else {
-                JMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
-                        "Buy Item",
-                        () -> handleStoreBuy(index, req.quantity()));
-                writMenu.add(buyItem);
+                writTopMenu.setText("Writ");
             }
 
-            if (hasRoute) {
-                JMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
-                        "Route",
-                        () -> handleRoute(index));
-                writMenu.add(routeItem);
-            } else if (canWriteRoutes) {
-                JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
-                        "Add Current Room", "Confirm",
-                        () -> handleAddRoute(index));
-                writMenu.add(addRouteMenu);
+            for (int i = 0; i < writRequirements.size(); i++) {
+                WritTracker.WritRequirement req = writRequirements.get(i);
+                boolean hasRoute = routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).isPresent();
+                boolean canWriteRoutes = Files.isWritable(routesPath);
+                int index = i;
+                JMenu writMenu = new JMenu("W" + (i + 1));
+
+                JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
+                        "Item: " + req.quantity() + " " + req.item(),
+                        () -> submitCommand("/item exact " + req.item()));
+                writMenu.add(itemInfo);
+
+                JMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
+                        "List Store",
+                        () -> submitCommand("list"));
+                writMenu.add(listItem);
+
+                if (req.quantity() == 2) {
+                    JMenuItem buyOneItem = buildWritMenuItem(index, WritMenuAction.BUY_ONE_ITEM,
+                            "Buy 1 Item",
+                            () -> handleStoreBuy(index, 1));
+                    writMenu.add(buyOneItem);
+                    JMenuItem buyTwoItems = buildWritMenuItem(index, WritMenuAction.BUY_TWO_ITEMS,
+                            "Buy 2 Items",
+                            () -> handleStoreBuy(index, 2));
+                    writMenu.add(buyTwoItems);
+                } else {
+                    JMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
+                            "Buy Item",
+                            () -> handleStoreBuy(index, req.quantity()));
+                    writMenu.add(buyItem);
+                }
+
+                if (hasRoute) {
+                    JMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
+                            "Route",
+                            () -> handleRoute(index));
+                    writMenu.add(routeItem);
+                } else if (canWriteRoutes) {
+                    JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
+                            "Add Current Room", "Confirm",
+                            () -> handleAddRoute(index));
+                    writMenu.add(addRouteMenu);
+                }
+
+                JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
+                        "Deliver",
+                        () -> submitCommand("/writ " + (index + 1) + " deliver"));
+                writMenu.add(deliverItem);
+
+                writMenu.addSeparator();
+
+                JMenu npcMenu = buildWritSubMenu(index, WritMenuAction.NPC_INFO,
+                        "Deliver to: " + req.npc(), "Search",
+                        () -> submitCommand("/writ " + (index + 1) + " npc"));
+                writMenu.add(npcMenu);
+
+                String locationText = req.locationDisplay();
+                JMenu locMenu = buildWritSubMenu(index, WritMenuAction.LOCATION_INFO,
+                        "Location: " + locationText, "Search",
+                        () -> submitCommand("/writ " + (index + 1) + " loc"));
+                writMenu.add(locMenu);
+                writMenus.add(writMenu);
+                writTopMenu.add(writMenu);
             }
-
-            JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
-                    "Deliver",
-                    () -> submitCommand("/writ " + (index + 1) + " deliver"));
-            writMenu.add(deliverItem);
-
-            writMenu.addSeparator();
-
-            JMenu npcMenu = buildWritSubMenu(index, WritMenuAction.NPC_INFO,
-                    "Deliver to: " + req.npc(), "Search",
-                    () -> submitCommand("/writ " + (index + 1) + " npc"));
-            writMenu.add(npcMenu);
-
-            String locationText = req.locationDisplay();
-            JMenu locMenu = buildWritSubMenu(index, WritMenuAction.LOCATION_INFO,
-                    "Location: " + locationText, "Search",
-                    () -> submitCommand("/writ " + (index + 1) + " loc"));
-            writMenu.add(locMenu);
-            writMenus.add(writMenu);
-            menuBar.add(writMenu);
         }
         reattachResultsMenus();
         updateTheme(mapPanel.isInverted());
