@@ -56,6 +56,7 @@ public final class ContextualResultsPanel extends JPanel implements FontChangeLi
     private Font baseFont;
     private ContextualResultList currentResults = new ContextualResultList(
             "Search Results",
+            "Results",
             java.util.List.of(),
             "No results yet.",
             null

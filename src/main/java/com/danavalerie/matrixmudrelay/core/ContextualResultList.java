@@ -21,11 +21,13 @@ package com.danavalerie.matrixmudrelay.core;
 import java.util.List;
 
 public record ContextualResultList(String title,
+                                   String shortTitle,
                                    List<ContextualResult> results,
                                    String emptyMessage,
                                    String footer) {
     public ContextualResultList {
         title = title == null ? "" : title;
+        shortTitle = shortTitle == null ? "" : shortTitle;
         results = results == null ? List.of() : List.copyOf(results);
         emptyMessage = emptyMessage == null ? "" : emptyMessage;
         footer = footer == null ? "" : footer;

@@ -1207,9 +1207,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     "/map " + (i + 1)));
         }
         String title = "Room search for \"" + query + "\"";
+        String shortTitle = "Rooms";
         String empty = "No rooms found matching \"" + query + "\".";
         String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
-        return new ContextualResultList(title, list, empty, footer);
+        return new ContextualResultList(title, shortTitle, list, empty, footer);
     }
 
     private ContextualResultList buildItemResultsList(String rawQuery,
@@ -1226,6 +1227,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     null));
         }
         String title = (exact ? "Item exact search for \"" : "Item search for \"") + termUsed + "\"";
+        String shortTitle = "Items";
         String empty = "No items found matching \"" + rawQuery + "\".";
         List<String> notes = new ArrayList<>();
         if (rawQuery != null && !rawQuery.isBlank()
@@ -1240,7 +1242,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         String footer = notes.stream().filter(note -> note != null && !note.isBlank())
                 .reduce((a, b) -> a + " " + b)
                 .orElse(null);
-        return new ContextualResultList(title, list, empty, footer);
+        return new ContextualResultList(title, shortTitle, list, empty, footer);
     }
 
     private ContextualResultList buildItemLocationResultsList(String itemName,
@@ -1266,9 +1268,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     "/map " + (i + 1)));
         }
         String title = "Item locations for \"" + itemName + "\"";
+        String shortTitle = "Rooms";
         String empty = "No rooms found for item \"" + itemName + "\".";
         String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
-        return new ContextualResultList(title, list, empty, footer);
+        return new ContextualResultList(title, shortTitle, list, empty, footer);
     }
 
     private ContextualResultList buildNpcResultsList(String query,
@@ -1288,9 +1291,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     "/map " + (i + 1)));
         }
         String title = "NPC search for \"" + query + "\"";
+        String shortTitle = "NPCs";
         String empty = "No NPCs found matching \"" + query + "\".";
         String footer = truncated ? "Showing first " + ROOM_SEARCH_LIMIT + " matches. Refine your search." : null;
-        return new ContextualResultList(title, list, empty, footer);
+        return new ContextualResultList(title, shortTitle, list, empty, footer);
     }
 
     private void checkAndShowTeleportBanner(String command) {
