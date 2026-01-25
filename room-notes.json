@@ -1072,6 +1072,15 @@
       }
     ]
   },
+  "7c676e7d22b4b42824290e38ef90122954653ffa": {
+    "name": "Thee Hunter\u0027s Emporium",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "7e7f533917d810a1d0d78f7b380fa93fb141258c": {
     "name": "Emmaline Lamb\u0027s World of Baskets",
     "buttons": [
