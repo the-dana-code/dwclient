@@ -15,7 +15,7 @@
     "windowHeight": 1039,
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7496677004873726,
-    "mapNotesSplitRatio": 0.6594360086767896,
+    "mapNotesSplitRatio": 0.6521264994547438,
     "chitchatTimerSplitRatio": 0.6310160427807486,
     "outputSplitRatio": 0.1995490417136415,
     "timerColumnWidths": [
@@ -564,13 +564,13 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769367728463,
+          "expirationTime": 1769374613305,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
-        4,
+        5,
         4,
         4,
         4
@@ -647,7 +647,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769367254091,
+          "expirationTime": 1769372738371,
           "durationMs": 3600000
         }
       },
@@ -655,8 +655,8 @@
         5,
         4,
         4,
-        5,
-        4
+        4,
+        3
       ],
       "hpRateSamples": [
         5,
@@ -669,20 +669,27 @@
     "Ngao": {
       "teleports": {
         "reliable": false,
-        "speedwalkingPenalty": 8
+        "speedwalkingPenalty": 8,
+        "locations": [
+          {
+            "name": "Mended Drum",
+            "command": "tp drum",
+            "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
+          }
+        ]
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769365664730,
+          "expirationTime": 1769375254873,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
+        1,
+        2,
         4,
         4,
-        4,
-        3,
-        3
+        4
       ],
       "hpRateSamples": [
         2,
