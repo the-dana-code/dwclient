@@ -66,7 +66,7 @@ public class RadioMenuItem extends JMenuItem {
             defaultUI = getUI();
         }
         if (keepMenuOpen) {
-            setUI(new KeepOpenMenuItem.KeepOpenMenuItemUI());
+            setUI(new KeepOpenMenuItem.KeepOpenMenuItemUI(keepMenuOpen));
         }
     }
 

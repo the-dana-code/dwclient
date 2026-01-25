@@ -595,6 +595,40 @@ public final class MapPanel extends JPanel {
             enabled = !currentRoomId.equals(room.roomId());
         }
         speedWalkButton.setEnabled(enabled);
+        updateSpeedWalkLabel();
+    }
+
+    private void updateSpeedWalkLabel() {
+        Integer remainingSteps = calculateRemainingSpeedwalkSteps();
+        if (remainingSteps != null) {
+            speedWalkButton.setText("Speed Walk (" + remainingSteps + ")");
+        } else {
+            speedWalkButton.setText("Speed Walk");
+        }
+    }
+
+    private Integer calculateRemainingSpeedwalkSteps() {
+        String roomId = currentRoomId;
+        if (roomId == null || speedwalkPath.isEmpty()) {
+            return null;
+        }
+        int lastIndex = -1;
+        for (int i = 0; i < speedwalkPath.size(); i++) {
+            RoomMapService.RoomLocation location = speedwalkPath.get(i);
+            if (location != null && roomId.equals(location.roomId())) {
+                lastIndex = i;
+            }
+        }
+        if (lastIndex < 0) {
+            return null;
+        }
+        int remainingSteps = 0;
+        for (int i = lastIndex + 1; i < speedwalkPath.size(); i++) {
+            if (speedwalkPath.get(i) != null) {
+                remainingSteps++;
+            }
+        }
+        return remainingSteps;
     }
 
     private static int scaledMarkerDiameter(int zoomPercent) {
@@ -871,4 +905,3 @@ public final class MapPanel extends JPanel {
         }
     }
 }
-

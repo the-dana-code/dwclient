@@ -57,7 +57,7 @@ public class CheckboxMenuItem extends JMenuItem {
             defaultUI = getUI();
         }
         if (keepMenuOpen) {
-            setUI(new KeepOpenMenuItem.KeepOpenMenuItemUI());
+            setUI(new KeepOpenMenuItem.KeepOpenMenuItemUI(true));
         }
     }
 }

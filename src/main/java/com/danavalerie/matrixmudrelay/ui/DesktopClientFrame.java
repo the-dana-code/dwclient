@@ -21,7 +21,6 @@ package com.danavalerie.matrixmudrelay.ui;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
-import com.danavalerie.matrixmudrelay.core.ContextualResultList;
 import com.danavalerie.matrixmudrelay.core.MenuPersistenceService;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.WritMenuAction;
@@ -37,7 +36,6 @@ import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.GrammarUtils;
 import com.danavalerie.matrixmudrelay.util.PasswordPreferences;
-import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +65,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.BorderLayout;
@@ -1295,7 +1292,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         if (writRequirements.isEmpty()) {
             writTopMenu.setText("Writ");
-            JMenuItem noWritItem = new KeepOpenMenuItem("No active writ", writTopMenu);
+            JMenuItem noWritItem = new KeepOpenMenuItem("No active writ", writTopMenu, true);
             noWritItem.setEnabled(false);
             writTopMenu.add(noWritItem);
         } else {
@@ -1363,7 +1360,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             } else if (canWriteRoutes) {
                 JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
                         "Add Current Room", "Confirm",
-                        () -> handleAddRoute(index));
+                        () -> handleAddRoute(index),
+                        false);
                 writTopMenu.add(addRouteMenu);
             }
 
@@ -1376,13 +1374,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             JMenu npcMenu = buildWritSubMenu(index, WritMenuAction.NPC_INFO,
                     "Deliver to: " + req.npc(), "Search",
-                    () -> submitCommand("/writ " + (index + 1) + " npc"));
+                    () -> submitCommand("/writ " + (index + 1) + " npc"), true);
             writTopMenu.add(npcMenu);
 
             String locationText = req.locationDisplay();
             JMenu locMenu = buildWritSubMenu(index, WritMenuAction.LOCATION_INFO,
                     "Location: " + locationText, "Search",
-                    () -> submitCommand("/writ " + (index + 1) + " loc"));
+                    () -> submitCommand("/writ " + (index + 1) + " loc"), true);
             writTopMenu.add(locMenu);
         }
         updateTheme(mapPanel.isInverted());
@@ -1393,7 +1391,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
-        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu);
+        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             item.setText(formatWritMenuLabel(true, label));
@@ -1402,10 +1400,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return item;
     }
 
-    private JMenu buildWritSubMenu(int index, WritMenuAction action, String menuLabel, String itemLabel, Runnable onSelect) {
+    private JMenu buildWritSubMenu(int index, WritMenuAction action, String menuLabel, String itemLabel, Runnable onSelect, boolean keepMenuOpen) {
         boolean visited = isWritMenuVisited(index, action);
         JMenu menu = new JMenu(formatWritMenuLabel(visited, menuLabel));
-        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, itemLabel), writTopMenu);
+        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, itemLabel), writTopMenu, keepMenuOpen);
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             menu.setText(formatWritMenuLabel(true, menuLabel));
@@ -1864,7 +1862,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             String emptyMsg = (currentResults != null && !currentResults.emptyMessage().isBlank())
                     ? currentResults.emptyMessage()
                     : "No active results";
-            JMenuItem noResultsItem = new KeepOpenMenuItem(emptyMsg, resultsTopMenu);
+            JMenuItem noResultsItem = new KeepOpenMenuItem(emptyMsg, resultsTopMenu, true);
             noResultsItem.setEnabled(false);
             resultsTopMenu.add(noResultsItem);
         } else {
@@ -1901,7 +1899,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             String title = currentResults.title();
             if (selectedResultsPageIndex == 0 && title != null && !title.isBlank()) {
-                JMenuItem header = new KeepOpenMenuItem(title, resultsTopMenu);
+                JMenuItem header = new KeepOpenMenuItem(title, resultsTopMenu, true);
                 header.setEnabled(false);
                 resultsTopMenu.add(header);
                 resultsTopMenu.addSeparator();
@@ -1918,7 +1916,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     continue;
                 }
                 boolean visited = resultsMenuVisits.contains(index);
-                JMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu);
+                JMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
                 if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
                     item.addActionListener(event -> {
@@ -1941,7 +1939,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean isLastPage = selectedResultsPageIndex == totalPages - 1;
             if (isLastPage && footerText != null && !footerText.isBlank()) {
                 resultsTopMenu.addSeparator();
-                JMenuItem footer = new KeepOpenMenuItem(footerText, resultsTopMenu);
+                JMenuItem footer = new KeepOpenMenuItem(footerText, resultsTopMenu, true);
                 footer.setEnabled(false);
                 resultsTopMenu.add(footer);
             }
