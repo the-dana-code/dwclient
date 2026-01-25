@@ -315,6 +315,11 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
         lineStartOffset = getDocument().getLength();
     }
 
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
+
     private AttributeSet buildAlertAttributes(AlertPattern alertPattern) {
         SimpleAttributeSet alert = new SimpleAttributeSet();
         Color foreground = alertPattern.foreground() != null ? alertPattern.foreground() : DEFAULT_COLOR;

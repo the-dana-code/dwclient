@@ -89,6 +89,11 @@ public final class ChitchatPane extends JTextPane implements AutoScrollable {
         });
     }
 
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
+
     private AttributeSet buildAttributes(Color color) {
         StyleContext context = StyleContext.getDefaultStyleContext();
         SimpleAttributeSet attrs = new SimpleAttributeSet();

@@ -14,6 +14,7 @@ public class AutoScrollScrollPane extends JScrollPane {
 
     public <T extends JComponent & AutoScrollable> AutoScrollScrollPane(T view) {
         super(view);
+        setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.view = view;
         setBorder(BLACK_BORDER);
 
