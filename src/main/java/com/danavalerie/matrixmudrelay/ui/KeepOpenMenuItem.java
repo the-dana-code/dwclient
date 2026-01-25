@@ -1,10 +1,14 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.MenuSelectionManager;
+import javax.swing.SwingUtilities;
 import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.MenuItemUI;
 import javax.swing.plaf.basic.BasicMenuItemUI;
+import java.awt.Container;
+import java.awt.Window;
 
 public class KeepOpenMenuItem extends JMenuItem {
     private ButtonUI defaultUI;
@@ -34,10 +38,29 @@ public class KeepOpenMenuItem extends JMenuItem {
         setKeepMenuOpen(true);
     }
 
-    private static class KeepOpenMenuItemUI extends BasicMenuItemUI {
+    public static class KeepOpenMenuItemUI extends BasicMenuItemUI {
         @Override
         protected void doClick(MenuSelectionManager msm) {
             menuItem.doClick(0);
+            updateMenuSize(menuItem);
         }
+    }
+
+    public static void updateMenuSize(JMenuItem menuItem) {
+        SwingUtilities.invokeLater(() -> {
+            Container parent = menuItem.getParent();
+            if (parent instanceof JPopupMenu) {
+                JPopupMenu popup = (JPopupMenu) parent;
+                popup.revalidate();
+                popup.repaint();
+
+                Window window = SwingUtilities.getWindowAncestor(popup);
+                if (window != null && window != SwingUtilities.getWindowAncestor(popup.getInvoker())) {
+                    window.pack();
+                } else {
+                    popup.setSize(popup.getPreferredSize());
+                }
+            }
+        });
     }
 }

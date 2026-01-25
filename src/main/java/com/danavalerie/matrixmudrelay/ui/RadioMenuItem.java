@@ -1,10 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import javax.swing.JMenuItem;
-import javax.swing.MenuSelectionManager;
 import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.MenuItemUI;
-import javax.swing.plaf.basic.BasicMenuItemUI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,14 +58,7 @@ public class RadioMenuItem extends JMenuItem {
             defaultUI = getUI();
         }
         if (keepMenuOpen) {
-            setUI(new KeepOpenMenuItemUI());
-        }
-    }
-
-    private static class KeepOpenMenuItemUI extends BasicMenuItemUI {
-        @Override
-        protected void doClick(MenuSelectionManager msm) {
-            menuItem.doClick(0);
+            setUI(new KeepOpenMenuItem.KeepOpenMenuItemUI());
         }
     }
 
