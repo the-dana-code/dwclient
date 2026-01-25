@@ -8,7 +8,7 @@ import java.util.List;
 
 public class RadioMenuItem extends JMenuItem {
     private static final String SELECTED_PREFIX = "\u25C9 ";
-    private static final String UNSELECTED_PREFIX = "\u25EF ";
+    private static final String UNSELECTED_PREFIX = "\u25CC ";
 
     private final String label;
     private final RadioMenuGroup group;
