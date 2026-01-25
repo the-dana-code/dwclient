@@ -1,0 +1,49 @@
+package com.danavalerie.matrixmudrelay.util;
+
+import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.TimerDataAdapter;
+import com.google.gson.Gson;
+import com.google.gson.InstanceCreator;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import org.junit.jupiter.api.Test;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class ConfigExampleGeneratorTest {
+    @Test
+    void configExampleMatchesGenerator() throws Exception {
+        Gson gson = GsonUtils.getDefaultBuilder()
+                .registerTypeAdapter(BotConfig.TimerData.class, new TimerDataAdapter())
+                .registerTypeAdapter(new TypeToken<Map<String, BotConfig.CharacterConfig>>() {}.getType(),
+                        (InstanceCreator<Map<String, BotConfig.CharacterConfig>>) type -> new CaseInsensitiveLinkedHashMap<>())
+                .create();
+
+        Path repoRoot = Paths.get("").toAbsolutePath();
+        Path configPath = repoRoot.resolve("config.json");
+        Path examplePath = repoRoot.resolve("config-example.json");
+
+        BotConfig config = gson.fromJson(Files.readString(configPath), BotConfig.class);
+        config.characters.clear();
+        config.teleports = null;
+
+        if (config.ui != null) {
+            config.ui.mudMapSplitRatio = null;
+            config.ui.mapNotesSplitRatio = null;
+            config.ui.chitchatTimerSplitRatio = null;
+            config.ui.outputSplitRatio = null;
+            config.ui.timerColumnWidths = null;
+        }
+
+        JsonElement actual = JsonParser.parseString(gson.toJson(config));
+        JsonElement expected = JsonParser.parseString(Files.readString(examplePath));
+
+        assertEquals(expected, actual, "config-example.json is out of date with ConfigExampleGenerator output");
+    }
+}
