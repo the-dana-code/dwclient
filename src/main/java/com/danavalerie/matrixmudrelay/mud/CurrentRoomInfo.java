@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,6 +33,12 @@ public final class CurrentRoomInfo {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final AtomicReference<Snapshot> snapshot = new AtomicReference<>(
             new Snapshot(null, Map.of(), Map.of(), Map.of()));
+
+    public enum RoomEnvironment {
+        OUTSIDE,
+        INSIDE,
+        UNKNOWN
+    }
 
     public Snapshot getSnapshot() {
         return snapshot.get();
@@ -121,6 +128,24 @@ public final class CurrentRoomInfo {
             return null;
         }
 
+        public RoomEnvironment roomEnvironment() {
+            JsonElement roomInfo = roomData.get("room.info");
+            if (roomInfo != null && roomInfo.isJsonObject()) {
+                JsonObject obj = roomInfo.getAsJsonObject();
+                JsonElement kind = obj.get("kind");
+                if (kind != null && kind.isJsonPrimitive()) {
+                    String normalized = kind.getAsString().trim().toLowerCase(Locale.ROOT);
+                    if ("outside".equals(normalized) || "outdoors".equals(normalized)) {
+                        return RoomEnvironment.OUTSIDE;
+                    }
+                    if ("inside".equals(normalized) || "indoors".equals(normalized) || "indoor".equals(normalized)) {
+                        return RoomEnvironment.INSIDE;
+                    }
+                }
+            }
+            return RoomEnvironment.UNKNOWN;
+        }
+
         public Map<String, JsonElement> data() {
             return data;
         }
@@ -179,4 +204,3 @@ public final class CurrentRoomInfo {
         }
     }
 }
-

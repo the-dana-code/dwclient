@@ -1887,6 +1887,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     @Override
+    public void updateRoomEnvironment(com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo.RoomEnvironment environment) {
+        discworldTimePanel.updateRoomEnvironment(environment);
+    }
+
+    @Override
     public void updateContextualResults(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
         updateResultsMenu(results);
     }

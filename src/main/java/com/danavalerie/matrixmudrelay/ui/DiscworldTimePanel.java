@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.util.DiscworldTimeUtils;
+import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -27,18 +28,23 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
 
     private final JLabel seasonLabel;
     private final JLabel timeLabel;
+    private final JLabel locationLabel;
     private final Timer refreshTimer;
     private String lastTooltip;
+    private CurrentRoomInfo.RoomEnvironment currentEnvironment;
 
     public DiscworldTimePanel() {
         setLayout(new BorderLayout());
         setOpaque(false);
 
+        locationLabel = new JLabel("", SwingConstants.LEFT);
+        locationLabel.setBorder(new EmptyBorder(0, 10, 0, 4));
         seasonLabel = new JLabel("", SwingConstants.LEFT);
-        seasonLabel.setBorder(new EmptyBorder(0, 10, 0, 5));
+        seasonLabel.setBorder(new EmptyBorder(0, 4, 0, 5));
         timeLabel = new JLabel("", SwingConstants.RIGHT);
         timeLabel.setBorder(new EmptyBorder(0, 5, 0, 10));
 
+        add(locationLabel, BorderLayout.WEST);
         add(seasonLabel, BorderLayout.CENTER);
         add(timeLabel, BorderLayout.EAST);
 
@@ -58,10 +64,12 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
         };
         seasonLabel.addMouseListener(tooltipExtender);
         timeLabel.addMouseListener(tooltipExtender);
+        locationLabel.addMouseListener(tooltipExtender);
 
         refreshTimer = new Timer(1000, e -> updateTime());
         refreshTimer.start();
         updateTime();
+        updateRoomEnvironment(CurrentRoomInfo.RoomEnvironment.UNKNOWN);
     }
 
     private String getSeason(long cycle, long dayInYear) {
@@ -144,13 +152,41 @@ public class DiscworldTimePanel extends JPanel implements FontChangeListener {
     public void onFontChange(Font font) {
         seasonLabel.setFont(font);
         timeLabel.setFont(font);
+        locationLabel.setFont(font);
         revalidate();
     }
 
     public void updateTheme(Color bg, Color fg) {
         seasonLabel.setForeground(fg);
         timeLabel.setForeground(fg);
+        locationLabel.setForeground(fg);
         updateTime();
+    }
+
+    public void updateRoomEnvironment(CurrentRoomInfo.RoomEnvironment environment) {
+        if (environment == null) {
+            environment = CurrentRoomInfo.RoomEnvironment.UNKNOWN;
+        }
+        if (environment == currentEnvironment) {
+            return;
+        }
+        currentEnvironment = environment;
+        switch (environment) {
+            case OUTSIDE -> {
+                locationLabel.setText("☀️");
+                locationLabel.setToolTipText("Outside");
+            }
+            case INSIDE -> {
+                locationLabel.setText("🏠");
+                locationLabel.setToolTipText("Inside");
+            }
+            default -> {
+                locationLabel.setText("❔");
+                locationLabel.setToolTipText("Unknown environment");
+            }
+        }
+        revalidate();
+        repaint();
     }
 
 }

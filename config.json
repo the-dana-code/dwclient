@@ -14,14 +14,14 @@
     "windowWidth": 2272,
     "windowHeight": 1039,
     "windowMaximized": false,
-    "mudMapSplitRatio": 0.7496677004873726,
-    "mapNotesSplitRatio": 0.6521264994547438,
-    "chitchatTimerSplitRatio": 0.6310160427807486,
-    "outputSplitRatio": 0.1995490417136415,
+    "mudMapSplitRatio": 0.7504432624113475,
+    "mapNotesSplitRatio": 0.6477644492911668,
+    "chitchatTimerSplitRatio": 0.6476868327402135,
+    "outputSplitRatio": 0.19794050343249428,
     "timerColumnWidths": [
-      143,
-      234,
-      233
+      137,
+      224,
+      223
     ]
   },
   "bookmarks": [
@@ -570,10 +570,10 @@
       },
       "gpRateSamples": [
         4,
-        5,
         4,
         4,
-        4
+        3,
+        5
       ],
       "hpRateSamples": [
         4,
@@ -652,11 +652,11 @@
         }
       },
       "gpRateSamples": [
+        4,
         5,
         4,
         4,
-        4,
-        3
+        4
       ],
       "hpRateSamples": [
         5,
@@ -675,6 +675,26 @@
             "name": "Mended Drum",
             "command": "tp drum",
             "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
+          },
+          {
+            "name": "Bes Pelargic",
+            "command": "tp bp",
+            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
+          },
+          {
+            "name": "Djelibeybi",
+            "command": "tp dj",
+            "roomId": "4ed9b9006731e04ade1ed9c34d41861fbe8ae1b1"
+          },
+          {
+            "name": "Genua",
+            "command": "tp genua",
+            "roomId": "c0c0f25581192506bc62dea1f925ae50e4c9e1ab"
+          },
+          {
+            "name": "Ephebe",
+            "command": "tp ephebe",
+            "roomId": "10052aaf26ad35faa0d7d5a48351aec96cf306ce"
           }
         ]
       },
@@ -685,10 +705,10 @@
         }
       },
       "gpRateSamples": [
-        1,
+        4,
+        4,
         2,
-        4,
-        4,
+        2,
         4
       ],
       "hpRateSamples": [

@@ -83,6 +83,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void updateContextualResults(ContextualResultList results);
 
         void updateSpeedwalkPath(List<RoomMapService.RoomLocation> path);
+        void updateRoomEnvironment(CurrentRoomInfo.RoomEnvironment environment);
         void updateConnectionState(boolean connected);
         void setUULibraryButtonsEnabled(boolean enabled);
         void setUULibraryDistortion(boolean distortion);
@@ -365,6 +366,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 }
             }
         }
+        output.updateRoomEnvironment(snapshot.roomEnvironment());
         if (message == null) {
             return;
         }
@@ -1326,4 +1328,3 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
     }
 }
-
