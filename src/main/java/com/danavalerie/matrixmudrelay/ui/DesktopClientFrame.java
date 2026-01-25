@@ -1296,7 +1296,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 int index = i;
                 String label = "Writ " + (i + 1);
                 boolean selected = (i == selectedWritIndex);
-                JMenuItem radioItem = new JMenuItem((selected ? "\u2713 " : "  ") + label);
+                JMenuItem radioItem = new JMenuItem((selected ? "\u25C9 " : "\u25EF ") + label);
                 radioItem.addActionListener(e -> {
                     selectedWritIndex = index;
                     rebuildWritMenus();
@@ -1870,7 +1870,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 int pageIndex = i;
                 String label = "Results " + (i + 1);
                 boolean selected = (i == selectedResultsPageIndex);
-                JMenuItem radioItem = new JMenuItem((selected ? "\u2713 " : "  ") + label);
+                JMenuItem radioItem = new JMenuItem((selected ? "\u25C9 " : "\u25EF ") + label);
                 radioItem.addActionListener(e -> {
                     selectedResultsPageIndex = pageIndex;
                     rebuildResultsMenu();
@@ -2220,4 +2220,3 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
     }
 }
-
