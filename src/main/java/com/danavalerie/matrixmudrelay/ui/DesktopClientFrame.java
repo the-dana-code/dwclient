@@ -41,7 +41,6 @@ import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JButton;
@@ -56,7 +55,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JSpinner;
@@ -443,17 +441,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(zoomSubMenu, currentBg, currentFg);
         }
-        ButtonGroup zoomGroup = new ButtonGroup();
+        RadioMenuItem.RadioMenuGroup zoomGroup = new RadioMenuItem.RadioMenuGroup();
         int currentZoom = resolveMapZoomPercent();
         for (int z = 20; z <= 200; z += 20) {
             final int zoomVal = z;
-            JRadioButtonMenuItem zoomItem = new JRadioButtonMenuItem(z + "%", z == currentZoom);
+            RadioMenuItem zoomItem = new RadioMenuItem(z + "%", z == currentZoom, zoomGroup, true);
             if (currentBg != null && currentFg != null) {
                 updateMenuTheme(zoomItem, currentBg, currentFg);
             }
             zoomItem.addActionListener(event -> mapPanel.setZoomPercent(zoomVal));
             zoomSubMenu.add(zoomItem);
-            zoomGroup.add(zoomItem);
         }
         viewMenu.add(zoomSubMenu);
         menuBar.add(viewMenu);
@@ -1278,7 +1275,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         if (writRequirements.isEmpty()) {
             writTopMenu.setText("Writ");
-            JMenuItem noWritItem = new JMenuItem("No active writ");
+            JMenuItem noWritItem = new KeepOpenMenuItem("No active writ");
             noWritItem.setEnabled(false);
             writTopMenu.add(noWritItem);
         } else {
@@ -1292,11 +1289,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 selectedWritIndex = 0;
             }
 
+            RadioMenuItem.RadioMenuGroup menuGroup = new RadioMenuItem.RadioMenuGroup();
             for (int i = 0; i < writRequirements.size(); i++) {
                 int index = i;
                 String label = "Writ " + (i + 1);
                 boolean selected = (i == selectedWritIndex);
-                JMenuItem radioItem = new JMenuItem((selected ? "\u25C9 " : "\u25EF ") + label);
+                RadioMenuItem radioItem = new RadioMenuItem(label, selected, menuGroup, true);
                 radioItem.addActionListener(e -> {
                     selectedWritIndex = index;
                     rebuildWritMenus();
@@ -1375,7 +1373,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
-        JMenuItem item = new JMenuItem(formatWritMenuLabel(visited, label));
+        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, label));
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             item.setText(formatWritMenuLabel(true, label));
@@ -1387,7 +1385,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JMenu buildWritSubMenu(int index, WritMenuAction action, String menuLabel, String itemLabel, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
         JMenu menu = new JMenu(formatWritMenuLabel(visited, menuLabel));
-        JMenuItem item = new JMenuItem(formatWritMenuLabel(visited, itemLabel));
+        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, itemLabel));
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             menu.setText(formatWritMenuLabel(true, menuLabel));
@@ -1846,7 +1844,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             String emptyMsg = (currentResults != null && !currentResults.emptyMessage().isBlank())
                     ? currentResults.emptyMessage()
                     : "No active results";
-            JMenuItem noResultsItem = new JMenuItem(emptyMsg);
+            JMenuItem noResultsItem = new KeepOpenMenuItem(emptyMsg);
             noResultsItem.setEnabled(false);
             resultsTopMenu.add(noResultsItem);
         } else {
@@ -1866,11 +1864,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 selectedResultsPageIndex = 0;
             }
 
+            RadioMenuItem.RadioMenuGroup menuGroup = new RadioMenuItem.RadioMenuGroup();
             for (int i = 0; i < totalPages; i++) {
                 int pageIndex = i;
                 String label = "Results " + (i + 1);
                 boolean selected = (i == selectedResultsPageIndex);
-                JMenuItem radioItem = new JMenuItem((selected ? "\u25C9 " : "\u25EF ") + label);
+                RadioMenuItem radioItem = new RadioMenuItem(label, selected, menuGroup, true);
                 radioItem.addActionListener(e -> {
                     selectedResultsPageIndex = pageIndex;
                     rebuildResultsMenu();
@@ -1882,7 +1881,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             String title = currentResults.title();
             if (selectedResultsPageIndex == 0 && title != null && !title.isBlank()) {
-                JMenuItem header = new JMenuItem(title);
+                JMenuItem header = new KeepOpenMenuItem(title);
                 header.setEnabled(false);
                 resultsTopMenu.add(header);
                 resultsTopMenu.addSeparator();
@@ -1899,7 +1898,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     continue;
                 }
                 boolean visited = resultsMenuVisits.contains(index);
-                JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
+                JMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()));
                 int resultIndex = index;
                 if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
                     item.addActionListener(event -> {
@@ -1922,7 +1921,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean isLastPage = selectedResultsPageIndex == totalPages - 1;
             if (isLastPage && footerText != null && !footerText.isBlank()) {
                 resultsTopMenu.addSeparator();
-                JMenuItem footer = new JMenuItem(footerText);
+                JMenuItem footer = new KeepOpenMenuItem(footerText);
                 footer.setEnabled(false);
                 resultsTopMenu.add(footer);
             }
