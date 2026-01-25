@@ -189,6 +189,19 @@
       }
     ]
   },
+  "17118332ea8519844f08c5a331a9a3d097e6cd48": {
+    "name": "guild branch of Bing\u0027s Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "1953162a25f312a0f60df63e3d956c07fdccb72f": {
     "name": "backroom of Madame Dawning\u0027s Palliaments",
     "buttons": [
@@ -204,6 +217,19 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "1a66022c27b23f046ef0a10f90b77acb87414acc": {
+    "name": "Lancrastian Farmers\u0027 Cooperative Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
       }
     ]
   },
@@ -379,6 +405,16 @@
       }
     ]
   },
+  "2cfa396253b092fc319a4d290338146dd8b9442f": {
+    "name": "branch of the First Imperial Bank of the Empire",
+    "notes": "You cannot open an account here. You must go to the main branch on Rhinu Road to open an account.",
+    "buttons": [
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "2d715bf254b2675fc60159bcc6cf6baf71399215": {
     "name": "Ripley\u0027s Custom Tabards",
     "notes": "You can order custom tabards here.\n\nSyntax:\n  order tabard\n  collect tabard",
@@ -453,6 +489,19 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "35ea94550b0f3b7a800e5141e1f0251278ecfe3c": {
+    "name": "Genua National Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
       }
     ]
   },
@@ -915,6 +964,19 @@
       }
     ]
   },
+  "69fe2f5e7ef5df80de47f3569c3086f2b9fe8a1e": {
+    "name": "neat branch of Bing\u0027s bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "6a23a422360bfbba06738708d2fa10e400c282f7": {
     "name": "Bologna shop",
     "buttons": [
@@ -1029,6 +1091,19 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "7a4ee137e6b6402ed78da377e17511ff88a47e89": {
+    "name": "local branch of Bing\u0027s Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
       }
     ]
   },
@@ -1380,6 +1455,19 @@
       }
     ]
   },
+  "9e30f240845166d37c2dd92ff4b3b122aa1d82eb": {
+    "name": "branch of Bing\u0027s Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "9e4b56f405e88c647bb13d9beb1ec1afcf1db5f6": {
     "name": "small bridal store",
     "buttons": [
@@ -1521,6 +1609,19 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "abc779d1df0ba4dfc0d4fe33049951e783ed9ce9": {
+    "name": "Lancrastian Farmers\u0027 Cooperative Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
       }
     ]
   },
@@ -1877,6 +1978,10 @@
       {
         "name": "Open Account",
         "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
       }
     ]
   },
@@ -2090,6 +2195,19 @@
       }
     ]
   },
+  "e49b3270b73a0f836e1d515fdfa20b0171abdd65": {
+    "name": "Lancrastian Farmers\u0027 Cooperative Bank",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "e5526dbae7e456e744ba86fe34a723ba686f9f09": {
     "name": "Golden Dragon",
     "buttons": [
@@ -2105,6 +2223,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "e66d94b7d55a403d298df53af4a9f9e755f173c6": {
+    "name": "Rhinu Road near to Palace Approach",
+    "buttons": [
+      {
+        "name": "Join Queue",
+        "command": "join queue"
       }
     ]
   },
