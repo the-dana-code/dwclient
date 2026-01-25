@@ -1166,6 +1166,15 @@
       }
     ]
   },
+  "79d55ba69644a7bc7dec9f069414c5ff35528894": {
+    "name": "open side of the Harbour Market, near a vegetable-laden blue stall",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "7a4ee137e6b6402ed78da377e17511ff88a47e89": {
     "name": "local branch of Bing\u0027s Bank",
     "buttons": [
@@ -1410,7 +1419,7 @@
     "notes": "You can convert money between Ankh-Morpork and Djelibeybi here.\n\nExample - Convert AM to DJ:\n  sell 3 dollars\n\nExample - Convert DJ to AM:\n  buy from morpork with 3 talents",
     "buttons": [
       {
-        "name": "Exchange Rates",
+        "name": "List Rates",
         "command": "list"
       }
     ]
@@ -2300,6 +2309,15 @@
   },
   "e5526dbae7e456e744ba86fe34a723ba686f9f09": {
     "name": "Golden Dragon",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
+  "e59397a0434224644f8712edbc2959fdee0d0b7c": {
+    "name": "Fat Sally\u0027s",
     "buttons": [
       {
         "name": "List Menu",

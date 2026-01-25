@@ -305,6 +305,22 @@
     {
       "name": "Money Changers/To/Genua/From Lancre/Ohulan-Cutash Money Changer",
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Djelibeybi/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Djelibeybi/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Ankh-Morpork/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Ankh-Morpork/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
     }
   ],
   "characters": {
@@ -533,15 +549,15 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769338565384,
+          "expirationTime": 1769351658064,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
         4,
-        5,
-        2,
+        4,
+        1,
         4
       ],
       "hpRateSamples": [
@@ -611,16 +627,16 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769337675323,
+          "expirationTime": 1769350637635,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
+        3,
         4,
         4,
-        4,
-        5
+        4
       ],
       "hpRateSamples": [
         4,
@@ -637,7 +653,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769339259123,
+          "expirationTime": 1769350023875,
           "durationMs": 3600000
         }
       },
