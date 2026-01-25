@@ -1904,6 +1904,15 @@
       }
     ]
   },
+  "c1ae5a1a9fb23d1809850ee45100d35bc2fcf432": {
+    "name": "clearing with a small creek",
+    "buttons": [
+      {
+        "name": "Cut Withe",
+        "command": "cut withe from tree with knife"
+      }
+    ]
+  },
   "c2d9724a029eab1db38a069311bab190132162f0": {
     "name": "King\u0027s Way Rathskeller",
     "buttons": [
