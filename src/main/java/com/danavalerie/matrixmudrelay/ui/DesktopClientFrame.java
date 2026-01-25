@@ -1057,6 +1057,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         panel.add(new JLabel("Name (optional):"));
         JTextField nameField = new JTextField(bookmark.name);
+        nameField.addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && nameField.isShowing()) {
+                SwingUtilities.invokeLater(nameField::requestFocusInWindow);
+            }
+        });
         panel.add(nameField);
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Edit Bookmark", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -1081,6 +1086,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         panel.add(new JLabel("Current Room: " + (roomName != null ? roomName : roomId)));
         panel.add(new JLabel("Name (optional):"));
         JTextField nameField = new JTextField();
+        nameField.addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && nameField.isShowing()) {
+                SwingUtilities.invokeLater(nameField::requestFocusInWindow);
+            }
+        });
         panel.add(nameField);
 
         int result = JOptionPane.showConfirmDialog(this, panel, "Add Bookmark", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -1112,6 +1122,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         panel.add(new JLabel("Name (optional):"));
         JTextField nameField = new JTextField(loc.name);
+        nameField.addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && nameField.isShowing()) {
+                SwingUtilities.invokeLater(nameField::requestFocusInWindow);
+            }
+        });
         panel.add(nameField);
         panel.add(new JLabel("Teleport Command:"));
         JTextField commandField = new JTextField(loc.command);
@@ -1147,6 +1162,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         panel.add(new JLabel("Current Room: " + (roomName != null ? roomName : roomId)));
         panel.add(new JLabel("Name (optional):"));
         JTextField nameField = new JTextField();
+        nameField.addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && nameField.isShowing()) {
+                SwingUtilities.invokeLater(nameField::requestFocusInWindow);
+            }
+        });
         panel.add(nameField);
         panel.add(new JLabel("Teleport Command:"));
         JTextField commandField = new JTextField();

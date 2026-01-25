@@ -1013,6 +1013,19 @@
       }
     ]
   },
+  "6d84b6454f041b8402bf08f2ef50ab6d695ac128": {
+    "name": "Ankh-Morpork Branch of the Genua National Bank",
+    "buttons": [
+      {
+        "name": "Open Account (A$19.50)",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "70102b7c64f25ff79524eeabced2fd68ef0ab69c": {
     "name": "Shelf Shock Shop",
     "buttons": [
