@@ -11,14 +11,14 @@
     "fontSize": 20,
     "mapZoomPercent": 100,
     "invertMap": true,
-    "mudMapSplitRatio": 0.8106770833333333,
-    "mapNotesSplitRatio": 0.6122881355932204,
-    "chitchatTimerSplitRatio": 0.6835157759175788,
-    "outputSplitRatio": 0.24528301886792453,
+    "mudMapSplitRatio": 0.7389653535832938,
+    "mapNotesSplitRatio": 0.6697782963827305,
+    "chitchatTimerSplitRatio": 0.6820276497695853,
+    "outputSplitRatio": 0.21867321867321868,
     "timerColumnWidths": [
-      325,
-      324,
-      324
+      84,
+      84,
+      83
     ]
   },
   "bookmarks": [

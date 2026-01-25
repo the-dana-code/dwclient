@@ -283,7 +283,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         add(statsPanel, BorderLayout.SOUTH);
         applyConfiguredFont();
         pack();
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         installInputFocusForwarding();
         updateTheme(mapPanel.isInverted());
