@@ -59,29 +59,32 @@ public class KeepOpenMenuItem extends JMenuItem {
     }
 
     public static void updateMenuSize(JMenuItem menuItem, Container capturedParent) {
-        SwingUtilities.invokeLater(() -> {
-            Object parentProp = menuItem.getClientProperty(PARENT_MENU_KEY);
-            Container parent = (parentProp instanceof Container) ? (Container) parentProp : capturedParent;
-            if (parent == null) {
-                parent = menuItem.getParent();
-            }
+        Object parentProp = menuItem.getClientProperty(PARENT_MENU_KEY);
+        Container parent = (parentProp instanceof Container) ? (Container) parentProp : capturedParent;
+        if (parent == null) {
+            parent = menuItem.getParent();
+        }
 
-            if (parent instanceof JMenu) {
-                parent = ((JMenu) parent).getPopupMenu();
-            }
+        if (parent instanceof JMenu) {
+            parent = ((JMenu) parent).getPopupMenu();
+        }
 
-            if (parent instanceof JPopupMenu) {
-                JPopupMenu popup = (JPopupMenu) parent;
+        if (parent instanceof JPopupMenu) {
+            JPopupMenu popup = (JPopupMenu) parent;
 
-                Point p = popup.getLocationOnScreen();
-                popup.setVisible(false);
+            SwingUtilities.invokeLater(() -> {
+                if (! popup.getSize().equals(popup.getPreferredSize())) {
+                    System.out.println(popup.getSize() + " -> " + popup.getPreferredSize());
+                    Point p = popup.getLocationOnScreen();
+                    popup.setVisible(false);
 
-                SwingUtilities.invokeLater(() -> {
-                    Point q = new Point(p);
-                    SwingUtilities.convertPointFromScreen(q, popup.getInvoker());
-                    popup.show(popup.getInvoker(), q.x, q.y);
-                });
-            }
-        });
+                    SwingUtilities.invokeLater(() -> {
+                        Point q = new Point(p);
+                        SwingUtilities.convertPointFromScreen(q, popup.getInvoker());
+                        popup.show(popup.getInvoker(), q.x, q.y);
+                    });
+                }
+            });
+        }
     }
 }
