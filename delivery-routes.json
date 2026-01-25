@@ -1121,5 +1121,10 @@
     "npc": "Mr Steless",
     "location": "Mr. T.A. Steless\u0027s World of Art on Street of Cunning Artificers",
     "roomId": "422368239d14c936a03a7cfc2b38935c455d4df0"
+  },
+  {
+    "npc": "Mrs Daycoparge",
+    "location": "a shop and craft room in the Musicians\u0027 guild",
+    "roomId": "4b8a5f240068cf36abd6ac65ce26232c14f2986f"
   }
 ]

@@ -352,6 +352,41 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(editPasswordItem);
 
         mainMenu.addSeparator();
+        JMenuItem fontItem = new JMenuItem("Output Font...");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(fontItem, currentBg, currentFg);
+        }
+        fontItem.addActionListener(event -> showFontDialog());
+        mainMenu.add(fontItem);
+        mainMenu.addSeparator();
+
+        JCheckBoxMenuItem invertItem = new JCheckBoxMenuItem("Invert Map", resolveMapInvert());
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(invertItem, currentBg, currentFg);
+        }
+        invertItem.addActionListener(event -> mapPanel.setInverted(invertItem.isSelected()));
+        mainMenu.add(invertItem);
+
+        mainMenu.addSeparator();
+
+        JMenu zoomSubMenu = new JMenu("Zoom");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(zoomSubMenu, currentBg, currentFg);
+        }
+        RadioMenuItem.RadioMenuGroup zoomGroup = new RadioMenuItem.RadioMenuGroup();
+        int currentZoom = resolveMapZoomPercent();
+        for (int z = 20; z <= 200; z += 20) {
+            final int zoomVal = z;
+            RadioMenuItem zoomItem = new RadioMenuItem(z + "%", z == currentZoom, zoomGroup, true);
+            if (currentBg != null && currentFg != null) {
+                updateMenuTheme(zoomItem, currentBg, currentFg);
+            }
+            zoomItem.addActionListener(event -> mapPanel.setZoomPercent(zoomVal));
+            zoomSubMenu.add(zoomItem);
+        }
+        mainMenu.add(zoomSubMenu);
+
+        mainMenu.addSeparator();
         JMenuItem exitItem = new JMenuItem("Exit");
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(exitItem, currentBg, currentFg);
@@ -411,46 +446,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
         
         menuBar.add(quickLinksMenu);
-        
-        JMenu viewMenu = new JMenu("View");
-        if (currentBg != null && currentFg != null) {
-            updateMenuTheme(viewMenu, currentBg, currentFg);
-        }
-
-        JMenuItem fontItem = new JMenuItem("Output Font...");
-        if (currentBg != null && currentFg != null) {
-            updateMenuTheme(fontItem, currentBg, currentFg);
-        }
-        fontItem.addActionListener(event -> showFontDialog());
-        viewMenu.add(fontItem);
-        viewMenu.addSeparator();
-
-        JCheckBoxMenuItem invertItem = new JCheckBoxMenuItem("Invert Map", resolveMapInvert());
-        if (currentBg != null && currentFg != null) {
-            updateMenuTheme(invertItem, currentBg, currentFg);
-        }
-        invertItem.addActionListener(event -> mapPanel.setInverted(invertItem.isSelected()));
-        viewMenu.add(invertItem);
-
-        viewMenu.addSeparator();
-
-        JMenu zoomSubMenu = new JMenu("Zoom");
-        if (currentBg != null && currentFg != null) {
-            updateMenuTheme(zoomSubMenu, currentBg, currentFg);
-        }
-        RadioMenuItem.RadioMenuGroup zoomGroup = new RadioMenuItem.RadioMenuGroup();
-        int currentZoom = resolveMapZoomPercent();
-        for (int z = 20; z <= 200; z += 20) {
-            final int zoomVal = z;
-            RadioMenuItem zoomItem = new RadioMenuItem(z + "%", z == currentZoom, zoomGroup, true);
-            if (currentBg != null && currentFg != null) {
-                updateMenuTheme(zoomItem, currentBg, currentFg);
-            }
-            zoomItem.addActionListener(event -> mapPanel.setZoomPercent(zoomVal));
-            zoomSubMenu.add(zoomItem);
-        }
-        viewMenu.add(zoomSubMenu);
-        menuBar.add(viewMenu);
 
         writTopMenu = new JMenu("Writ");
         if (currentBg != null && currentFg != null) {

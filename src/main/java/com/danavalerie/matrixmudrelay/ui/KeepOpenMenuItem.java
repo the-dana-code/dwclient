@@ -20,7 +20,7 @@ public class KeepOpenMenuItem extends JMenuItem {
         super(text);
         this.keepMenuOpen = keepMenuOpen;
         this.defaultUI = getUI();
-        setKeepMenuOpen(true);
+        setKeepMenuOpen(keepMenuOpen);
     }
 
     public KeepOpenMenuItem(String text, JComponent parentMenu, boolean keepMenuOpen) {
@@ -44,7 +44,7 @@ public class KeepOpenMenuItem extends JMenuItem {
         if (defaultUI == null) {
             defaultUI = getUI();
         }
-        setKeepMenuOpen(true);
+        setKeepMenuOpen(keepMenuOpen);
     }
 
     public static class KeepOpenMenuItemUI extends BasicMenuItemUI {
