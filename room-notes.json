@@ -8,6 +8,15 @@
       }
     ]
   },
+  "040b76b86b9ed01e635a40daeea5470cbf45bc5e": {
+    "name": "The Stab in the Back pub",
+    "buttons": [
+      {
+        "name": "List Menu",
+        "command": "list"
+      }
+    ]
+  },
   "047d2c350046d2613c5adecd189edaf639ddafcb": {
     "name": "Krazzander\u0027s Magic Tricks",
     "buttons": [
@@ -610,6 +619,10 @@
       {
         "name": "List Shop",
         "command": "list"
+      },
+      {
+        "name": "Ring Bell",
+        "command": "ring bell"
       }
     ]
   },
