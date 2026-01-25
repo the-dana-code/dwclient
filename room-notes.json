@@ -540,6 +540,16 @@
       }
     ]
   },
+  "3903070ab58bf7fd52cc6484984647fe6133dfc6": {
+    "name": "Ohulan-Cutash money changer",
+    "notes": "You can exchange money here.\n\nExamples:\n  buy from Ankh-Morpork with 10 crowns\n  sell 5 dollars",
+    "buttons": [
+      {
+        "name": "List Rates",
+        "command": "list"
+      }
+    ]
+  },
   "398ce8b182f8cd52d8d10d8106963ecd8dd00045": {
     "name": "Argle\u0027s Bakery",
     "buttons": [

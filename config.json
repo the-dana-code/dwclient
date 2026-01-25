@@ -13,12 +13,12 @@
     "invertMap": true,
     "mudMapSplitRatio": 0.8106770833333333,
     "mapNotesSplitRatio": 0.6122881355932204,
-    "chitchatTimerSplitRatio": 0.6822429906542056,
+    "chitchatTimerSplitRatio": 0.6835157759175788,
     "outputSplitRatio": 0.24528301886792453,
     "timerColumnWidths": [
-      326,
-      326,
-      325
+      325,
+      324,
+      324
     ]
   },
   "bookmarks": [
@@ -225,6 +225,86 @@
     {
       "name": "Money Changers/To/Ankh-Morpork/From Genua/Chester Shillock\u0027s money changers",
       "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Djelibeybi/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Djelibeybi/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Agatean Empire/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Agatean Empire/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Agatean Empire/To Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Agatean Empire/From Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Ephebe/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Ephebe/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Ankh-Morpork/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Ankh-Morpork/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Genua/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Genua/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Lancre/Ohulan-Cutash Money Changer",
+      "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
     }
   ],
   "characters": {
@@ -458,7 +538,7 @@
         }
       },
       "gpRateSamples": [
-        1,
+        4,
         4,
         4,
         4,
