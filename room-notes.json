@@ -1072,6 +1072,15 @@
     "name": "Embroidery Shop",
     "notes": "You can embroider your clothes here.\n\nSyntax\n  embroider \u003cstring\u003e on \u003cobject\u003e\n  order motif on \u003cobject\u003e"
   },
+  "7f705c76e1d9eec0540c4f43ffd4ad0b023f2b14": {
+    "name": "clothing sampan",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "814b427c463698937d560d669ccb604e2f01ea4e": {
     "name": "Ligeia\u0027s chiton shop",
     "buttons": [
@@ -1771,6 +1780,15 @@
   },
   "c79abae6d5d1ee87413e8a2d233cf68d4c9fde8d": {
     "name": "Sklurtch\u0027s House of Bathing Accoutrements",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "c79fb93da5a14bab20090150f390d0190f9bc086": {
+    "name": "Valerianne\u0027s weapon and armour shop",
     "buttons": [
       {
         "name": "List Shop",

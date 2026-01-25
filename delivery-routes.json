@@ -1111,5 +1111,10 @@
     "npc": "Petra Protest",
     "location": "the King\u0027s Way Rathskeller",
     "roomId": "c2d9724a029eab1db38a069311bab190132162f0"
+  },
+  {
+    "npc": "All Jolson",
+    "location": "All Jolson\u0027s Restaurant on Turnwise Broadway",
+    "roomId": "eaa8715cdf2b779c63768077765b9649cbf11350"
   }
 ]
