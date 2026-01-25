@@ -364,6 +364,10 @@
       }
     ]
   },
+  "26a79fa779221c335e38e4f90bf297f1527b9bb3": {
+    "name": "Jorodin\u0027s small and rather friendly-looking shop",
+    "notes": "You can convert an item into a talker here.\n\nSyntax:\n  convert \u003citem\u003e"
+  },
   "289116726a05b872697e3867fce746b965b8e03d": {
     "name": "Imperial Guard forge",
     "buttons": [
@@ -635,6 +639,16 @@
     "buttons": [
       {
         "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
+  "44fd4de4f8251012143eb8d4b1790dd86314658b": {
+    "name": "Chester Shillock\u0027s money changers",
+    "notes": "You can exchange money here.\n\nExamples:\n  buy from Ankh-Morpork with 10 livres\n  sell 5 dollars",
+    "buttons": [
+      {
+        "name": "List Rates",
         "command": "list"
       }
     ]
@@ -2406,6 +2420,28 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "efae39d6e661d1f4aea47518b616116cccf81538": {
+    "name": "white-walled room",
+    "notes": "You can get your broken leg fixed here.\n\nSyntax:\n  set leg\n\nThere\u0027s also a medical mannequin here where you can practice first aid skills.\n\nSyntax:\n  splint leg of mannequin\n  bandage {left|right} {arm|leg|foot|hand|shoulder|hip} {of|on} {mannequin|dummy}\n  bandage {neck|head|abdomen|back|chest|pelvis} {of|on} {mannequin|dummy}\n  remove dressings from mannequin",
+    "buttons": [
+      {
+        "name": "Practice Splint (A$0.40)",
+        "command": "splint left leg of dummy"
+      },
+      {
+        "name": "Set Leg",
+        "command": "set leg"
+      },
+      {
+        "name": "Practice Bandage (A$0.25)",
+        "command": "bandage left leg of dummy"
+      },
+      {
+        "name": "Remove Dressings",
+        "command": "remove dressings from dummy"
       }
     ]
   },
