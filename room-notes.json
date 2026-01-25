@@ -505,6 +505,15 @@
       }
     ]
   },
+  "3e3dc92b2ce0c6222b165f4101483a9846b41c2a": {
+    "name": "clothing shop",
+    "buttons": [
+      {
+        "name": "List Shop",
+        "command": "list"
+      }
+    ]
+  },
   "3e658fac2b551442d118db1e726c01044e9271fa": {
     "name": "Little Agatea",
     "buttons": [

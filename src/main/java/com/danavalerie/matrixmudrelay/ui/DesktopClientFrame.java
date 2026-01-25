@@ -382,12 +382,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         quickLinksMenu.addSeparator();
 
-        bookmarksMenu = new JMenu("Bookmarks...");
+        bookmarksMenu = new JMenu("Bookmarks");
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(bookmarksMenu, currentBg, currentFg);
         }
         quickLinksMenu.add(bookmarksMenu);
         refreshBookmarksMenu();
+
+        quickLinksMenu.addSeparator();
 
         teleportsMenu = new JMenu("Teleports");
         if (currentBg != null && currentFg != null) {
