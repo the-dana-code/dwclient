@@ -71,12 +71,12 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     private final JMenuBar nameMenuBar = new JMenuBar();
     private final JMenu nameMenu = new JMenu();
-    private final JLabel characterLabel = new JLabel("Character: ");
+    private final JLabel characterLabel = new JLabel("Char: ");
     private Consumer<String> characterSelector;
     private final List<String> configCharacters = new ArrayList<>();
     private final JLabel hpLabel = new JLabel("HP");
     private final JLabel gpLabel = new JLabel("GP");
-    private final JLabel burdenLabel = new JLabel("Burden");
+    private final JLabel burdenLabel = new JLabel("Bdn");
     private final JLabel xpLabel = new JLabel("XP");
     private final JProgressBar hpBar = buildBar(HP_COLOR);
     private final JProgressBar gpBar = buildBar(GP_COLOR);
@@ -122,8 +122,6 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
         JPanel statusBar = new JPanel();
         statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
-        statusBar.add(characterLabel);
-        statusBar.add(nameMenuBar);
         statusBar.add(Box.createHorizontalStrut(12));
         statusBar.add(buildStatGroup(hpLabel, hpBar));
         statusBar.add(Box.createHorizontalStrut(10));
@@ -132,6 +130,9 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         statusBar.add(buildStatGroup(burdenLabel, burdenBar));
         statusBar.add(Box.createHorizontalStrut(10));
         statusBar.add(buildStatGroup(xpLabel, xpBar));
+        statusBar.add(Box.createHorizontalStrut(10));
+        statusBar.add(characterLabel);
+        statusBar.add(nameMenuBar);
         statusBar.add(Box.createHorizontalGlue());
         add(statusBar, BorderLayout.CENTER);
 
