@@ -37,7 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
-/config.json
 /sun.log
 /menus.json
 /notes/

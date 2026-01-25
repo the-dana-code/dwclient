@@ -1,0 +1,591 @@
+{
+  "mud": {
+    "host": "discworld.starturtle.net",
+    "port": 4242,
+    "charset": "UTF-8",
+    "connectTimeoutMs": 10000
+  },
+  "useTeleports": true,
+  "ui": {
+    "fontFamily": "Monospaced",
+    "fontSize": 20,
+    "mapZoomPercent": 100,
+    "invertMap": true,
+    "mudMapSplitRatio": 0.8106770833333333,
+    "mapNotesSplitRatio": 0.6122881355932204,
+    "chitchatTimerSplitRatio": 0.6822429906542056,
+    "outputSplitRatio": 0.24528301886792453,
+    "timerColumnWidths": [
+      326,
+      326,
+      325
+    ]
+  },
+  "bookmarks": [
+    {
+      "name": "Regions/Ankh-Morpork/Mended Drum",
+      "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
+    },
+    {
+      "name": "Job Market",
+      "roomId": "a5846b0acd26afec87c2dc20daa7ccadecc94cff"
+    },
+    {
+      "name": "Regions/Ankh-Morpork/Bologna shop",
+      "roomId": "6a23a422360bfbba06738708d2fa10e400c282f7"
+    },
+    {
+      "name": "Transport/Ankh-Morpork -\u003e Foreign Lands",
+      "roomId": "c892f2464117eca48ca0e6c66289164a0f513e7f"
+    },
+    {
+      "name": "Witch/Gennie Applebottom\u0027s (Ankh-Morpork)",
+      "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
+    },
+    {
+      "name": "Witch/Granny Weatherwax (Bad Ass)",
+      "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
+    },
+    {
+      "name": "Wizard/UU Library",
+      "roomId": "d13059580c4af9f874ed8d832d1b347cdf962855"
+    },
+    {
+      "name": "Wizard/Student Lounge",
+      "roomId": "3e2a6d718998453da8181c9f75c3a5efa612df99"
+    },
+    {
+      "name": "Money Changers/To/Agatean Empire/From Ankh-Morpork/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/To/Agatean Empire/From Djelibeybi/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/To/Agatean Empire/From Genua/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Agatean Empire/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Agatean Empire/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Agatean Empire/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/From/Agatean Empire/To Ankh-Morpork/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/From/Agatean Empire/To Djelibeybi/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/From/Agatean Empire/To Genua/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Agatean Empire/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Agatean Empire/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Agatean Empire/Bes Pelargic Money Changers",
+      "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+    },
+    {
+      "name": "Banks/Bing\u0027s Bank/Ankh-Morpork/Upper Broadway Branch",
+      "roomId": "faf3b7313a9c3dbd4a75a528230ce2545e689d7f"
+    },
+    {
+      "name": "Banks/Bing\u0027s Bank/Sto Lat",
+      "roomId": "9e30f240845166d37c2dd92ff4b3b122aa1d82eb"
+    },
+    {
+      "name": "Banks/Bing\u0027s Bank/Ankh-Morpork/Street of Bookkeepers",
+      "roomId": "17118332ea8519844f08c5a331a9a3d097e6cd48"
+    },
+    {
+      "name": "Banks/Bing\u0027s Bank/Hillshire",
+      "roomId": "7a4ee137e6b6402ed78da377e17511ff88a47e89"
+    },
+    {
+      "name": "Banks/Bing\u0027s Bank/Ephebe",
+      "roomId": "69fe2f5e7ef5df80de47f3569c3086f2b9fe8a1e"
+    },
+    {
+      "name": "Banks/Lancrastian Farmers\u0027/Ankh-Morpork",
+      "roomId": "e49b3270b73a0f836e1d515fdfa20b0171abdd65"
+    },
+    {
+      "name": "Banks/Lancrastian Farmers\u0027/Lancre",
+      "roomId": "1a66022c27b23f046ef0a10f90b77acb87414acc"
+    },
+    {
+      "name": "Banks/Lancrastian Farmers\u0027/Ohulan Cutash",
+      "roomId": "abc779d1df0ba4dfc0d4fe33049951e783ed9ce9"
+    },
+    {
+      "name": "Banks/Lancrastian Farmers\u0027/Escrow",
+      "roomId": "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585"
+    },
+    {
+      "name": "Banks/First Imperial/Bes Pelargic/Main Branch",
+      "roomId": "d5030b11774e5e24b516428d36c17b2f6c819e18"
+    },
+    {
+      "name": "Banks/First Imperial/Bes Pelargic/Market Street Branch",
+      "roomId": "2cfa396253b092fc319a4d290338146dd8b9442f"
+    },
+    {
+      "name": "Banks/Genua National Bank/Genua",
+      "roomId": "35ea94550b0f3b7a800e5141e1f0251278ecfe3c"
+    },
+    {
+      "name": "Banks/Genua National Bank/Ankh-Morpork",
+      "roomId": "6d84b6454f041b8402bf08f2ef50ab6d695ac128"
+    },
+    {
+      "name": "Banks/Klatchian Continental/Djelibeybi",
+      "roomId": "174d2ac91ce4aa3b553b4f53f88326c7a5b9493a"
+    },
+    {
+      "name": "Banks/Klatchian Continental/Ephebe",
+      "roomId": "783219e639517111bb7976cd955d93c3d61b58cd"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Djelibeybi/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Ephebe/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Lancre/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Ankh-Morpork/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Djelibeybi/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Ephebe/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Lancre/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Ankh-Morpork/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Genua/Chester Shillock\u0027s money changers",
+      "roomId": "44fd4de4f8251012143eb8d4b1790dd86314658b"
+    }
+  ],
+  "characters": {
+    "Lesa": {
+      "teleports": {
+        "reliable": true,
+        "speedwalkingPenalty": 8,
+        "locations": [
+          {
+            "command": "tp am-fiddleys-music",
+            "roomId": "ca679a04ebf851ef96d9ee9c42429e4d943909be"
+          },
+          {
+            "command": "tp am-milords",
+            "roomId": "f653670a6ee9e7868919a5b6b15ce7148acb16d0"
+          },
+          {
+            "command": "tp am-pishe",
+            "roomId": "a6bfcd86381816a351d3ca14221aa6fce511b5d9"
+          },
+          {
+            "command": "tp am-rimwards-gate",
+            "roomId": "606154467ffc43ee165c891889bb597925f7588d"
+          },
+          {
+            "command": "tp badass",
+            "roomId": "1a146e63d6e3a52afca87b52f074688342a5f974"
+          },
+          {
+            "command": "tp balance",
+            "roomId": "375905c93d0b436477125681c2282feeef4232cc"
+          },
+          {
+            "command": "tp banditcamp",
+            "roomId": "89af9ca7d2be71875cd11eed35e49b2b99d55cac"
+          },
+          {
+            "command": "tp barbariancamp-summer",
+            "roomId": "0252ca10d1535e5384ec9890ebe8d2729f18d914"
+          },
+          {
+            "command": "tp barbariancamp-winter",
+            "roomId": "8776b0c4669c4710590c2a6bd7769e2e790da7df"
+          },
+          {
+            "command": "tp bi",
+            "roomId": "ef740e3f6cb0aec56ba6f4c71620cb817b0bb1f0"
+          },
+          {
+            "command": "tp blackglass",
+            "roomId": "087e9ce0a29cb5e1885352a7965d744bf398dfaf"
+          },
+          {
+            "command": "tp bleak",
+            "roomId": "153638d11334e4e573fc0a6dc8fd9efc2ed1627d"
+          },
+          {
+            "command": "tp bp",
+            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
+          },
+          {
+            "command": "tp bp-dojo",
+            "roomId": "62c1d0d4a3449a4db14dc64554fecb13f663ad03"
+          },
+          {
+            "command": "tp bp-fish",
+            "roomId": "31170af0c11ebb1cd0f647f1034db5e7f7b7bd86"
+          },
+          {
+            "command": "tp bp-ninja",
+            "roomId": "e52e482a9e087500b71dca1ddb4f46c140d8987d"
+          },
+          {
+            "command": "tp bp-tunawalk",
+            "roomId": "649635b91636ddf97c6b70c4ee513ffc0f865963"
+          },
+          {
+            "command": "tp brassneck",
+            "roomId": "6fbb4a53491fe3ee652b0babe7181ebf3b8dd4a1"
+          },
+          {
+            "command": "tp chronides",
+            "roomId": "64ee40a06178cbddb80935725cb463e2e21770b5"
+          },
+          {
+            "command": "tp death",
+            "roomId": "1bcacf98716e201caca070f20d7299012402ffc5"
+          },
+          {
+            "command": "tp dj",
+            "roomId": "7b09e78f281d3c4b443e98aef58986913b0f3448"
+          },
+          {
+            "command": "tp doctor",
+            "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
+          },
+          {
+            "command": "tp drum",
+            "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
+          },
+          {
+            "command": "tp ephebe",
+            "roomId": "bb138a9349adf67346cc5819aa31c990084ef2f6"
+          },
+          {
+            "command": "tp escrow",
+            "roomId": "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585"
+          },
+          {
+            "command": "tp forest-pishe",
+            "roomId": "288f14413021b378e72076615d07d4ddc6089622"
+          },
+          {
+            "command": "tp genua",
+            "roomId": "88a5a8639b1f92da0b1130c9a491ea28542a0fd5"
+          },
+          {
+            "command": "tp goosegate",
+            "roomId": "cca3b4a788b6f7025afe023905c73514ceb395a8"
+          },
+          {
+            "command": "tp granny",
+            "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
+          },
+          {
+            "command": "tp hillshire",
+            "roomId": "e957156f0f75d89cf263b661f630435099b44b66"
+          },
+          {
+            "command": "tp holywood",
+            "roomId": "4bc88d12c0917d4380ee024b526595b832df490a"
+          },
+          {
+            "command": "tp horse",
+            "roomId": "4da8fd81aa0b5a2f2ee06cc4ca52ed5c618a95cd"
+          },
+          {
+            "command": "tp jobs",
+            "roomId": "a5846b0acd26afec87c2dc20daa7ccadecc94cff"
+          },
+          {
+            "command": "tp klatch-foreign-legion",
+            "roomId": "31bf3a3c04cb0009a32aee364747be7761530556"
+          },
+          {
+            "command": "tp lancre",
+            "roomId": "6ef1fc26cedacd2ab099c282942533a74b98c086"
+          },
+          {
+            "command": "tp lanfear",
+            "roomId": "a4a00bc993f97216ace642c94f4bf7cb5ced3764"
+          },
+          {
+            "command": "tp madstoat",
+            "roomId": "36e23a9697d5123e220744d9fc82ed544d765078"
+          },
+          {
+            "command": "tp madwolf",
+            "roomId": "19b30aabaecbf5960ad7066d6eba782ba173ac91"
+          },
+          {
+            "command": "tp nowhere",
+            "roomId": "ef8dea6037376b168f48c9b68d436be95bb342b1"
+          },
+          {
+            "command": "tp oasis",
+            "roomId": "482f82180dfd58da05af5e4ae5c7c2b5b159f06e"
+          },
+          {
+            "command": "tp oc",
+            "roomId": "93bf68291d0dbc25680ffb5f42e35e6516b264eb"
+          },
+          {
+            "command": "tp pekanford",
+            "roomId": "3e8df84018719b734c59d5e7e14793f9b5040c70"
+          },
+          {
+            "command": "tp pishe",
+            "roomId": "3e8df84018719b734c59d5e7e14793f9b5040c70"
+          },
+          {
+            "command": "tp postoffice",
+            "roomId": "109a9d6ff64b288e95580099e5b72864d67e4d33"
+          },
+          {
+            "command": "tp razorback",
+            "roomId": "1212b8ffdc79082c01580ff424356b7d032c31b5"
+          },
+          {
+            "command": "tp satorsquare",
+            "roomId": "28cb1a4206a92b895d0941164d516491748ef4ef"
+          },
+          {
+            "command": "tp scrogden",
+            "roomId": "5c2ff14f357b50a676d3ee02a73e3710e2d34020"
+          },
+          {
+            "command": "tp scry",
+            "roomId": "3bbc93f1a0af0f4be503ce2969fc5b83061d68a8"
+          },
+          {
+            "command": "tp sheepridge",
+            "roomId": "7cdff063a132319a743af7d7d4c38c51ddb6e2d2"
+          },
+          {
+            "command": "tp slice",
+            "roomId": "eb5de57e4ca48dfd9324bd3c9cd66f5c0e1aeddf"
+          },
+          {
+            "command": "tp slipperyhollow",
+            "roomId": "fe1bf5763a4420f441744cc8cebb01be4f1a5ee9"
+          },
+          {
+            "command": "tp stickenplace",
+            "roomId": "514c484b96d69e11b531189bca3ed3a066f08e66"
+          },
+          {
+            "command": "tp stolat",
+            "roomId": "326449a847b703d051fd8efcc2717087a2de429e"
+          },
+          {
+            "command": "tp tosg",
+            "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
+          }
+        ]
+      },
+      "timers": {
+        "Foreign Goods": {
+          "expirationTime": 1769338565384,
+          "durationMs": 3600000
+        }
+      },
+      "gpRateSamples": [
+        1,
+        4,
+        4,
+        4,
+        4
+      ],
+      "hpRateSamples": [
+        4,
+        5,
+        4,
+        4,
+        4
+      ]
+    },
+    "Maemot": {
+      "teleports": {
+        "reliable": false,
+        "speedwalkingPenalty": 30,
+        "locations": [
+          {
+            "name": "Ankh-Morpork (Mended Drum)",
+            "command": "tp drum",
+            "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
+          },
+          {
+            "name": "Djelibeybi (Market Crossroads)",
+            "command": "tp dj",
+            "roomId": "4ed9b9006731e04ade1ed9c34d41861fbe8ae1b1"
+          },
+          {
+            "name": "Ephebe (Glaxos)",
+            "command": "tp glaxos",
+            "roomId": "c4ef5a570d4d747808791e2181c848fc7443fefe"
+          },
+          {
+            "name": "Bes Pelargic (Middle Bridge)",
+            "command": "tp bp",
+            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
+          },
+          {
+            "name": "Ankh-Morpork (Five Ways)",
+            "command": "tp fiveways",
+            "roomId": "5d05e86948b486a3d01a21ded57ba1c1b2ba3d4c"
+          },
+          {
+            "name": "Genua (Genua National Bank)",
+            "command": "tp genua",
+            "roomId": "35ea94550b0f3b7a800e5141e1f0251278ecfe3c"
+          },
+          {
+            "name": "Escrow",
+            "command": "tp escrow",
+            "roomId": "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585"
+          },
+          {
+            "name": "OC (Temple of Small Gods)",
+            "command": "tp oc",
+            "roomId": "30f530dcf0577d89df22f09a26aa48df3debd7b6"
+          },
+          {
+            "name": "Sto Lat",
+            "command": "tp stolat",
+            "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
+          },
+          {
+            "name": "Doctor (Flintwick Building)",
+            "command": "tp doctor",
+            "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
+          }
+        ]
+      },
+      "timers": {
+        "Foreign Goods": {
+          "expirationTime": 1769337675323,
+          "durationMs": 3600000
+        }
+      },
+      "gpRateSamples": [
+        4,
+        4,
+        4,
+        4,
+        5
+      ],
+      "hpRateSamples": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "Ngao": {
+      "teleports": {
+        "reliable": false,
+        "speedwalkingPenalty": 8
+      },
+      "timers": {
+        "Foreign Goods": {
+          "expirationTime": 1769339259123,
+          "durationMs": 3600000
+        }
+      },
+      "gpRateSamples": [
+        4,
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "Bpla": {
+      "teleports": {
+        "reliable": true,
+        "speedwalkingPenalty": 8
+      },
+      "gpRateSamples": [
+        -1,
+        -1,
+        -1,
+        3,
+        3
+      ],
+      "uuLibrary": {
+        "row": 1,
+        "col": 5,
+        "orientation": "EAST"
+      }
+    }
+  }
+}
