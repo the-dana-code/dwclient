@@ -1296,6 +1296,15 @@
       }
     ]
   },
+  "87113bee9b7c36e6634dfaa68abf8e841e2b8445": {
+    "name": "Unknown",
+    "buttons": [
+      {
+        "name": "List Stops",
+        "command": "read list"
+      }
+    ]
+  },
   "87bccf82aa89cb15517caa3a5c5828a7f6113bcb": {
     "name": "northeast corner of the museum\u0027s hall",
     "buttons": [
@@ -1712,6 +1721,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "acd14c92321f105eca84332ecff9b079793c119e": {
+    "name": "Thella\u0027s vault",
+    "buttons": [
+      {
+        "name": "Enter Vault (DjToon 0.50)",
+        "command": "north"
       }
     ]
   },
@@ -2246,6 +2264,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "e1c6879478d02977a3899909d5eab754c113fe4b": {
+    "name": "inside the vault",
+    "buttons": [
+      {
+        "name": "Exit Vault",
+        "command": "south"
       }
     ]
   },

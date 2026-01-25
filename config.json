@@ -11,17 +11,17 @@
     "fontSize": 20,
     "mapZoomPercent": 100,
     "invertMap": true,
-    "windowWidth": 1645,
+    "windowWidth": 2272,
     "windowHeight": 1039,
     "windowMaximized": false,
-    "mudMapSplitRatio": 0.7423124231242313,
+    "mudMapSplitRatio": 0.7496677004873726,
     "mapNotesSplitRatio": 0.6594360086767896,
-    "chitchatTimerSplitRatio": 0.6064891846921797,
+    "chitchatTimerSplitRatio": 0.6310160427807486,
     "outputSplitRatio": 0.1995490417136415,
     "timerColumnWidths": [
-      97,
-      183,
-      183
+      143,
+      234,
+      233
     ]
   },
   "bookmarks": [
@@ -324,6 +324,18 @@
     {
       "name": "Money Changers/To/Djelibeybi/From Ankh-Morpork/Djelibeybi: The Morporkian Embassy",
       "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Vaults/Nella\u0027s Vault",
+      "roomId": "53da665ea8ddaf7cf38287d1343d92963f3f1b98"
+    },
+    {
+      "name": "Vaults/Thella\u0027s Vault",
+      "roomId": "acd14c92321f105eca84332ecff9b079793c119e"
+    },
+    {
+      "name": "Vaults/Jonas\u0027 Vault",
+      "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337"
     }
   ],
   "characters": {
@@ -552,7 +564,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769357076851,
+          "expirationTime": 1769367728463,
           "durationMs": 3600000
         }
       },
@@ -625,24 +637,29 @@
             "name": "Doctor (Flintwick Building)",
             "command": "tp doctor",
             "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
+          },
+          {
+            "name": "Bleak Prospect",
+            "command": "tp bleak",
+            "roomId": "e04e13e7dceeeb0e3338e0a3bcc80a4c3c226362"
           }
         ]
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769356645565,
+          "expirationTime": 1769367254091,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
-        3,
+        5,
         4,
-        3,
-        3,
+        4,
+        5,
         4
       ],
       "hpRateSamples": [
-        4,
+        5,
         4,
         4,
         4,
@@ -656,7 +673,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769355912636,
+          "expirationTime": 1769365664730,
           "durationMs": 3600000
         }
       },
@@ -664,8 +681,15 @@
         4,
         4,
         4,
-        4,
-        4
+        3,
+        3
+      ],
+      "hpRateSamples": [
+        2,
+        2,
+        1,
+        3,
+        3
       ]
     },
     "Bpla": {
