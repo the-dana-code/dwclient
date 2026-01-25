@@ -145,8 +145,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
     private final Map<Integer, EnumSet<WritMenuAction>> writMenuVisits = new HashMap<>();
-    private final List<JMenu> resultsMenus = new ArrayList<>();
     private int selectedWritIndex = 0;
+    private int selectedResultsPageIndex = 0;
     private JMenu teleportsMenu;
     private JMenu bookmarksMenu;
     private JMenu writTopMenu;
@@ -1831,10 +1831,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         if (resetResultsVisits) {
             resultsMenuVisits.clear();
+            selectedResultsPageIndex = 0;
         }
+        rebuildResultsMenu();
+    }
+
+    private void rebuildResultsMenu() {
+        if (resultsTopMenu == null) return;
 
         resultsTopMenu.removeAll();
-        resultsMenus.clear();
 
         if (currentResults == null || currentResults.results().isEmpty()) {
             resultsTopMenu.setText("Results");
@@ -1843,9 +1848,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     : "No active results";
             JMenuItem noResultsItem = new JMenuItem(emptyMsg);
             noResultsItem.setEnabled(false);
-            if (currentBg != null && currentFg != null) {
-                updateMenuTheme(noResultsItem, currentBg, currentFg);
-            }
             resultsTopMenu.add(noResultsItem);
         } else {
             String shortTitle = currentResults.shortTitle();
@@ -1855,63 +1857,74 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 resultsTopMenu.setText("Results");
             }
 
-            String title = currentResults.title();
-
             List<com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult> resultsList =
                     currentResults.results();
             int totalResults = resultsList.size();
-            int totalMenus = (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE);
+            int totalPages = (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE);
+
+            if (selectedResultsPageIndex >= totalPages) {
+                selectedResultsPageIndex = 0;
+            }
+
+            for (int i = 0; i < totalPages; i++) {
+                int pageIndex = i;
+                String label = "Results " + (i + 1);
+                boolean selected = (i == selectedResultsPageIndex);
+                JMenuItem radioItem = new JMenuItem((selected ? "\u2713 " : "  ") + label);
+                radioItem.addActionListener(e -> {
+                    selectedResultsPageIndex = pageIndex;
+                    rebuildResultsMenu();
+                });
+                resultsTopMenu.add(radioItem);
+            }
+
+            resultsTopMenu.addSeparator();
+
+            String title = currentResults.title();
+            if (selectedResultsPageIndex == 0 && title != null && !title.isBlank()) {
+                JMenuItem header = new JMenuItem(title);
+                header.setEnabled(false);
+                resultsTopMenu.add(header);
+                resultsTopMenu.addSeparator();
+            }
+
+            int start = selectedResultsPageIndex * RESULTS_MENU_PAGE_SIZE;
+            int end = Math.min(start + RESULTS_MENU_PAGE_SIZE, totalResults);
+
+            for (int index = start; index < end; index++) {
+                com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result =
+                        resultsList.get(index);
+                if (result.isSeparator()) {
+                    resultsTopMenu.addSeparator();
+                    continue;
+                }
+                boolean visited = resultsMenuVisits.contains(index);
+                JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
+                int resultIndex = index;
+                if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
+                    item.addActionListener(event -> {
+                        markResultVisited(resultIndex);
+                        item.setText(formatResultsMenuLabel(true, result.label()));
+                        submitCommand(result.mapCommand());
+                        showSpeedWalkPrompt(result.command());
+                    });
+                } else {
+                    item.addActionListener(event -> {
+                        markResultVisited(resultIndex);
+                        item.setText(formatResultsMenuLabel(true, result.label()));
+                        submitCommand(result.command());
+                    });
+                }
+                resultsTopMenu.add(item);
+            }
+
             String footerText = currentResults.footer();
-
-            for (int menuIndex = 0; menuIndex < totalMenus; menuIndex++) {
-                JMenu menu = new JMenu("R" + (menuIndex + 1));
-                if (menuIndex == 0 && title != null && !title.isBlank()) {
-                    JMenuItem header = new JMenuItem(title);
-                    header.setEnabled(false);
-                    menu.add(header);
-                    menu.addSeparator();
-                }
-
-                int start = menuIndex * RESULTS_MENU_PAGE_SIZE;
-                int end = Math.min(start + RESULTS_MENU_PAGE_SIZE, totalResults);
-                
-                for (int index = start; index < end; index++) {
-                    com.danavalerie.matrixmudrelay.core.ContextualResultList.ContextualResult result =
-                            resultsList.get(index);
-                    if (result.isSeparator()) {
-                        menu.addSeparator();
-                        continue;
-                    }
-                    boolean visited = resultsMenuVisits.contains(index);
-                    JMenuItem item = new JMenuItem(formatResultsMenuLabel(visited, result.label()));
-                    int resultIndex = index;
-                    if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
-                        item.addActionListener(event -> {
-                            markResultVisited(resultIndex);
-                            item.setText(formatResultsMenuLabel(true, result.label()));
-                            submitCommand(result.mapCommand());
-                            showSpeedWalkPrompt(result.command());
-                        });
-                    } else {
-                        item.addActionListener(event -> {
-                            markResultVisited(resultIndex);
-                            item.setText(formatResultsMenuLabel(true, result.label()));
-                            submitCommand(result.command());
-                        });
-                    }
-                    menu.add(item);
-                }
-
-                boolean isLastMenu = menuIndex == totalMenus - 1;
-                if (isLastMenu && footerText != null && !footerText.isBlank()) {
-                    menu.addSeparator();
-                    JMenuItem footer = new JMenuItem(footerText);
-                    footer.setEnabled(false);
-                    menu.add(footer);
-                }
-
-                resultsMenus.add(menu);
-                resultsTopMenu.add(menu);
+            boolean isLastPage = selectedResultsPageIndex == totalPages - 1;
+            if (isLastPage && footerText != null && !footerText.isBlank()) {
+                resultsTopMenu.addSeparator();
+                JMenuItem footer = new JMenuItem(footerText);
+                footer.setEnabled(false);
+                resultsTopMenu.add(footer);
             }
         }
         updateTheme(mapPanel.isInverted());
