@@ -296,6 +296,22 @@
     {
       "name": "Money Changers/To/Genua/From Lancre/Ohulan-Cutash Money Changer",
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Djelibeybi/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Djelibeybi/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Ankh-Morpork/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Ankh-Morpork/Djelibeybi: The Morporkian Embassy",
+      "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
     }
   ]
 }
