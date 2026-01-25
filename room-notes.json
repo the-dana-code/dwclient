@@ -193,6 +193,19 @@
     "name": "guild branch of Bing\u0027s Bank",
     "buttons": [
       {
+        "name": "Open Account (A$1)",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
+  "174d2ac91ce4aa3b553b4f53f88326c7a5b9493a": {
+    "name": "Klatchian Continental Bank",
+    "buttons": [
+      {
         "name": "Open Account",
         "command": "open account"
       },
@@ -702,6 +715,19 @@
       }
     ]
   },
+  "4e22f04d622d486ef767840ec15774c7e34bf8e7": {
+    "name": "Bing\u0027s First Bank on Brookless Lane",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      },
+      {
+        "name": "Balance",
+        "command": "balance"
+      }
+    ]
+  },
   "50193d819d63ff2a6060b8b55659760683cc930b": {
     "name": "[player shop]",
     "buttons": [
@@ -1086,6 +1112,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "783219e639517111bb7976cd955d93c3d61b58cd": {
+    "name": "Klatchian Continental Bank",
+    "buttons": [
+      {
+        "name": "Balance",
+        "command": "balance"
       }
     ]
   },
@@ -1701,6 +1736,15 @@
       }
     ]
   },
+  "b1af471fbf737429b940cac18e4ce1533b368b08": {
+    "name": "personal banking area",
+    "buttons": [
+      {
+        "name": "Open Account",
+        "command": "open account"
+      }
+    ]
+  },
   "b1c92bb1b0aac24ec54f968cd58ca3c187bbbeaf": {
     "name": "inside the Emerald Necklace coaching inn",
     "buttons": [
@@ -2212,7 +2256,7 @@
     "name": "Lancrastian Farmers\u0027 Cooperative Bank",
     "buttons": [
       {
-        "name": "Open Account",
+        "name": "Open Account (A$10)",
         "command": "open account"
       },
       {
