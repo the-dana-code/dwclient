@@ -51,6 +51,9 @@ public final class BotConfig {
         public Integer fontSize;
         public Integer mapZoomPercent;
         public Boolean invertMap;
+        public Integer windowWidth;
+        public Integer windowHeight;
+        public Boolean windowMaximized;
         public Double mudMapSplitRatio;
         public Double mapNotesSplitRatio;
         public Double chitchatTimerSplitRatio;
@@ -130,4 +133,3 @@ public final class BotConfig {
         }
     }
 }
-

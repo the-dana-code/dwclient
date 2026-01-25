@@ -83,6 +83,8 @@ import java.awt.KeyboardFocusManager;
 import java.awt.image.BufferedImage;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -283,9 +285,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         add(statsPanel, BorderLayout.SOUTH);
         applyConfiguredFont();
         pack();
-        setLocationRelativeTo(null);
+        applyWindowConfiguration();
+        if (!isWindowMaximized()) {
+            setLocationRelativeTo(null);
+        }
         installInputFocusForwarding();
         updateTheme(mapPanel.isInverted());
+        installWindowStatePersistence();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -299,6 +305,64 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 shutdown();
             }
         });
+    }
+
+    private void applyWindowConfiguration() {
+        Integer width = cfg.ui.windowWidth;
+        Integer height = cfg.ui.windowHeight;
+        if (width != null && height != null && width > 0 && height > 0) {
+            setSize(new Dimension(width, height));
+        }
+        if (Boolean.TRUE.equals(cfg.ui.windowMaximized)) {
+            setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        }
+    }
+
+    private void installWindowStatePersistence() {
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (!isShowing() || isWindowMaximized()) {
+                    return;
+                }
+                persistWindowSize(getSize());
+            }
+        });
+
+        addWindowStateListener(new WindowAdapter() {
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                boolean maximized = (e.getNewState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+                persistWindowMaximized(maximized);
+                if (!maximized) {
+                    persistWindowSize(getSize());
+                }
+            }
+        });
+    }
+
+    private boolean isWindowMaximized() {
+        return (getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+    }
+
+    private void persistWindowSize(Dimension size) {
+        if (size == null || size.width <= 0 || size.height <= 0) {
+            return;
+        }
+        if (Objects.equals(cfg.ui.windowWidth, size.width) && Objects.equals(cfg.ui.windowHeight, size.height)) {
+            return;
+        }
+        cfg.ui.windowWidth = size.width;
+        cfg.ui.windowHeight = size.height;
+        saveConfig();
+    }
+
+    private void persistWindowMaximized(boolean maximized) {
+        if (Objects.equals(cfg.ui.windowMaximized, maximized)) {
+            return;
+        }
+        cfg.ui.windowMaximized = maximized;
+        saveConfig();
     }
 
     private JMenuBar buildMenuBar() {

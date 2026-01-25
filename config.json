@@ -11,14 +11,17 @@
     "fontSize": 20,
     "mapZoomPercent": 100,
     "invertMap": true,
-    "mudMapSplitRatio": 0.7389653535832938,
-    "mapNotesSplitRatio": 0.6697782963827305,
-    "chitchatTimerSplitRatio": 0.6820276497695853,
-    "outputSplitRatio": 0.21867321867321868,
+    "windowWidth": 1613,
+    "windowHeight": 1039,
+    "windowMaximized": false,
+    "mudMapSplitRatio": 0.7415940224159403,
+    "mapNotesSplitRatio": 0.6594360086767896,
+    "chitchatTimerSplitRatio": 0.4279624893435635,
+    "outputSplitRatio": 0.1995490417136415,
     "timerColumnWidths": [
-      84,
-      84,
-      83
+      221,
+      220,
+      220
     ]
   },
   "bookmarks": [
