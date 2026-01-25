@@ -1,22 +1,29 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JMenu;
 import javax.swing.MenuSelectionManager;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.MenuItemUI;
 import javax.swing.plaf.basic.BasicMenuItemUI;
-import java.awt.Container;
-import java.awt.Window;
+import java.awt.*;
 
 public class KeepOpenMenuItem extends JMenuItem {
+    public static final String PARENT_MENU_KEY = "KeepOpenMenuItem.parentMenu";
     private ButtonUI defaultUI;
 
     public KeepOpenMenuItem(String text) {
         super(text);
         this.defaultUI = getUI();
         setKeepMenuOpen(true);
+    }
+
+    public KeepOpenMenuItem(String text, JComponent parentMenu) {
+        this(text);
+        putClientProperty(PARENT_MENU_KEY, parentMenu);
     }
 
     public void setKeepMenuOpen(boolean keepMenuOpen) {
@@ -41,25 +48,39 @@ public class KeepOpenMenuItem extends JMenuItem {
     public static class KeepOpenMenuItemUI extends BasicMenuItemUI {
         @Override
         protected void doClick(MenuSelectionManager msm) {
+            Container parent = menuItem.getParent();
             menuItem.doClick(0);
-            updateMenuSize(menuItem);
+            updateMenuSize(menuItem, parent);
         }
     }
 
     public static void updateMenuSize(JMenuItem menuItem) {
+        updateMenuSize(menuItem, null);
+    }
+
+    public static void updateMenuSize(JMenuItem menuItem, Container capturedParent) {
         SwingUtilities.invokeLater(() -> {
-            Container parent = menuItem.getParent();
+            Object parentProp = menuItem.getClientProperty(PARENT_MENU_KEY);
+            Container parent = (parentProp instanceof Container) ? (Container) parentProp : capturedParent;
+            if (parent == null) {
+                parent = menuItem.getParent();
+            }
+
+            if (parent instanceof JMenu) {
+                parent = ((JMenu) parent).getPopupMenu();
+            }
+
             if (parent instanceof JPopupMenu) {
                 JPopupMenu popup = (JPopupMenu) parent;
-                popup.revalidate();
-                popup.repaint();
 
-                Window window = SwingUtilities.getWindowAncestor(popup);
-                if (window != null && window != SwingUtilities.getWindowAncestor(popup.getInvoker())) {
-                    window.pack();
-                } else {
-                    popup.setSize(popup.getPreferredSize());
-                }
+                Point p = popup.getLocationOnScreen();
+                popup.setVisible(false);
+
+                SwingUtilities.invokeLater(() -> {
+                    Point q = new Point(p);
+                    SwingUtilities.convertPointFromScreen(q, popup.getInvoker());
+                    popup.show(popup.getInvoker(), q.x, q.y);
+                });
             }
         });
     }

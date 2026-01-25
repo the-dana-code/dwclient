@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.plaf.ButtonUI;
 
@@ -17,10 +18,17 @@ public class CheckboxMenuItem extends JMenuItem {
     }
 
     public CheckboxMenuItem(String label, boolean checked, boolean keepMenuOpen) {
+        this(label, checked, keepMenuOpen, null);
+    }
+
+    public CheckboxMenuItem(String label, boolean checked, boolean keepMenuOpen, JComponent parentMenu) {
         this.label = label;
         this.defaultUI = getUI();
         setChecked(checked);
         setKeepMenuOpen(keepMenuOpen);
+        if (parentMenu != null) {
+            putClientProperty(KeepOpenMenuItem.PARENT_MENU_KEY, parentMenu);
+        }
         addActionListener(event -> toggle());
     }
 

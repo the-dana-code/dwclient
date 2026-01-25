@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.plaf.ButtonUI;
 import java.util.ArrayList;
@@ -20,6 +21,10 @@ public class RadioMenuItem extends JMenuItem {
     }
 
     public RadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen) {
+        this(label, selected, group, keepMenuOpen, null);
+    }
+
+    public RadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen, JComponent parentMenu) {
         this.label = label;
         this.group = group;
         if (group != null) {
@@ -28,6 +33,9 @@ public class RadioMenuItem extends JMenuItem {
         this.defaultUI = getUI();
         setSelected(selected);
         setKeepMenuOpen(keepMenuOpen);
+        if (parentMenu != null) {
+            putClientProperty(KeepOpenMenuItem.PARENT_MENU_KEY, parentMenu);
+        }
         addActionListener(event -> {
             if (group != null) {
                 group.select(this);
