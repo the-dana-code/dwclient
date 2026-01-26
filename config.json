@@ -880,6 +880,11 @@
             "name": "Djelibeybi",
             "command": "tp dj",
             "roomId": "8996c145b1b02f540f510abc850d8d952ca26b33"
+          },
+          {
+            "name": "Sto Lat",
+            "command": "tp stolat",
+            "roomId": "572f3c54b5dece1f8fd35b74eb87f99482004a7d"
           }
         ]
       }
