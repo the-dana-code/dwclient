@@ -114,14 +114,17 @@ public final class MapPanel extends JPanel {
             areaComboBoxModel.addElement(area);
         }
         areaComboBox = new JComboBox<>(areaComboBoxModel);
+        areaComboBox.setFocusable(false);
         areaComboBox.setSelectedItem(NONE_AREA);
         areaComboBox.setBorder(BorderFactory.createEmptyBorder(4, 6, 4, 6));
         areaComboBox.addActionListener(event -> handleAreaSelection());
         mapLabel.setOpaque(true);
         mapLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         speedWalkButton.setEnabled(false);
+        speedWalkButton.setFocusable(false);
         speedWalkButton.addActionListener(event -> handleSpeedWalk());
         centerButton.setEnabled(false);
+        centerButton.setFocusable(false);
         centerButton.setToolTipText("Center on current room");
         centerButton.setMargin(new Insets(2, 4, 2, 4));
         centerButton.addActionListener(event -> handleCenterAction());
@@ -133,6 +136,9 @@ public final class MapPanel extends JPanel {
         titlePanel.add(areaComboBox, BorderLayout.CENTER);
         titlePanel.add(titleActions, BorderLayout.EAST);
         scrollPane = new JScrollPane(mapLabel);
+        scrollPane.setFocusable(false);
+        scrollPane.getHorizontalScrollBar().setFocusable(false);
+        scrollPane.getVerticalScrollBar().setFocusable(false);
         add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         updateColors();

@@ -1480,7 +1480,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 KeepOpenMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
                         "Route",
                         () -> handleRoute(index));
-                routeItem.setKeepMenuOpen(false);
                 writTopMenu.add(routeItem);
             } else if (canWriteRoutes) {
                 JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,

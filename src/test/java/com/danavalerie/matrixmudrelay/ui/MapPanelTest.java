@@ -181,5 +181,32 @@ public class MapPanelTest {
         Thread.sleep(100);
         org.junit.jupiter.api.Assertions.assertFalse(centerButton.isEnabled());
     }
+
+    @Test
+    public void testComponentsAreNotFocusable() throws Exception {
+        MapPanel mapPanel = new MapPanel(new RoomMapService(new com.danavalerie.matrixmudrelay.core.MapDataService()), 100, z -> {}, false, invert -> {});
+
+        java.lang.reflect.Field areaComboBoxField = MapPanel.class.getDeclaredField("areaComboBox");
+        areaComboBoxField.setAccessible(true);
+        javax.swing.JComboBox<?> areaComboBox = (javax.swing.JComboBox<?>) areaComboBoxField.get(mapPanel);
+        org.junit.jupiter.api.Assertions.assertFalse(areaComboBox.isFocusable(), "Area combo box should not be focusable");
+
+        java.lang.reflect.Field speedWalkButtonField = MapPanel.class.getDeclaredField("speedWalkButton");
+        speedWalkButtonField.setAccessible(true);
+        javax.swing.JButton speedWalkButton = (javax.swing.JButton) speedWalkButtonField.get(mapPanel);
+        org.junit.jupiter.api.Assertions.assertFalse(speedWalkButton.isFocusable(), "Speed walk button should not be focusable");
+
+        java.lang.reflect.Field centerButtonField = MapPanel.class.getDeclaredField("centerButton");
+        centerButtonField.setAccessible(true);
+        javax.swing.JButton centerButton = (javax.swing.JButton) centerButtonField.get(mapPanel);
+        org.junit.jupiter.api.Assertions.assertFalse(centerButton.isFocusable(), "Center button should not be focusable");
+
+        java.lang.reflect.Field scrollPaneField = MapPanel.class.getDeclaredField("scrollPane");
+        scrollPaneField.setAccessible(true);
+        javax.swing.JScrollPane scrollPane = (javax.swing.JScrollPane) scrollPaneField.get(mapPanel);
+        org.junit.jupiter.api.Assertions.assertFalse(scrollPane.isFocusable(), "Scroll pane should not be focusable");
+        org.junit.jupiter.api.Assertions.assertFalse(scrollPane.getHorizontalScrollBar().isFocusable(), "Horizontal scroll bar should not be focusable");
+        org.junit.jupiter.api.Assertions.assertFalse(scrollPane.getVerticalScrollBar().isFocusable(), "Vertical scroll bar should not be focusable");
+    }
 }
 

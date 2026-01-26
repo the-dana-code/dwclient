@@ -15,11 +15,11 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7326596233348646,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.681360201511335,
-    "outputSplitRatio": 0.2399103139013453,
+    "chitchatTimerSplitRatio": 0.6807304785894207,
+    "outputSplitRatio": 0.2421972534332085,
     "timerColumnWidths": [
       132,
-      182,
+      183,
       182
     ]
   },
@@ -826,16 +826,16 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769430637558,
+          "expirationTime": 1769438983871,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
         4,
+        3,
         4,
-        4,
-        3
+        4
       ],
       "hpRateSamples": [
         4,
@@ -919,7 +919,7 @@
         4,
         4,
         4,
-        5,
+        3,
         4
       ],
       "hpRateSamples": [
