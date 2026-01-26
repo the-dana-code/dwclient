@@ -16,12 +16,12 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7504432624113475,
     "mapNotesSplitRatio": 0.6477644492911668,
-    "chitchatTimerSplitRatio": 0.6476868327402135,
+    "chitchatTimerSplitRatio": 0.6595492289442467,
     "outputSplitRatio": 0.19794050343249428,
     "timerColumnWidths": [
-      137,
-      224,
-      223
+      133,
+      216,
+      215
     ]
   },
   "bookmarks": [
@@ -342,6 +342,7 @@
     "Lesa": {
       "teleports": {
         "reliable": true,
+        "outdoorOnly": false,
         "speedwalkingPenalty": 8,
         "locations": [
           {
@@ -564,7 +565,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769374613305,
+          "expirationTime": 1769409576270,
           "durationMs": 3600000
         }
       },
@@ -572,8 +573,8 @@
         4,
         4,
         4,
-        3,
-        5
+        4,
+        4
       ],
       "hpRateSamples": [
         4,
@@ -586,6 +587,7 @@
     "Maemot": {
       "teleports": {
         "reliable": false,
+        "outdoorOnly": false,
         "speedwalkingPenalty": 30,
         "locations": [
           {
@@ -602,11 +604,6 @@
             "name": "Ephebe (Glaxos)",
             "command": "tp glaxos",
             "roomId": "c4ef5a570d4d747808791e2181c848fc7443fefe"
-          },
-          {
-            "name": "Bes Pelargic (Middle Bridge)",
-            "command": "tp bp",
-            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
           },
           {
             "name": "Ankh-Morpork (Five Ways)",
@@ -642,24 +639,29 @@
             "name": "Bleak Prospect",
             "command": "tp bleak",
             "roomId": "e04e13e7dceeeb0e3338e0a3bcc80a4c3c226362"
+          },
+          {
+            "name": "Bes Pelargic",
+            "command": "tp bp",
+            "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
           }
         ]
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769372738371,
+          "expirationTime": 1769409233219,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
-        5,
+        4,
         4,
         4,
         4
       ],
       "hpRateSamples": [
-        5,
+        4,
         4,
         4,
         4,
@@ -669,7 +671,8 @@
     "Ngao": {
       "teleports": {
         "reliable": false,
-        "speedwalkingPenalty": 8,
+        "outdoorOnly": true,
+        "speedwalkingPenalty": 15,
         "locations": [
           {
             "name": "Mended Drum",
@@ -700,15 +703,15 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769375254873,
+          "expirationTime": 1769407573209,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
+        1,
+        1,
         4,
-        4,
-        2,
-        2,
+        1,
         4
       ],
       "hpRateSamples": [
@@ -722,6 +725,7 @@
     "Bpla": {
       "teleports": {
         "reliable": true,
+        "outdoorOnly": false,
         "speedwalkingPenalty": 8
       },
       "gpRateSamples": [

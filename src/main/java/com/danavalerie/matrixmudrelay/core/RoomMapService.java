@@ -475,23 +475,8 @@ public class RoomMapService {
         open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
         TeleportRegistry.CharacterTeleports characterTeleports = TeleportRegistry.forCharacter(characterName);
         boolean teleportsReliable = characterTeleports.reliable();
-
-        if (useTeleports) {
-            List<ResolvedTeleport> teleports = resolveTeleports(roomCache, characterTeleports.teleports());
-            for (ResolvedTeleport teleport : teleports) {
-                if (teleport.roomId.equals(start.roomId)) {
-                    continue;
-                }
-                int tentativeScore = characterTeleports.speedwalkingPenalty();
-                Integer bestScore = gScore.get(teleport.roomId);
-                if (bestScore == null || tentativeScore < bestScore) {
-                    cameFrom.put(teleport.roomId, new PreviousStep(start.roomId, teleport.command()));
-                    gScore.put(teleport.roomId, tentativeScore);
-                    double fScore = tentativeScore + estimateDistance(teleport.room, target);
-                    open.add(new RouteNode(teleport.roomId, fScore));
-                }
-            }
-        }
+        boolean outdoorOnly = characterTeleports.outdoorOnly();
+        List<ResolvedTeleport> teleports = useTeleports ? resolveTeleports(roomCache, characterTeleports.teleports()) : List.of();
 
         while (!open.isEmpty()) {
             RouteNode current = open.poll();
@@ -523,6 +508,22 @@ public class RoomMapService {
                         gScore.put(neighborId, tentativeScore);
                         double fScore = tentativeScore + estimateDistance(neighbor, target);
                         open.add(new RouteNode(neighborId, fScore));
+                    }
+                }
+
+                if (useTeleports && (!outdoorOnly || "outside".equalsIgnoreCase(currentData.getRoomType()))) {
+                    for (ResolvedTeleport teleport : teleports) {
+                        if (teleport.roomId.equals(current.roomId)) {
+                            continue;
+                        }
+                        int tentativeScore = currentScore + characterTeleports.speedwalkingPenalty();
+                        Integer bestScore = gScore.get(teleport.roomId);
+                        if (bestScore == null || tentativeScore < bestScore) {
+                            cameFrom.put(teleport.roomId, new PreviousStep(current.roomId, teleport.command()));
+                            gScore.put(teleport.roomId, tentativeScore);
+                            double fScore = tentativeScore + estimateDistance(teleport.room, target);
+                            open.add(new RouteNode(teleport.roomId, fScore));
+                        }
                     }
                 }
             }
@@ -616,14 +617,14 @@ public class RoomMapService {
     }
 
     private static List<RouteStep> applyUnreliableTeleportRule(List<RouteStep> steps) {
-        if (steps.isEmpty()) {
-            return steps;
+        List<RouteStep> result = new ArrayList<>();
+        for (RouteStep step : steps) {
+            result.add(step);
+            if (step.exit().startsWith("tp ")) {
+                break;
+            }
         }
-        RouteStep first = steps.get(0);
-        if (first.exit().startsWith("tp ")) {
-            return List.of(first);
-        }
-        return steps;
+        return result;
     }
 
     private BufferedImage loadMapBackground(int mapId, boolean isDark) throws IOException {

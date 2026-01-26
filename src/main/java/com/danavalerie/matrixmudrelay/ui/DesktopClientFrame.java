@@ -972,6 +972,21 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
         optionsMenu.add(reliableTpItem);
 
+        JCheckBoxMenuItem outdoorTpItem = new JCheckBoxMenuItem("Outdoor Use Only");
+        if (charCfg != null && charCfg.teleports != null) {
+            outdoorTpItem.setSelected(charCfg.teleports.outdoorOnly);
+        } else {
+            outdoorTpItem.setEnabled(false);
+        }
+        outdoorTpItem.addActionListener(e -> {
+            if (charCfg != null && charCfg.teleports != null) {
+                charCfg.teleports.outdoorOnly = outdoorTpItem.isSelected();
+                com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
+                saveConfig();
+            }
+        });
+        optionsMenu.add(outdoorTpItem);
+
         JMenuItem penaltyItem = new JMenuItem("Speedwalking Teleport Penalty...");
         if (charCfg != null && charCfg.teleports != null) {
             penaltyItem.addActionListener(e -> showSpeedwalkingPenaltyDialog(charCfg.teleports));

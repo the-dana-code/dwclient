@@ -110,6 +110,7 @@ public final class BotConfig {
 
     public static final class CharacterTeleports {
         public boolean reliable = true;
+        public boolean outdoorOnly = false;
         public int speedwalkingPenalty = 8;
         public List<TeleportLocation> locations = new ArrayList<>();
     }

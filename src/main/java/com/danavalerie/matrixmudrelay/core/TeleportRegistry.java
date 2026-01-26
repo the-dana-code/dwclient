@@ -28,7 +28,7 @@ import java.util.Map;
 import com.danavalerie.matrixmudrelay.config.BotConfig;
 
 public final class TeleportRegistry {
-    private static CharacterTeleports DEFAULT = new CharacterTeleports(true, 8, List.of());
+    private static CharacterTeleports DEFAULT = new CharacterTeleports(true, false, 8, List.of());
     private static Map<String, CharacterTeleports> BY_CHARACTER = Map.of();
 
     private TeleportRegistry() {
@@ -45,7 +45,7 @@ public final class TeleportRegistry {
                         locations.add(new TeleportLocation(loc.name, loc.command, loc.roomId));
                     }
                 }
-                map.put(name.trim().toLowerCase(Locale.ROOT), new CharacterTeleports(charConfig.teleports.reliable, charConfig.teleports.speedwalkingPenalty, Collections.unmodifiableList(locations)));
+                map.put(name.trim().toLowerCase(Locale.ROOT), new CharacterTeleports(charConfig.teleports.reliable, charConfig.teleports.outdoorOnly, charConfig.teleports.speedwalkingPenalty, Collections.unmodifiableList(locations)));
             });
         }
         BY_CHARACTER = Collections.unmodifiableMap(map);
@@ -59,7 +59,7 @@ public final class TeleportRegistry {
         return BY_CHARACTER.getOrDefault(key, DEFAULT);
     }
 
-    public record CharacterTeleports(boolean reliable, int speedwalkingPenalty, List<TeleportLocation> teleports) {
+    public record CharacterTeleports(boolean reliable, boolean outdoorOnly, int speedwalkingPenalty, List<TeleportLocation> teleports) {
     }
 
     public record TeleportLocation(String name, String command, String roomId) {
