@@ -15,12 +15,12 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7504432624113475,
     "mapNotesSplitRatio": 0.6477644492911668,
-    "chitchatTimerSplitRatio": 0.6809015421115066,
+    "chitchatTimerSplitRatio": 0.6814946619217082,
     "outputSplitRatio": 0.19794050343249428,
     "timerColumnWidths": [
       126,
       201,
-      201
+      200
     ]
   },
   "bookmarks": [
@@ -710,11 +710,11 @@
         }
       },
       "gpRateSamples": [
-        1,
+        4,
         1,
         4,
         1,
-        4
+        1
       ],
       "hpRateSamples": [
         2,

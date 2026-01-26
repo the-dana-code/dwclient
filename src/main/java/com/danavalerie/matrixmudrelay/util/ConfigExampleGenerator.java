@@ -14,27 +14,38 @@ public class ConfigExampleGenerator {
             System.out.println("Loading config.json...");
             ClientConfig config = ConfigLoader.load(Paths.get("config.json"));
 
-            System.out.println("Removing unnecessary data...");
-            // Remove characters and associated data
-            config.characters.clear();
-            config.teleports = null;
+            System.out.println("Creating example config...");
+            ClientConfig example = new ClientConfig();
 
-            // Add a sample character to show the new character-specific settings
-            ClientConfig.CharacterConfig sampleChar = new ClientConfig.CharacterConfig();
-            sampleChar.useTeleports = true;
-            config.characters.put("SampleCharacter", sampleChar);
+            // Specifically pull out what we want to keep
 
-            // Remove splitpane stored location info and other transient UI state
+            // MUD settings
+            example.mud.host = config.mud.host;
+            example.mud.port = config.mud.port;
+            example.mud.charset = config.mud.charset;
+            example.mud.connectTimeoutMs = config.mud.connectTimeoutMs;
+
+            // UI settings (only specific ones)
             if (config.ui != null) {
-                config.ui.mudMapSplitRatio = null;
-                config.ui.mapNotesSplitRatio = null;
-                config.ui.chitchatTimerSplitRatio = null;
-                config.ui.outputSplitRatio = null;
-                config.ui.timerColumnWidths = null;
+                example.ui.fontFamily = config.ui.fontFamily;
+                example.ui.fontSize = config.ui.fontSize;
+                example.ui.mapZoomPercent = config.ui.mapZoomPercent;
+                example.ui.invertMap = config.ui.invertMap;
+                example.ui.windowWidth = config.ui.windowWidth;
+                example.ui.windowHeight = config.ui.windowHeight;
+                example.ui.windowMaximized = config.ui.windowMaximized;
             }
 
+            // Bookmarks
+            example.bookmarks.addAll(config.bookmarks);
+
+            // Add a sample character to show the character-specific settings
+            ClientConfig.CharacterConfig sampleChar = new ClientConfig.CharacterConfig();
+            sampleChar.useTeleports = true;
+            example.characters.put("SampleCharacter", sampleChar);
+
             System.out.println("Saving to config-example.json...");
-            ConfigLoader.save(Paths.get("config-example.json"), config);
+            ConfigLoader.save(Paths.get("config-example.json"), example);
 
             System.out.println("Waiting for background saves to complete...");
             BackgroundSaver.waitForIdle();
