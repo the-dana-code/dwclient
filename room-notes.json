@@ -739,6 +739,16 @@
       }
     ]
   },
+  "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80": {
+    "name": "Krimat\u0027s Foreign Exchange",
+    "notes": "You can exchange money here.\n\nExamples:\n  buy from Ankh-Morpork with 10 minae\n  sell 5 dollars  ",
+    "buttons": [
+      {
+        "name": "List Rates",
+        "command": "list"
+      }
+    ]
+  },
   "4e22f04d622d486ef767840ec15774c7e34bf8e7": {
     "name": "Bing\u0027s First Bank on Brookless Lane",
     "buttons": [
