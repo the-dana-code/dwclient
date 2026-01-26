@@ -758,11 +758,6 @@
     "roomId": "70f88d649cd3de500d64caacad14de76c4127827"
   },
   {
-    "npc": "real estate receptionist",
-    "location": "Ankh-Morpork foreign real estate agency",
-    "roomId": "59a4bd0c01076b87947d4b0805d06f79425a6400"
-  },
-  {
     "npc": "stallholder Bernie",
     "location": "the colourful stall on Market Street",
     "roomId": "c0e92eb5d896371a382973b703e7e4ec86681d74"
@@ -1131,5 +1126,10 @@
     "npc": "Igor",
     "location": "High Quality Weapon Emporium on Tenth Egg Street",
     "roomId": "084d6823e2fdf672d66bbe3e315eee4df0690a92"
+  },
+  {
+    "npc": "real estate receptionist",
+    "location": "Ankh-Morpork foreign real estate agency",
+    "roomId": "107efc06837570d31221002636496a7308266777"
   }
 ]

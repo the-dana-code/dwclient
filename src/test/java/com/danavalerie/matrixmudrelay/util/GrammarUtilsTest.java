@@ -48,6 +48,9 @@ class GrammarUtilsTest {
         assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphos"));
         assertEquals(List.of("steel xiphos"), GrammarUtils.singularizePhrase("steel xiphoi"));
         assertEquals(List.of("bronze sagaris"), GrammarUtils.singularizePhrase("bronze sagaris"));
+        assertEquals(List.of("black silk fundoshi"), GrammarUtils.singularizePhrase("black silk fundoshis"));
+        assertEquals(List.of("blackened kunai"), GrammarUtils.singularizePhrase("blackened kunais"));
+        assertEquals(List.of("rimturnwiser"), GrammarUtils.singularizePhrase("rimturnwisers"));
         
         // Ensure "set of" and "pair of" don't over-singularize the tail
         assertEquals(List.of("set of shiny gold handcuffs"), GrammarUtils.singularizePhrase("set of shiny gold handcuffs"));

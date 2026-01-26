@@ -14,9 +14,9 @@
     "windowHeight": 1057,
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7326596233348646,
-    "mapNotesSplitRatio": 0.6438502673796791,
+    "mapNotesSplitRatio": 0.6149732620320856,
     "chitchatTimerSplitRatio": 0.6807304785894207,
-    "outputSplitRatio": 0.2421972534332085,
+    "outputSplitRatio": 0.226457399103139,
     "timerColumnWidths": [
       132,
       183,
@@ -527,6 +527,10 @@
     {
       "name": "Money Changers/From/Genua/To Ankh-Morpork/Ankh Bridge Currency Exchange",
       "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Regions/Ankh-Morpork/Lanfear\u0027s House",
+      "roomId": "a5df4b73f004d57d7ceab81bab38c168736d0c96"
     }
   ],
   "triggers": [
@@ -595,6 +599,13 @@
       "foreground": "#FFFFFF",
       "bold": true,
       "systemBeep": false,
+      "sendToChitchat": false
+    },
+    {
+      "pattern": "^Mr Werks selects a bit of chalk from the chalk tray and then scribbles noisily on the job board.$",
+      "background": "#CC33FF",
+      "bold": true,
+      "systemBeep": true,
       "sendToChitchat": false
     }
   ],
@@ -826,14 +837,14 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769438983871,
+          "expirationTime": 1769456590642,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
         4,
-        3,
+        4,
         4,
         4
       ],
@@ -883,11 +894,6 @@
             "roomId": "30f530dcf0577d89df22f09a26aa48df3debd7b6"
           },
           {
-            "name": "Sto Lat",
-            "command": "tp stolat",
-            "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
-          },
-          {
             "name": "Doctor (Flintwick Building)",
             "command": "tp doctor",
             "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
@@ -911,7 +917,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769434400395,
+          "expirationTime": 1769451609868,
           "durationMs": 3600000
         }
       },
@@ -919,7 +925,7 @@
         4,
         4,
         4,
-        3,
+        4,
         4
       ],
       "hpRateSamples": [
@@ -971,16 +977,16 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769438033694,
+          "expirationTime": 1769452858032,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
         4,
-        2,
-        3,
-        2
+        4,
+        4,
+        4
       ],
       "hpRateSamples": [
         2,

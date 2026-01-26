@@ -148,7 +148,7 @@ public final class GrammarUtils {
                 }
             }
         }
-        if (!lower.endsWith("ss") && !lower.endsWith("is") && !lower.endsWith("os")) {
+        if (!lower.endsWith("ss") && (!lower.endsWith("is") || lower.endsWith("shis") || lower.endsWith("ais")) && !lower.endsWith("os")) {
             tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
         }
         return new ArrayList<>(candidates);

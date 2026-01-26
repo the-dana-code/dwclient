@@ -1953,6 +1953,67 @@
       }
     ]
   },
+  "be4e5249b8a046015f8fd069e7857f0c55d2c1d3": {
+    "name": "Modern Language and Music classroom",
+    "buttons": [
+      {
+        "name": "Spoken Agatean",
+        "command": "say learn spoken agatean please"
+      },
+      {
+        "name": "Written Agatean",
+        "command": "say learn written agatean please"
+      },
+      {
+        "name": "Spoken Brindisian",
+        "command": "say learn spoken brindisian please"
+      },
+      {
+        "name": "Written Brindisian",
+        "command": "say learn written brindisian please"
+      },
+      {
+        "name": "Spoken Uberwaldean",
+        "command": "say learn spoken uberwaldean please"
+      },
+      {
+        "name": "Written Uberwaldean",
+        "command": "say learn written uberwaldean please"
+      },
+      {
+        "name": "Spoken Klatchian",
+        "command": "say learn spoken klatchian please"
+      },
+      {
+        "name": "Written Klatchian",
+        "command": "say learn written klatchian please"
+      },
+      {
+        "name": "Spoken Ephebian",
+        "command": "say learn spoken ephebian please"
+      },
+      {
+        "name": "Written Ephebian",
+        "command": "say learn written ephebian please"
+      },
+      {
+        "name": "Spoken Djelian",
+        "command": "say learn spoken djelian please"
+      },
+      {
+        "name": "Written Djelian",
+        "command": "say learn written djelian please"
+      },
+      {
+        "name": "Spoken Morporkian",
+        "command": "say learn spoken morporkian please"
+      },
+      {
+        "name": "Written Morporkian",
+        "command": "say learn written morporkian please"
+      }
+    ]
+  },
   "be910f9961b0636114f01fe1daa6c28c1134b7d2": {
     "name": "Ecksian Souvenir shop",
     "buttons": [
@@ -2621,6 +2682,16 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "feb4e26f425e9fa4dd6405c3b2534e420125016f": {
+    "name": "Agatean-themed classroom",
+    "notes": "Morporkian speakers can learn Agatean here.",
+    "buttons": [
+      {
+        "name": "Language Lesson",
+        "command": "enroll"
       }
     ]
   }
