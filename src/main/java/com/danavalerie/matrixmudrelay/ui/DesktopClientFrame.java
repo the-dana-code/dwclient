@@ -1775,7 +1775,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         restartSpeedwalkButton.addActionListener(e -> {
             submitCommand("/restart");
-            clearTeleportQueued();
         });
         cancelTeleportButton.addActionListener(e -> clearTeleportQueued());
 
