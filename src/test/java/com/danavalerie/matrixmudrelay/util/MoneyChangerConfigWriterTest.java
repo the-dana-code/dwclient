@@ -70,7 +70,7 @@ class MoneyChangerConfigWriterTest {
         // Then update it with different room ID
         MoneyChangerConfigWriter.updateConfig(tempConfigPath, exchangeName, nativeCurrency, additionalCurrencies, roomId2);
 
-        ClientConfig config = ConfigLoader.load(tempConfigPath);
+        ClientConfig config = ConfigLoader.load(tempConfigPath).clientConfig();
         
         long count = config.bookmarks.stream()
                 .filter(b -> b.name.contains("Existing Exchange"))
@@ -89,7 +89,7 @@ class MoneyChangerConfigWriterTest {
 
         MoneyChangerConfigWriter.updateConfig(tempConfigPath, exchangeName, nativeCurrency, additionalCurrencies, roomId);
 
-        ClientConfig config = ConfigLoader.load(tempConfigPath);
+        ClientConfig config = ConfigLoader.load(tempConfigPath).clientConfig();
         
         // 2 additional currencies * 4 variants each = 8 new bookmarks
         // But we might have started with some bookmarks if we copied original config.

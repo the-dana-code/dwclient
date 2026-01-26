@@ -68,7 +68,7 @@ public class MoneyChangerConfigWriter {
     }
 
     public static void updateConfig(Path configPath, String exchangeName, String nativeCurrency, String[] additionalCurrencies, String roomId) throws Exception {
-        ClientConfig config = ConfigLoader.load(configPath);
+        ClientConfig config = ConfigLoader.load(configPath).clientConfig();
 
         for (String otherCurrencyRaw : additionalCurrencies) {
             String otherCurrency = otherCurrencyRaw.trim();

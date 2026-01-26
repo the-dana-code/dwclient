@@ -9,19 +9,7 @@
     "fontFamily": "Monospaced",
     "fontSize": 20,
     "mapZoomPercent": 100,
-    "invertMap": true,
-    "windowWidth": 2193,
-    "windowHeight": 1057,
-    "windowMaximized": false,
-    "mudMapSplitRatio": 0.7326596233348646,
-    "mapNotesSplitRatio": 0.6149732620320856,
-    "chitchatTimerSplitRatio": 0.6807304785894207,
-    "outputSplitRatio": 0.226457399103139,
-    "timerColumnWidths": [
-      132,
-      183,
-      182
-    ]
+    "invertMap": true
   },
   "bookmarks": [
     {
@@ -834,27 +822,7 @@
             "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
           }
         ]
-      },
-      "timers": {
-        "Foreign Goods": {
-          "expirationTime": 1769456590642,
-          "durationMs": 3600000
-        }
-      },
-      "gpRateSamples": [
-        4,
-        4,
-        4,
-        4,
-        4
-      ],
-      "hpRateSamples": [
-        4,
-        5,
-        4,
-        4,
-        4
-      ]
+      }
     },
     "Maemot": {
       "useTeleports": true,
@@ -914,27 +882,7 @@
             "roomId": "8996c145b1b02f540f510abc850d8d952ca26b33"
           }
         ]
-      },
-      "timers": {
-        "Foreign Goods": {
-          "expirationTime": 1769451609868,
-          "durationMs": 3600000
-        }
-      },
-      "gpRateSamples": [
-        4,
-        4,
-        4,
-        4,
-        4
-      ],
-      "hpRateSamples": [
-        4,
-        4,
-        4,
-        4,
-        4
-      ]
+      }
     },
     "Ngao": {
       "useTeleports": true,
@@ -974,27 +922,7 @@
             "roomId": "29cb3cf6e2e9f48894ddf19a5c3151b90163f2e5"
           }
         ]
-      },
-      "timers": {
-        "Foreign Goods": {
-          "expirationTime": 1769452858032,
-          "durationMs": 3600000
-        }
-      },
-      "gpRateSamples": [
-        4,
-        4,
-        4,
-        4,
-        4
-      ],
-      "hpRateSamples": [
-        2,
-        2,
-        1,
-        3,
-        3
-      ]
+      }
     },
     "Bpla": {
       "useTeleports": false,
@@ -1003,13 +931,6 @@
         "outdoorOnly": false,
         "speedwalkingPenalty": 8
       },
-      "gpRateSamples": [
-        -1,
-        -1,
-        -1,
-        3,
-        3
-      ],
       "uuLibrary": {
         "row": 1,
         "col": 5,

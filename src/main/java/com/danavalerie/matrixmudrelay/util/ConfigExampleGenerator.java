@@ -12,7 +12,7 @@ public class ConfigExampleGenerator {
     public static void main(String[] args) {
         try {
             System.out.println("Loading config.json...");
-            ClientConfig config = ConfigLoader.load(Paths.get("config.json"));
+            ClientConfig config = ConfigLoader.load(Paths.get("config.json")).clientConfig();
 
             System.out.println("Creating example config...");
             ClientConfig example = new ClientConfig();

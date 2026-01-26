@@ -56,9 +56,11 @@ public class DataCleanup {
             // 5. BotConfig (config.json)
             System.out.println("Cleaning Config and converting coordinates...");
             Path configPath = Paths.get("config.json");
-            ClientConfig config = ConfigLoader.load(configPath);
+            var bundle = ConfigLoader.load(configPath);
+            ClientConfig config = bundle.clientConfig();
             ConfigLoader.convertCoordinatesToRoomIds(config, roomMapService);
             ConfigLoader.save(configPath, config);
+            ConfigLoader.saveUi(configPath.resolveSibling("ui.json"), bundle.uiConfig());
 
             System.out.println("Waiting for background saves to complete...");
             BackgroundSaver.waitForIdle();

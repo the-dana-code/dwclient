@@ -77,7 +77,7 @@ class ConfigLoaderTest {
             """;
         Files.writeString(configPath, json);
 
-        ClientConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath).clientConfig();
         assertNotNull(cfg);
         assertEquals(1, cfg.bookmarks.size());
         assertEquals("drum_id", cfg.bookmarks.get(0).roomId);
@@ -125,7 +125,7 @@ class ConfigLoaderTest {
         // OR ConfigLoader should look for it relative to the configPath.
         // The requirement says: "if it doesn't exist, then make a copy of config-example.json as config.json automatically"
         
-        ClientConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath).clientConfig();
         
         assertTrue(Files.exists(configPath), "config.json should have been created");
         assertEquals("example.com", cfg.mud.host);
@@ -151,7 +151,7 @@ class ConfigLoaderTest {
             """;
         Files.writeString(configPath, json);
 
-        ClientConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath).clientConfig();
         assertNotNull(cfg);
         // Should be flattened to 2 bookmarks
         assertEquals(2, cfg.bookmarks.size());
@@ -173,7 +173,7 @@ class ConfigLoaderTest {
             """;
         Files.writeString(configPath, json);
 
-        ClientConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath).clientConfig();
         assertNotNull(cfg.triggers);
         assertFalse(cfg.triggers.isEmpty());
         // Check for one of the default triggers

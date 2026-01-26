@@ -2,6 +2,7 @@ package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
+import com.danavalerie.matrixmudrelay.config.UiConfig;
 
 import java.nio.file.Path;
 import java.util.Collections;
@@ -10,10 +11,12 @@ import java.util.Map;
 
 public class TimerService {
     private final ClientConfig config;
+    private final UiConfig uiConfig;
     private final Path configPath;
 
-    public TimerService(ClientConfig config, Path configPath) {
+    public TimerService(ClientConfig config, UiConfig uiConfig, Path configPath) {
         this.config = config;
+        this.uiConfig = uiConfig;
         this.configPath = configPath;
     }
 
@@ -22,25 +25,25 @@ public class TimerService {
             return;
         }
 
-        ClientConfig.CharacterConfig charConfig = config.characters.computeIfAbsent(characterName, k -> new ClientConfig.CharacterConfig());
+        UiConfig.CharacterUiData charConfig = uiConfig.characters.computeIfAbsent(characterName, k -> new UiConfig.CharacterUiData());
         if (charConfig.timers == null) {
             charConfig.timers = new LinkedHashMap<>();
         }
         long expiration = System.currentTimeMillis() + durationMs;
         charConfig.timers.put(timerName, new ClientConfig.TimerData(expiration, durationMs));
-        saveConfig();
+        saveUiConfig();
     }
 
     public synchronized void restartTimer(String characterName, String timerName) {
         if (characterName == null || characterName.isBlank() || timerName == null) {
             return;
         }
-        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        UiConfig.CharacterUiData charConfig = uiConfig.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null) {
             ClientConfig.TimerData data = charConfig.timers.get(timerName);
             if (data != null && data.durationMs > 0) {
                 data.expirationTime = System.currentTimeMillis() + data.durationMs;
-                saveConfig();
+                saveUiConfig();
             }
         }
     }
@@ -49,11 +52,11 @@ public class TimerService {
         if (characterName == null || characterName.isBlank() || oldDescription == null || newDescription == null) {
             return;
         }
-        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        UiConfig.CharacterUiData charConfig = uiConfig.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null && charConfig.timers.containsKey(oldDescription)) {
             ClientConfig.TimerData data = charConfig.timers.remove(oldDescription);
             charConfig.timers.put(newDescription, data);
-            saveConfig();
+            saveUiConfig();
         }
     }
 
@@ -61,20 +64,20 @@ public class TimerService {
         if (characterName == null || characterName.isBlank()) {
             return;
         }
-        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        UiConfig.CharacterUiData charConfig = uiConfig.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null) {
             charConfig.timers.remove(timerName);
-            saveConfig();
+            saveUiConfig();
         }
     }
 
     public synchronized void setTimerColumnWidths(java.util.List<Integer> widths) {
-        config.ui.timerColumnWidths = widths;
-        saveConfig();
+        uiConfig.timerColumnWidths = widths;
+        saveUiConfig();
     }
 
     public synchronized java.util.List<Integer> getTimerColumnWidths() {
-        return config.ui.timerColumnWidths;
+        return uiConfig.timerColumnWidths;
     }
 
     public synchronized Map<String, ClientConfig.TimerData> getTimers(String characterName) {
@@ -82,7 +85,7 @@ public class TimerService {
             return Collections.emptyMap();
         }
 
-        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        UiConfig.CharacterUiData charConfig = uiConfig.characters.get(characterName);
         if (charConfig == null || charConfig.timers == null) {
             return Collections.emptyMap();
         }
@@ -93,7 +96,7 @@ public class TimerService {
 
     public synchronized Map<String, Map<String, ClientConfig.TimerData>> getAllTimers() {
         Map<String, Map<String, ClientConfig.TimerData>> allTimers = new LinkedHashMap<>();
-        for (Map.Entry<String, ClientConfig.CharacterConfig> entry : config.characters.entrySet()) {
+        for (Map.Entry<String, UiConfig.CharacterUiData> entry : uiConfig.characters.entrySet()) {
             if (entry.getValue().timers != null && !entry.getValue().timers.isEmpty()) {
                 allTimers.put(entry.getKey(), new LinkedHashMap<>(entry.getValue().timers));
             }
@@ -101,8 +104,8 @@ public class TimerService {
         return allTimers;
     }
 
-    private void saveConfig() {
-        ConfigLoader.save(configPath, config);
+    private void saveUiConfig() {
+        ConfigLoader.saveUi(configPath.resolveSibling("ui.json"), uiConfig);
     }
 
     public String formatRemainingTime(long remainingMs) {

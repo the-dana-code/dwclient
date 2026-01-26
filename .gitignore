@@ -39,4 +39,5 @@ build/
 .DS_Store
 /sun.log
 /menus.json
+/ui.json
 /notes/

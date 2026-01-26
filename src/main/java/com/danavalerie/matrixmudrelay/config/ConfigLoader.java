@@ -23,6 +23,9 @@ import com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap;
 import com.danavalerie.matrixmudrelay.util.GsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.InstanceCreator;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -42,7 +45,8 @@ public final class ConfigLoader {
 
     private ConfigLoader() {}
 
-    public static ClientConfig load(Path path) throws IOException {
+    public static ConfigBundle load(Path path) throws IOException {
+        Path uiPath = path.resolveSibling("ui.json");
         if (!Files.exists(path)) {
             Path examplePath = path.resolveSibling("config-example.json");
             if (Files.exists(examplePath)) {
@@ -50,9 +54,18 @@ public final class ConfigLoader {
             }
         }
         String json = Files.readString(path);
-        ClientConfig cfg = GSON.fromJson(json, ClientConfig.class);
+        JsonObject configObj = JsonParser.parseString(json).getAsJsonObject();
+        ClientConfig cfg = GSON.fromJson(configObj, ClientConfig.class);
 
-        boolean migrated = false;
+        UiConfig uiCfg;
+        if (Files.exists(uiPath)) {
+            uiCfg = GSON.fromJson(Files.readString(uiPath), UiConfig.class);
+        } else {
+            uiCfg = new UiConfig();
+        }
+
+        boolean migrated = migrateToUiConfig(configObj, uiCfg);
+
         if (cfg.teleports != null && !cfg.teleports.isEmpty()) {
             for (Map.Entry<String, ClientConfig.CharacterTeleports> entry : cfg.teleports.entrySet()) {
                 ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(entry.getKey(), k -> new ClientConfig.CharacterConfig());
@@ -79,9 +92,55 @@ public final class ConfigLoader {
 
         if (migrated) {
             save(path, cfg);
+            saveUi(uiPath, uiCfg);
         }
 
-        return cfg;
+        return new ConfigBundle(cfg, uiCfg);
+    }
+
+    private static boolean migrateToUiConfig(JsonObject configObj, UiConfig uiCfg) {
+        boolean migrated = false;
+        if (configObj.has("ui")) {
+            JsonObject uiObj = configObj.getAsJsonObject("ui");
+            if (uiObj.has("windowWidth")) { uiCfg.windowWidth = uiObj.get("windowWidth").getAsInt(); migrated = true; }
+            if (uiObj.has("windowHeight")) { uiCfg.windowHeight = uiObj.get("windowHeight").getAsInt(); migrated = true; }
+            if (uiObj.has("windowMaximized")) { uiCfg.windowMaximized = uiObj.get("windowMaximized").getAsBoolean(); migrated = true; }
+            if (uiObj.has("mudMapSplitRatio")) { uiCfg.mudMapSplitRatio = uiObj.get("mudMapSplitRatio").getAsDouble(); migrated = true; }
+            if (uiObj.has("mapNotesSplitRatio")) { uiCfg.mapNotesSplitRatio = uiObj.get("mapNotesSplitRatio").getAsDouble(); migrated = true; }
+            if (uiObj.has("chitchatTimerSplitRatio")) { uiCfg.chitchatTimerSplitRatio = uiObj.get("chitchatTimerSplitRatio").getAsDouble(); migrated = true; }
+            if (uiObj.has("outputSplitRatio")) { uiCfg.outputSplitRatio = uiObj.get("outputSplitRatio").getAsDouble(); migrated = true; }
+            if (uiObj.has("timerColumnWidths")) {
+                uiCfg.timerColumnWidths = GSON.fromJson(uiObj.get("timerColumnWidths"), new TypeToken<List<Integer>>(){}.getType());
+                migrated = true;
+            }
+        }
+
+        if (configObj.has("characters")) {
+            JsonObject charactersObj = configObj.getAsJsonObject("characters");
+            for (Map.Entry<String, JsonElement> entry : charactersObj.entrySet()) {
+                String charName = entry.getKey();
+                if (!entry.getValue().isJsonObject()) continue;
+                JsonObject charObj = entry.getValue().getAsJsonObject();
+                UiConfig.CharacterUiData charUiData = null;
+
+                if (charObj.has("timers")) {
+                    if (charUiData == null) charUiData = uiCfg.characters.computeIfAbsent(charName, k -> new UiConfig.CharacterUiData());
+                    charUiData.timers = GSON.fromJson(charObj.get("timers"), new TypeToken<Map<String, ClientConfig.TimerData>>(){}.getType());
+                    migrated = true;
+                }
+                if (charObj.has("gpRateSamples")) {
+                    if (charUiData == null) charUiData = uiCfg.characters.computeIfAbsent(charName, k -> new UiConfig.CharacterUiData());
+                    charUiData.gpRateSamples = GSON.fromJson(charObj.get("gpRateSamples"), new TypeToken<List<Integer>>(){}.getType());
+                    migrated = true;
+                }
+                if (charObj.has("hpRateSamples")) {
+                    if (charUiData == null) charUiData = uiCfg.characters.computeIfAbsent(charName, k -> new UiConfig.CharacterUiData());
+                    charUiData.hpRateSamples = GSON.fromJson(charObj.get("hpRateSamples"), new TypeToken<List<Integer>>(){}.getType());
+                    migrated = true;
+                }
+            }
+        }
+        return migrated;
     }
 
     public static DeliveryRouteMappings loadRoutes(Path path) throws IOException {
@@ -101,6 +160,11 @@ public final class ConfigLoader {
 
     public static java.util.concurrent.Future<?> save(Path path, ClientConfig cfg) {
         String json = GSON.toJson(cfg);
+        return BackgroundSaver.save(path, json);
+    }
+
+    public static java.util.concurrent.Future<?> saveUi(Path path, UiConfig uiCfg) {
+        String json = GSON.toJson(uiCfg);
         return BackgroundSaver.save(path, json);
     }
 

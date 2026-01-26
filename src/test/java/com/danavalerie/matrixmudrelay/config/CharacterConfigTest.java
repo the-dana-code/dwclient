@@ -37,7 +37,7 @@ class CharacterConfigTest {
 
     @Test
     void testJsonDeserialization() throws Exception {
-        String json = "{\"characters\": {\"Lesa\": {\"gpRateSamples\": [1, 2, 3]}}}";
+        String json = "{\"characters\": {\"Lesa\": {\"useTeleports\": true}}}";
         com.google.gson.Gson gson = new com.google.gson.GsonBuilder()
                 .registerTypeAdapter(new com.google.gson.reflect.TypeToken<java.util.Map<String, ClientConfig.CharacterConfig>>() {}.getType(),
                         (com.google.gson.InstanceCreator<java.util.Map<String, ClientConfig.CharacterConfig>>) type -> new com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap<>())
@@ -49,7 +49,7 @@ class CharacterConfigTest {
         
         // Test case-insensitive access on deserialized map
         assertNotNull(cfg.characters.get("lesa"));
-        assertEquals(3, cfg.characters.get("LESA").gpRateSamples.size());
+        assertTrue(cfg.characters.get("LESA").useTeleports);
         
         // Test case preservation
         assertEquals("Lesa", cfg.characters.keySet().iterator().next());

@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
+import com.danavalerie.matrixmudrelay.config.UiConfig;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TimerServiceTest {
     private ClientConfig config;
+    private UiConfig uiConfig;
     private TimerService timerService;
     private Path configPath;
 
@@ -21,8 +23,9 @@ class TimerServiceTest {
     void setUp(@TempDir Path tempDir) {
         BackgroundSaver.resetForTests();
         config = new ClientConfig();
+        uiConfig = new UiConfig();
         configPath = tempDir.resolve("config.json");
-        timerService = new TimerService(config, configPath);
+        timerService = new TimerService(config, uiConfig, configPath);
     }
     
     @AfterEach
@@ -59,7 +62,7 @@ class TimerServiceTest {
     @Test
     void testUpdateTimerDescription() {
         timerService.setTimer("Char1", "OldDesc", 1000);
-        ClientConfig.TimerData data = config.characters.get("Char1").timers.get("OldDesc");
+        ClientConfig.TimerData data = uiConfig.characters.get("Char1").timers.get("OldDesc");
         long expiration = data.expirationTime;
 
         timerService.updateTimerDescription("Char1", "OldDesc", "NewDesc");
@@ -73,7 +76,7 @@ class TimerServiceTest {
     @Test
     void testRestartTimer() {
         timerService.setTimer("Char1", "Timer1", 10000);
-        ClientConfig.TimerData data = config.characters.get("Char1").timers.get("Timer1");
+        ClientConfig.TimerData data = uiConfig.characters.get("Char1").timers.get("Timer1");
         long originalExpiration = data.expirationTime;
 
         // Manually age the timer

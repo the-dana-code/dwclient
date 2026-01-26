@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
+import com.danavalerie.matrixmudrelay.config.UiConfig;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
@@ -111,7 +112,7 @@ class MudCommandShortcutTest {
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, new UiConfig(), Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
@@ -129,7 +130,7 @@ class MudCommandShortcutTest {
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, new UiConfig(), Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
@@ -146,7 +147,7 @@ class MudCommandShortcutTest {
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, new UiConfig(), Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
         MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);

@@ -21,6 +21,7 @@ package com.danavalerie.matrixmudrelay.ui;
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
+import com.danavalerie.matrixmudrelay.config.UiConfig;
 import com.danavalerie.matrixmudrelay.core.MenuPersistenceService;
 import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.WritMenuAction;
@@ -129,6 +130,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private String currentRoomName;
     private final TimerService timerService;
     private final ClientConfig cfg;
+    private final UiConfig uiCfg;
     private final Path configPath;
     private final Path routesPath;
     private final RoomMapService routeMapService;
@@ -178,9 +180,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JButton cancelTeleportButton;
 
 
-    public DesktopClientFrame(ClientConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
+    public DesktopClientFrame(ClientConfig cfg, UiConfig uiCfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
         super("Lesa's Discworld MUD Client");
         this.cfg = cfg;
+        this.uiCfg = uiCfg;
         this.routeMapService = routeMapService;
         com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
         this.configPath = configPath;
@@ -211,7 +214,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         writTracker = new WritTracker();
         storeInventoryTracker = new StoreInventoryTracker();
-        timerService = new TimerService(cfg, configPath);
+        timerService = new TimerService(cfg, uiCfg, configPath);
         menuPersistenceService = new MenuPersistenceService(configPath.resolveSibling("menus.json"));
 
         MenuPersistenceService.SavedMenus saved = menuPersistenceService.load();
@@ -260,22 +263,22 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
         });
         statsPanel.setCharacterGpSamplesLoader(name -> {
-            ClientConfig.CharacterConfig c = cfg.characters.get(name);
+            UiConfig.CharacterUiData c = uiCfg.characters.get(name);
             return c != null ? c.gpRateSamples : null;
         });
         statsPanel.setCharacterHpSamplesLoader(name -> {
-            ClientConfig.CharacterConfig c = cfg.characters.get(name);
+            UiConfig.CharacterUiData c = uiCfg.characters.get(name);
             return c != null ? c.hpRateSamples : null;
         });
         statsPanel.setOnGpSamplesChanged((name, samples) -> {
-            ClientConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new ClientConfig.CharacterConfig());
+            UiConfig.CharacterUiData c = uiCfg.characters.computeIfAbsent(name, k -> new UiConfig.CharacterUiData());
             c.gpRateSamples = new ArrayList<>(samples);
-            saveConfig();
+            saveUiConfig();
         });
         statsPanel.setOnHpSamplesChanged((name, samples) -> {
-            ClientConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new ClientConfig.CharacterConfig());
+            UiConfig.CharacterUiData c = uiCfg.characters.computeIfAbsent(name, k -> new UiConfig.CharacterUiData());
             c.hpRateSamples = new ArrayList<>(samples);
-            saveConfig();
+            saveUiConfig();
         });
         if (cfg.characters != null) {
             statsPanel.setConfigCharacters(new ArrayList<>(cfg.characters.keySet()));
@@ -314,12 +317,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void applyWindowConfiguration() {
-        Integer width = cfg.ui.windowWidth;
-        Integer height = cfg.ui.windowHeight;
+        Integer width = uiCfg.windowWidth;
+        Integer height = uiCfg.windowHeight;
         if (width != null && height != null && width > 0 && height > 0) {
             setSize(new Dimension(width, height));
         }
-        if (Boolean.TRUE.equals(cfg.ui.windowMaximized)) {
+        if (Boolean.TRUE.equals(uiCfg.windowMaximized)) {
             setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         }
     }
@@ -355,20 +358,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (size == null || size.width <= 0 || size.height <= 0) {
             return;
         }
-        if (Objects.equals(cfg.ui.windowWidth, size.width) && Objects.equals(cfg.ui.windowHeight, size.height)) {
+        if (Objects.equals(uiCfg.windowWidth, size.width) && Objects.equals(uiCfg.windowHeight, size.height)) {
             return;
         }
-        cfg.ui.windowWidth = size.width;
-        cfg.ui.windowHeight = size.height;
-        saveConfig();
+        uiCfg.windowWidth = size.width;
+        uiCfg.windowHeight = size.height;
+        saveUiConfig();
     }
 
     private void persistWindowMaximized(boolean maximized) {
-        if (Objects.equals(cfg.ui.windowMaximized, maximized)) {
+        if (Objects.equals(uiCfg.windowMaximized, maximized)) {
             return;
         }
-        cfg.ui.windowMaximized = maximized;
-        saveConfig();
+        uiCfg.windowMaximized = maximized;
+        saveUiConfig();
     }
 
     private JMenuBar buildMenuBar() {
@@ -840,7 +843,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
 
     private double resolveMudMapSplitRatio() {
-        Double ratio = cfg.ui.mudMapSplitRatio;
+        Double ratio = uiCfg.mudMapSplitRatio;
         if (ratio == null || ratio <= 0 || ratio >= 1) {
             return 0.75;
         }
@@ -851,12 +854,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
             return;
         }
-        cfg.ui.mudMapSplitRatio = ratio;
-        saveConfig();
+        uiCfg.mudMapSplitRatio = ratio;
+        saveUiConfig();
     }
 
     private double resolveMapNotesSplitRatio() {
-        Double ratio = cfg.ui.mapNotesSplitRatio;
+        Double ratio = uiCfg.mapNotesSplitRatio;
         if (ratio == null || ratio <= 0 || ratio >= 1) {
             return 0.7;
         }
@@ -867,12 +870,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
             return;
         }
-        cfg.ui.mapNotesSplitRatio = ratio;
-        saveConfig();
+        uiCfg.mapNotesSplitRatio = ratio;
+        saveUiConfig();
     }
 
     private double resolveChitchatTimerSplitRatio() {
-        Double ratio = cfg.ui.chitchatTimerSplitRatio;
+        Double ratio = uiCfg.chitchatTimerSplitRatio;
         if (ratio == null || ratio <= 0 || ratio >= 1) {
             return 0.7;
         }
@@ -883,12 +886,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
             return;
         }
-        cfg.ui.chitchatTimerSplitRatio = ratio;
-        saveConfig();
+        uiCfg.chitchatTimerSplitRatio = ratio;
+        saveUiConfig();
     }
 
     private double resolveOutputSplitRatio() {
-        Double ratio = cfg.ui.outputSplitRatio;
+        Double ratio = uiCfg.outputSplitRatio;
         if (ratio == null || ratio <= 0 || ratio >= 1) {
             return 0.2;
         }
@@ -899,12 +902,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (Double.isNaN(ratio) || ratio <= 0 || ratio >= 1) {
             return;
         }
-        cfg.ui.outputSplitRatio = ratio;
-        saveConfig();
+        uiCfg.outputSplitRatio = ratio;
+        saveUiConfig();
     }
 
     private void saveConfig() {
         ConfigLoader.save(configPath, cfg);
+    }
+
+    private void saveUiConfig() {
+        ConfigLoader.saveUi(configPath.resolveSibling("ui.json"), uiCfg);
     }
 
     private void saveMenus() {
@@ -2383,14 +2390,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         com.danavalerie.matrixmudrelay.util.SoundUtils.playUULibraryAlertSound();
     }
 
-    public static void launch(ClientConfig cfg, Path configPath, DeliveryRouteMappings routes, RoomMapService routeMapService) {
+    public static void launch(ClientConfig cfg, UiConfig uiCfg, Path configPath, DeliveryRouteMappings routes, RoomMapService routeMapService) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             System.err.println("Unable to set cross-platform look and feel: " + e.getMessage());
         }
         SwingUtilities.invokeLater(() -> {
-            DesktopClientFrame frame = new DesktopClientFrame(cfg, configPath, routes, routeMapService);
+            DesktopClientFrame frame = new DesktopClientFrame(cfg, uiCfg, configPath, routes, routeMapService);
             frame.setVisible(true);
         });
     }

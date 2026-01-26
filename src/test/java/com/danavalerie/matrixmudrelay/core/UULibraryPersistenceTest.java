@@ -103,7 +103,7 @@ class UULibraryPersistenceTest {
         // Verify config file also reflects the removal
         try {
             BackgroundSaver.waitForIdle();
-            ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
+            ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath).clientConfig();
             assertNull(loaded.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
         } catch (Exception e) {
             fail("Failed to load config: " + e.getMessage());
@@ -168,7 +168,7 @@ class UULibraryPersistenceTest {
         assertNull(cfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
 
         BackgroundSaver.waitForIdle();
-        ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
+        ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath).clientConfig();
         assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }
 

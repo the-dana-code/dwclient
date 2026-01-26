@@ -50,14 +50,6 @@ public final class ClientConfig {
         public Integer fontSize;
         public Integer mapZoomPercent;
         public Boolean invertMap;
-        public Integer windowWidth;
-        public Integer windowHeight;
-        public Boolean windowMaximized;
-        public Double mudMapSplitRatio;
-        public Double mapNotesSplitRatio;
-        public Double chitchatTimerSplitRatio;
-        public Double outputSplitRatio;
-        public List<Integer> timerColumnWidths;
     }
 
     public static final class Bookmark {
@@ -78,9 +70,6 @@ public final class ClientConfig {
     public static final class CharacterConfig {
         public Boolean useTeleports;
         public CharacterTeleports teleports = new CharacterTeleports();
-        public Map<String, TimerData> timers = new LinkedHashMap<>();
-        public List<Integer> gpRateSamples = new ArrayList<>();
-        public List<Integer> hpRateSamples = new ArrayList<>();
         public UULibraryState uuLibrary;
     }
 
