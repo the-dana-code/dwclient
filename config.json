@@ -10,17 +10,17 @@
     "fontSize": 20,
     "mapZoomPercent": 100,
     "invertMap": true,
-    "windowWidth": 1697,
+    "windowWidth": 2193,
     "windowHeight": 1057,
     "windowMaximized": false,
-    "mudMapSplitRatio": 0.7481927710843373,
+    "mudMapSplitRatio": 0.7545955882352942,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.6778577138289369,
-    "outputSplitRatio": 0.19282511210762332,
+    "chitchatTimerSplitRatio": 0.677893447642376,
+    "outputSplitRatio": 0.1905829596412556,
     "timerColumnWidths": [
-      96,
-      149,
-      148
+      138,
+      190,
+      189
     ]
   },
   "bookmarks": [
@@ -565,7 +565,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769418446795,
+          "expirationTime": 1769426405433,
           "durationMs": 3600000
         }
       },
@@ -655,8 +655,8 @@
         }
       },
       "gpRateSamples": [
-        4,
         3,
+        4,
         4,
         4,
         4
@@ -715,9 +715,9 @@
         }
       },
       "gpRateSamples": [
-        1,
         2,
         5,
+        4,
         4,
         4
       ],
