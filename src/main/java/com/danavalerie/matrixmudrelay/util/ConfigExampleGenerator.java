@@ -31,6 +31,9 @@ public class ConfigExampleGenerator {
             // Bookmarks
             example.bookmarks.addAll(config.bookmarks);
 
+            // Triggers
+            example.triggers.addAll(config.triggers);
+
             System.out.println("Saving to config-example.json...");
             ConfigLoader.save(Paths.get("config-example.json"), example);
 

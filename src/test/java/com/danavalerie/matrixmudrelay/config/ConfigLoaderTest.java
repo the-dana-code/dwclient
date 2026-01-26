@@ -162,5 +162,22 @@ class ConfigLoaderTest {
         assertEquals("weatherwax_id", cfg.bookmarks.get(1).roomId);
         assertNull(cfg.bookmarks.get(1).bookmarks);
     }
+
+    @Test
+    void loadConfigMigratesTriggers(@TempDir Path tempDir) throws Exception {
+        Path configPath = tempDir.resolve("config.json");
+        String json = """
+            {
+              "mud": { "host": "localhost", "port": 4242 }
+            }
+            """;
+        Files.writeString(configPath, json);
+
+        ClientConfig cfg = ConfigLoader.load(configPath);
+        assertNotNull(cfg.triggers);
+        assertFalse(cfg.triggers.isEmpty());
+        // Check for one of the default triggers
+        assertTrue(cfg.triggers.stream().anyMatch(t -> t.pattern.contains("Whoops!")));
+    }
 }
 

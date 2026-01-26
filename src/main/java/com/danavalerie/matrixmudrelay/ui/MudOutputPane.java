@@ -18,9 +18,13 @@
 
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
@@ -31,6 +35,8 @@ import javax.swing.text.StyleContext;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -45,80 +51,8 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
     private static final Color ALERT_BACKGROUND = new Color(255, 255, 255);
     private static final Color TELL_COLOR = new Color(255, 235, 80);
     private static final Color TALKER_COLOR = new Color(180, 120, 255);
-    private static final List<AlertPattern> ALERT_PATTERNS = List.of(
-            new AlertPattern(
-                    Pattern.compile("^Whoops!  You tried to carry too many things and fumbled .*$"),
-                    Color.WHITE,
-                    Color.RED,
-                    true,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    false
-            ),
-            new AlertPattern(
-                    Pattern.compile("^When you open the .* you think you can hear a faint rumbling sound from it\\.$"),
-                    Color.WHITE,
-                    Color.RED,
-                    true,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    false
-            ),
-            new AlertPattern(
-                    Pattern.compile("^Your divine protection is weakening\\.$"),
-                    ALERT_FOREGROUND,
-                    ALERT_BACKGROUND,
-                    false,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    false
-            ),
-            new AlertPattern(
-                    Pattern.compile("^Your divine protection expires\\.$"),
-                    ALERT_FOREGROUND,
-                    ALERT_BACKGROUND,
-                    false,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    false
-            ),
-            new AlertPattern(
-                    Pattern.compile("^\\([^)]*\\) .*"),
-                    TALKER_COLOR,
-                    null,
-                    false,
-                    null,
-                    true
-            ),
-            new AlertPattern(
-                    Pattern.compile("^.+ asks you: .*$"),
-                    TELL_COLOR,
-                    null,
-                    false,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    true
-            ),
-            new AlertPattern(
-                    Pattern.compile("^.+ tells you: .*$"),
-                    TELL_COLOR,
-                    null,
-                    false,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    true
-            ),
-            new AlertPattern(
-                    Pattern.compile("^You .* tell .+: .*$"),
-                    TELL_COLOR,
-                    null,
-                    false,
-                    () -> Toolkit.getDefaultToolkit().beep(),
-                    true
-            ),
-            new AlertPattern(
-                    Pattern.compile("^You have been awarded .*"),
-                    Color.WHITE,
-                    null,
-                    true,
-                    null,
-                    false
-            )
-    );
+
+    private List<AlertPattern> alertPatterns = new ArrayList<>();
     private final AnsiColorParser parser = new AnsiColorParser();
     private AttributeSet systemAttributes;
     private AttributeSet commandAttributes;
@@ -333,11 +267,47 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
         return alert;
     }
 
-    private static AlertPattern matchAlert(String line) {
+    public void setTriggers(List<ClientConfig.Trigger> triggers) {
+        List<AlertPattern> patterns = new ArrayList<>();
+        for (ClientConfig.Trigger t : triggers) {
+            try {
+                Pattern p = Pattern.compile(t.pattern);
+                Color fg = (t.foreground != null && !t.foreground.isBlank()) ? Color.decode(t.foreground) : null;
+                Color bg = (t.background != null && !t.background.isBlank()) ? Color.decode(t.background) : null;
+                Runnable sound = null;
+                if (t.systemBeep) {
+                    sound = () -> Toolkit.getDefaultToolkit().beep();
+                } else if (t.soundFile != null && !t.soundFile.isBlank()) {
+                    File file = new File(t.soundFile);
+                    sound = () -> playSound(file);
+                }
+                patterns.add(new AlertPattern(p, fg, bg, t.bold, sound, t.sendToChitchat));
+            } catch (Exception e) {
+                System.err.println("Error parsing trigger: " + t.pattern + " - " + e.getMessage());
+            }
+        }
+        this.alertPatterns = patterns;
+    }
+
+    private void playSound(File file) {
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+        } catch (Exception e) {
+            System.err.println("Error playing sound: " + e.getMessage());
+        }
+    }
+
+    private AlertPattern matchAlert(String line) {
         if (line.isEmpty()) {
             return null;
         }
-        for (AlertPattern alertPattern : ALERT_PATTERNS) {
+        for (AlertPattern alertPattern : alertPatterns) {
             if (alertPattern.pattern().matcher(line).matches()) {
                 return alertPattern;
             }

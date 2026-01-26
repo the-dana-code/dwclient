@@ -29,6 +29,7 @@ public final class ClientConfig {
 
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();
+    public List<Trigger> triggers = new ArrayList<>();
 
     public Map<String, CharacterConfig> characters = new CaseInsensitiveLinkedHashMap<>();
 
@@ -131,5 +132,15 @@ public final class ClientConfig {
             this.command = command;
             this.roomId = roomId;
         }
+    }
+
+    public static final class Trigger {
+        public String pattern;
+        public String foreground;
+        public String background;
+        public boolean bold;
+        public String soundFile;
+        public boolean systemBeep;
+        public boolean sendToChitchat;
     }
 }

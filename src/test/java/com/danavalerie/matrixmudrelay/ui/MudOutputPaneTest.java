@@ -18,7 +18,10 @@
 
 package com.danavalerie.matrixmudrelay.ui;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.danavalerie.matrixmudrelay.config.ConfigLoader;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -30,10 +33,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MudOutputPaneTest {
+    private java.util.List<ClientConfig.Trigger> defaultTriggers;
+
+    @BeforeEach
+    public void setUp() {
+        defaultTriggers = ConfigLoader.createDefaultTriggers();
+    }
+
+    private MudOutputPane createPane() {
+        MudOutputPane pane = new MudOutputPane();
+        pane.setTriggers(defaultTriggers);
+        return pane;
+    }
 
     @Test
     public void testAwardedExperienceColoring() throws BadLocationException {
-        MudOutputPane pane = new MudOutputPane();
+        MudOutputPane pane = createPane();
         StyledDocument doc = (StyledDocument) pane.getDocument();
         
         String awardedLine = "You have been awarded 123164 experience points for completing this job.\n";
@@ -58,7 +73,7 @@ public class MudOutputPaneTest {
 
     @Test
     public void testFumbleAlertColoring() throws BadLocationException {
-        MudOutputPane pane = new MudOutputPane();
+        MudOutputPane pane = createPane();
         StyledDocument doc = (StyledDocument) pane.getDocument();
 
         String fumbleLine = "Whoops!  You tried to carry too many things and fumbled a heavy iron key.\n";
@@ -83,7 +98,7 @@ public class MudOutputPaneTest {
 
     @Test
     public void testRumblingAlert() throws BadLocationException {
-        MudOutputPane pane = new MudOutputPane();
+        MudOutputPane pane = createPane();
         java.util.List<String> chitchatMessages = new java.util.ArrayList<>();
         pane.setChitchatListener((text, color) -> chitchatMessages.add(text));
 
@@ -113,7 +128,7 @@ public class MudOutputPaneTest {
 
     @Test
     public void testRumblingAlertWildcard() throws BadLocationException {
-        MudOutputPane pane = new MudOutputPane();
+        MudOutputPane pane = createPane();
         StyledDocument doc = (StyledDocument) pane.getDocument();
 
         String rumblingLine = "When you open the burning piece of fur you think you can hear a faint rumbling sound from it.\n";
@@ -136,7 +151,7 @@ public class MudOutputPaneTest {
 
     @Test
     public void testWhoopsNoLongerSentToChitchat() throws BadLocationException {
-        MudOutputPane pane = new MudOutputPane();
+        MudOutputPane pane = createPane();
         java.util.List<String> chitchatMessages = new java.util.ArrayList<>();
         pane.setChitchatListener((text, color) -> chitchatMessages.add(text));
 

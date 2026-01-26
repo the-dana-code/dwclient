@@ -236,6 +236,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         );
         this.timerPanel = new TimerPanel(timerService, () -> mud.getCurrentRoomSnapshot().characterName());
         outputPane.setChitchatListener((text, color) -> chitchatPane.appendChitchatLine(text, color));
+        outputPane.setTriggers(cfg.triggers);
         commandProcessor = new MudCommandProcessor(cfg, configPath, mud, routeMapService, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
         outputPane.setLineListener(line -> commandProcessor.onFullLineReceived(line));
         mapPanel.setSpeedwalkHandler(
@@ -426,6 +427,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         fontItem.addActionListener(event -> showFontDialog());
         mainMenu.add(fontItem);
+
+        KeepOpenMenuItem triggersItem = new KeepOpenMenuItem("Triggers...", false);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(triggersItem, currentBg, currentFg);
+        }
+        triggersItem.addActionListener(event -> showTriggerDialog());
+        mainMenu.add(triggersItem);
+
         mainMenu.addSeparator();
 
         KeepOpenCheckBoxMenuItem invertItem = new KeepOpenCheckBoxMenuItem("Invert Map", resolveMapInvert());
@@ -639,6 +648,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
+
+    private void showTriggerDialog() {
+        TriggerConfigDialog dialog = new TriggerConfigDialog(this, cfg.triggers);
+        if (currentBg != null && currentFg != null) {
+            updateComponentTree(dialog.getContentPane(), currentBg, currentFg);
+        }
+        dialog.setVisible(true);
+        if (dialog.isSaved()) {
+            cfg.triggers = dialog.getTriggers();
+            outputPane.setTriggers(cfg.triggers);
+            saveConfig();
+        }
+    }
 
     private void showFontDialog() {
         Font current = outputPane.getFont();

@@ -70,6 +70,11 @@ public final class ConfigLoader {
             }
         }
 
+        if (cfg.triggers == null || cfg.triggers.isEmpty()) {
+            cfg.triggers = createDefaultTriggers();
+            migrated = true;
+        }
+
         validate(cfg);
 
         if (migrated) {
@@ -184,6 +189,32 @@ public final class ConfigLoader {
             return routes;
         }
         return changed ? new DeliveryRouteMappings(newEntries) : routes;
+    }
+
+    public static List<ClientConfig.Trigger> createDefaultTriggers() {
+        List<ClientConfig.Trigger> triggers = new ArrayList<>();
+        triggers.add(createTrigger("^Whoops!  You tried to carry too many things and fumbled .*$", "#FFFFFF", "#FF0000", true, null, true, false));
+        triggers.add(createTrigger("^When you open the .* you think you can hear a faint rumbling sound from it\\.$", "#FFFFFF", "#FF0000", true, null, true, false));
+        triggers.add(createTrigger("^Your divine protection is weakening\\.$", "#000000", "#FFFFFF", false, null, true, false));
+        triggers.add(createTrigger("^Your divine protection expires\\.$", "#000000", "#FFFFFF", false, null, true, false));
+        triggers.add(createTrigger("^\\([^)]*\\) .*", "#B478FF", null, false, null, false, true));
+        triggers.add(createTrigger("^.+ asks you: .*$", "#FFEB50", null, false, null, true, true));
+        triggers.add(createTrigger("^.+ tells you: .*$", "#FFEB50", null, false, null, true, true));
+        triggers.add(createTrigger("^You .* tell .+: .*$", "#FFEB50", null, false, null, true, true));
+        triggers.add(createTrigger("^You have been awarded .*$", "#FFFFFF", null, true, null, false, false));
+        return triggers;
+    }
+
+    private static ClientConfig.Trigger createTrigger(String pattern, String fg, String bg, boolean bold, String soundFile, boolean beep, boolean chitchat) {
+        ClientConfig.Trigger t = new ClientConfig.Trigger();
+        t.pattern = pattern;
+        t.foreground = fg;
+        t.background = bg;
+        t.bold = bold;
+        t.soundFile = soundFile;
+        t.systemBeep = beep;
+        t.sendToChitchat = chitchat;
+        return t;
     }
 
     private static void validate(ClientConfig cfg) {

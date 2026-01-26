@@ -15,12 +15,12 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7326596233348646,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.6830808080808081,
-    "outputSplitRatio": 0.1797752808988764,
+    "chitchatTimerSplitRatio": 0.6826196473551638,
+    "outputSplitRatio": 0.24719101123595505,
     "timerColumnWidths": [
-      128,
-      176,
-      175
+      132,
+      181,
+      181
     ]
   },
   "bookmarks": [
@@ -433,6 +433,75 @@
       "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
     }
   ],
+  "triggers": [
+    {
+      "pattern": "^Whoops!  You tried to carry too many things and fumbled .*$",
+      "foreground": "#FFFFFF",
+      "background": "#FF0000",
+      "bold": true,
+      "systemBeep": true,
+      "sendToChitchat": false
+    },
+    {
+      "pattern": "^When you open the .* you think you can hear a faint rumbling sound from it\\.$",
+      "foreground": "#FFFFFF",
+      "background": "#FF0000",
+      "bold": true,
+      "systemBeep": true,
+      "sendToChitchat": false
+    },
+    {
+      "pattern": "^Your divine protection is weakening\\.$",
+      "foreground": "#000000",
+      "background": "#FFFFFF",
+      "bold": false,
+      "systemBeep": true,
+      "sendToChitchat": false
+    },
+    {
+      "pattern": "^Your divine protection expires\\.$",
+      "foreground": "#000000",
+      "background": "#FFFFFF",
+      "bold": false,
+      "systemBeep": true,
+      "sendToChitchat": false
+    },
+    {
+      "pattern": "^\\([^)]*\\) .*",
+      "foreground": "#B478FF",
+      "bold": false,
+      "systemBeep": false,
+      "sendToChitchat": true
+    },
+    {
+      "pattern": "^.+ asks you: .*$",
+      "foreground": "#FFEB50",
+      "bold": false,
+      "systemBeep": true,
+      "sendToChitchat": true
+    },
+    {
+      "pattern": "^.+ tells you: .*$",
+      "foreground": "#FFEB50",
+      "bold": false,
+      "systemBeep": true,
+      "sendToChitchat": true
+    },
+    {
+      "pattern": "^You .* tell .+: .*$",
+      "foreground": "#FFEB50",
+      "bold": false,
+      "systemBeep": true,
+      "sendToChitchat": true
+    },
+    {
+      "pattern": "^You have been awarded .*$",
+      "foreground": "#FFFFFF",
+      "bold": true,
+      "systemBeep": false,
+      "sendToChitchat": false
+    }
+  ],
   "characters": {
     "Lesa": {
       "useTeleports": true,
@@ -811,8 +880,8 @@
         }
       },
       "gpRateSamples": [
-        3,
         4,
+        1,
         2,
         4,
         4
