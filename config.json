@@ -15,12 +15,12 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7545955882352942,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.6790953545232273,
-    "outputSplitRatio": 0.18834080717488788,
+    "chitchatTimerSplitRatio": 0.6809290953545232,
+    "outputSplitRatio": 0.1860986547085202,
     "timerColumnWidths": [
       137,
-      189,
-      189
+      188,
+      187
     ]
   },
   "bookmarks": [
@@ -57,51 +57,51 @@
       "roomId": "3e2a6d718998453da8181c9f75c3a5efa612df99"
     },
     {
-      "name": "Money Changers/To/Agatean Empire/From Ankh-Morpork/Bes Pelargic Money Changers",
+      "name": "Money Changers/To/Counterweight Continent/From Ankh-Morpork/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/To/Agatean Empire/From Djelibeybi/Bes Pelargic Money Changers",
+      "name": "Money Changers/To/Counterweight Continent/From Djelibeybi/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/To/Agatean Empire/From Genua/Bes Pelargic Money Changers",
+      "name": "Money Changers/To/Counterweight Continent/From Genua/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/To/Ankh-Morpork/From Agatean Empire/Bes Pelargic Money Changers",
+      "name": "Money Changers/To/Ankh-Morpork/From Counterweight Continent/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/To/Djelibeybi/From Agatean Empire/Bes Pelargic Money Changers",
+      "name": "Money Changers/To/Djelibeybi/From Counterweight Continent/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/To/Genua/From Agatean Empire/Bes Pelargic Money Changers",
+      "name": "Money Changers/To/Genua/From Counterweight Continent/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/From/Agatean Empire/To Ankh-Morpork/Bes Pelargic Money Changers",
+      "name": "Money Changers/From/Counterweight Continent/To Ankh-Morpork/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/From/Agatean Empire/To Djelibeybi/Bes Pelargic Money Changers",
+      "name": "Money Changers/From/Counterweight Continent/To Djelibeybi/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/From/Agatean Empire/To Genua/Bes Pelargic Money Changers",
+      "name": "Money Changers/From/Counterweight Continent/To Genua/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/From/Ankh-Morpork/To Agatean Empire/Bes Pelargic Money Changers",
+      "name": "Money Changers/From/Ankh-Morpork/To Counterweight Continent/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/From/Djelibeybi/To Agatean Empire/Bes Pelargic Money Changers",
+      "name": "Money Changers/From/Djelibeybi/To Counterweight Continent/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
-      "name": "Money Changers/From/Genua/To Agatean Empire/Bes Pelargic Money Changers",
+      "name": "Money Changers/From/Genua/To Counterweight Continent/Bes Pelargic Money Changers",
       "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
     },
     {
@@ -245,19 +245,19 @@
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
     },
     {
-      "name": "Money Changers/From/Lancre/To Agatean Empire/Ohulan-Cutash Money Changer",
+      "name": "Money Changers/From/Lancre/To Counterweight Continent/Ohulan-Cutash Money Changer",
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
     },
     {
-      "name": "Money Changers/To/Lancre/From Agatean Empire/Ohulan-Cutash Money Changer",
+      "name": "Money Changers/To/Lancre/From Counterweight Continent/Ohulan-Cutash Money Changer",
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
     },
     {
-      "name": "Money Changers/From/Agatean Empire/To Lancre/Ohulan-Cutash Money Changer",
+      "name": "Money Changers/From/Counterweight Continent/To Lancre/Ohulan-Cutash Money Changer",
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
     },
     {
-      "name": "Money Changers/To/Agatean Empire/From Lancre/Ohulan-Cutash Money Changer",
+      "name": "Money Changers/To/Counterweight Continent/From Lancre/Ohulan-Cutash Money Changer",
       "roomId": "3903070ab58bf7fd52cc6484984647fe6133dfc6"
     },
     {
@@ -338,6 +338,98 @@
     },
     {
       "name": "Money Changers/From/Ephebe/To Ankh-Morpork/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Djelibeybi/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Djelibeybi/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Howondaland/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Howondaland/From Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Howondaland/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Howondaland/To Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Counterweight Continent/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Counterweight Continent/From Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Counterweight Continent/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Counterweight Continent/To Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Klatch/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Klatch/From Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Klatch/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Klatch/To Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Ankh-Morpork/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Tsort/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Tsort/From Ephebe/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Tsort/Krimat\u0027s Foreign Exchange",
+      "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/From/Tsort/To Ephebe/Krimat\u0027s Foreign Exchange",
       "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
     }
   ],
@@ -719,7 +811,7 @@
         }
       },
       "gpRateSamples": [
-        5,
+        4,
         4,
         4,
         4,
