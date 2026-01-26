@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.core.TimerService;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +25,7 @@ public class TimerPanelTest {
     @Test
     public void testTableSelectionMode(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
-        BotConfig config = new BotConfig();
+        ClientConfig config = new ClientConfig();
         TimerService service = new TimerService(config, configPath);
 
         SwingUtilities.invokeAndWait(() -> {
@@ -44,7 +44,7 @@ public class TimerPanelTest {
     @Test
     public void testFocusLostClearsSelection(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
-        BotConfig config = new BotConfig();
+        ClientConfig config = new ClientConfig();
         TimerService service = new TimerService(config, configPath);
         service.setTimer("TestChar", "TestTimer", 10000);
 
@@ -92,7 +92,7 @@ public class TimerPanelTest {
     @Test
     public void testRestartButton(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
-        BotConfig config = new BotConfig();
+        ClientConfig config = new ClientConfig();
         TimerService service = new TimerService(config, configPath);
         service.setTimer("TestChar", "TestTimer", 10000);
         long originalExpiration = config.characters.get("TestChar").timers.get("TestTimer").expirationTime;
@@ -127,7 +127,7 @@ public class TimerPanelTest {
     @Test
     public void testColumnWidthPersistence(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
-        BotConfig config = new BotConfig();
+        ClientConfig config = new ClientConfig();
         TimerService service = new TimerService(config, configPath);
 
         SwingUtilities.invokeAndWait(() -> {
@@ -160,7 +160,7 @@ public class TimerPanelTest {
     @Test
     public void testCharacterNameColoring(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
-        BotConfig config = new BotConfig();
+        ClientConfig config = new ClientConfig();
         TimerService service = new TimerService(config, configPath);
         // Use different expiration times to ensure deterministic order (oldest first)
         service.setTimer("CurrentChar", "Timer1", 10000);

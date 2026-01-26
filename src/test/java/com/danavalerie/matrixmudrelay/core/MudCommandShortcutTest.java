@@ -18,13 +18,12 @@
 
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
 import com.danavalerie.matrixmudrelay.util.PasswordPreferences;
-import com.danavalerie.matrixmudrelay.util.TeleportBannerUtils;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,7 +84,7 @@ class MudCommandShortcutTest {
         CurrentRoomInfo cri = new CurrentRoomInfo();
 
         public StubMudClient() {
-            super(new BotConfig.Mud(), null, null);
+            super(new ClientConfig.Mud(), null, null);
         }
 
         @Override
@@ -108,7 +106,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testPwShortcut() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         PasswordPreferences.setPassword("supersecret");
 
         StubMudClient mud = new StubMudClient();
@@ -126,7 +124,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testMmPasswordSubcommand() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         PasswordPreferences.setPassword("supersecret");
 
         StubMudClient mud = new StubMudClient();
@@ -143,7 +141,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testPasswordShortcutTriggersDialog() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         PasswordPreferences.setPassword(null);
 
         StubMudClient mud = new StubMudClient();
@@ -167,7 +165,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testLocCommand() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
@@ -188,7 +186,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testRoomNameUpdateTrigger() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
@@ -220,7 +218,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testRoomNameFallback() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
@@ -244,7 +242,7 @@ class MudCommandShortcutTest {
 
     @Test
     void testDeliverNpcOverride() {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
         TimerService timerService = new TimerService(cfg, Paths.get("config.json"));

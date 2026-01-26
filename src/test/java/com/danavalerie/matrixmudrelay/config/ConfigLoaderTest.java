@@ -77,7 +77,7 @@ class ConfigLoaderTest {
             """;
         Files.writeString(configPath, json);
 
-        BotConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath);
         assertNotNull(cfg);
         assertEquals(1, cfg.bookmarks.size());
         assertEquals("drum_id", cfg.bookmarks.get(0).roomId);
@@ -125,7 +125,7 @@ class ConfigLoaderTest {
         // OR ConfigLoader should look for it relative to the configPath.
         // The requirement says: "if it doesn't exist, then make a copy of config-example.json as config.json automatically"
         
-        BotConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath);
         
         assertTrue(Files.exists(configPath), "config.json should have been created");
         assertEquals("example.com", cfg.mud.host);
@@ -151,7 +151,7 @@ class ConfigLoaderTest {
             """;
         Files.writeString(configPath, json);
 
-        BotConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath);
         assertNotNull(cfg);
         // Should be flattened to 2 bookmarks
         assertEquals(2, cfg.bookmarks.size());

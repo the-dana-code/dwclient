@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay.ui;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.plaf.ButtonUI;
+import java.awt.event.ActionEvent;
 
 public class KeepOpenCheckBoxMenuItem extends JMenuItem {
     private static final String CHECKED_PREFIX = "\u2611 ";
@@ -25,7 +26,12 @@ public class KeepOpenCheckBoxMenuItem extends JMenuItem {
         if (parentMenu != null) {
             putClientProperty(KeepOpenMenuItem.PARENT_MENU_KEY, parentMenu);
         }
-        addActionListener(event -> toggle());
+    }
+
+    @Override
+    protected void fireActionPerformed(ActionEvent event) {
+        toggle();
+        super.fireActionPerformed(event);
     }
 
     public void setChecked(boolean checked) {

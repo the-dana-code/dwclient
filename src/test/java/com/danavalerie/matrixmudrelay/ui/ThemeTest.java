@@ -18,6 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.data.RoomButton;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
@@ -130,7 +131,7 @@ public class ThemeTest {
     @Test
     public void testTimerPanelTheme(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
-        com.danavalerie.matrixmudrelay.config.BotConfig config = new com.danavalerie.matrixmudrelay.config.BotConfig();
+        ClientConfig config = new ClientConfig();
         com.danavalerie.matrixmudrelay.core.TimerService service = new com.danavalerie.matrixmudrelay.core.TimerService(config, configPath);
         
         javax.swing.SwingUtilities.invokeAndWait(() -> {

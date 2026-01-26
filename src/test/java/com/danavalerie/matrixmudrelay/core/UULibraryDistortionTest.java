@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,9 +52,9 @@ class UULibraryDistortionTest {
         service.setRoomId("UULibrary"); // Activate it
         
         output = new StubClientOutput();
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         Path configPath = Paths.get("config.json");
-        MudClient mud = new MudClient(new BotConfig.Mud(), null, null);
+        MudClient mud = new MudClient(new ClientConfig.Mud(), null, null);
         RoomMapService mapService = new RoomMapService(new MapDataService());
         
         processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), output);

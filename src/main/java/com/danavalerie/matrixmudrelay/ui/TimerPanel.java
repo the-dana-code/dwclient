@@ -1,5 +1,6 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.core.TimerService;
 
 import javax.swing.*;
@@ -8,14 +9,12 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class TimerPanel extends JPanel {
     private final TimerService timerService;
@@ -126,11 +125,11 @@ public class TimerPanel extends JPanel {
 
     public void refreshData() {
         List<TimerEntry> entries = new ArrayList<>();
-        Map<String, Map<String, com.danavalerie.matrixmudrelay.config.BotConfig.TimerData>> allTimers = timerService.getAllTimers();
-        for (Map.Entry<String, Map<String, com.danavalerie.matrixmudrelay.config.BotConfig.TimerData>> charEntry : allTimers.entrySet()) {
+        Map<String, Map<String, ClientConfig.TimerData>> allTimers = timerService.getAllTimers();
+        for (Map.Entry<String, Map<String, ClientConfig.TimerData>> charEntry : allTimers.entrySet()) {
             String characterName = charEntry.getKey();
-            for (Map.Entry<String, com.danavalerie.matrixmudrelay.config.BotConfig.TimerData> timerEntry : charEntry.getValue().entrySet()) {
-                com.danavalerie.matrixmudrelay.config.BotConfig.TimerData data = timerEntry.getValue();
+            for (Map.Entry<String, ClientConfig.TimerData> timerEntry : charEntry.getValue().entrySet()) {
+                ClientConfig.TimerData data = timerEntry.getValue();
                 entries.add(new TimerEntry(characterName, timerEntry.getKey(), data.expirationTime, data.durationMs));
             }
         }

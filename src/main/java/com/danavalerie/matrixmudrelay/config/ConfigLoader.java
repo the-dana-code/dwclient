@@ -35,14 +35,14 @@ import java.util.Map;
 
 public final class ConfigLoader {
     private static final Gson GSON = GsonUtils.getDefaultBuilder()
-            .registerTypeAdapter(BotConfig.TimerData.class, new TimerDataAdapter())
-            .registerTypeAdapter(new TypeToken<Map<String, BotConfig.CharacterConfig>>() {}.getType(),
-                    (InstanceCreator<Map<String, BotConfig.CharacterConfig>>) type -> new CaseInsensitiveLinkedHashMap<>())
+            .registerTypeAdapter(ClientConfig.TimerData.class, new TimerDataAdapter())
+            .registerTypeAdapter(new TypeToken<Map<String, ClientConfig.CharacterConfig>>() {}.getType(),
+                    (InstanceCreator<Map<String, ClientConfig.CharacterConfig>>) type -> new CaseInsensitiveLinkedHashMap<>())
             .create();
 
     private ConfigLoader() {}
 
-    public static BotConfig load(Path path) throws IOException {
+    public static ClientConfig load(Path path) throws IOException {
         if (!Files.exists(path)) {
             Path examplePath = path.resolveSibling("config-example.json");
             if (Files.exists(examplePath)) {
@@ -50,30 +50,20 @@ public final class ConfigLoader {
             }
         }
         String json = Files.readString(path);
-        BotConfig cfg = GSON.fromJson(json, BotConfig.class);
+        ClientConfig cfg = GSON.fromJson(json, ClientConfig.class);
 
         boolean migrated = false;
         if (cfg.teleports != null && !cfg.teleports.isEmpty()) {
-            for (Map.Entry<String, BotConfig.CharacterTeleports> entry : cfg.teleports.entrySet()) {
-                BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(entry.getKey(), k -> new BotConfig.CharacterConfig());
+            for (Map.Entry<String, ClientConfig.CharacterTeleports> entry : cfg.teleports.entrySet()) {
+                ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(entry.getKey(), k -> new ClientConfig.CharacterConfig());
                 charCfg.teleports = entry.getValue();
             }
             cfg.teleports = null;
             migrated = true;
         }
 
-        if (cfg.useTeleports != null) {
-            for (BotConfig.CharacterConfig charCfg : cfg.characters.values()) {
-                if (charCfg.useTeleports == null) {
-                    charCfg.useTeleports = cfg.useTeleports;
-                }
-            }
-            cfg.useTeleports = null;
-            migrated = true;
-        }
-
         if (cfg.bookmarks != null && !cfg.bookmarks.isEmpty()) {
-            List<BotConfig.Bookmark> flat = new ArrayList<>();
+            List<ClientConfig.Bookmark> flat = new ArrayList<>();
             if (migrateBookmarks(cfg.bookmarks, null, flat)) {
                 cfg.bookmarks = flat;
                 migrated = true;
@@ -104,21 +94,21 @@ public final class ConfigLoader {
         return BackgroundSaver.save(path, json);
     }
 
-    public static java.util.concurrent.Future<?> save(Path path, BotConfig cfg) {
+    public static java.util.concurrent.Future<?> save(Path path, ClientConfig cfg) {
         String json = GSON.toJson(cfg);
         return BackgroundSaver.save(path, json);
     }
 
-    public static boolean convertCoordinatesToRoomIds(BotConfig cfg, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
+    public static boolean convertCoordinatesToRoomIds(ClientConfig cfg, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
         boolean changed = false;
         try {
             if (cfg.bookmarks != null) {
                 changed |= convertBookmarksToRoomIds(cfg.bookmarks, mapService);
             }
             if (cfg.characters != null) {
-                for (BotConfig.CharacterConfig cc : cfg.characters.values()) {
+                for (ClientConfig.CharacterConfig cc : cfg.characters.values()) {
                     if (cc.teleports != null && cc.teleports.locations != null) {
-                        for (BotConfig.TeleportLocation tl : cc.teleports.locations) {
+                        for (ClientConfig.TeleportLocation tl : cc.teleports.locations) {
                             if (tl.roomId == null && tl.target != null && tl.target.length >= 3) {
                                 String id = mapService.findRoomIdByCoordinates(tl.target[0], tl.target[1], tl.target[2]);
                                 if (id != null) {
@@ -137,9 +127,9 @@ public final class ConfigLoader {
         return changed;
     }
 
-    private static boolean migrateBookmarks(List<BotConfig.Bookmark> source, String prefix, List<BotConfig.Bookmark> target) {
+    private static boolean migrateBookmarks(List<ClientConfig.Bookmark> source, String prefix, List<ClientConfig.Bookmark> target) {
         boolean migrated = false;
-        for (BotConfig.Bookmark b : source) {
+        for (ClientConfig.Bookmark b : source) {
             String currentName = (b.name != null) ? b.name : "";
             String fullName = (prefix == null || prefix.isEmpty()) ? currentName : prefix + "/" + currentName;
 
@@ -157,9 +147,9 @@ public final class ConfigLoader {
         return migrated;
     }
 
-    private static boolean convertBookmarksToRoomIds(List<BotConfig.Bookmark> bookmarks, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
+    private static boolean convertBookmarksToRoomIds(List<ClientConfig.Bookmark> bookmarks, com.danavalerie.matrixmudrelay.core.RoomMapService mapService) {
         boolean changed = false;
-        for (BotConfig.Bookmark b : bookmarks) {
+        for (ClientConfig.Bookmark b : bookmarks) {
             if (b.roomId == null && b.target != null && b.target.length >= 3) {
                 String id = mapService.findRoomIdByCoordinates(b.target[0], b.target[1], b.target[2]);
                 if (id != null) {
@@ -196,7 +186,7 @@ public final class ConfigLoader {
         return changed ? new DeliveryRouteMappings(newEntries) : routes;
     }
 
-    private static void validate(BotConfig cfg) {
+    private static void validate(ClientConfig cfg) {
         require(cfg.mud.host, "mud.host");
         if (cfg.mud.port <= 0 || cfg.mud.port > 65535) throw new IllegalArgumentException("mud.port invalid");
     }

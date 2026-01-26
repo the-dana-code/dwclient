@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.mud;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.util.Sanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class MudClient {
         void onConnectFailed(String message);
     }
 
-    private final BotConfig.Mud cfg;
+    private final ClientConfig.Mud cfg;
     private final MudLineListener lineListener;
     private final MudDisconnectListener disconnectListener;
     private volatile MudGmcpListener gmcpListener;
@@ -78,7 +78,7 @@ public class MudClient {
     });
     ;
 
-    public MudClient(BotConfig.Mud cfg,
+    public MudClient(ClientConfig.Mud cfg,
                      MudLineListener lineListener,
                      MudDisconnectListener disconnectListener) {
         this.cfg = cfg;

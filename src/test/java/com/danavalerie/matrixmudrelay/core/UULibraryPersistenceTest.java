@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
@@ -55,7 +55,7 @@ class UULibraryPersistenceTest {
         CurrentRoomInfo cri = new CurrentRoomInfo();
 
         public StubMudClient() {
-            super(new BotConfig.Mud(), null, null);
+            super(new ClientConfig.Mud(), null, null);
         }
 
         @Override
@@ -67,7 +67,7 @@ class UULibraryPersistenceTest {
     @Test
     void testSaveAndRestoreState() {
         Path configPath = tempDir.resolve("config.json");
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         cfg.mud.host = "localhost";
         cfg.mud.port = 1234;
         StubMudClient mud = new StubMudClient();
@@ -103,14 +103,14 @@ class UULibraryPersistenceTest {
         // Verify config file also reflects the removal
         try {
             BackgroundSaver.waitForIdle();
-            BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
+            ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
             assertNull(loaded.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
         } catch (Exception e) {
             fail("Failed to load config: " + e.getMessage());
         }
 
         // Put it back manually to simulate loading from config
-        cfg.characters.get("TestChar").uuLibrary = new BotConfig.UULibraryState(3, 4, "WEST");
+        cfg.characters.get("TestChar").uuLibrary = new ClientConfig.UULibraryState(3, 4, "WEST");
         
         // Trigger entering library
         JsonObject roomInfo = new JsonObject();
@@ -128,7 +128,7 @@ class UULibraryPersistenceTest {
     @Test
     void testRemoveStateOnWalkOut() throws Exception {
         Path configPath = tempDir.resolve("config_walkout.json");
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         cfg.mud.host = "localhost";
         cfg.mud.port = 1234;
         StubMudClient mud = new StubMudClient();
@@ -153,7 +153,7 @@ class UULibraryPersistenceTest {
         // Move to ensure something is saved (skipping entry save is intended)
         service.processCommand("rt"); 
         
-        BotConfig.CharacterConfig charCfg = cfg.characters.values().stream().findFirst().orElse(null);
+        ClientConfig.CharacterConfig charCfg = cfg.characters.values().stream().findFirst().orElse(null);
         assertNotNull(charCfg, "CharacterConfig should exist after movement");
         assertNotNull(charCfg.uuLibrary, "uuLibrary state should not be null after movement");
 
@@ -168,21 +168,21 @@ class UULibraryPersistenceTest {
         assertNull(cfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
 
         BackgroundSaver.waitForIdle();
-        BotConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
+        ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath);
         assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }
 
     @Test
     void testRestoreStateWhenRoomInfoArrivesBeforeCharInfo() {
         Path configPath = tempDir.resolve("config_late_char.json");
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         cfg.mud.host = "localhost";
         cfg.mud.port = 1234;
         StubMudClient mud = new StubMudClient();
 
         // Saved state for character "LateChar"
-        BotConfig.CharacterConfig charCfg = new BotConfig.CharacterConfig();
-        charCfg.uuLibrary = new BotConfig.UULibraryState(10, 20, "SOUTH");
+        ClientConfig.CharacterConfig charCfg = new ClientConfig.CharacterConfig();
+        charCfg.uuLibrary = new ClientConfig.UULibraryState(10, 20, "SOUTH");
         cfg.characters.put("LateChar", charCfg);
 
         RoomMapService mapService = new RoomMapService(new MapDataService());

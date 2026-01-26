@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.util;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.TimerDataAdapter;
 import com.google.gson.Gson;
 import com.google.gson.InstanceCreator;
@@ -20,22 +20,20 @@ class ConfigExampleGeneratorTest {
     @Test
     void configExampleMatchesGenerator() throws Exception {
         Gson gson = GsonUtils.getDefaultBuilder()
-                .registerTypeAdapter(BotConfig.TimerData.class, new TimerDataAdapter())
-                .registerTypeAdapter(new TypeToken<Map<String, BotConfig.CharacterConfig>>() {}.getType(),
-                        (InstanceCreator<Map<String, BotConfig.CharacterConfig>>) type -> new CaseInsensitiveLinkedHashMap<>())
+                .registerTypeAdapter(ClientConfig.TimerData.class, new TimerDataAdapter())
+                .registerTypeAdapter(new TypeToken<Map<String, ClientConfig.CharacterConfig>>() {}.getType(),
+                        (InstanceCreator<Map<String, ClientConfig.CharacterConfig>>) type -> new CaseInsensitiveLinkedHashMap<>())
                 .create();
 
         Path repoRoot = Paths.get("").toAbsolutePath();
         Path configPath = repoRoot.resolve("config.json");
         Path examplePath = repoRoot.resolve("config-example.json");
 
-        BotConfig config = gson.fromJson(Files.readString(configPath), BotConfig.class);
+        ClientConfig config = gson.fromJson(Files.readString(configPath), ClientConfig.class);
         config.characters.clear();
-        config.teleports = null;
-        config.useTeleports = null;
 
         // Add a sample character to show the new character-specific settings
-        BotConfig.CharacterConfig sampleChar = new BotConfig.CharacterConfig();
+        ClientConfig.CharacterConfig sampleChar = new ClientConfig.CharacterConfig();
         sampleChar.useTeleports = true;
         config.characters.put("SampleCharacter", sampleChar);
 

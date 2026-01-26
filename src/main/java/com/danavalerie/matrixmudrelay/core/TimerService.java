@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 
 import java.nio.file.Path;
@@ -9,10 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TimerService {
-    private final BotConfig config;
+    private final ClientConfig config;
     private final Path configPath;
 
-    public TimerService(BotConfig config, Path configPath) {
+    public TimerService(ClientConfig config, Path configPath) {
         this.config = config;
         this.configPath = configPath;
     }
@@ -22,12 +22,12 @@ public class TimerService {
             return;
         }
 
-        BotConfig.CharacterConfig charConfig = config.characters.computeIfAbsent(characterName, k -> new BotConfig.CharacterConfig());
+        ClientConfig.CharacterConfig charConfig = config.characters.computeIfAbsent(characterName, k -> new ClientConfig.CharacterConfig());
         if (charConfig.timers == null) {
             charConfig.timers = new LinkedHashMap<>();
         }
         long expiration = System.currentTimeMillis() + durationMs;
-        charConfig.timers.put(timerName, new BotConfig.TimerData(expiration, durationMs));
+        charConfig.timers.put(timerName, new ClientConfig.TimerData(expiration, durationMs));
         saveConfig();
     }
 
@@ -35,9 +35,9 @@ public class TimerService {
         if (characterName == null || characterName.isBlank() || timerName == null) {
             return;
         }
-        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null) {
-            BotConfig.TimerData data = charConfig.timers.get(timerName);
+            ClientConfig.TimerData data = charConfig.timers.get(timerName);
             if (data != null && data.durationMs > 0) {
                 data.expirationTime = System.currentTimeMillis() + data.durationMs;
                 saveConfig();
@@ -49,9 +49,9 @@ public class TimerService {
         if (characterName == null || characterName.isBlank() || oldDescription == null || newDescription == null) {
             return;
         }
-        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null && charConfig.timers.containsKey(oldDescription)) {
-            BotConfig.TimerData data = charConfig.timers.remove(oldDescription);
+            ClientConfig.TimerData data = charConfig.timers.remove(oldDescription);
             charConfig.timers.put(newDescription, data);
             saveConfig();
         }
@@ -61,7 +61,7 @@ public class TimerService {
         if (characterName == null || characterName.isBlank()) {
             return;
         }
-        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
         if (charConfig != null && charConfig.timers != null) {
             charConfig.timers.remove(timerName);
             saveConfig();
@@ -77,12 +77,12 @@ public class TimerService {
         return config.ui.timerColumnWidths;
     }
 
-    public synchronized Map<String, BotConfig.TimerData> getTimers(String characterName) {
+    public synchronized Map<String, ClientConfig.TimerData> getTimers(String characterName) {
         if (characterName == null || characterName.isBlank()) {
             return Collections.emptyMap();
         }
 
-        BotConfig.CharacterConfig charConfig = config.characters.get(characterName);
+        ClientConfig.CharacterConfig charConfig = config.characters.get(characterName);
         if (charConfig == null || charConfig.timers == null) {
             return Collections.emptyMap();
         }
@@ -91,9 +91,9 @@ public class TimerService {
         return new LinkedHashMap<>(charConfig.timers);
     }
 
-    public synchronized Map<String, Map<String, BotConfig.TimerData>> getAllTimers() {
-        Map<String, Map<String, BotConfig.TimerData>> allTimers = new LinkedHashMap<>();
-        for (Map.Entry<String, BotConfig.CharacterConfig> entry : config.characters.entrySet()) {
+    public synchronized Map<String, Map<String, ClientConfig.TimerData>> getAllTimers() {
+        Map<String, Map<String, ClientConfig.TimerData>> allTimers = new LinkedHashMap<>();
+        for (Map.Entry<String, ClientConfig.CharacterConfig> entry : config.characters.entrySet()) {
             if (entry.getValue().timers != null && !entry.getValue().timers.isEmpty()) {
                 allTimers.put(entry.getKey(), new LinkedHashMap<>(entry.getValue().timers));
             }

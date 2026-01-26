@@ -24,12 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public final class BotConfig {
+public final class ClientConfig {
     public Mud mud = new Mud();
-
-    /** @deprecated Use characters.useTeleports instead. This field is for migration. */
-    @Deprecated
-    public Boolean useTeleports;
 
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();

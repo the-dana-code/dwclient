@@ -3,6 +3,7 @@ package com.danavalerie.matrixmudrelay.ui;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.plaf.ButtonUI;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +29,16 @@ public class KeepOpenRadioMenuItem extends JMenuItem {
         if (parentMenu != null) {
             putClientProperty(KeepOpenMenuItem.PARENT_MENU_KEY, parentMenu);
         }
-        addActionListener(event -> {
-            if (group != null) {
-                group.select(this);
-            } else {
-                setSelected(true);
-            }
-        });
+    }
+
+    @Override
+    protected void fireActionPerformed(ActionEvent event) {
+        if (group != null) {
+            group.select(this);
+        } else {
+            setSelected(true);
+        }
+        super.fireActionPerformed(event);
     }
 
     public void setSelected(boolean selected) {

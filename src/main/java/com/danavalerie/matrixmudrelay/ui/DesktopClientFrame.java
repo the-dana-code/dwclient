@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.ui;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.MenuPersistenceService;
@@ -128,7 +128,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private String currentRoomId;
     private String currentRoomName;
     private final TimerService timerService;
-    private final BotConfig cfg;
+    private final ClientConfig cfg;
     private final Path configPath;
     private final Path routesPath;
     private final RoomMapService routeMapService;
@@ -172,7 +172,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MenuPersistenceService menuPersistenceService;
 
 
-    public DesktopClientFrame(BotConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
+    public DesktopClientFrame(ClientConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
         super("Lesa's Discworld MUD Client");
         this.cfg = cfg;
         this.routeMapService = routeMapService;
@@ -253,20 +253,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
         });
         statsPanel.setCharacterGpSamplesLoader(name -> {
-            BotConfig.CharacterConfig c = cfg.characters.get(name);
+            ClientConfig.CharacterConfig c = cfg.characters.get(name);
             return c != null ? c.gpRateSamples : null;
         });
         statsPanel.setCharacterHpSamplesLoader(name -> {
-            BotConfig.CharacterConfig c = cfg.characters.get(name);
+            ClientConfig.CharacterConfig c = cfg.characters.get(name);
             return c != null ? c.hpRateSamples : null;
         });
         statsPanel.setOnGpSamplesChanged((name, samples) -> {
-            BotConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new BotConfig.CharacterConfig());
+            ClientConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new ClientConfig.CharacterConfig());
             c.gpRateSamples = new ArrayList<>(samples);
             saveConfig();
         });
         statsPanel.setOnHpSamplesChanged((name, samples) -> {
-            BotConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new BotConfig.CharacterConfig());
+            ClientConfig.CharacterConfig c = cfg.characters.computeIfAbsent(name, k -> new ClientConfig.CharacterConfig());
             c.hpRateSamples = new ArrayList<>(samples);
             saveConfig();
         });
@@ -525,7 +525,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     @SuppressWarnings("unchecked")
-    private void addBookmarksToMenu(Container menu, List<BotConfig.Bookmark> bookmarks) {
+    private void addBookmarksToMenu(Container menu, List<ClientConfig.Bookmark> bookmarks) {
         if (bookmarks == null) {
             return;
         }
@@ -533,7 +533,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         // Use a TreeMap to keep categories sorted
         Map<String, Object> hierarchy = new java.util.TreeMap<>();
 
-        for (BotConfig.Bookmark b : bookmarks) {
+        for (ClientConfig.Bookmark b : bookmarks) {
             String name = b.name;
             if (name == null || name.isBlank()) {
                 name = b.roomId;
@@ -579,7 +579,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
                 buildMenuFromHierarchy(subMenu, (Map<String, Object>) value);
                 menu.add(subMenu);
-            } else if (value instanceof BotConfig.Bookmark link) {
+            } else if (value instanceof ClientConfig.Bookmark link) {
                 JMenu bmSubMenu = new JMenu(name);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(bmSubMenu, currentBg, currentFg);
@@ -945,17 +945,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         teleportsMenu.removeAll();
 
         String charName = currentCharacterName;
-        BotConfig.CharacterConfig charCfg = (charName != null) ? cfg.characters.get(charName) : null;
+        ClientConfig.CharacterConfig charCfg = (charName != null) ? cfg.characters.get(charName) : null;
 
         JMenu optionsMenu = new JMenu("Options");
 
-        boolean useTp = (charCfg != null && charCfg.useTeleports != null) ? charCfg.useTeleports : (cfg.useTeleports != null ? cfg.useTeleports : true);
+        boolean useTp = (charCfg != null && charCfg.useTeleports != null) ? charCfg.useTeleports : false;
         KeepOpenCheckBoxMenuItem useTpItem = new KeepOpenCheckBoxMenuItem("Use Teleports for Speedwalking", useTp);
         useTpItem.addActionListener(e -> {
             if (charCfg != null) {
                 charCfg.useTeleports = useTpItem.isChecked();
-            } else {
-                cfg.useTeleports = useTpItem.isChecked();
             }
             saveConfig();
         });
@@ -1008,7 +1006,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         teleportsMenu.addSeparator();
 
         if (charCfg != null && charCfg.teleports != null && charCfg.teleports.locations != null) {
-            List<BotConfig.TeleportLocation> locations = charCfg.teleports.locations;
+            List<ClientConfig.TeleportLocation> locations = charCfg.teleports.locations;
             if (locations.size() > 15) {
                 for (int i = 0; i < locations.size(); i += 15) {
                     int pageNum = (i / 15) + 1;
@@ -1023,7 +1021,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     teleportsMenu.add(pageMenu);
                 }
             } else {
-                for (BotConfig.TeleportLocation loc : locations) {
+                for (ClientConfig.TeleportLocation loc : locations) {
                     teleportsMenu.add(createTeleportSubMenu(loc, charCfg));
                 }
             }
@@ -1034,7 +1032,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
-    private JMenu createTeleportSubMenu(BotConfig.TeleportLocation loc, BotConfig.CharacterConfig charCfg) {
+    private JMenu createTeleportSubMenu(ClientConfig.TeleportLocation loc, ClientConfig.CharacterConfig charCfg) {
         String displayName = loc.name;
         if (displayName == null || displayName.isBlank()) {
             displayName = loc.roomId;
@@ -1111,7 +1109,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
-    private void showEditBookmarkDialog(BotConfig.Bookmark bookmark) {
+    private void showEditBookmarkDialog(ClientConfig.Bookmark bookmark) {
         String roomName = bookmark.roomId;
         try {
             RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(bookmark.roomId);
@@ -1170,13 +1168,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         int result = JOptionPane.showConfirmDialog(this, panel, "Add Bookmark", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             String name = nameField.getText().trim();
-            cfg.bookmarks.add(new BotConfig.Bookmark(name.isEmpty() ? null : name, roomId));
+            cfg.bookmarks.add(new ClientConfig.Bookmark(name.isEmpty() ? null : name, roomId));
             saveConfig();
             refreshBookmarksMenu();
         }
     }
 
-    private void showEditTeleportDialog(BotConfig.TeleportLocation loc) {
+    private void showEditTeleportDialog(ClientConfig.TeleportLocation loc) {
         String roomName = loc.roomId;
         try {
             RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(loc.roomId);
@@ -1260,18 +1258,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 return;
             }
 
-            BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(currentCharacterName, k -> new BotConfig.CharacterConfig());
+            ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(currentCharacterName, k -> new ClientConfig.CharacterConfig());
             if (charCfg.teleports == null) {
-                charCfg.teleports = new BotConfig.CharacterTeleports();
+                charCfg.teleports = new ClientConfig.CharacterTeleports();
             }
-            charCfg.teleports.locations.add(new BotConfig.TeleportLocation(name.isEmpty() ? null : name, command, roomId));
+            charCfg.teleports.locations.add(new ClientConfig.TeleportLocation(name.isEmpty() ? null : name, command, roomId));
             com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
             saveConfig();
             refreshTeleportsMenu();
         }
     }
 
-    private void showSpeedwalkingPenaltyDialog(BotConfig.CharacterTeleports teleportsCfg) {
+    private void showSpeedwalkingPenaltyDialog(ClientConfig.CharacterTeleports teleportsCfg) {
         JPanel panel = new JPanel(new BorderLayout(5, 5));
         panel.add(new JLabel("Penalty:"), BorderLayout.NORTH);
 
@@ -2307,7 +2305,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         com.danavalerie.matrixmudrelay.util.SoundUtils.playUULibraryAlertSound();
     }
 
-    public static void launch(BotConfig cfg, Path configPath, DeliveryRouteMappings routes, RoomMapService routeMapService) {
+    public static void launch(ClientConfig cfg, Path configPath, DeliveryRouteMappings routes, RoomMapService routeMapService) {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {

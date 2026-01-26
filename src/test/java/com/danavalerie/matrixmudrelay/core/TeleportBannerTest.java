@@ -1,17 +1,15 @@
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,17 +48,17 @@ class TeleportBannerTest {
 
     private MudCommandProcessor processor;
     private MockOutput output;
-    private BotConfig cfg;
+    private ClientConfig cfg;
     private MudClient mudClient;
 
     @BeforeEach
     void setUp() {
         UULibraryService.getInstance().reset();
-        cfg = new BotConfig();
-        BotConfig.CharacterConfig charCfg = new BotConfig.CharacterConfig();
-        charCfg.teleports = new BotConfig.CharacterTeleports();
+        cfg = new ClientConfig();
+        ClientConfig.CharacterConfig charCfg = new ClientConfig.CharacterConfig();
+        charCfg.teleports = new ClientConfig.CharacterTeleports();
         charCfg.teleports.locations = new ArrayList<>();
-        BotConfig.TeleportLocation loc = new BotConfig.TeleportLocation();
+        ClientConfig.TeleportLocation loc = new ClientConfig.TeleportLocation();
         loc.name = "Home";
         loc.command = "tp home";
         loc.roomId = "room1";

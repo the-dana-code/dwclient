@@ -1,10 +1,9 @@
 package com.danavalerie.matrixmudrelay.util;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Utility to recreate config-example.json based on config.json.
@@ -13,7 +12,7 @@ public class ConfigExampleGenerator {
     public static void main(String[] args) {
         try {
             System.out.println("Loading config.json...");
-            BotConfig config = ConfigLoader.load(Paths.get("config.json"));
+            ClientConfig config = ConfigLoader.load(Paths.get("config.json"));
 
             System.out.println("Removing unnecessary data...");
             // Remove characters and associated data
@@ -21,7 +20,7 @@ public class ConfigExampleGenerator {
             config.teleports = null;
 
             // Add a sample character to show the new character-specific settings
-            BotConfig.CharacterConfig sampleChar = new BotConfig.CharacterConfig();
+            ClientConfig.CharacterConfig sampleChar = new ClientConfig.CharacterConfig();
             sampleChar.useTeleports = true;
             config.characters.put("SampleCharacter", sampleChar);
 

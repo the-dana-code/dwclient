@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.util.BackgroundSaver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,14 +13,14 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TimerServiceTest {
-    private BotConfig config;
+    private ClientConfig config;
     private TimerService timerService;
     private Path configPath;
 
     @BeforeEach
     void setUp(@TempDir Path tempDir) {
         BackgroundSaver.resetForTests();
-        config = new BotConfig();
+        config = new ClientConfig();
         configPath = tempDir.resolve("config.json");
         timerService = new TimerService(config, configPath);
     }
@@ -33,7 +33,7 @@ class TimerServiceTest {
     @Test
     void testAddAndRemoveTimer() {
         timerService.setTimer("Char1", "Timer1", 1000);
-        Map<String, BotConfig.TimerData> timers = timerService.getTimers("Char1");
+        Map<String, ClientConfig.TimerData> timers = timerService.getTimers("Char1");
         assertEquals(1, timers.size());
         assertTrue(timers.containsKey("Timer1"));
         assertEquals(1000, timers.get("Timer1").durationMs);
@@ -48,7 +48,7 @@ class TimerServiceTest {
         timerService.setTimer("Char1", "Timer1", 1000);
         timerService.setTimer("Char2", "Timer2", 2000);
 
-        Map<String, Map<String, BotConfig.TimerData>> allTimers = timerService.getAllTimers();
+        Map<String, Map<String, ClientConfig.TimerData>> allTimers = timerService.getAllTimers();
         assertEquals(2, allTimers.size());
         assertTrue(allTimers.containsKey("Char1"));
         assertTrue(allTimers.containsKey("Char2"));
@@ -59,12 +59,12 @@ class TimerServiceTest {
     @Test
     void testUpdateTimerDescription() {
         timerService.setTimer("Char1", "OldDesc", 1000);
-        BotConfig.TimerData data = config.characters.get("Char1").timers.get("OldDesc");
+        ClientConfig.TimerData data = config.characters.get("Char1").timers.get("OldDesc");
         long expiration = data.expirationTime;
 
         timerService.updateTimerDescription("Char1", "OldDesc", "NewDesc");
         
-        Map<String, BotConfig.TimerData> timers = timerService.getTimers("Char1");
+        Map<String, ClientConfig.TimerData> timers = timerService.getTimers("Char1");
         assertFalse(timers.containsKey("OldDesc"));
         assertTrue(timers.containsKey("NewDesc"));
         assertEquals(expiration, timers.get("NewDesc").expirationTime);
@@ -73,7 +73,7 @@ class TimerServiceTest {
     @Test
     void testRestartTimer() {
         timerService.setTimer("Char1", "Timer1", 10000);
-        BotConfig.TimerData data = config.characters.get("Char1").timers.get("Timer1");
+        ClientConfig.TimerData data = config.characters.get("Char1").timers.get("Timer1");
         long originalExpiration = data.expirationTime;
 
         // Manually age the timer

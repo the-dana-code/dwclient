@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.ui.DesktopClientFrame;
@@ -33,7 +33,7 @@ public final class Main {
         }, "Shutdown-Saver-Hook"));
 
         Path configPath = Path.of("config.json");
-        BotConfig cfg = ConfigLoader.load(configPath);
+        ClientConfig cfg = ConfigLoader.load(configPath);
         Path routesPath = configPath.resolveSibling("delivery-routes.json");
         DeliveryRouteMappings routes = ConfigLoader.loadRoutes(routesPath);
 

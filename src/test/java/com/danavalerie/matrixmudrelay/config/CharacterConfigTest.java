@@ -1,16 +1,15 @@
 package com.danavalerie.matrixmudrelay.config;
 
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CharacterConfigTest {
 
     @Test
     void testCaseInsensitiveAccess() {
-        BotConfig cfg = new BotConfig();
-        BotConfig.CharacterConfig lesaConfig = new BotConfig.CharacterConfig();
+        ClientConfig cfg = new ClientConfig();
+        ClientConfig.CharacterConfig lesaConfig = new ClientConfig.CharacterConfig();
         cfg.characters.put("Lesa", lesaConfig);
 
         // Currently, this will likely fail because it's a LinkedHashMap
@@ -20,12 +19,12 @@ class CharacterConfigTest {
 
     @Test
     void testCasePreservation() {
-        BotConfig cfg = new BotConfig();
-        BotConfig.CharacterConfig lesaConfig = new BotConfig.CharacterConfig();
+        ClientConfig cfg = new ClientConfig();
+        ClientConfig.CharacterConfig lesaConfig = new ClientConfig.CharacterConfig();
         cfg.characters.put("Lesa", lesaConfig);
 
         // Try to "add" lesa
-        cfg.characters.computeIfAbsent("lesa", k -> new BotConfig.CharacterConfig());
+        cfg.characters.computeIfAbsent("lesa", k -> new ClientConfig.CharacterConfig());
         
         assertEquals(1, cfg.characters.size(), "Should not have added a second entry for 'lesa'");
         assertTrue(cfg.characters.containsKey("Lesa"), "Should contain Lesa");
@@ -40,11 +39,11 @@ class CharacterConfigTest {
     void testJsonDeserialization() throws Exception {
         String json = "{\"characters\": {\"Lesa\": {\"gpRateSamples\": [1, 2, 3]}}}";
         com.google.gson.Gson gson = new com.google.gson.GsonBuilder()
-                .registerTypeAdapter(new com.google.gson.reflect.TypeToken<java.util.Map<String, BotConfig.CharacterConfig>>() {}.getType(),
-                        (com.google.gson.InstanceCreator<java.util.Map<String, BotConfig.CharacterConfig>>) type -> new com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap<>())
+                .registerTypeAdapter(new com.google.gson.reflect.TypeToken<java.util.Map<String, ClientConfig.CharacterConfig>>() {}.getType(),
+                        (com.google.gson.InstanceCreator<java.util.Map<String, ClientConfig.CharacterConfig>>) type -> new com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap<>())
                 .create();
 
-        BotConfig cfg = gson.fromJson(json, BotConfig.class);
+        ClientConfig cfg = gson.fromJson(json, ClientConfig.class);
         assertNotNull(cfg.characters);
         assertTrue(cfg.characters instanceof com.danavalerie.matrixmudrelay.util.CaseInsensitiveLinkedHashMap);
         

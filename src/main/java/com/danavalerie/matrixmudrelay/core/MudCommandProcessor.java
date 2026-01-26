@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
@@ -95,7 +95,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void showEditPasswordDialog(Runnable onPasswordStored);
     }
 
-    private final BotConfig cfg;
+    private final ClientConfig cfg;
     private final Path configPath;
     private final MudClient mud;
     private final RoomMapService mapService;
@@ -116,7 +116,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private String uuLibraryRestoredForChar = null;
     private final Runnable uuLibraryListener = this::saveUULibraryState;
 
-    public MudCommandProcessor(BotConfig cfg,
+    public MudCommandProcessor(ClientConfig cfg,
                                Path configPath,
                                MudClient mud,
                                RoomMapService mapService,
@@ -146,10 +146,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         String charName = mud.getCurrentRoomSnapshot().characterName();
         if (charName == null || charName.isBlank()) return;
 
-        BotConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(charName, k -> new BotConfig.CharacterConfig());
+        ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(charName, k -> new ClientConfig.CharacterConfig());
 
         if (service.isActive()) {
-            charCfg.uuLibrary = new BotConfig.UULibraryState(
+            charCfg.uuLibrary = new ClientConfig.UULibraryState(
                     service.getCurRow(),
                     service.getCurCol(),
                     service.getOrientation().name()
@@ -312,7 +312,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         if (charName != null && !charName.isBlank() && !charName.equals(currentCharacterName)) {
             currentCharacterName = charName;
             if (!cfg.characters.containsKey(charName)) {
-                cfg.characters.put(charName, new BotConfig.CharacterConfig());
+                cfg.characters.put(charName, new ClientConfig.CharacterConfig());
                 ConfigLoader.save(configPath, cfg);
             }
             output.onCharacterChanged(charName);
@@ -337,7 +337,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                         uuLibraryRestoredForChar = null;
                     }
                     if (charName != null && !charName.equals(uuLibraryRestoredForChar)) {
-                        BotConfig.CharacterConfig charCfg = cfg.characters.get(charName);
+                        ClientConfig.CharacterConfig charCfg = cfg.characters.get(charName);
                         if (charCfg != null && charCfg.uuLibrary != null) {
                             try {
                                 UULibraryService.getInstance().setState(
@@ -529,11 +529,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
         if ("tp".equals(subcommand)) {
             if (currentCharacterName != null) {
-                cfg.characters.computeIfAbsent(currentCharacterName, k -> new BotConfig.CharacterConfig()).useTeleports = true;
+                cfg.characters.computeIfAbsent(currentCharacterName, k -> new ClientConfig.CharacterConfig()).useTeleports = true;
                 output.appendSystem("Teleport-assisted routing enabled for " + currentCharacterName + ".");
             } else {
-                cfg.useTeleports = true;
-                output.appendSystem("Teleport-assisted routing enabled.");
+                output.appendSystem("No character logged in.");
             }
             if (configPath != null) {
                 ConfigLoader.save(configPath, cfg);
@@ -542,11 +541,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
         if ("notp".equals(subcommand)) {
             if (currentCharacterName != null) {
-                cfg.characters.computeIfAbsent(currentCharacterName, k -> new BotConfig.CharacterConfig()).useTeleports = false;
+                cfg.characters.computeIfAbsent(currentCharacterName, k -> new ClientConfig.CharacterConfig()).useTeleports = false;
                 output.appendSystem("Teleport-assisted routing disabled for " + currentCharacterName + ".");
             } else {
-                cfg.useTeleports = false;
-                output.appendSystem("Teleport-assisted routing disabled.");
+                output.appendSystem("No character logged in.");
             }
             if (configPath != null) {
                 ConfigLoader.save(configPath, cfg);
@@ -624,7 +622,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return;
         }
 
-        Map<String, BotConfig.TimerData> timers = timerService.getTimers(charName);
+        Map<String, ClientConfig.TimerData> timers = timerService.getTimers(charName);
         if (timers.isEmpty()) {
             output.appendSystem("No active timers for " + charName + ".");
             return;
@@ -636,9 +634,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         // Find max timer name length for padding
         int maxNameLen = timers.keySet().stream().mapToInt(String::length).max().orElse(0);
 
-        for (Map.Entry<String, BotConfig.TimerData> entry : timers.entrySet()) {
+        for (Map.Entry<String, ClientConfig.TimerData> entry : timers.entrySet()) {
             String name = entry.getKey();
-            BotConfig.TimerData data = entry.getValue();
+            ClientConfig.TimerData data = entry.getValue();
             long remaining = data.expirationTime - now;
 
             out.append(String.format("%-" + (maxNameLen + 2) + "s", name + ":"))
@@ -1182,7 +1180,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 return val;
             }
         }
-        return cfg.useTeleports != null ? cfg.useTeleports : true;
+        return false;
     }
 
     private void updateSpeedwalkPath(String currentRoomId, RoomMapService.RouteResult route) {

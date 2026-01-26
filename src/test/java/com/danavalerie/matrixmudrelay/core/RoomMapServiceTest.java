@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoomMapServiceTest {
     @BeforeEach
     public void setup() {
-        BotConfig.CharacterConfig lesa = new BotConfig.CharacterConfig();
+        ClientConfig.CharacterConfig lesa = new ClientConfig.CharacterConfig();
         lesa.teleports.reliable = true;
         lesa.teleports.locations = List.of(
-                new BotConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
+                new ClientConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
         );
         TeleportRegistry.initialize(Map.of("lesa", lesa));
     }
@@ -87,10 +87,10 @@ public class RoomMapServiceTest {
         String bakeryRoomId = "09f2edffdc50c9b865efeefe7e74ee640dc952ef";
 
         // Setup a character with a VERY high penalty
-        BotConfig.CharacterConfig highPenaltyChar = new BotConfig.CharacterConfig();
+        ClientConfig.CharacterConfig highPenaltyChar = new ClientConfig.CharacterConfig();
         highPenaltyChar.teleports.speedwalkingPenalty = 9999;
         highPenaltyChar.teleports.locations = List.of(
-                new BotConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
+                new ClientConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
         );
         TeleportRegistry.initialize(Map.of("highpenalty", highPenaltyChar));
 
@@ -102,10 +102,10 @@ public class RoomMapServiceTest {
         }
 
         // Setup a character with a VERY low penalty (0)
-        BotConfig.CharacterConfig lowPenaltyChar = new BotConfig.CharacterConfig();
+        ClientConfig.CharacterConfig lowPenaltyChar = new ClientConfig.CharacterConfig();
         lowPenaltyChar.teleports.speedwalkingPenalty = 0;
         lowPenaltyChar.teleports.locations = List.of(
-                new BotConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
+                new ClientConfig.TeleportLocation("tp blackglass", "087e9ce0a29cb5e1885352a7965d744bf398dfaf")
         );
         TeleportRegistry.initialize(Map.of("lowpenalty", lowPenaltyChar));
 

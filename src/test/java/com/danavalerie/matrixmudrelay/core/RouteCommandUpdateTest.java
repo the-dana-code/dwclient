@@ -18,7 +18,7 @@
 
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import org.junit.jupiter.api.Test;
@@ -85,7 +85,7 @@ class RouteCommandUpdateTest {
 
     @Test
     void testRouteCommandUpdatesLastSpeedwalk() throws Exception {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         Path configPath = Paths.get("config.json");
         MockOutput output = new MockOutput();
         

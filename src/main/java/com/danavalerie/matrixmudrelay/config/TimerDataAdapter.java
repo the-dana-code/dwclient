@@ -7,9 +7,9 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
-public class TimerDataAdapter extends TypeAdapter<BotConfig.TimerData> {
+public class TimerDataAdapter extends TypeAdapter<ClientConfig.TimerData> {
     @Override
-    public void write(JsonWriter out, BotConfig.TimerData value) throws IOException {
+    public void write(JsonWriter out, ClientConfig.TimerData value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;
@@ -21,14 +21,14 @@ public class TimerDataAdapter extends TypeAdapter<BotConfig.TimerData> {
     }
 
     @Override
-    public BotConfig.TimerData read(JsonReader in) throws IOException {
+    public ClientConfig.TimerData read(JsonReader in) throws IOException {
         if (in.peek() == JsonToken.NULL) {
             in.nextNull();
             return null;
         }
         if (in.peek() == JsonToken.NUMBER) {
             long expirationTime = in.nextLong();
-            return new BotConfig.TimerData(expirationTime, 0);
+            return new ClientConfig.TimerData(expirationTime, 0);
         }
         in.beginObject();
         long expirationTime = 0;
@@ -48,6 +48,6 @@ public class TimerDataAdapter extends TypeAdapter<BotConfig.TimerData> {
             }
         }
         in.endObject();
-        return new BotConfig.TimerData(expirationTime, durationMs);
+        return new ClientConfig.TimerData(expirationTime, durationMs);
     }
 }

@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.util;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.core.MapDataService;
@@ -56,7 +56,7 @@ public class DataCleanup {
             // 5. BotConfig (config.json)
             System.out.println("Cleaning Config and converting coordinates...");
             Path configPath = Paths.get("config.json");
-            BotConfig config = ConfigLoader.load(configPath);
+            ClientConfig config = ConfigLoader.load(configPath);
             ConfigLoader.convertCoordinatesToRoomIds(config, roomMapService);
             ConfigLoader.save(configPath, config);
 

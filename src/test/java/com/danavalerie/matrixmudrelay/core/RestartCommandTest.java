@@ -1,6 +1,6 @@
 package com.danavalerie.matrixmudrelay.core;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
@@ -39,7 +39,7 @@ class RestartCommandTest {
 
     @Test
     void testRestartCommandLogic() throws Exception {
-        BotConfig cfg = new BotConfig();
+        ClientConfig cfg = new ClientConfig();
         Path configPath = Paths.get("config.json");
         MockOutput output = new MockOutput();
         

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.danavalerie.matrixmudrelay.config.BotConfig;
+import com.danavalerie.matrixmudrelay.config.ClientConfig;
 
 public final class TeleportRegistry {
     private static CharacterTeleports DEFAULT = new CharacterTeleports(true, false, 8, List.of());
@@ -34,14 +34,14 @@ public final class TeleportRegistry {
     private TeleportRegistry() {
     }
 
-    public static void initialize(Map<String, BotConfig.CharacterConfig> config) {
+    public static void initialize(Map<String, ClientConfig.CharacterConfig> config) {
         Map<String, CharacterTeleports> map = new HashMap<>();
         if (config != null) {
             config.forEach((name, charConfig) -> {
                 if (charConfig.teleports == null) return;
                 List<TeleportLocation> locations = new ArrayList<>();
                 if (charConfig.teleports.locations != null) {
-                    for (BotConfig.TeleportLocation loc : charConfig.teleports.locations) {
+                    for (ClientConfig.TeleportLocation loc : charConfig.teleports.locations) {
                         locations.add(new TeleportLocation(loc.name, loc.command, loc.roomId));
                     }
                 }
