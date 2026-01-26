@@ -15,11 +15,11 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7545955882352942,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.677893447642376,
-    "outputSplitRatio": 0.1905829596412556,
+    "chitchatTimerSplitRatio": 0.6790953545232273,
+    "outputSplitRatio": 0.18834080717488788,
     "timerColumnWidths": [
-      138,
-      190,
+      137,
+      189,
       189
     ]
   },
@@ -655,10 +655,10 @@
         }
       },
       "gpRateSamples": [
-        3,
         4,
+        1,
         4,
-        4,
+        1,
         4
       ],
       "hpRateSamples": [
@@ -715,8 +715,8 @@
         }
       },
       "gpRateSamples": [
-        2,
         5,
+        4,
         4,
         4,
         4
