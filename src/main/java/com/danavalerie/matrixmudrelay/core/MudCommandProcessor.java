@@ -92,6 +92,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void onCharacterChanged(String characterName);
         void updateRepeatLastSpeedwalkItem();
         void appendTeleportBanner(String banner);
+        default void setTeleportQueued(String command, String targetName) {}
+        default void clearTeleportQueued() {}
         void showEditPasswordDialog(Runnable onPasswordStored);
     }
 
@@ -559,6 +561,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     private void handleRestart() {
+        output.clearTeleportQueued();
         if (lastSpeedwalkTargetRoomId == null) {
             output.appendSystem("Error: No previous speedwalk available to restart.");
             return;
@@ -1347,6 +1350,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 }
                 String banner = TeleportBannerUtils.generateBanner(targetName, command);
                 output.appendTeleportBanner(banner);
+                if (!characterTeleports.reliable()) {
+                    output.setTeleportQueued(command, targetName);
+                }
                 return;
             }
         }

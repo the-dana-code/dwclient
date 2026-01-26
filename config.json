@@ -10,17 +10,17 @@
     "fontSize": 20,
     "mapZoomPercent": 100,
     "invertMap": true,
-    "windowWidth": 2272,
+    "windowWidth": 1697,
     "windowHeight": 1057,
     "windowMaximized": false,
-    "mudMapSplitRatio": 0.7504432624113475,
+    "mudMapSplitRatio": 0.7481927710843373,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.6826809015421115,
-    "outputSplitRatio": 0.19506726457399104,
+    "chitchatTimerSplitRatio": 0.6743814844373504,
+    "outputSplitRatio": 0.19282511210762332,
     "timerColumnWidths": [
-      126,
-      200,
-      199
+      97,
+      151,
+      151
     ]
   },
   "bookmarks": [
@@ -565,7 +565,7 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769409576270,
+          "expirationTime": 1769418446795,
           "durationMs": 3600000
         }
       },
@@ -573,7 +573,7 @@
         4,
         4,
         4,
-        3,
+        4,
         4
       ],
       "hpRateSamples": [
@@ -650,15 +650,15 @@
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769409233219,
+          "expirationTime": 1769417701985,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
-        4,
-        4,
         3,
+        4,
+        4,
         4
       ],
       "hpRateSamples": [

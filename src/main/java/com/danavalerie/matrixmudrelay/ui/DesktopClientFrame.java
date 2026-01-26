@@ -171,6 +171,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final DiscworldTimePanel discworldTimePanel = new DiscworldTimePanel();
     private final MenuPersistenceService menuPersistenceService;
 
+    private JPanel teleportInfoPanel;
+    private JLabel teleportCommandLabel;
+    private JLabel teleportTargetLabel;
+    private JButton restartSpeedwalkButton;
+    private JButton cancelTeleportButton;
+
 
     public DesktopClientFrame(ClientConfig cfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
         super("Lesa's Discworld MUD Client");
@@ -896,6 +902,27 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     @Override
     public void appendTeleportBanner(String banner) {
         outputPane.appendErrorText(banner);
+    }
+
+    @Override
+    public void setTeleportQueued(String command, String targetName) {
+        SwingUtilities.invokeLater(() -> {
+            teleportCommandLabel.setText("Command: " + command);
+            teleportTargetLabel.setText("Target: " + targetName);
+            teleportInfoPanel.setVisible(true);
+            updateComponentTree(teleportInfoPanel, currentBg, currentFg);
+            revalidate();
+            repaint();
+        });
+    }
+
+    @Override
+    public void clearTeleportQueued() {
+        SwingUtilities.invokeLater(() -> {
+            teleportInfoPanel.setVisible(false);
+            revalidate();
+            repaint();
+        });
     }
 
     private void updateRepeatLastSpeedwalkItemUI() {
@@ -1724,6 +1751,34 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         outputScroll = new AutoScrollScrollPane(outputPane);
 
+        teleportInfoPanel = new JPanel();
+        teleportInfoPanel.setLayout(new javax.swing.BoxLayout(teleportInfoPanel, javax.swing.BoxLayout.Y_AXIS));
+        teleportInfoPanel.setVisible(false);
+        teleportCommandLabel = new JLabel();
+        teleportTargetLabel = new JLabel();
+        restartSpeedwalkButton = new JButton("Restart Speedwalk");
+        cancelTeleportButton = new JButton("Cancel");
+
+        teleportCommandLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        teleportTargetLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel teleportButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        teleportButtons.setOpaque(false);
+        teleportButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
+        teleportButtons.add(restartSpeedwalkButton);
+        teleportButtons.add(new JLabel("  "));
+        teleportButtons.add(cancelTeleportButton);
+
+        teleportInfoPanel.add(teleportCommandLabel);
+        teleportInfoPanel.add(teleportTargetLabel);
+        teleportInfoPanel.add(teleportButtons);
+
+        restartSpeedwalkButton.addActionListener(e -> {
+            submitCommand("/restart");
+            clearTeleportQueued();
+        });
+        cancelTeleportButton.addActionListener(e -> clearTeleportQueued());
+
         JPanel inputPanel = new JPanel(new BorderLayout(6, 6));
         JButton sendButton = new JButton("Send");
         inputPanel.add(inputField, BorderLayout.CENTER);
@@ -1799,7 +1854,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         panel.add(outputSplit, BorderLayout.CENTER);
         
         JPanel bottomMudPanel = new JPanel(new BorderLayout(6, 0));
-        bottomMudPanel.add(inputPanel, BorderLayout.NORTH);
+        bottomMudPanel.add(teleportInfoPanel, BorderLayout.NORTH);
+        bottomMudPanel.add(inputPanel, BorderLayout.CENTER);
         
         panel.add(bottomMudPanel, BorderLayout.SOUTH);
         return panel;

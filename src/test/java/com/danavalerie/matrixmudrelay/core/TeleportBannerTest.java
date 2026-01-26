@@ -17,6 +17,7 @@ class TeleportBannerTest {
 
     static class MockOutput implements MudCommandProcessor.ClientOutput {
         List<String> teleportBanners = new ArrayList<>();
+        List<String> queuedTeleports = new ArrayList<>();
         @Override public void appendSystem(String text) {}
         @Override public void appendCommandEcho(String text) {}
         @Override public void addToHistory(String command) {}
@@ -33,6 +34,7 @@ class TeleportBannerTest {
         @Override public void onCharacterChanged(String characterName) {}
         @Override public void updateRepeatLastSpeedwalkItem() {}
         @Override public void appendTeleportBanner(String banner) { teleportBanners.add(banner); }
+        @Override public void setTeleportQueued(String command, String targetName) { queuedTeleports.add(command); }
         @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
     }
 
@@ -96,6 +98,27 @@ class TeleportBannerTest {
         processor.handleInput("tp home", true);
         assertFalse(output.teleportBanners.isEmpty(), "Banner SHOULD be triggered by system");
         assertTrue(output.teleportBanners.get(0).contains("Home"));
+    }
+
+    @Test
+    void testReliableTeleportDoesNotQueueUiPanel() {
+        cfg.characters.get("Dana").teleports.reliable = true;
+        TeleportRegistry.initialize(cfg.characters);
+
+        processor.handleInput("tp home", true);
+        assertFalse(output.teleportBanners.isEmpty(), "Banner SHOULD be triggered");
+        assertTrue(output.queuedTeleports.isEmpty(), "UI Panel SHOULD NOT be queued when reliable");
+    }
+
+    @Test
+    void testUnreliableTeleportQueuesUiPanel() {
+        cfg.characters.get("Dana").teleports.reliable = false;
+        TeleportRegistry.initialize(cfg.characters);
+
+        processor.handleInput("tp home", true);
+        assertFalse(output.teleportBanners.isEmpty(), "Banner SHOULD be triggered");
+        assertFalse(output.queuedTeleports.isEmpty(), "UI Panel SHOULD be queued when unreliable");
+        assertEquals("tp home", output.queuedTeleports.get(0));
     }
 
     static class StubMapService extends RoomMapService {
