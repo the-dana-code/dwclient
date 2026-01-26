@@ -13,14 +13,14 @@
     "windowWidth": 2193,
     "windowHeight": 1057,
     "windowMaximized": false,
-    "mudMapSplitRatio": 0.7545955882352942,
+    "mudMapSplitRatio": 0.7326596233348646,
     "mapNotesSplitRatio": 0.6438502673796791,
-    "chitchatTimerSplitRatio": 0.6815403422982885,
+    "chitchatTimerSplitRatio": 0.6830808080808081,
     "outputSplitRatio": 0.1797752808988764,
     "timerColumnWidths": [
-      133,
-      182,
-      181
+      128,
+      176,
+      175
     ]
   },
   "bookmarks": [
@@ -669,7 +669,7 @@
         4,
         4,
         4,
-        1,
+        4,
         4
       ],
       "hpRateSamples": [
@@ -691,11 +691,6 @@
             "name": "Ankh-Morpork (Mended Drum)",
             "command": "tp drum",
             "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
-          },
-          {
-            "name": "Djelibeybi (Market Crossroads)",
-            "command": "tp dj",
-            "roomId": "4ed9b9006731e04ade1ed9c34d41861fbe8ae1b1"
           },
           {
             "name": "Ephebe (Glaxos)",
@@ -741,20 +736,25 @@
             "name": "Bes Pelargic",
             "command": "tp bp",
             "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
+          },
+          {
+            "name": "Djelibeybi",
+            "command": "tp dj",
+            "roomId": "8996c145b1b02f540f510abc850d8d952ca26b33"
           }
         ]
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769417701985,
+          "expirationTime": 1769434400395,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
         4,
-        1,
         4,
-        1,
+        4,
+        5,
         4
       ],
       "hpRateSamples": [
@@ -811,9 +811,9 @@
         }
       },
       "gpRateSamples": [
+        3,
         4,
-        4,
-        4,
+        2,
         4,
         4
       ],

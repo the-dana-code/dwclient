@@ -1910,6 +1910,20 @@
       }
     ]
   },
+  "ba1311a3625efc61c9e0d43b8e2af73542781bef": {
+    "name": "Djelian classroom",
+    "notes": "1am to 5am - Djelian for Klatchian students\n6am to 2pm - Djelian for Morporkian students\n3pm to 11pm - Djelian for Ephebian students",
+    "buttons": [
+      {
+        "name": "Written Lesson",
+        "command": "enroll in djelian written lesson"
+      },
+      {
+        "name": "Spoken Lesson",
+        "command": "enroll in djelian spoken lesson"
+      }
+    ]
+  },
   "bb97d14f936216eeb7d6457dc4c9bb514ebc0b0d": {
     "name": "Rendtnor\u0027s Jewellery Shop",
     "notes": "restore cost \u003cjewellery\u003e\nrestore \u003cjewellery\u003e",
