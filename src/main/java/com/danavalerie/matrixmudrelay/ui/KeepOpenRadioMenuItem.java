@@ -6,7 +6,7 @@ import javax.swing.plaf.ButtonUI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RadioMenuItem extends JMenuItem {
+public class KeepOpenRadioMenuItem extends JMenuItem {
     private static final String SELECTED_PREFIX = "\u25C9 ";
     private static final String UNSELECTED_PREFIX = "\u25CC ";
 
@@ -16,15 +16,15 @@ public class RadioMenuItem extends JMenuItem {
     private boolean keepMenuOpen;
     private boolean selected;
 
-    public RadioMenuItem(String label, boolean selected, RadioMenuGroup group) {
+    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group) {
         this(label, selected, group, false);
     }
 
-    public RadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen) {
+    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen) {
         this(label, selected, group, keepMenuOpen, null);
     }
 
-    public RadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen, JComponent parentMenu) {
+    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen, JComponent parentMenu) {
         this.label = label;
         this.group = group;
         if (group != null) {
@@ -71,16 +71,16 @@ public class RadioMenuItem extends JMenuItem {
     }
 
     public static class RadioMenuGroup {
-        private final List<RadioMenuItem> items = new ArrayList<>();
+        private final List<KeepOpenRadioMenuItem> items = new ArrayList<>();
 
-        public void add(RadioMenuItem item) {
+        public void add(KeepOpenRadioMenuItem item) {
             if (!items.contains(item)) {
                 items.add(item);
             }
         }
 
-        public void select(RadioMenuItem selectedItem) {
-            for (RadioMenuItem item : items) {
+        public void select(KeepOpenRadioMenuItem selectedItem) {
+            for (KeepOpenRadioMenuItem item : items) {
                 item.setSelected(item == selectedItem);
             }
         }

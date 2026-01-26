@@ -4,7 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.plaf.ButtonUI;
 
-public class CheckboxMenuItem extends JMenuItem {
+public class KeepOpenCheckBoxMenuItem extends JMenuItem {
     private static final String CHECKED_PREFIX = "\u2611 ";
     private static final String UNCHECKED_PREFIX = "\u2610 ";
 
@@ -13,15 +13,15 @@ public class CheckboxMenuItem extends JMenuItem {
     private boolean keepMenuOpen;
     private boolean checked;
 
-    public CheckboxMenuItem(String label, boolean checked) {
+    public KeepOpenCheckBoxMenuItem(String label, boolean checked) {
         this(label, checked, false);
     }
 
-    public CheckboxMenuItem(String label, boolean checked, boolean keepMenuOpen) {
+    public KeepOpenCheckBoxMenuItem(String label, boolean checked, boolean keepMenuOpen) {
         this(label, checked, keepMenuOpen, null);
     }
 
-    public CheckboxMenuItem(String label, boolean checked, boolean keepMenuOpen, JComponent parentMenu) {
+    public KeepOpenCheckBoxMenuItem(String label, boolean checked, boolean keepMenuOpen, JComponent parentMenu) {
         this.label = label;
         this.defaultUI = getUI();
         setChecked(checked);

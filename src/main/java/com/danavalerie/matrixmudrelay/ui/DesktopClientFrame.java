@@ -436,11 +436,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(zoomSubMenu, currentBg, currentFg);
         }
-        RadioMenuItem.RadioMenuGroup zoomGroup = new RadioMenuItem.RadioMenuGroup();
+        KeepOpenRadioMenuItem.RadioMenuGroup zoomGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
         int currentZoom = resolveMapZoomPercent();
         for (int z = 20; z <= 200; z += 20) {
             final int zoomVal = z;
-            RadioMenuItem zoomItem = new RadioMenuItem(z + "%", z == currentZoom, zoomGroup, true);
+            KeepOpenRadioMenuItem zoomItem = new KeepOpenRadioMenuItem(z + "%", z == currentZoom, zoomGroup, true);
             if (currentBg != null && currentFg != null) {
                 updateMenuTheme(zoomItem, currentBg, currentFg);
             }
@@ -1379,12 +1379,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 selectedWritIndex = 0;
             }
 
-            RadioMenuItem.RadioMenuGroup menuGroup = new RadioMenuItem.RadioMenuGroup();
+            KeepOpenRadioMenuItem.RadioMenuGroup menuGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
             for (int i = 0; i < writRequirements.size(); i++) {
                 int index = i;
                 String label = "Writ " + (i + 1);
                 boolean selected = (i == selectedWritIndex);
-                RadioMenuItem radioItem = new RadioMenuItem(label, selected, menuGroup, true, writTopMenu);
+                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, true, writTopMenu);
                 radioItem.addActionListener(e -> {
                     selectedWritIndex = index;
                     rebuildWritMenus();
@@ -1960,12 +1960,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 selectedResultsPageIndex = 0;
             }
 
-            RadioMenuItem.RadioMenuGroup menuGroup = new RadioMenuItem.RadioMenuGroup();
+            KeepOpenRadioMenuItem.RadioMenuGroup menuGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
             for (int i = 0; i < totalPages; i++) {
                 int pageIndex = i;
                 String label = "Results " + (i + 1);
                 boolean selected = (i == selectedResultsPageIndex);
-                RadioMenuItem radioItem = new RadioMenuItem(label, selected, menuGroup, true, resultsTopMenu);
+                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, true, resultsTopMenu);
                 radioItem.addActionListener(e -> {
                     selectedResultsPageIndex = pageIndex;
                     rebuildResultsMenu();
