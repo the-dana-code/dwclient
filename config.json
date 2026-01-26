@@ -15,12 +15,12 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7504432624113475,
     "mapNotesSplitRatio": 0.6477644492911668,
-    "chitchatTimerSplitRatio": 0.6761565836298933,
+    "chitchatTimerSplitRatio": 0.6785290628706999,
     "outputSplitRatio": 0.19794050343249428,
     "timerColumnWidths": [
       126,
-      205,
-      205
+      203,
+      203
     ]
   },
   "bookmarks": [
@@ -670,7 +670,7 @@
       ]
     },
     "Ngao": {
-      "useTeleports": false,
+      "useTeleports": true,
       "teleports": {
         "reliable": false,
         "outdoorOnly": false,
