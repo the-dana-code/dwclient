@@ -27,7 +27,9 @@ import java.util.Map;
 public final class BotConfig {
     public Mud mud = new Mud();
 
-    public boolean useTeleports = true;
+    /** @deprecated Use characters.useTeleports instead. This field is for migration. */
+    @Deprecated
+    public Boolean useTeleports;
 
     public Ui ui = new Ui();
     public List<Bookmark> bookmarks = new ArrayList<>();
@@ -77,6 +79,7 @@ public final class BotConfig {
     }
 
     public static final class CharacterConfig {
+        public Boolean useTeleports;
         public CharacterTeleports teleports = new CharacterTeleports();
         public Map<String, TimerData> timers = new LinkedHashMap<>();
         public List<Integer> gpRateSamples = new ArrayList<>();

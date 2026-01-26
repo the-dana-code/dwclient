@@ -171,7 +171,7 @@ public class ThemeTest {
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         SwingUtilities.invokeAndWait(() -> {
             JMenu menu = new JMenu("Test Menu");
-            JMenuItem item = new JMenuItem("Test Item");
+            KeepOpenMenuItem item = new KeepOpenMenuItem("Test Item", false);
             menu.add(item);
             
             Color bg = Color.BLACK;
@@ -235,4 +235,3 @@ public class ThemeTest {
         });
     }
 }
-

@@ -528,13 +528,29 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return;
         }
         if ("tp".equals(subcommand)) {
-            cfg.useTeleports = true;
-            output.appendSystem("Teleport-assisted routing enabled.");
+            if (currentCharacterName != null) {
+                cfg.characters.computeIfAbsent(currentCharacterName, k -> new BotConfig.CharacterConfig()).useTeleports = true;
+                output.appendSystem("Teleport-assisted routing enabled for " + currentCharacterName + ".");
+            } else {
+                cfg.useTeleports = true;
+                output.appendSystem("Teleport-assisted routing enabled.");
+            }
+            if (configPath != null) {
+                ConfigLoader.save(configPath, cfg);
+            }
             return;
         }
         if ("notp".equals(subcommand)) {
-            cfg.useTeleports = false;
-            output.appendSystem("Teleport-assisted routing disabled.");
+            if (currentCharacterName != null) {
+                cfg.characters.computeIfAbsent(currentCharacterName, k -> new BotConfig.CharacterConfig()).useTeleports = false;
+                output.appendSystem("Teleport-assisted routing disabled for " + currentCharacterName + ".");
+            } else {
+                cfg.useTeleports = false;
+                output.appendSystem("Teleport-assisted routing disabled.");
+            }
+            if (configPath != null) {
+                ConfigLoader.save(configPath, cfg);
+            }
             return;
         }
         if ("reset".equals(subcommand)) {
@@ -1152,11 +1168,21 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         RoomMapService.RouteResult route = mapService.findRoute(
                 currentRoomId,
                 targetRoomId,
-                cfg.useTeleports,
+                getUseTeleports(characterName),
                 characterName
         );
         updateSpeedwalkPath(currentRoomId, route);
         return route;
+    }
+
+    private boolean getUseTeleports(String characterName) {
+        if (characterName != null && cfg.characters.containsKey(characterName)) {
+            Boolean val = cfg.characters.get(characterName).useTeleports;
+            if (val != null) {
+                return val;
+            }
+        }
+        return cfg.useTeleports != null ? cfg.useTeleports : true;
     }
 
     private void updateSpeedwalkPath(String currentRoomId, RoomMapService.RouteResult route) {

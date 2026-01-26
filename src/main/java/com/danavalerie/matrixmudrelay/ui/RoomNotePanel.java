@@ -81,7 +81,7 @@ public class RoomNotePanel extends JPanel {
     private void showPopupMenu(int x, int y) {
         if (currentRoomId == null) return;
         JPopupMenu menu = new JPopupMenu();
-        JMenuItem editItem = new JMenuItem("Edit Notes");
+        KeepOpenMenuItem editItem = new KeepOpenMenuItem("Edit Notes", false);
         editItem.addActionListener(e -> showEditDialog());
         menu.add(editItem);
         if (currentBg != null && currentFg != null) {

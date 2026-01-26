@@ -5,12 +5,14 @@
     "charset": "UTF-8",
     "connectTimeoutMs": 10000
   },
-  "useTeleports": true,
   "ui": {
     "fontFamily": "Monospaced",
     "fontSize": 20,
     "mapZoomPercent": 100,
-    "invertMap": true
+    "invertMap": true,
+    "windowWidth": 2272,
+    "windowHeight": 1039,
+    "windowMaximized": false
   },
   "bookmarks": [
     {
@@ -312,6 +314,28 @@
     {
       "name": "Money Changers/To/Djelibeybi/From Ankh-Morpork/Djelibeybi: The Morporkian Embassy",
       "roomId": "94d42056d8bce1a46364b9bd18ee6486bd6edfb8"
+    },
+    {
+      "name": "Vaults/Nella\u0027s Vault",
+      "roomId": "53da665ea8ddaf7cf38287d1343d92963f3f1b98"
+    },
+    {
+      "name": "Vaults/Thella\u0027s Vault",
+      "roomId": "acd14c92321f105eca84332ecff9b079793c119e"
+    },
+    {
+      "name": "Vaults/Jonas\u0027 Vault",
+      "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337"
     }
-  ]
+  ],
+  "characters": {
+    "SampleCharacter": {
+      "useTeleports": true,
+      "teleports": {
+        "reliable": true,
+        "outdoorOnly": false,
+        "speedwalkingPenalty": 8
+      }
+    }
+  }
 }

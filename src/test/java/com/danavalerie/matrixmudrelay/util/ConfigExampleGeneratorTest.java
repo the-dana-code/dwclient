@@ -32,6 +32,12 @@ class ConfigExampleGeneratorTest {
         BotConfig config = gson.fromJson(Files.readString(configPath), BotConfig.class);
         config.characters.clear();
         config.teleports = null;
+        config.useTeleports = null;
+
+        // Add a sample character to show the new character-specific settings
+        BotConfig.CharacterConfig sampleChar = new BotConfig.CharacterConfig();
+        sampleChar.useTeleports = true;
+        config.characters.put("SampleCharacter", sampleChar);
 
         if (config.ui != null) {
             config.ui.mudMapSplitRatio = null;

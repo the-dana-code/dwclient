@@ -62,6 +62,16 @@ public final class ConfigLoader {
             migrated = true;
         }
 
+        if (cfg.useTeleports != null) {
+            for (BotConfig.CharacterConfig charCfg : cfg.characters.values()) {
+                if (charCfg.useTeleports == null) {
+                    charCfg.useTeleports = cfg.useTeleports;
+                }
+            }
+            cfg.useTeleports = null;
+            migrated = true;
+        }
+
         if (cfg.bookmarks != null && !cfg.bookmarks.isEmpty()) {
             List<BotConfig.Bookmark> flat = new ArrayList<>();
             if (migrateBookmarks(cfg.bookmarks, null, flat)) {

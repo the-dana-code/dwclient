@@ -111,7 +111,7 @@ public class RoomButtonBarPanel extends JPanel implements FontChangeListener {
     private void showPanelPopupMenu(int x, int y) {
         if (currentRoomId == null) return;
         JPopupMenu menu = new JPopupMenu();
-        JMenuItem addBtn = new JMenuItem("Add Button");
+        KeepOpenMenuItem addBtn = new KeepOpenMenuItem("Add Button", false);
         addBtn.addActionListener(e -> showEditDialog(null, -1));
         menu.add(addBtn);
         if (currentBg != null && currentFg != null) {
@@ -123,14 +123,14 @@ public class RoomButtonBarPanel extends JPanel implements FontChangeListener {
     private void showButtonPopupMenu(JButton btn, int index, int x, int y) {
         JPopupMenu menu = new JPopupMenu();
         
-        JMenuItem editBtn = new JMenuItem("Edit");
+        KeepOpenMenuItem editBtn = new KeepOpenMenuItem("Edit", false);
         editBtn.addActionListener(e -> {
             RoomButton rb = roomButtonService.getButtonsForRoom(currentRoomId).get(index);
             showEditDialog(rb, index);
         });
         menu.add(editBtn);
 
-        JMenuItem removeBtn = new JMenuItem("Remove");
+        KeepOpenMenuItem removeBtn = new KeepOpenMenuItem("Remove", false);
         removeBtn.addActionListener(e -> {
             roomButtonService.removeButton(currentRoomId, index);
             refreshButtons();
@@ -139,7 +139,7 @@ public class RoomButtonBarPanel extends JPanel implements FontChangeListener {
 
         menu.addSeparator();
 
-        JMenuItem moveLeft = new JMenuItem("Move Left");
+        KeepOpenMenuItem moveLeft = new KeepOpenMenuItem("Move Left", false);
         moveLeft.setEnabled(index > 0);
         moveLeft.addActionListener(e -> {
             roomButtonService.moveButtonLeft(currentRoomId, index);
@@ -147,7 +147,7 @@ public class RoomButtonBarPanel extends JPanel implements FontChangeListener {
         });
         menu.add(moveLeft);
 
-        JMenuItem moveRight = new JMenuItem("Move Right");
+        KeepOpenMenuItem moveRight = new KeepOpenMenuItem("Move Right", false);
         int size = roomButtonService.getButtonsForRoom(currentRoomId).size();
         moveRight.setEnabled(index < size - 1);
         moveRight.addActionListener(e -> {

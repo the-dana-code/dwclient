@@ -5,7 +5,6 @@
     "charset": "UTF-8",
     "connectTimeoutMs": 10000
   },
-  "useTeleports": true,
   "ui": {
     "fontFamily": "Monospaced",
     "fontSize": 20,
@@ -16,12 +15,12 @@
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7504432624113475,
     "mapNotesSplitRatio": 0.6477644492911668,
-    "chitchatTimerSplitRatio": 0.6595492289442467,
+    "chitchatTimerSplitRatio": 0.6761565836298933,
     "outputSplitRatio": 0.19794050343249428,
     "timerColumnWidths": [
-      133,
-      216,
-      215
+      126,
+      205,
+      205
     ]
   },
   "bookmarks": [
@@ -340,6 +339,7 @@
   ],
   "characters": {
     "Lesa": {
+      "useTeleports": false,
       "teleports": {
         "reliable": true,
         "outdoorOnly": false,
@@ -585,6 +585,7 @@
       ]
     },
     "Maemot": {
+      "useTeleports": false,
       "teleports": {
         "reliable": false,
         "outdoorOnly": false,
@@ -669,9 +670,10 @@
       ]
     },
     "Ngao": {
+      "useTeleports": false,
       "teleports": {
         "reliable": false,
-        "outdoorOnly": true,
+        "outdoorOnly": false,
         "speedwalkingPenalty": 15,
         "locations": [
           {
@@ -723,6 +725,7 @@
       ]
     },
     "Bpla": {
+      "useTeleports": false,
       "teleports": {
         "reliable": true,
         "outdoorOnly": false,

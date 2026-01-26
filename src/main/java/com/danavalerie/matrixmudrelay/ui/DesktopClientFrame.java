@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -135,7 +134,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final RoomMapService routeMapService;
     private final UiFontManager fontManager;
     private final JMenuBar menuBar = new JMenuBar();
-    private JMenuItem connectionItem;
+    private KeepOpenMenuItem connectionItem;
     private AutoScrollScrollPane outputScroll;
     private AutoScrollScrollPane chitchatScroll;
     private com.danavalerie.matrixmudrelay.core.ContextualResultList currentResults;
@@ -148,7 +147,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JMenu bookmarksMenu;
     private JMenu writTopMenu;
     private JMenu resultsTopMenu;
-    private JMenuItem repeatLastSpeedwalkItem;
+    private KeepOpenMenuItem repeatLastSpeedwalkItem;
     private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private String writCharacterName = null;
@@ -370,7 +369,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(mainMenu, currentBg, currentFg);
         }
-        connectionItem = new JMenuItem();
+        connectionItem = new KeepOpenMenuItem("", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(connectionItem, currentBg, currentFg);
         }
@@ -400,14 +399,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(connectionItem);
 
         mainMenu.addSeparator();
-        JMenuItem sendPasswordItem = new JMenuItem("Send Password");
+        KeepOpenMenuItem sendPasswordItem = new KeepOpenMenuItem("Send Password", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(sendPasswordItem, currentBg, currentFg);
         }
         sendPasswordItem.addActionListener(event -> submitCommand("/pw"));
         mainMenu.add(sendPasswordItem);
 
-        JMenuItem editPasswordItem = new JMenuItem("Edit Password...");
+        KeepOpenMenuItem editPasswordItem = new KeepOpenMenuItem("Edit Password...", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(editPasswordItem, currentBg, currentFg);
         }
@@ -415,7 +414,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(editPasswordItem);
 
         mainMenu.addSeparator();
-        JMenuItem fontItem = new JMenuItem("Output Font...");
+        KeepOpenMenuItem fontItem = new KeepOpenMenuItem("Output Font...", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(fontItem, currentBg, currentFg);
         }
@@ -423,11 +422,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(fontItem);
         mainMenu.addSeparator();
 
-        JCheckBoxMenuItem invertItem = new JCheckBoxMenuItem("Invert Map", resolveMapInvert());
+        KeepOpenCheckBoxMenuItem invertItem = new KeepOpenCheckBoxMenuItem("Invert Map", resolveMapInvert());
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(invertItem, currentBg, currentFg);
         }
-        invertItem.addActionListener(event -> mapPanel.setInverted(invertItem.isSelected()));
+        invertItem.addActionListener(event -> mapPanel.setInverted(invertItem.isChecked()));
         mainMenu.add(invertItem);
 
         mainMenu.addSeparator();
@@ -440,7 +439,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         int currentZoom = resolveMapZoomPercent();
         for (int z = 20; z <= 200; z += 20) {
             final int zoomVal = z;
-            KeepOpenRadioMenuItem zoomItem = new KeepOpenRadioMenuItem(z + "%", z == currentZoom, zoomGroup, true);
+            KeepOpenRadioMenuItem zoomItem = new KeepOpenRadioMenuItem(z + "%", z == currentZoom, zoomGroup, null);
             if (currentBg != null && currentFg != null) {
                 updateMenuTheme(zoomItem, currentBg, currentFg);
             }
@@ -450,7 +449,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mainMenu.add(zoomSubMenu);
 
         mainMenu.addSeparator();
-        JMenuItem exitItem = new JMenuItem("Exit");
+        KeepOpenMenuItem exitItem = new KeepOpenMenuItem("Exit", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(exitItem, currentBg, currentFg);
         }
@@ -467,7 +466,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
 
-        repeatLastSpeedwalkItem = new JMenuItem();
+        repeatLastSpeedwalkItem = new KeepOpenMenuItem("", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
         }
@@ -586,7 +585,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     updateMenuTheme(bmSubMenu, currentBg, currentFg);
                 }
 
-                JMenuItem speedwalkNow = new JMenuItem("Speedwalk Now");
+                KeepOpenMenuItem speedwalkNow = new KeepOpenMenuItem("Speedwalk Now", false);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(speedwalkNow, currentBg, currentFg);
                 }
@@ -598,14 +597,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
                 bmSubMenu.addSeparator();
 
-                JMenuItem editBm = new JMenuItem("Edit...");
+                KeepOpenMenuItem editBm = new KeepOpenMenuItem("Edit...", false);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(editBm, currentBg, currentFg);
                 }
                 editBm.addActionListener(e -> showEditBookmarkDialog(link));
                 bmSubMenu.add(editBm);
 
-                JMenuItem deleteBm = new JMenuItem("Delete...");
+                KeepOpenMenuItem deleteBm = new KeepOpenMenuItem("Delete...", false);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(deleteBm, currentBg, currentFg);
                 }
@@ -950,44 +949,49 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         JMenu optionsMenu = new JMenu("Options");
 
-        JCheckBoxMenuItem useTpItem = new JCheckBoxMenuItem("Use Teleports for Speedwalking", cfg.useTeleports);
+        boolean useTp = (charCfg != null && charCfg.useTeleports != null) ? charCfg.useTeleports : (cfg.useTeleports != null ? cfg.useTeleports : true);
+        KeepOpenCheckBoxMenuItem useTpItem = new KeepOpenCheckBoxMenuItem("Use Teleports for Speedwalking", useTp);
         useTpItem.addActionListener(e -> {
-            cfg.useTeleports = useTpItem.isSelected();
+            if (charCfg != null) {
+                charCfg.useTeleports = useTpItem.isChecked();
+            } else {
+                cfg.useTeleports = useTpItem.isChecked();
+            }
             saveConfig();
         });
         optionsMenu.add(useTpItem);
 
-        JCheckBoxMenuItem reliableTpItem = new JCheckBoxMenuItem("Reliable Teleports");
+        KeepOpenCheckBoxMenuItem reliableTpItem = new KeepOpenCheckBoxMenuItem("Reliable Teleports", false);
         if (charCfg != null && charCfg.teleports != null) {
-            reliableTpItem.setSelected(charCfg.teleports.reliable);
+            reliableTpItem.setChecked(charCfg.teleports.reliable);
         } else {
             reliableTpItem.setEnabled(false);
         }
         reliableTpItem.addActionListener(e -> {
             if (charCfg != null && charCfg.teleports != null) {
-                charCfg.teleports.reliable = reliableTpItem.isSelected();
+                charCfg.teleports.reliable = reliableTpItem.isChecked();
                 com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
                 saveConfig();
             }
         });
         optionsMenu.add(reliableTpItem);
 
-        JCheckBoxMenuItem outdoorTpItem = new JCheckBoxMenuItem("Outdoor Use Only");
+        KeepOpenCheckBoxMenuItem outdoorTpItem = new KeepOpenCheckBoxMenuItem("Outdoor Use Only", false);
         if (charCfg != null && charCfg.teleports != null) {
-            outdoorTpItem.setSelected(charCfg.teleports.outdoorOnly);
+            outdoorTpItem.setChecked(charCfg.teleports.outdoorOnly);
         } else {
             outdoorTpItem.setEnabled(false);
         }
         outdoorTpItem.addActionListener(e -> {
             if (charCfg != null && charCfg.teleports != null) {
-                charCfg.teleports.outdoorOnly = outdoorTpItem.isSelected();
+                charCfg.teleports.outdoorOnly = outdoorTpItem.isChecked();
                 com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
                 saveConfig();
             }
         });
         optionsMenu.add(outdoorTpItem);
 
-        JMenuItem penaltyItem = new JMenuItem("Speedwalking Teleport Penalty...");
+        KeepOpenMenuItem penaltyItem = new KeepOpenMenuItem("Speedwalking Teleport Penalty...", false);
         if (charCfg != null && charCfg.teleports != null) {
             penaltyItem.addActionListener(e -> showSpeedwalkingPenaltyDialog(charCfg.teleports));
         } else {
@@ -997,7 +1001,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         teleportsMenu.add(optionsMenu);
 
-        JMenuItem addTpItem = new JMenuItem("Add Teleport...");
+        KeepOpenMenuItem addTpItem = new KeepOpenMenuItem("Add Teleport...", false);
         addTpItem.addActionListener(e -> showAddTeleportDialog());
         teleportsMenu.add(addTpItem);
 
@@ -1047,7 +1051,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(tpSubMenu, currentBg, currentFg);
         }
 
-        JMenuItem tpNow = new JMenuItem("Teleport Now");
+        KeepOpenMenuItem tpNow = new KeepOpenMenuItem("Teleport Now", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(tpNow, currentBg, currentFg);
         }
@@ -1056,11 +1060,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         tpSubMenu.addSeparator();
 
-        JMenuItem editTp = new JMenuItem("Edit...");
+        KeepOpenMenuItem editTp = new KeepOpenMenuItem("Edit...", false);
         editTp.addActionListener(e -> showEditTeleportDialog(loc));
         tpSubMenu.add(editTp);
 
-        JMenuItem deleteTp = new JMenuItem("Delete...");
+        KeepOpenMenuItem deleteTp = new KeepOpenMenuItem("Delete...", false);
         deleteTp.addActionListener(e -> {
             Object[] options = {"Yes", "No"};
             int choice = JOptionPane.showOptionDialog(
@@ -1091,7 +1095,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         bookmarksMenu.removeAll();
 
-        JMenuItem addBmItem = new JMenuItem("Add Bookmark...");
+        KeepOpenMenuItem addBmItem = new KeepOpenMenuItem("Add Bookmark...", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(addBmItem, currentBg, currentFg);
         }
@@ -1365,7 +1369,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
         if (writRequirements.isEmpty()) {
             writTopMenu.setText("Writ");
-            JMenuItem noWritItem = new KeepOpenMenuItem("No active writ", writTopMenu, true);
+            KeepOpenMenuItem noWritItem = new KeepOpenMenuItem("No active writ", writTopMenu, true);
             noWritItem.setEnabled(false);
             writTopMenu.add(noWritItem);
         } else {
@@ -1384,7 +1388,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 int index = i;
                 String label = "Writ " + (i + 1);
                 boolean selected = (i == selectedWritIndex);
-                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, true, writTopMenu);
+                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, writTopMenu);
                 radioItem.addActionListener(e -> {
                     selectedWritIndex = index;
                     rebuildWritMenus();
@@ -1399,34 +1403,34 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean canWriteRoutes = Files.isWritable(routesPath);
             int index = selectedWritIndex;
 
-            JMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
+            KeepOpenMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
                     "Item: " + req.quantity() + " " + req.item(),
                     () -> submitCommand("/item exact " + req.item()));
             writTopMenu.add(itemInfo);
 
-            JMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
+            KeepOpenMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
                     "List Store",
                     () -> submitCommand("list"));
             writTopMenu.add(listItem);
 
             if (req.quantity() == 2) {
-                JMenuItem buyOneItem = buildWritMenuItem(index, WritMenuAction.BUY_ONE_ITEM,
+                KeepOpenMenuItem buyOneItem = buildWritMenuItem(index, WritMenuAction.BUY_ONE_ITEM,
                         "Buy 1 Item",
                         () -> handleStoreBuy(index, 1));
                 writTopMenu.add(buyOneItem);
-                JMenuItem buyTwoItems = buildWritMenuItem(index, WritMenuAction.BUY_TWO_ITEMS,
+                KeepOpenMenuItem buyTwoItems = buildWritMenuItem(index, WritMenuAction.BUY_TWO_ITEMS,
                         "Buy 2 Items",
                         () -> handleStoreBuy(index, 2));
                 writTopMenu.add(buyTwoItems);
             } else {
-                JMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
+                KeepOpenMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
                         "Buy Item",
                         () -> handleStoreBuy(index, req.quantity()));
                 writTopMenu.add(buyItem);
             }
 
             if (hasRoute) {
-                JMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
+                KeepOpenMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
                         "Route",
                         () -> handleRoute(index));
                 writTopMenu.add(routeItem);
@@ -1438,7 +1442,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 writTopMenu.add(addRouteMenu);
             }
 
-            JMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
+            KeepOpenMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
                     "Deliver",
                     () -> submitCommand("/writ " + (index + 1) + " deliver"));
             writTopMenu.add(deliverItem);
@@ -1462,9 +1466,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         saveMenus();
     }
 
-    private JMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
+    private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
-        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
+        KeepOpenMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             item.setText(formatWritMenuLabel(true, label));
@@ -1476,7 +1480,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JMenu buildWritSubMenu(int index, WritMenuAction action, String menuLabel, String itemLabel, Runnable onSelect, boolean keepMenuOpen) {
         boolean visited = isWritMenuVisited(index, action);
         JMenu menu = new JMenu(formatWritMenuLabel(visited, menuLabel));
-        JMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, itemLabel), writTopMenu, keepMenuOpen);
+        KeepOpenMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, itemLabel), writTopMenu, keepMenuOpen);
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             menu.setText(formatWritMenuLabel(true, menuLabel));
@@ -1940,7 +1944,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             String emptyMsg = (currentResults != null && !currentResults.emptyMessage().isBlank())
                     ? currentResults.emptyMessage()
                     : "No active results";
-            JMenuItem noResultsItem = new KeepOpenMenuItem(emptyMsg, resultsTopMenu, true);
+            KeepOpenMenuItem noResultsItem = new KeepOpenMenuItem(emptyMsg, resultsTopMenu, true);
             noResultsItem.setEnabled(false);
             resultsTopMenu.add(noResultsItem);
         } else {
@@ -1965,7 +1969,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 int pageIndex = i;
                 String label = "Results " + (i + 1);
                 boolean selected = (i == selectedResultsPageIndex);
-                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, true, resultsTopMenu);
+                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, resultsTopMenu);
                 radioItem.addActionListener(e -> {
                     selectedResultsPageIndex = pageIndex;
                     rebuildResultsMenu();
@@ -1977,7 +1981,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             String title = currentResults.title();
             if (selectedResultsPageIndex == 0 && title != null && !title.isBlank()) {
-                JMenuItem header = new KeepOpenMenuItem(title, resultsTopMenu, true);
+                KeepOpenMenuItem header = new KeepOpenMenuItem(title, resultsTopMenu, true);
                 header.setEnabled(false);
                 resultsTopMenu.add(header);
                 resultsTopMenu.addSeparator();
@@ -1994,7 +1998,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     continue;
                 }
                 boolean visited = resultsMenuVisits.contains(index);
-                JMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
+                KeepOpenMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
                 if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
                     item.addActionListener(event -> {
@@ -2017,7 +2021,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean isLastPage = selectedResultsPageIndex == totalPages - 1;
             if (isLastPage && footerText != null && !footerText.isBlank()) {
                 resultsTopMenu.addSeparator();
-                JMenuItem footer = new KeepOpenMenuItem(footerText, resultsTopMenu, true);
+                KeepOpenMenuItem footer = new KeepOpenMenuItem(footerText, resultsTopMenu, true);
                 footer.setEnabled(false);
                 resultsTopMenu.add(footer);
             }

@@ -182,7 +182,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         nameMenu.removeAll();
         Font font = nameMenu.getFont();
         for (String configChar : configCharacters) {
-            JMenuItem item = new JMenuItem(configChar);
+            KeepOpenMenuItem item = new KeepOpenMenuItem(configChar, false);
             if (font != null) {
                 item.setFont(font);
             }
@@ -593,4 +593,3 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
         hpTimer.setInitialDelay(hpMillisPerPoint);
     }
 }
-

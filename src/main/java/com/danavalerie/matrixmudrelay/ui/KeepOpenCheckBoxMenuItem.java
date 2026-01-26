@@ -14,18 +14,14 @@ public class KeepOpenCheckBoxMenuItem extends JMenuItem {
     private boolean checked;
 
     public KeepOpenCheckBoxMenuItem(String label, boolean checked) {
-        this(label, checked, false);
+        this(label, checked, null);
     }
 
-    public KeepOpenCheckBoxMenuItem(String label, boolean checked, boolean keepMenuOpen) {
-        this(label, checked, keepMenuOpen, null);
-    }
-
-    public KeepOpenCheckBoxMenuItem(String label, boolean checked, boolean keepMenuOpen, JComponent parentMenu) {
+    public KeepOpenCheckBoxMenuItem(String label, boolean checked, JComponent parentMenu) {
         this.label = label;
         this.defaultUI = getUI();
         setChecked(checked);
-        setKeepMenuOpen(keepMenuOpen);
+        setKeepMenuOpen(true);
         if (parentMenu != null) {
             putClientProperty(KeepOpenMenuItem.PARENT_MENU_KEY, parentMenu);
         }

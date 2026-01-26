@@ -16,15 +16,7 @@ public class KeepOpenRadioMenuItem extends JMenuItem {
     private boolean keepMenuOpen;
     private boolean selected;
 
-    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group) {
-        this(label, selected, group, false);
-    }
-
-    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen) {
-        this(label, selected, group, keepMenuOpen, null);
-    }
-
-    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group, boolean keepMenuOpen, JComponent parentMenu) {
+    public KeepOpenRadioMenuItem(String label, boolean selected, RadioMenuGroup group, JComponent parentMenu) {
         this.label = label;
         this.group = group;
         if (group != null) {
@@ -32,7 +24,7 @@ public class KeepOpenRadioMenuItem extends JMenuItem {
         }
         this.defaultUI = getUI();
         setSelected(selected);
-        setKeepMenuOpen(keepMenuOpen);
+        setKeepMenuOpen(true);
         if (parentMenu != null) {
             putClientProperty(KeepOpenMenuItem.PARENT_MENU_KEY, parentMenu);
         }
