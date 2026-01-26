@@ -1480,6 +1480,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 KeepOpenMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
                         "Route",
                         () -> handleRoute(index));
+                routeItem.setKeepMenuOpen(false);
                 writTopMenu.add(routeItem);
             } else if (canWriteRoutes) {
                 JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
@@ -2076,6 +2077,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 KeepOpenMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
                 if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
+                    item.setKeepMenuOpen(false);
                     item.addActionListener(event -> {
                         markResultVisited(resultIndex);
                         item.setText(formatResultsMenuLabel(true, result.label()));
