@@ -21,6 +21,7 @@ package com.danavalerie.matrixmudrelay.core;
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
+import com.danavalerie.matrixmudrelay.config.UiConfig;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
@@ -98,6 +99,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     private final ClientConfig cfg;
+    private final UiConfig uiCfg;
     private final Path configPath;
     private final MudClient mud;
     private final RoomMapService mapService;
@@ -119,6 +121,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private final Runnable uuLibraryListener = this::saveUULibraryState;
 
     public MudCommandProcessor(ClientConfig cfg,
+                               UiConfig uiCfg,
                                Path configPath,
                                MudClient mud,
                                RoomMapService mapService,
@@ -128,6 +131,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                                java.util.function.Supplier<DeliveryRouteMappings> routeMappingsSupplier,
                                ClientOutput output) {
         this.cfg = cfg;
+        this.uiCfg = uiCfg;
         this.configPath = configPath;
         this.mud = mud;
         this.mapService = mapService;
@@ -148,10 +152,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         String charName = mud.getCurrentRoomSnapshot().characterName();
         if (charName == null || charName.isBlank()) return;
 
-        ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(charName, k -> new ClientConfig.CharacterConfig());
+        UiConfig.CharacterUiData charCfg = uiCfg.characters.computeIfAbsent(charName, k -> new UiConfig.CharacterUiData());
 
         if (service.isActive()) {
-            charCfg.uuLibrary = new ClientConfig.UULibraryState(
+            charCfg.uuLibrary = new UiConfig.UULibraryState(
                     service.getCurRow(),
                     service.getCurCol(),
                     service.getOrientation().name()
@@ -161,7 +165,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
 
         if (configPath != null) {
-            ConfigLoader.save(configPath, cfg);
+            ConfigLoader.saveUi(configPath.resolveSibling("ui.json"), uiCfg);
         }
     }
 
@@ -339,7 +343,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                         uuLibraryRestoredForChar = null;
                     }
                     if (charName != null && !charName.equals(uuLibraryRestoredForChar)) {
-                        ClientConfig.CharacterConfig charCfg = cfg.characters.get(charName);
+                        UiConfig.CharacterUiData charCfg = uiCfg.characters.get(charName);
                         if (charCfg != null && charCfg.uuLibrary != null) {
                             try {
                                 UULibraryService.getInstance().setState(

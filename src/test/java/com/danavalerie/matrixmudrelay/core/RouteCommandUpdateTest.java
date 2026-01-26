@@ -93,7 +93,7 @@ class RouteCommandUpdateTest {
         RoomMapService mapService = new StubRoomMapService();
 
         MudCommandProcessor processor = new MudCommandProcessor(
-                cfg, configPath, mud, mapService, null, null, null, () -> null, output
+                cfg, new com.danavalerie.matrixmudrelay.config.UiConfig(), configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings(List.of()), output
         );
 
         // Inject last room search results

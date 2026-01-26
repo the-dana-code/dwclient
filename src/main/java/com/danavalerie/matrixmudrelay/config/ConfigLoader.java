@@ -138,6 +138,11 @@ public final class ConfigLoader {
                     charUiData.hpRateSamples = GSON.fromJson(charObj.get("hpRateSamples"), new TypeToken<List<Integer>>(){}.getType());
                     migrated = true;
                 }
+                if (charObj.has("uuLibrary")) {
+                    if (charUiData == null) charUiData = uiCfg.characters.computeIfAbsent(charName, k -> new UiConfig.CharacterUiData());
+                    charUiData.uuLibrary = GSON.fromJson(charObj.get("uuLibrary"), UiConfig.UULibraryState.class);
+                    migrated = true;
+                }
             }
         }
         return migrated;

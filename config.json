@@ -930,11 +930,6 @@
         "reliable": true,
         "outdoorOnly": false,
         "speedwalkingPenalty": 8
-      },
-      "uuLibrary": {
-        "row": 1,
-        "col": 5,
-        "orientation": "EAST"
       }
     }
   }

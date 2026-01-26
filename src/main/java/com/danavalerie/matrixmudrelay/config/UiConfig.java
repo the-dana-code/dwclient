@@ -39,5 +39,18 @@ public final class UiConfig {
         public Map<String, ClientConfig.TimerData> timers = new LinkedHashMap<>();
         public List<Integer> gpRateSamples = new ArrayList<>();
         public List<Integer> hpRateSamples = new ArrayList<>();
+        public UULibraryState uuLibrary;
+    }
+
+    public static final class UULibraryState {
+        public int row;
+        public int col;
+        public String orientation;
+
+        public UULibraryState(int row, int col, String orientation) {
+            this.row = row;
+            this.col = col;
+            this.orientation = orientation;
+        }
     }
 }

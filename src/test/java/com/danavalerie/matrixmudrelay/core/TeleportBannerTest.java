@@ -83,7 +83,7 @@ class TeleportBannerTest {
         mudClient = new StubMudClient(roomInfo.getSnapshot());
 
         processor = new MudCommandProcessor(
-                cfg, Paths.get("config.json"), mudClient, null, null, null, null, () -> null, output
+                cfg, new com.danavalerie.matrixmudrelay.config.UiConfig(), Paths.get("config.json"), mudClient, null, null, null, null, () -> null, output
         );
     }
 
@@ -142,7 +142,7 @@ class TeleportBannerTest {
         RoomMapService mapService = new StubMapService(route);
 
         processor = new MudCommandProcessor(
-                cfg, Paths.get("config.json"), mudClient, mapService, null, null, null, () -> null, output
+                cfg, new com.danavalerie.matrixmudrelay.config.UiConfig(), Paths.get("config.json"), mudClient, mapService, null, null, null, () -> null, output
         );
 
         processor.speedwalkTo("room1");

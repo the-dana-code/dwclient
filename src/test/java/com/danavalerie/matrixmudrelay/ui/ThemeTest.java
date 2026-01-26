@@ -132,7 +132,7 @@ public class ThemeTest {
     public void testTimerPanelTheme(@TempDir Path tempDir) throws Exception {
         Path configPath = tempDir.resolve("config.json");
         ClientConfig config = new ClientConfig();
-        com.danavalerie.matrixmudrelay.core.TimerService service = new com.danavalerie.matrixmudrelay.core.TimerService(config, configPath);
+        com.danavalerie.matrixmudrelay.core.TimerService service = new com.danavalerie.matrixmudrelay.core.TimerService(config, new com.danavalerie.matrixmudrelay.config.UiConfig(), configPath);
         
         javax.swing.SwingUtilities.invokeAndWait(() -> {
             TimerPanel panel = new TimerPanel(service, () -> "TestChar");

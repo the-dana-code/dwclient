@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
+import com.danavalerie.matrixmudrelay.config.UiConfig;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -77,7 +79,8 @@ class UULibraryPersistenceTest {
         mud.cri.update("char.info", charInfo);
 
         RoomMapService mapService = new RoomMapService(new MapDataService());
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        UiConfig uiCfg = new UiConfig();
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
 
         UULibraryService service = UULibraryService.getInstance();
         service.setRoomId("UULibrary");
@@ -91,26 +94,27 @@ class UULibraryPersistenceTest {
         assertEquals(UULibraryService.Orientation.NORTH, service.getOrientation());
 
         // Verify it's in the config
-        assertNotNull(cfg.characters.get("TestChar").uuLibrary);
-        assertEquals(2, cfg.characters.get("TestChar").uuLibrary.row);
-        assertEquals(6, cfg.characters.get("TestChar").uuLibrary.col);
-        assertEquals("NORTH", cfg.characters.get("TestChar").uuLibrary.orientation);
+        assertNotNull(uiCfg.characters.get("TestChar").uuLibrary);
+        assertEquals(2, uiCfg.characters.get("TestChar").uuLibrary.row);
+        assertEquals(6, uiCfg.characters.get("TestChar").uuLibrary.col);
+        assertEquals("NORTH", uiCfg.characters.get("TestChar").uuLibrary.orientation);
 
         // Deactivate
         service.setRoomId("OtherRoom");
-        assertNull(cfg.characters.get("TestChar").uuLibrary);
+        assertNull(uiCfg.characters.get("TestChar").uuLibrary);
 
         // Verify config file also reflects the removal
         try {
             BackgroundSaver.waitForIdle();
-            ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath).clientConfig();
-            assertNull(loaded.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
+            if (!Files.exists(configPath)) Files.writeString(configPath, "{\"mud\":{\"host\":\"localhost\",\"port\":4242}}");
+            UiConfig loadedUi = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath).uiConfig();
+            assertNull(loadedUi.characters.get("TestChar").uuLibrary, "Config file should have uuLibrary as null after leaving library");
         } catch (Exception e) {
             fail("Failed to load config: " + e.getMessage());
         }
 
         // Put it back manually to simulate loading from config
-        cfg.characters.get("TestChar").uuLibrary = new ClientConfig.UULibraryState(3, 4, "WEST");
+        uiCfg.characters.get("TestChar").uuLibrary = new UiConfig.UULibraryState(3, 4, "WEST");
         
         // Trigger entering library
         JsonObject roomInfo = new JsonObject();
@@ -129,6 +133,7 @@ class UULibraryPersistenceTest {
     void testRemoveStateOnWalkOut() throws Exception {
         Path configPath = tempDir.resolve("config_walkout.json");
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         cfg.mud.host = "localhost";
         cfg.mud.port = 1234;
         StubMudClient mud = new StubMudClient();
@@ -139,7 +144,7 @@ class UULibraryPersistenceTest {
         mud.cri.update("char.info", charInfo);
 
         RoomMapService mapService = new RoomMapService(new MapDataService());
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
         UULibraryService service = UULibraryService.getInstance();
 
         // 2. Enter Library
@@ -153,9 +158,9 @@ class UULibraryPersistenceTest {
         // Move to ensure something is saved (skipping entry save is intended)
         service.processCommand("rt"); 
         
-        ClientConfig.CharacterConfig charCfg = cfg.characters.values().stream().findFirst().orElse(null);
-        assertNotNull(charCfg, "CharacterConfig should exist after movement");
-        assertNotNull(charCfg.uuLibrary, "uuLibrary state should not be null after movement");
+        UiConfig.CharacterUiData charUiData = uiCfg.characters.get("Walker");
+        assertNotNull(charUiData, "CharacterUiData should exist after movement");
+        assertNotNull(charUiData.uuLibrary, "uuLibrary state should not be null after movement");
 
         // 3. Walk out (New room ID)
         JsonObject roomOutside = new JsonObject();
@@ -165,28 +170,30 @@ class UULibraryPersistenceTest {
 
         // 4. Verify
         assertFalse(service.isActive());
-        assertNull(cfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
+        assertNull(uiCfg.characters.get("Walker").uuLibrary, "uuLibrary state should be null in memory");
 
         BackgroundSaver.waitForIdle();
-        ClientConfig loaded = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath).clientConfig();
-        assertNull(loaded.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
+        if (!Files.exists(configPath)) Files.writeString(configPath, "{\"mud\":{\"host\":\"localhost\",\"port\":4242}}");
+        UiConfig loadedUi = com.danavalerie.matrixmudrelay.config.ConfigLoader.load(configPath).uiConfig();
+        assertNull(loadedUi.characters.get("Walker").uuLibrary, "uuLibrary state should be null in config file");
     }
 
     @Test
     void testRestoreStateWhenRoomInfoArrivesBeforeCharInfo() {
         Path configPath = tempDir.resolve("config_late_char.json");
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         cfg.mud.host = "localhost";
         cfg.mud.port = 1234;
         StubMudClient mud = new StubMudClient();
 
         // Saved state for character "LateChar"
-        ClientConfig.CharacterConfig charCfg = new ClientConfig.CharacterConfig();
-        charCfg.uuLibrary = new ClientConfig.UULibraryState(10, 20, "SOUTH");
-        cfg.characters.put("LateChar", charCfg);
+        UiConfig.CharacterUiData charUiData = new UiConfig.CharacterUiData();
+        charUiData.uuLibrary = new UiConfig.UULibraryState(10, 20, "SOUTH");
+        uiCfg.characters.put("LateChar", charUiData);
 
         RoomMapService mapService = new RoomMapService(new MapDataService());
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), new StubClientOutput());
         UULibraryService service = UULibraryService.getInstance();
 
         // 1. room.info arrives first. No character name known yet.

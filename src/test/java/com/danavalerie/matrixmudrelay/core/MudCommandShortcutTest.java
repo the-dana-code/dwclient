@@ -108,14 +108,15 @@ class MudCommandShortcutTest {
     @Test
     void testPwShortcut() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         PasswordPreferences.setPassword("supersecret");
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, new UiConfig(), Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
         processor.handleInput("/pw");
         
@@ -126,14 +127,15 @@ class MudCommandShortcutTest {
     @Test
     void testMmPasswordSubcommand() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         PasswordPreferences.setPassword("supersecret");
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, new UiConfig(), Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
         processor.handleInput("/password");
         
@@ -143,14 +145,15 @@ class MudCommandShortcutTest {
     @Test
     void testPasswordShortcutTriggersDialog() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         PasswordPreferences.setPassword(null);
 
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, new UiConfig(), Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
         processor.handleInput("/pw");
 
@@ -167,12 +170,13 @@ class MudCommandShortcutTest {
     @Test
     void testLocCommand() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
         
         // Test /loc usage
         processor.handleInput("/loc");
@@ -188,12 +192,13 @@ class MudCommandShortcutTest {
     @Test
     void testRoomNameUpdateTrigger() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
         // Scenario: Room ID arrives, but Name is null
         JsonObject roomInfo1 = new JsonObject();
@@ -220,12 +225,13 @@ class MudCommandShortcutTest {
     @Test
     void testRoomNameFallback() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, new WritTracker(), new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
 
         // Room ID for the Mended Drum from rooms.json
         String drumRoomId = "4b11616f93c94e3c766bb5ad9cba3b61dcc73979";
@@ -244,9 +250,10 @@ class MudCommandShortcutTest {
     @Test
     void testDeliverNpcOverride() {
         ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
         StubMudClient mud = new StubMudClient();
         StubClientOutput output = new StubClientOutput();
-        TimerService timerService = new TimerService(cfg, Paths.get("config.json"));
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
         WritTracker writTracker = new WritTracker();
 
         String npc = "the Ephebian teacher in the Ephebian Embassy";
@@ -258,7 +265,7 @@ class MudCommandShortcutTest {
         ));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
-        MudCommandProcessor processor = new MudCommandProcessor(cfg, Paths.get("config.json"), mud, mapService, writTracker, new StoreInventoryTracker(), timerService, () -> routeMappings, output);
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, writTracker, new StoreInventoryTracker(), timerService, () -> routeMappings, output);
 
         // Simulating parsing the writ line
         writTracker.ingest("You read the official employment writ\n[ ] " + item + " to " + npc + " at " + loc);

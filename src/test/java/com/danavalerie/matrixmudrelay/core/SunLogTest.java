@@ -55,7 +55,7 @@ class SunLogTest {
             @Override public void appendTeleportBanner(String banner) {}
             @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
         };
-        MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
+        MudCommandProcessor processor = new MudCommandProcessor(null, new com.danavalerie.matrixmudrelay.config.UiConfig(), null, null, null, null, null, null, null, output);
 
         String sunriseMessage = "The turnwise sky starts to lighten as the sun peeks over the horizon.";
         processor.onFullLineReceived(sunriseMessage);
@@ -93,7 +93,7 @@ class SunLogTest {
             @Override public void appendTeleportBanner(String banner) {}
             @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
         };
-        MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
+        MudCommandProcessor processor = new MudCommandProcessor(null, new com.danavalerie.matrixmudrelay.config.UiConfig(), null, null, null, null, null, null, null, output);
 
         String sunriseMessage = "The turnwise sky starts to lighten as the sun peeks over the horizon.";
         processor.onFullLineReceived(sunriseMessage);
@@ -124,7 +124,7 @@ class SunLogTest {
             @Override public void appendTeleportBanner(String banner) {}
             @Override public void showEditPasswordDialog(Runnable onPasswordStored) {}
         };
-        MudCommandProcessor processor = new MudCommandProcessor(null, null, null, null, null, null, null, null, output);
+        MudCommandProcessor processor = new MudCommandProcessor(null, new com.danavalerie.matrixmudrelay.config.UiConfig(), null, null, null, null, null, null, null, output);
 
         processor.onFullLineReceived("The turnwise sky starts to lighten as the sun peeks over the horizon.");
         processor.onFullLineReceived("The sun sinks further below the widdershins horizon.");

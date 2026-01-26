@@ -57,7 +57,7 @@ class UULibraryDistortionTest {
         MudClient mud = new MudClient(new ClientConfig.Mud(), null, null);
         RoomMapService mapService = new RoomMapService(new MapDataService());
         
-        processor = new MudCommandProcessor(cfg, configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), output);
+        processor = new MudCommandProcessor(cfg, new com.danavalerie.matrixmudrelay.config.UiConfig(), configPath, mud, mapService, new WritTracker(), new StoreInventoryTracker(), null, () -> new DeliveryRouteMappings(List.of()), output);
     }
 
     @Test

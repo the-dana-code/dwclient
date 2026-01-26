@@ -44,7 +44,7 @@ class RestartCommandTest {
         MockOutput output = new MockOutput();
         
         MudCommandProcessor processor = new MudCommandProcessor(
-                cfg, configPath, null, null, null, null, null, () -> null, output
+                cfg, new com.danavalerie.matrixmudrelay.config.UiConfig(), configPath, null, null, null, null, null, () -> null, output
         );
 
         Field targetField = MudCommandProcessor.class.getDeclaredField("lastSpeedwalkTargetRoomId");

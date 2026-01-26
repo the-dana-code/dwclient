@@ -70,21 +70,8 @@ public final class ClientConfig {
     public static final class CharacterConfig {
         public Boolean useTeleports;
         public CharacterTeleports teleports = new CharacterTeleports();
-        public UULibraryState uuLibrary;
     }
 
-    public static final class UULibraryState {
-        public int row;
-        public int col;
-        public String orientation;
-
-        public UULibraryState() {}
-        public UULibraryState(int row, int col, String orientation) {
-            this.row = row;
-            this.col = col;
-            this.orientation = orientation;
-        }
-    }
 
     public static final class TimerData {
         public long expirationTime;
