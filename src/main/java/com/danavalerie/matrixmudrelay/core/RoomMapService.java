@@ -455,7 +455,8 @@ public class RoomMapService {
 
         RoomRecord start = loadRoom(startRoomId);
         if (start == null) {
-            throw new MapLookupException("Start room not found in map database.");
+            // Assume start room is unknown/outside if not in database
+            start = new RoomRecord(startRoomId, -1, 0, 0, "Unknown Room", "outside");
         }
         RoomRecord target = loadRoom(targetRoomId);
         if (target == null) {
@@ -510,8 +511,12 @@ public class RoomMapService {
                         open.add(new RouteNode(neighborId, fScore));
                     }
                 }
+            }
 
-                if (useTeleports && (!outdoorOnly || "outside".equalsIgnoreCase(currentData.getRoomType()))) {
+            if (useTeleports) {
+                boolean isOutside = (currentData != null && "outside".equalsIgnoreCase(currentData.getRoomType()))
+                        || currentData == null; // Assume outside if unknown
+                if (!outdoorOnly || isOutside) {
                     for (ResolvedTeleport teleport : teleports) {
                         if (teleport.roomId.equals(current.roomId)) {
                             continue;
