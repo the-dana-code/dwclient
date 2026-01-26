@@ -5,15 +5,7 @@
     "charset": "UTF-8",
     "connectTimeoutMs": 10000
   },
-  "ui": {
-    "fontFamily": "Monospaced",
-    "fontSize": 20,
-    "mapZoomPercent": 100,
-    "invertMap": true,
-    "windowWidth": 1697,
-    "windowHeight": 1057,
-    "windowMaximized": false
-  },
+  "ui": {},
   "bookmarks": [
     {
       "name": "Regions/Ankh-Morpork/Mended Drum",
@@ -327,15 +319,5 @@
       "name": "Vaults/Jonas\u0027 Vault",
       "roomId": "66cdb7f0e0fd006c472e00abf2fb23348bb74337"
     }
-  ],
-  "characters": {
-    "SampleCharacter": {
-      "useTeleports": true,
-      "teleports": {
-        "reliable": true,
-        "outdoorOnly": false,
-        "speedwalkingPenalty": 8
-      }
-    }
-  }
+  ]
 }

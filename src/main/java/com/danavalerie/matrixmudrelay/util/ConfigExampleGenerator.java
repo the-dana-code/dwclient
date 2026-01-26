@@ -26,23 +26,18 @@ public class ConfigExampleGenerator {
             example.mud.connectTimeoutMs = config.mud.connectTimeoutMs;
 
             // UI settings (only specific ones)
-            if (config.ui != null) {
-                example.ui.fontFamily = config.ui.fontFamily;
-                example.ui.fontSize = config.ui.fontSize;
-                example.ui.mapZoomPercent = config.ui.mapZoomPercent;
-                example.ui.invertMap = config.ui.invertMap;
-                example.ui.windowWidth = config.ui.windowWidth;
-                example.ui.windowHeight = config.ui.windowHeight;
-                example.ui.windowMaximized = config.ui.windowMaximized;
-            }
+//            if (config.ui != null) {
+//                example.ui.fontFamily = config.ui.fontFamily;
+//                example.ui.fontSize = config.ui.fontSize;
+//                example.ui.mapZoomPercent = config.ui.mapZoomPercent;
+//                example.ui.invertMap = config.ui.invertMap;
+//                example.ui.windowWidth = config.ui.windowWidth;
+//                example.ui.windowHeight = config.ui.windowHeight;
+//                example.ui.windowMaximized = config.ui.windowMaximized;
+//            }
 
             // Bookmarks
             example.bookmarks.addAll(config.bookmarks);
-
-            // Add a sample character to show the character-specific settings
-            ClientConfig.CharacterConfig sampleChar = new ClientConfig.CharacterConfig();
-            sampleChar.useTeleports = true;
-            example.characters.put("SampleCharacter", sampleChar);
 
             System.out.println("Saving to config-example.json...");
             ConfigLoader.save(Paths.get("config-example.json"), example);
