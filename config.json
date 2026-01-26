@@ -431,6 +431,102 @@
     {
       "name": "Money Changers/From/Tsort/To Ephebe/Krimat\u0027s Foreign Exchange",
       "roomId": "4c9b04fc5c87eb5f2c742dde897ed2be2ac8aa80"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Djelibeybi/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Djelibeybi/From Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Djelibeybi/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Djelibeybi/To Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Counterweight Continent/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Counterweight Continent/From Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Counterweight Continent/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Counterweight Continent/To Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Ephebe/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Ephebe/From Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Ephebe/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ephebe/To Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Lancre/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Lancre/From Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Lancre/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Lancre/To Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Klatch/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Klatch/From Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Klatch/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Klatch/To Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Ankh-Morpork/From Genua/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/To/Genua/From Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Ankh-Morpork/To Genua/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
+    },
+    {
+      "name": "Money Changers/From/Genua/To Ankh-Morpork/Ankh Bridge Currency Exchange",
+      "roomId": "1934a41b8797b3e64175f0ec01523db91e736b33"
     }
   ],
   "triggers": [
