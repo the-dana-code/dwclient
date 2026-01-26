@@ -11,16 +11,16 @@
     "mapZoomPercent": 100,
     "invertMap": true,
     "windowWidth": 2272,
-    "windowHeight": 1039,
+    "windowHeight": 1057,
     "windowMaximized": false,
     "mudMapSplitRatio": 0.7504432624113475,
-    "mapNotesSplitRatio": 0.6477644492911668,
-    "chitchatTimerSplitRatio": 0.6814946619217082,
-    "outputSplitRatio": 0.19794050343249428,
+    "mapNotesSplitRatio": 0.6438502673796791,
+    "chitchatTimerSplitRatio": 0.6826809015421115,
+    "outputSplitRatio": 0.19506726457399104,
     "timerColumnWidths": [
       126,
-      201,
-      200
+      200,
+      199
     ]
   },
   "bookmarks": [
@@ -339,7 +339,7 @@
   ],
   "characters": {
     "Lesa": {
-      "useTeleports": false,
+      "useTeleports": true,
       "teleports": {
         "reliable": true,
         "outdoorOnly": false,
@@ -573,7 +573,7 @@
         4,
         4,
         4,
-        4,
+        3,
         4
       ],
       "hpRateSamples": [
@@ -585,7 +585,7 @@
       ]
     },
     "Maemot": {
-      "useTeleports": false,
+      "useTeleports": true,
       "teleports": {
         "reliable": false,
         "outdoorOnly": false,
@@ -658,7 +658,7 @@
         4,
         4,
         4,
-        4,
+        3,
         4
       ],
       "hpRateSamples": [
@@ -700,21 +700,26 @@
             "name": "Ephebe",
             "command": "tp ephebe",
             "roomId": "10052aaf26ad35faa0d7d5a48351aec96cf306ce"
+          },
+          {
+            "name": "Bad Ass",
+            "command": "tp badass",
+            "roomId": "29cb3cf6e2e9f48894ddf19a5c3151b90163f2e5"
           }
         ]
       },
       "timers": {
         "Foreign Goods": {
-          "expirationTime": 1769407573209,
+          "expirationTime": 1769415728634,
           "durationMs": 3600000
         }
       },
       "gpRateSamples": [
-        4,
         1,
+        2,
+        5,
         4,
-        1,
-        1
+        4
       ],
       "hpRateSamples": [
         2,
