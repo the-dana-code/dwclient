@@ -16,7 +16,7 @@
     "mudMapSplitRatio": 0.7326596233348646,
     "mapNotesSplitRatio": 0.6438502673796791,
     "chitchatTimerSplitRatio": 0.6826196473551638,
-    "outputSplitRatio": 0.24719101123595505,
+    "outputSplitRatio": 0.242152466367713,
     "timerColumnWidths": [
       132,
       181,
@@ -880,11 +880,11 @@
         }
       },
       "gpRateSamples": [
-        4,
         1,
         2,
         4,
-        4
+        4,
+        2
       ],
       "hpRateSamples": [
         2,

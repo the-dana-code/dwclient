@@ -215,6 +215,16 @@
       }
     ]
   },
+  "1934a41b8797b3e64175f0ec01523db91e736b33": {
+    "name": "small business on Ankh Bridge",
+    "notes": "You can exchange money here.\n\nExamples:\n  buy from djelibeybi with 10 dollars\n  sell 5 crowns",
+    "buttons": [
+      {
+        "name": "List Rates",
+        "command": "list"
+      }
+    ]
+  },
   "1953162a25f312a0f60df63e3d956c07fdccb72f": {
     "name": "backroom of Madame Dawning\u0027s Palliaments",
     "buttons": [
