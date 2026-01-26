@@ -42,7 +42,7 @@ public class MapPanelTest {
         mapPanel.setSpeedwalkPath(List.of(loc1, loc2));
         
         RoomMapService.MapImage mapImage = new RoomMapService.MapImage(
-            new byte[0], 100, 100, "image/png", "Map 1", 10, 10, false, 1, 0, 0, 2, 1, 1, "1", 10, 10, "Room 1", false
+            new byte[0], 100, 100, "image/png", "Map 1", 10, 10, false, 1, 0, 0, 2, 1, 1, "1", 10, 10, "Room 1", false, null
         );
 
         // We want to verify that buildScaledSpeedwalkPath throws NPE when it tries to use List.copyOf with nulls
@@ -209,4 +209,3 @@ public class MapPanelTest {
         org.junit.jupiter.api.Assertions.assertFalse(scrollPane.getVerticalScrollBar().isFocusable(), "Vertical scroll bar should not be focusable");
     }
 }
-

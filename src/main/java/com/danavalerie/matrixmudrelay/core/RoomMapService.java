@@ -54,6 +54,7 @@ public class RoomMapService {
     private static final int IMAGE_HALF_SPAN = IMAGE_SPAN / 2;
     private final MapDataService dataService;
     private final Map<String, Optional<BufferedImage>> backgroundCache = new HashMap<>();
+    private final Map<String, MapImage> mapByIdCache = new HashMap<>();
     private BaseImageCache baseImageCache;
 
     public RoomMapService(MapDataService dataService) {
@@ -128,6 +129,7 @@ public class RoomMapService {
         boolean reuseBase = cachedBase != null
                 && cachedBase.matches(current.mapId, minX, maxX, minY, maxY, imageWidth, imageHeight, isDark);
         byte[] data = null;
+        BufferedImage baseImage = null;
         if (!reuseBase) {
             BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = image.createGraphics();
@@ -147,6 +149,9 @@ public class RoomMapService {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ImageIO.write(image, "png", out);
             data = out.toByteArray();
+            baseImage = image;
+        } else if (cachedBase != null) {
+            baseImage = cachedBase.image;
         }
 
         int currentX = (current.xpos - minX) * IMAGE_SCALE + ROOM_PIXEL_OFFSET_X;
@@ -172,11 +177,25 @@ public class RoomMapService {
                 current.xpos,
                 current.ypos,
                 current.roomShort,
-                isDark
+                isDark,
+                baseImage
         );
     }
 
     public MapImage renderMapByMapId(int mapId, boolean isDark) throws MapLookupException, IOException {
+        String cacheKey = mapId + (isDark ? "_dark" : "_light");
+        MapImage cachedImage = mapByIdCache.get(cacheKey);
+        if (cachedImage != null) {
+            BufferedImage cachedBase = cachedImage.baseImage();
+            if (cachedBase != null) {
+                int scaledWidth = cachedImage.width() / cachedImage.imageScale();
+                int scaledHeight = cachedImage.height() / cachedImage.imageScale();
+                baseImageCache = new BaseImageCache(mapId, cachedImage.minX(), cachedImage.minX() + scaledWidth - 1,
+                        cachedImage.minY(), cachedImage.minY() + scaledHeight - 1,
+                        cachedImage.width(), cachedImage.height(), cachedBase, isDark);
+            }
+            return cachedImage;
+        }
         BufferedImage backgroundImage = loadMapBackground(mapId, isDark);
         if (backgroundImage == null) {
             throw new MapLookupException("No background image for map " + mapId);
@@ -252,13 +271,9 @@ public class RoomMapService {
         baseImageCache = new BaseImageCache(mapId, minX, maxX, minY, maxY, imageWidth, imageHeight,
                 image, isDark);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", out);
-        byte[] data = out.toByteArray();
-
         String mapName = getMapDisplayName(mapId);
-        return new MapImage(
-                data,
+        MapImage mapImage = new MapImage(
+                null,
                 imageWidth,
                 imageHeight,
                 "image/png",
@@ -274,8 +289,11 @@ public class RoomMapService {
                 null,
                 -1, -1,
                 null,
-                isDark
+                isDark,
+                image
         );
+        mapByIdCache.put(cacheKey, mapImage);
+        return mapImage;
     }
 
     public List<MapArea> listMapAreas() {
@@ -757,7 +775,8 @@ public class RoomMapService {
                            int roomX,
                            int roomY,
                            String roomShort,
-                           boolean isDark) {
+                           boolean isDark,
+                           BufferedImage baseImage) {
     }
 
     private static final class BaseImageCache {
@@ -949,4 +968,3 @@ public class RoomMapService {
         }
     }
 }
-

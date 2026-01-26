@@ -175,6 +175,18 @@ public final class MapPanel extends JPanel {
                     updateDisplayedImage();
                 }
             }
+        } else if (lastMapId != null) {
+            try {
+                RoomMapService.MapImage mapImage = mapService.renderMapByMapId(lastMapId, invertMap);
+                BufferedImage image = resolveBaseImage(mapImage);
+                showImage(mapImage, image, null);
+            } catch (Exception e) {
+                BufferedImage cached = baseImageCache.get();
+                if (cached != null) {
+                    lastBaseImage = (invertMap) ? DarkThemeConverter.toDarkTheme(cached) : cached;
+                    updateDisplayedImage();
+                }
+            }
         } else {
             BufferedImage cached = baseImageCache.get();
             if (cached != null) {
@@ -419,6 +431,11 @@ public final class MapPanel extends JPanel {
     }
 
     private BufferedImage resolveBaseImage(RoomMapService.MapImage mapImage) throws Exception {
+        if (mapImage.baseImage() != null) {
+            BufferedImage base = mapImage.baseImage();
+            baseImageCache.set(base);
+            return (invertMap && !mapImage.isDark()) ? DarkThemeConverter.toDarkTheme(base) : base;
+        }
         if (mapImage.baseImageReused()) {
             BufferedImage cached = baseImageCache.get();
             if (cached != null) {

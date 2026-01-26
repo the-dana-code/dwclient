@@ -519,6 +519,14 @@
     {
       "name": "Regions/Ankh-Morpork/Lanfear\u0027s House",
       "roomId": "a5df4b73f004d57d7ceab81bab38c168736d0c96"
+    },
+    {
+      "name": "Special/Blue Water/Ankh-Morpork",
+      "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
+    },
+    {
+      "name": "Special/Blue Water/Djelibeybi",
+      "roomId": "305db9803d5911aa92ae761c3fb99249e2f08819"
     }
   ],
   "triggers": [
@@ -832,11 +840,6 @@
         "speedwalkingPenalty": 30,
         "locations": [
           {
-            "name": "Ankh-Morpork (Mended Drum)",
-            "command": "tp drum",
-            "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
-          },
-          {
             "name": "Ephebe (Glaxos)",
             "command": "tp glaxos",
             "roomId": "c4ef5a570d4d747808791e2181c848fc7443fefe"
@@ -885,6 +888,11 @@
             "name": "Sto Lat",
             "command": "tp stolat",
             "roomId": "572f3c54b5dece1f8fd35b74eb87f99482004a7d"
+          },
+          {
+            "name": "Ankh-Morpork (Mended Drum)",
+            "command": "tp drum",
+            "roomId": "964ea3c5f971d538232e683612cd41900c232bdd"
           }
         ]
       }
