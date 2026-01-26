@@ -38,24 +38,11 @@ class ConfigExampleGeneratorTest {
         example.mud.charset = config.mud.charset;
         example.mud.connectTimeoutMs = config.mud.connectTimeoutMs;
 
-        // UI settings (only specific ones)
-        if (config.ui != null) {
-            example.ui.fontFamily = config.ui.fontFamily;
-            example.ui.fontSize = config.ui.fontSize;
-            example.ui.mapZoomPercent = config.ui.mapZoomPercent;
-            example.ui.invertMap = config.ui.invertMap;
-            example.ui.windowWidth = config.ui.windowWidth;
-            example.ui.windowHeight = config.ui.windowHeight;
-            example.ui.windowMaximized = config.ui.windowMaximized;
-        }
+        // UI settings - explicitly null to keep out of example
+        example.ui = null;
 
         // Bookmarks
         example.bookmarks.addAll(config.bookmarks);
-
-        // Add a sample character to show the character-specific settings
-        ClientConfig.CharacterConfig sampleChar = new ClientConfig.CharacterConfig();
-        sampleChar.useTeleports = true;
-        example.characters.put("SampleCharacter", sampleChar);
 
         JsonElement actual = JsonParser.parseString(gson.toJson(example));
         JsonElement expected = JsonParser.parseString(Files.readString(examplePath));

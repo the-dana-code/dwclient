@@ -25,16 +25,8 @@ public class ConfigExampleGenerator {
             example.mud.charset = config.mud.charset;
             example.mud.connectTimeoutMs = config.mud.connectTimeoutMs;
 
-            // UI settings (only specific ones)
-//            if (config.ui != null) {
-//                example.ui.fontFamily = config.ui.fontFamily;
-//                example.ui.fontSize = config.ui.fontSize;
-//                example.ui.mapZoomPercent = config.ui.mapZoomPercent;
-//                example.ui.invertMap = config.ui.invertMap;
-//                example.ui.windowWidth = config.ui.windowWidth;
-//                example.ui.windowHeight = config.ui.windowHeight;
-//                example.ui.windowMaximized = config.ui.windowMaximized;
-//            }
+            // UI settings - explicitly null to keep out of example
+            example.ui = null;
 
             // Bookmarks
             example.bookmarks.addAll(config.bookmarks);
