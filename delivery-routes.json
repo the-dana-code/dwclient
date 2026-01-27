@@ -75,11 +75,6 @@
     "roomId": "c81d328377224f5281740eff52e5eae6a780ed0b"
   },
   {
-    "npc": "Brent Booz",
-    "location": "the King\u0027s Way Rathskeller",
-    "roomId": "01635c1a831a93361073678b2e6776c709ee7dcd"
-  },
-  {
     "npc": "Brerand",
     "location": "the well stocked armoury on Tenth Egg Street",
     "roomId": "3d8164d64324a2b14d89a9752ece648e160c2b63"
@@ -1131,5 +1126,10 @@
     "npc": "real estate receptionist",
     "location": "Ankh-Morpork foreign real estate agency",
     "roomId": "107efc06837570d31221002636496a7308266777"
+  },
+  {
+    "npc": "Brent Booz",
+    "location": "the King\u0027s Way Rathskeller",
+    "roomId": "c2d9724a029eab1db38a069311bab190132162f0"
   }
 ]
