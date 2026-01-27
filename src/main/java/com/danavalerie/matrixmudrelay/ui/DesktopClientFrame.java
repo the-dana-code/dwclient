@@ -776,7 +776,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 locationDisplay,
                 location.roomId(),
                 null,
-                List.of(),
                 null
         ));
         return new DeliveryRouteMappings(updated);
@@ -1881,7 +1880,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void handleRoute(int index) {
         WritTracker.WritRequirement requirement = writRequirements.get(index);
         routeMappings.findRoutePlan(requirement.npc(), requirement.locationDisplay()).ifPresentOrElse(plan -> {
-            commandProcessor.speedwalkToThenCommands(plan.target().roomId(), plan.commands());
+            commandProcessor.speedwalkTo(plan.target().roomId());
         }, () -> outputPane.appendErrorText("No route mapping for \"" + requirement.npc()
                 + "\" at \"" + requirement.locationDisplay() + "\"."));
     }

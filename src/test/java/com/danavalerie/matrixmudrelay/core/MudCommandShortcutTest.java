@@ -261,7 +261,7 @@ class MudCommandShortcutTest {
         String item = "a wicker tube";
 
         DeliveryRouteMappings routeMappings = new DeliveryRouteMappings(List.of(
-                new DeliveryRouteMappings.RouteEntry(npc, loc, "room1", null, List.of(), "the teacher")
+                new DeliveryRouteMappings.RouteEntry(npc, loc, "room1", null, "the teacher")
         ));
         RoomMapService mapService = new RoomMapService(new MapDataService());
 
@@ -276,4 +276,3 @@ class MudCommandShortcutTest {
                 "Should use NPC override 'the teacher' in deliver command. Sent: " + mud.sentLines);
     }
 }
-
