@@ -565,7 +565,6 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     }
 
     private void handleRestart() {
-        output.clearTeleportQueued();
         if (lastSpeedwalkTargetRoomId == null) {
             output.appendSystem("Error: No previous speedwalk available to restart.");
             return;
@@ -1064,6 +1063,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             if (exits.isEmpty()) {
                 out.append("\nAlready there.");
             } else {
+                output.clearTeleportQueued();
                 for (RoomMapService.RouteStep step : route.steps()) {
                     checkAndShowTeleportBanner(step.exit());
                 }
@@ -1156,6 +1156,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         if (exits.isEmpty()) {
             output.appendSystem("Already there.");
         } else {
+            output.clearTeleportQueued();
             for (RoomMapService.RouteStep step : route.steps()) {
                 checkAndShowTeleportBanner(step.exit());
             }
