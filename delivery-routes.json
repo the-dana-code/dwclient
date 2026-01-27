@@ -137,7 +137,7 @@
   {
     "npc": "Dhraz Shaftrubble",
     "location": "the Iron Helmet on Welcome Soap",
-    "roomId": "578c49a984d252e2ea376ff0db3c1ff9b227049f"
+    "roomId": "d10c02b1ef81cbbe09f4d8effdc6c4338732e919"
   },
   {
     "npc": "Dimitris",
@@ -562,7 +562,7 @@
   {
     "npc": "Patrice Le Clair",
     "location": "the market stall on Goose Gate",
-    "roomId": "5356f6ff7be52c00a566ecf7b6c2810bb4f0e416"
+    "roomId": "000930a8256eb9936b6d8a79e2f00bd90be426c1"
   },
   {
     "npc": "Pierre Grepe",
@@ -819,7 +819,7 @@
   {
     "npc": "the maitre d\u0027",
     "location": "the wine lounge at the Flaming Cabbage",
-    "roomId": "93accbf431cebfd6918025f5061f076b2f20af88"
+    "roomId": "97c0216ddba02e73e8d44bbfe7277e1820b4845e"
   },
   {
     "npc": "the neat secretary",
