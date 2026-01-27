@@ -42,7 +42,7 @@ public class MapPanelTest {
         mapPanel.setSpeedwalkPath(List.of(loc1, loc2));
         
         RoomMapService.MapImage mapImage = new RoomMapService.MapImage(
-            new byte[0], 100, 100, "image/png", "Map 1", 10, 10, false, 1, 0, 0, 2, 1, 1, "1", 10, 10, "Room 1", false, null
+            new byte[0], 100, 100, "image/png", "Map 1", 10, 10, false, 1, 0, 0, 2, 1, 1, "1", 10, 10, "Room 1", false, false, null
         );
 
         // We want to verify that buildScaledSpeedwalkPath throws NPE when it tries to use List.copyOf with nulls
@@ -50,11 +50,11 @@ public class MapPanelTest {
         // Actually, let's just make it package-private for a moment to test it easily.
         
         java.lang.reflect.Method method = MapPanel.class.getDeclaredMethod("buildScaledSpeedwalkPath", 
-            RoomMapService.MapImage.class, Integer.class, int.class);
+            RoomMapService.MapImage.class, Integer.class, double.class);
         method.setAccessible(true);
         
         // This should NOT throw NPE anymore
-        List<Point> result = (List<Point>) method.invoke(mapPanel, mapImage, 1, 100);
+        List<Point> result = (List<Point>) method.invoke(mapPanel, mapImage, 1, 100.0);
         
         org.junit.jupiter.api.Assertions.assertNotNull(result);
         System.out.println("[DEBUG_LOG] buildScaledSpeedwalkPath executed successfully after fix");
