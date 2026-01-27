@@ -97,7 +97,7 @@ public class TimerPanel extends JPanel {
         scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
 
-        buttonBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        buttonBar = new JPanel(new WrapLayout(FlowLayout.LEFT, 5, 5));
         addButton = new JButton("Add");
         editButton = new JButton("Edit");
         deleteButton = new JButton("Delete");
