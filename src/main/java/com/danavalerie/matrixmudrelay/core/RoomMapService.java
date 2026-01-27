@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -446,6 +447,59 @@ public class RoomMapService {
                 .flatMap(r -> r.getShopItems().stream())
                 .filter(si -> si.getName().equalsIgnoreCase(trimmed))
                 .collect(Collectors.toList());
+    }
+
+    public RoomData getRoomData(String roomId) {
+        if (roomId == null || roomId.isBlank()) {
+            return null;
+        }
+        return dataService.getRoom(roomId);
+    }
+
+    public boolean updateRoomDetails(String roomId, String roomType, boolean noTeleport, String roomShort, Map<String, String> exits, int mapId, int xpos, int ypos) {
+        RoomData room = getRoomData(roomId);
+        if (room == null) {
+            return false;
+        }
+        if (roomType != null && !roomType.isBlank()) {
+            room.setRoomType(roomType.trim().toLowerCase());
+        }
+        if (roomShort != null) {
+            String trimmed = roomShort.trim();
+            room.setRoomShort(trimmed.isEmpty() ? null : trimmed);
+        }
+        room.setMapId(mapId);
+        room.setXpos(xpos);
+        room.setYpos(ypos);
+        if (exits != null) {
+            Map<String, String> normalizedExits = new TreeMap<>();
+            for (Map.Entry<String, String> entry : exits.entrySet()) {
+                if (entry.getKey() == null || entry.getValue() == null) {
+                    continue;
+                }
+                String exit = entry.getKey().trim();
+                String target = entry.getValue().trim();
+                if (!exit.isEmpty() && !target.isEmpty()) {
+                    normalizedExits.put(exit, target);
+                }
+            }
+            room.setExits(normalizedExits);
+        }
+        List<String> updatedFlags = new ArrayList<>();
+        List<String> existingFlags = room.getFlags();
+        if (existingFlags != null) {
+            for (String flag : existingFlags) {
+                if (flag != null && !flag.equalsIgnoreCase(RoomData.FLAG_NO_TELEPORT)) {
+                    updatedFlags.add(flag);
+                }
+            }
+        }
+        if (noTeleport) {
+            updatedFlags.add(RoomData.FLAG_NO_TELEPORT);
+        }
+        room.setFlags(updatedFlags.isEmpty() ? null : updatedFlags);
+        dataService.saveAll();
+        return true;
     }
 
     private int getSourceRank(String sourceInfo) {

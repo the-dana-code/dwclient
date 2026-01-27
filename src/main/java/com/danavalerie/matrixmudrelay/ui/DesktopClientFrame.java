@@ -27,6 +27,7 @@ import com.danavalerie.matrixmudrelay.core.MudCommandProcessor;
 import com.danavalerie.matrixmudrelay.core.WritMenuAction;
 import com.danavalerie.matrixmudrelay.core.RoomMapService;
 import com.danavalerie.matrixmudrelay.core.StoreInventoryTracker;
+import com.danavalerie.matrixmudrelay.core.data.RoomData;
 import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.TimerService;
@@ -67,6 +68,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -81,6 +87,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.image.BufferedImage;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.ComponentAdapter;
@@ -438,6 +446,13 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         triggersItem.addActionListener(event -> showTriggerDialog());
         mainMenu.add(triggersItem);
+
+        KeepOpenMenuItem editRoomItem = new KeepOpenMenuItem("Edit Current Room...", false);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(editRoomItem, currentBg, currentFg);
+        }
+        editRoomItem.addActionListener(event -> showEditCurrentRoomDialog());
+        mainMenu.add(editRoomItem);
 
         mainMenu.addSeparator();
 
@@ -1230,6 +1245,246 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             cfg.bookmarks.add(new ClientConfig.Bookmark(name.isEmpty() ? null : name, roomId));
             saveConfig();
             refreshBookmarksMenu();
+        }
+    }
+
+    private void showEditCurrentRoomDialog() {
+        String roomId = currentRoomId;
+        String roomName = currentRoomName;
+
+        if (roomId == null || roomId.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Current room unknown. Cannot edit room.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        RoomData room = routeMapService.getRoomData(roomId);
+        if (room == null) {
+            JOptionPane.showMessageDialog(this, "Current room not found in rooms.json.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (roomName == null || roomName.isBlank()) {
+            try {
+                RoomMapService.RoomLocation roomLoc = routeMapService.lookupRoomLocation(roomId);
+                if (roomLoc != null) {
+                    roomName = roomLoc.roomShort();
+                }
+            } catch (Exception ignored) {}
+        }
+        String storedRoomName = room.getRoomShort();
+        String displayName = (roomName == null || roomName.isBlank()) ? roomId : roomName;
+        if (storedRoomName != null && !storedRoomName.isBlank()) {
+            displayName = storedRoomName;
+        }
+
+        JPanel panel = new JPanel(new BorderLayout(8, 8));
+        JPanel topPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+
+        JPanel roomPanel = new JPanel(new BorderLayout(5, 0));
+        roomPanel.add(new JLabel("Room: " + displayName + " (" + roomId + ")"), BorderLayout.CENTER);
+        JButton copyIdButton = new JButton("Copy ID");
+        copyIdButton.addActionListener(e -> {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(roomId), null);
+        });
+        roomPanel.add(copyIdButton, BorderLayout.EAST);
+        topPanel.add(roomPanel);
+
+        topPanel.add(new JLabel("Room Name:"));
+        JTextField nameField = new JTextField(storedRoomName != null ? storedRoomName : (roomName != null ? roomName : ""));
+        nameField.addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && nameField.isShowing()) {
+                SwingUtilities.invokeLater(nameField::requestFocusInWindow);
+            }
+        });
+        topPanel.add(nameField);
+
+        topPanel.add(new JLabel("Map ID:"));
+        JTextField mapIdField = new JTextField(String.valueOf(room.getMapId()));
+        applyIntegerFilter(mapIdField);
+        topPanel.add(mapIdField);
+
+        topPanel.add(new JLabel("X Position:"));
+        JTextField xposField = new JTextField(String.valueOf(room.getXpos()));
+        applyIntegerFilter(xposField);
+        topPanel.add(xposField);
+
+        topPanel.add(new JLabel("Y Position:"));
+        JTextField yposField = new JTextField(String.valueOf(room.getYpos()));
+        applyIntegerFilter(yposField);
+        topPanel.add(yposField);
+
+        topPanel.add(new JLabel("Room Type:"));
+        String[] roomTypes = {"inside", "outside", "special"};
+        JComboBox<String> roomTypeBox = new JComboBox<>(roomTypes);
+        String currentType = room.getRoomType();
+        boolean matched = false;
+        if (currentType != null && !currentType.isBlank()) {
+            for (String type : roomTypes) {
+                if (type.equalsIgnoreCase(currentType)) {
+                    roomTypeBox.setSelectedItem(type);
+                    matched = true;
+                    break;
+                }
+            }
+        }
+        if (!matched) {
+            roomTypeBox.setSelectedItem("outside");
+        }
+        topPanel.add(roomTypeBox);
+
+        JCheckBox noTeleportCheck = new JCheckBox("No Teleport (notp)");
+        noTeleportCheck.setSelected(room.hasFlag(RoomData.FLAG_NO_TELEPORT));
+        topPanel.add(noTeleportCheck);
+
+        panel.add(topPanel, BorderLayout.NORTH);
+
+        DefaultTableModel exitsModel = new DefaultTableModel(new Object[]{"Exit", "Room ID"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return true;
+            }
+        };
+        if (room.getExits() != null) {
+            room.getExits().forEach((exit, target) -> exitsModel.addRow(new Object[]{exit, target}));
+        }
+        JTable exitsTable = new JTable(exitsModel);
+        exitsTable.setFillsViewportHeight(true);
+        exitsTable.setPreferredScrollableViewportSize(new Dimension(420, 160));
+        exitsTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        JPanel exitsPanel = new JPanel(new BorderLayout(5, 5));
+        exitsPanel.add(new JLabel("Exits:"), BorderLayout.NORTH);
+        exitsPanel.add(new JScrollPane(exitsTable), BorderLayout.CENTER);
+
+        JPanel exitButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton addExitButton = new JButton("Add");
+        addExitButton.addActionListener(e -> {
+            exitsModel.addRow(new Object[]{"", ""});
+            int row = exitsModel.getRowCount() - 1;
+            exitsTable.requestFocusInWindow();
+            exitsTable.changeSelection(row, 0, false, false);
+            exitsTable.editCellAt(row, 0);
+        });
+        JButton removeExitButton = new JButton("Remove");
+        removeExitButton.addActionListener(e -> {
+            int row = exitsTable.getSelectedRow();
+            if (row >= 0) {
+                exitsModel.removeRow(row);
+            } else {
+                JOptionPane.showMessageDialog(this, "Select an exit to remove.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        exitButtons.add(addExitButton);
+        exitButtons.add(removeExitButton);
+        exitsPanel.add(exitButtons, BorderLayout.SOUTH);
+
+        panel.add(exitsPanel, BorderLayout.CENTER);
+
+        if (currentBg != null && currentFg != null) {
+            updateComponentTree(panel, currentBg, currentFg);
+        }
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Edit Current Room", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            if (exitsTable.isEditing()) {
+                exitsTable.getCellEditor().stopCellEditing();
+            }
+            Integer mapIdValue = parseIntegerField(mapIdField, "Map ID");
+            if (mapIdValue == null) {
+                return;
+            }
+            Integer xposValue = parseIntegerField(xposField, "X Position");
+            if (xposValue == null) {
+                return;
+            }
+            Integer yposValue = parseIntegerField(yposField, "Y Position");
+            if (yposValue == null) {
+                return;
+            }
+            String updatedName = nameField.getText().trim();
+            if (updatedName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Room name cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Map<String, String> exits = new java.util.TreeMap<>();
+            for (int i = 0; i < exitsModel.getRowCount(); i++) {
+                Object exitObj = exitsModel.getValueAt(i, 0);
+                Object targetObj = exitsModel.getValueAt(i, 1);
+                String exit = exitObj == null ? "" : exitObj.toString().trim();
+                String target = targetObj == null ? "" : targetObj.toString().trim();
+                if (exit.isEmpty() && target.isEmpty()) {
+                    continue;
+                }
+                if (exit.isEmpty() || target.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Exit name and room ID are required for each exit.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                exits.put(exit, target);
+            }
+            String selectedType = (String) roomTypeBox.getSelectedItem();
+            boolean noTeleport = noTeleportCheck.isSelected();
+            if (!routeMapService.updateRoomDetails(roomId, selectedType, noTeleport, updatedName, exits, mapIdValue, xposValue, yposValue)) {
+                JOptionPane.showMessageDialog(this, "Failed to update room details.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private static void applyIntegerFilter(JTextField field) {
+        if (field.getDocument() instanceof AbstractDocument doc) {
+            doc.setDocumentFilter(new IntegerDocumentFilter());
+        }
+    }
+
+    private Integer parseIntegerField(JTextField field, String label) {
+        String text = field.getText().trim();
+        if (text.isEmpty() || "-".equals(text)) {
+            JOptionPane.showMessageDialog(this, label + " must be an integer.", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, label + " must be an integer.", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
+
+    private static final class IntegerDocumentFilter extends DocumentFilter {
+        private boolean isValid(String text) {
+            return text.isEmpty() || "-".equals(text) || text.matches("-?\\d+");
+        }
+
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            if (string == null) {
+                return;
+            }
+            String current = fb.getDocument().getText(0, fb.getDocument().getLength());
+            StringBuilder updated = new StringBuilder(current);
+            updated.insert(offset, string);
+            if (isValid(updated.toString())) {
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            String current = fb.getDocument().getText(0, fb.getDocument().getLength());
+            StringBuilder updated = new StringBuilder(current);
+            updated.replace(offset, offset + length, text == null ? "" : text);
+            if (isValid(updated.toString())) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            String current = fb.getDocument().getText(0, fb.getDocument().getLength());
+            StringBuilder updated = new StringBuilder(current);
+            updated.delete(offset, offset + length);
+            if (isValid(updated.toString())) {
+                super.remove(fb, offset, length);
+            }
         }
     }
 
