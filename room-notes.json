@@ -709,6 +709,15 @@
       }
     ]
   },
+  "49ee43a936c1fce7958802a340afd82e388cf596": {
+    "name": "Gapp\u0027s chamber",
+    "buttons": [
+      {
+        "name": "Pose Before Statue",
+        "command": "pose before statue"
+      }
+    ]
+  },
   "4ab7a88f2a9b07e72db5185aa9d11b251ff0e296": {
     "name": "Cutankle Quaffpint\u0027s Irone Shoppe",
     "buttons": [
@@ -1422,6 +1431,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "8fa09bbc734b0972fa7f7eabca3edc8c62a38bdf": {
+    "name": "Sek\u0027s chamber",
+    "buttons": [
+      {
+        "name": "Enter Flame",
+        "command": "enter flame"
       }
     ]
   },
@@ -2691,6 +2709,15 @@
       {
         "name": "List Shop",
         "command": "list"
+      }
+    ]
+  },
+  "f85434e3c014e5c9b6bf9210c03623fc273792ca": {
+    "name": "Fish\u0027s chamber",
+    "buttons": [
+      {
+        "name": "Enter Whirlpool",
+        "command": "enter whirlpool"
       }
     ]
   },

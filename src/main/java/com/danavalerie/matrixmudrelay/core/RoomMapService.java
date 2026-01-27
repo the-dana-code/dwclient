@@ -993,6 +993,7 @@ public class RoomMapService {
         PASSAGE_ROOMS(64, "passages.png"),
         SKUND_HEDGE_WIZZARDS(65, "sto_hedge.png"),
         FLYING_ROOM(66, "flyingroom.png", true),
+        PISHE_MOORLANDS(67, "passageroom_pishe.png", true),
         WHOLE_DISC(99, "discwhole.png");
 
         private static final Map<Integer, MapBackground> BY_ID = new HashMap<>();
