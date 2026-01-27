@@ -150,6 +150,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JMenu writTopMenu;
     private JMenu resultsTopMenu;
     private KeepOpenMenuItem repeatLastSpeedwalkItem;
+    private KeepOpenMenuItem writRouteMenuItem;
     private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
     private String writCharacterName = null;
@@ -990,6 +991,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
                 refreshTeleportsMenu();
                 refreshBookmarksMenu();
+                updateRouteMenuKeepOpen();
             });
         }
     }
@@ -1026,6 +1028,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 charCfg.teleports.reliable = reliableTpItem.isChecked();
                 com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
                 saveConfig();
+                updateRouteMenuKeepOpen();
             }
         });
         optionsMenu.add(reliableTpItem);
@@ -1420,6 +1423,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (writTopMenu == null) return;
 
         writTopMenu.removeAll();
+        writRouteMenuItem = null;
 
         if (writRequirements.isEmpty()) {
             writTopMenu.setText("Writ");
@@ -1487,6 +1491,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 KeepOpenMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
                         "Route",
                         () -> handleRoute(index));
+                routeItem.setKeepMenuOpen(shouldKeepRouteMenuOpen());
+                writRouteMenuItem = routeItem;
                 writTopMenu.add(routeItem);
             } else if (canWriteRoutes) {
                 JMenu addRouteMenu = buildWritSubMenu(index, WritMenuAction.ADD_ROUTE,
@@ -1518,6 +1524,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         menuBar.revalidate();
         menuBar.repaint();
         saveMenus();
+    }
+
+    private boolean shouldKeepRouteMenuOpen() {
+        return RouteMenuPolicy.shouldKeepRouteMenuOpen(currentCharacterName, cfg.characters);
+    }
+
+    private void updateRouteMenuKeepOpen() {
+        if (writRouteMenuItem != null) {
+            writRouteMenuItem.setKeepMenuOpen(shouldKeepRouteMenuOpen());
+        }
     }
 
     private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {

@@ -29,6 +29,7 @@ public class KeepOpenMenuItem extends JMenuItem {
     }
 
     public void setKeepMenuOpen(boolean keepMenuOpen) {
+        this.keepMenuOpen = keepMenuOpen;
         if (keepMenuOpen) {
             setUI(new KeepOpenMenuItemUI(true));
         } else if (defaultUI != null) {
