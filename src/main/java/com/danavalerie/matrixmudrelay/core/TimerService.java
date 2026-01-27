@@ -5,8 +5,10 @@ import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.UiConfig;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TimerService {
@@ -102,6 +104,13 @@ public class TimerService {
             }
         }
         return allTimers;
+    }
+
+    public synchronized List<String> getKnownCharacters() {
+        if (config.characters == null || config.characters.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(config.characters.keySet());
     }
 
     private void saveUiConfig() {

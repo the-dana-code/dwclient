@@ -144,7 +144,7 @@ public class TimerPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "You must be logged in with a character to add a timer.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        TimerDialog dialog = new TimerDialog((Frame) SwingUtilities.getWindowAncestor(this), "Add Timer", false, currentChar, null, 0, timerService, currentBg, currentFg);
+        TimerDialog dialog = new TimerDialog((Frame) SwingUtilities.getWindowAncestor(this), "Add Timer", false, currentChar, null, 0, timerService, timerService.getKnownCharacters(), currentBg, currentFg);
         dialog.setVisible(true);
         if (dialog.isSaved()) {
             timerService.setTimer(dialog.getCharacterName(), dialog.getDescription(), dialog.getDurationMs());
@@ -159,7 +159,7 @@ public class TimerPanel extends JPanel {
             return;
         }
         TimerEntry entry = tableModel.getEntry(selectedRow);
-        TimerDialog dialog = new TimerDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Timer", true, entry.characterName, entry.description, entry.expirationTime, timerService, currentBg, currentFg);
+        TimerDialog dialog = new TimerDialog((Frame) SwingUtilities.getWindowAncestor(this), "Edit Timer", true, entry.characterName, entry.description, entry.expirationTime, timerService, timerService.getKnownCharacters(), currentBg, currentFg);
         dialog.setVisible(true);
         if (dialog.isSaved()) {
             timerService.updateTimerDescription(entry.characterName, entry.description, dialog.getDescription());

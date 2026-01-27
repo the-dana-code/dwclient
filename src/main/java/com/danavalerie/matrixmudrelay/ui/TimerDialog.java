@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimerDialog extends JDialog {
     private final TimerService timerService;
@@ -15,6 +17,7 @@ public class TimerDialog extends JDialog {
     private final long expirationTime;
 
     private JLabel charLabel;
+    private JComboBox<String> charComboBox;
     private JTextField descrField;
     private JSpinner hourSpinner;
     private JSpinner minuteSpinner;
@@ -27,7 +30,7 @@ public class TimerDialog extends JDialog {
     private Color currentBg;
     private Color currentFg;
 
-    public TimerDialog(Frame owner, String title, boolean isEdit, String characterName, String description, long expirationTime, TimerService timerService, Color bg, Color fg) {
+    public TimerDialog(Frame owner, String title, boolean isEdit, String characterName, String description, long expirationTime, TimerService timerService, List<String> knownCharacters, Color bg, Color fg) {
         super(owner, title, true);
         this.timerService = timerService;
         this.isEdit = isEdit;
@@ -37,7 +40,7 @@ public class TimerDialog extends JDialog {
         this.currentBg = bg;
         this.currentFg = fg;
 
-        initComponents();
+        initComponents(knownCharacters);
         if (bg != null && fg != null) {
             updateTheme(bg, fg);
         }
@@ -70,7 +73,7 @@ public class TimerDialog extends JDialog {
         }
     }
 
-    private void initComponents() {
+    private void initComponents(List<String> knownCharacters) {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -80,8 +83,16 @@ public class TimerDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 0;
         add(new JLabel("Character:"), gbc);
         gbc.gridx = 1;
-        charLabel = new JLabel(initialChar);
-        add(charLabel, gbc);
+        if (isEdit) {
+            charLabel = new JLabel(initialChar);
+            add(charLabel, gbc);
+        } else {
+            charComboBox = new JComboBox<>(buildCharacterModel(knownCharacters));
+            if (!initialChar.isBlank()) {
+                charComboBox.setSelectedItem(initialChar);
+            }
+            add(charComboBox, gbc);
+        }
 
         // Description
         gbc.gridx = 0; gbc.gridy = 1;
@@ -123,7 +134,7 @@ public class TimerDialog extends JDialog {
         add(buttonPanel, gbc);
 
         saveButton.addActionListener(e -> {
-            if (charLabel.getText().isBlank()) {
+            if (getCharacterName().isBlank()) {
                 JOptionPane.showMessageDialog(this, "Character name is required.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -156,6 +167,10 @@ public class TimerDialog extends JDialog {
     }
 
     public String getCharacterName() {
+        if (charComboBox != null) {
+            Object selected = charComboBox.getSelectedItem();
+            return selected != null ? selected.toString().trim() : "";
+        }
         return charLabel.getText().trim();
     }
 
@@ -176,5 +191,16 @@ public class TimerDialog extends JDialog {
             countdownTimer.stop();
         }
         super.dispose();
+    }
+
+    private DefaultComboBoxModel<String> buildCharacterModel(List<String> knownCharacters) {
+        List<String> items = new ArrayList<>();
+        if (knownCharacters != null) {
+            items.addAll(knownCharacters);
+        }
+        if (!initialChar.isBlank() && !items.contains(initialChar)) {
+            items.add(0, initialChar);
+        }
+        return new DefaultComboBoxModel<>(items.toArray(new String[0]));
     }
 }
