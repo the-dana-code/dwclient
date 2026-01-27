@@ -2,11 +2,11 @@
   "mud": {
     "host": "discworld.starturtle.net",
     "port": 4242,
-    "charset": "UTF-8",
+    "charset": "ISO-8859-1",
     "connectTimeoutMs": 10000
   },
   "ui": {
-    "fontFamily": "Monospaced",
+    "fontFamily": "PT Mono",
     "fontSize": 20,
     "mapZoomPercent": 100,
     "invertMap": true

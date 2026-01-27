@@ -2,8 +2,14 @@
   "mud": {
     "host": "discworld.starturtle.net",
     "port": 4242,
-    "charset": "UTF-8",
+    "charset": "ISO-8859-1",
     "connectTimeoutMs": 10000
+  },
+  "ui": {
+    "fontFamily": "Monospaced",
+    "fontSize": 20,
+    "mapZoomPercent": 100,
+    "invertMap": true
   },
   "bookmarks": [
     {
@@ -513,6 +519,14 @@
     {
       "name": "Regions/Ankh-Morpork/Lanfear\u0027s House",
       "roomId": "a5df4b73f004d57d7ceab81bab38c168736d0c96"
+    },
+    {
+      "name": "Special/Blue Water/Ankh-Morpork",
+      "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
+    },
+    {
+      "name": "Special/Blue Water/Djelibeybi",
+      "roomId": "305db9803d5911aa92ae761c3fb99249e2f08819"
     }
   ],
   "triggers": [

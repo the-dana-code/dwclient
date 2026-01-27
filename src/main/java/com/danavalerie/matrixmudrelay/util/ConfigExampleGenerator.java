@@ -19,14 +19,17 @@ public class ConfigExampleGenerator {
 
             // Specifically pull out what we want to keep
 
-            // MUD settings
-            example.mud.host = config.mud.host;
-            example.mud.port = config.mud.port;
-            example.mud.charset = config.mud.charset;
-            example.mud.connectTimeoutMs = config.mud.connectTimeoutMs;
+            // MUD settings - use fixed defaults instead of copying from config.json
+            example.mud.host = "discworld.starturtle.net";
+            example.mud.port = 4242;
+            example.mud.charset = "ISO-8859-1";
+            example.mud.connectTimeoutMs = 10000;
 
-            // UI settings - explicitly null to keep out of example
-            example.ui = null;
+            // UI settings - use fixed defaults instead of copying from config.json
+            example.ui.fontFamily = "Monospaced";
+            example.ui.fontSize = 20;
+            example.ui.mapZoomPercent = 100;
+            example.ui.invertMap = true;
 
             // Bookmarks
             example.bookmarks.addAll(config.bookmarks);

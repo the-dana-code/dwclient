@@ -763,7 +763,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
 
     private void handleReset() {
         List<String> lines = List.of(
-                "alias LesaClientReset options terminal encoding = UTF-8; options output prompt =",
+                "alias LesaClientReset options terminal encoding = ISO-8859-1; options output prompt =",
                 "LesaClientReset"
         );
         sendToMud(lines);

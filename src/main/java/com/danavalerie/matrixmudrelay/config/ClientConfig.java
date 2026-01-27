@@ -40,7 +40,7 @@ public final class ClientConfig {
     public static final class Mud {
         public String host;
         public int port;
-        public String charset = "UTF-8";
+        public String charset = "ISO-8859-1";
         public int connectTimeoutMs = 10000;
     }
 
