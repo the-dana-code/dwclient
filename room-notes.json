@@ -1663,6 +1663,10 @@
       }
     ]
   },
+  "a5df4b73f004d57d7ceab81bab38c168736d0c96": {
+    "name": "foyer",
+    "notes": "Lanfear idles here regularly, and loves to teach other players. You can learn skills from Lanfear automatically, just specify the skill you want to learn.\n\nExample:\n  teach me max fi.de.do from lanfear\n  learn fi.de.do from lanfear"
+  },
   "a6df1adb71ca9acc5007fc82443b70f683d718dc": {
     "name": "Gimlet\u0027s Hole Food Delicatessen",
     "buttons": [
