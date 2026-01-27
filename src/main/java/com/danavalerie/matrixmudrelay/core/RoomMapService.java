@@ -140,7 +140,7 @@ public class RoomMapService {
             g2.setStroke(new BasicStroke(IMAGE_SCALE));
 
             if (backgroundImage != null) {
-                drawMapBackground(backgroundImage, g2);
+                drawMapBackground(backgroundImage, g2, imageWidth, imageHeight, isStaticBackground(current.mapId));
             }
 
             g2.dispose();
@@ -178,6 +178,7 @@ public class RoomMapService {
                 current.ypos,
                 current.roomShort,
                 isDark,
+                isStaticBackground(current.mapId),
                 baseImage
         );
     }
@@ -216,7 +217,7 @@ public class RoomMapService {
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g2.setStroke(new BasicStroke(IMAGE_SCALE));
 
-        drawMapBackground(backgroundImage, g2);
+        drawMapBackground(backgroundImage, g2, imageWidth, imageHeight, isStaticBackground(mapId));
 
         if (mapId == 47) {
             UULibraryService lib = UULibraryService.getInstance();
@@ -290,6 +291,7 @@ public class RoomMapService {
                 -1, -1,
                 null,
                 isDark,
+                isStaticBackground(mapId),
                 image
         );
         mapByIdCache.put(cacheKey, mapImage);
@@ -716,13 +718,29 @@ public class RoomMapService {
         return null;
     }
 
-    private void drawMapBackground(BufferedImage source, Graphics2D g2) {
+    private void drawMapBackground(BufferedImage source, Graphics2D g2, int targetWidth, int targetHeight, boolean preserveAspect) {
         if (source == null) {
             return;
         }
-        int destRight = source.getWidth() * IMAGE_SCALE;
-        int destBottom = source.getHeight() * IMAGE_SCALE;
-        g2.drawImage(source, 0, 0, destRight, destBottom, 0, 0, source.getWidth(), source.getHeight(), null);
+        if (!preserveAspect) {
+            int destRight = source.getWidth() * IMAGE_SCALE;
+            int destBottom = source.getHeight() * IMAGE_SCALE;
+            g2.drawImage(source, 0, 0, destRight, destBottom, 0, 0, source.getWidth(), source.getHeight(), null);
+            return;
+        }
+        double scale = Math.min(targetWidth / (double) source.getWidth(), targetHeight / (double) source.getHeight());
+        int scaledWidth = Math.max(1, (int) Math.round(source.getWidth() * scale));
+        int scaledHeight = Math.max(1, (int) Math.round(source.getHeight() * scale));
+        int offsetX = (targetWidth - scaledWidth) / 2;
+        int offsetY = (targetHeight - scaledHeight) / 2;
+        g2.drawImage(source, offsetX, offsetY, offsetX + scaledWidth, offsetY + scaledHeight,
+                0, 0, source.getWidth(), source.getHeight(), null);
+    }
+
+    private boolean isStaticBackground(int mapId) {
+        return MapBackground.forMapId(mapId)
+                .map(MapBackground::isStaticBackground)
+                .orElse(false);
     }
 
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
@@ -776,6 +794,7 @@ public class RoomMapService {
                            int roomY,
                            String roomShort,
                            boolean isDark,
+                           boolean staticBackground,
                            BufferedImage baseImage) {
     }
 
@@ -918,6 +937,7 @@ public class RoomMapService {
         SS_UNSINKABLE(63, "unsinkable.png"),
         PASSAGE_ROOMS(64, "passages.png"),
         SKUND_HEDGE_WIZZARDS(65, "sto_hedge.png"),
+        FLYING_ROOM(66, "flyingroom.png", true),
         WHOLE_DISC(99, "discwhole.png");
 
         private static final Map<Integer, MapBackground> BY_ID = new HashMap<>();
@@ -930,10 +950,16 @@ public class RoomMapService {
 
         private final int mapId;
         private final String filename;
+        private final boolean staticBackground;
 
         MapBackground(int mapId, String filename) {
+            this(mapId, filename, false);
+        }
+
+        MapBackground(int mapId, String filename, boolean staticBackground) {
             this.mapId = mapId;
             this.filename = filename;
+            this.staticBackground = staticBackground;
         }
 
         private static Optional<MapBackground> forMapId(int mapId) {
@@ -946,6 +972,10 @@ public class RoomMapService {
                 return "Map " + mapId;
             }
             return background.formatName();
+        }
+
+        private boolean isStaticBackground() {
+            return staticBackground;
         }
 
         private String formatName() {

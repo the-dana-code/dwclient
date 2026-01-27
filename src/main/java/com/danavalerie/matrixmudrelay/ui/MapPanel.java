@@ -45,6 +45,8 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -139,6 +141,12 @@ public final class MapPanel extends JPanel {
         scrollPane.setFocusable(false);
         scrollPane.getHorizontalScrollBar().setFocusable(false);
         scrollPane.getVerticalScrollBar().setFocusable(false);
+        scrollPane.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent event) {
+                handleViewportResize();
+            }
+        });
         add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         updateColors();
@@ -349,20 +357,23 @@ public final class MapPanel extends JPanel {
                 mapLabel.setText("");
                 mapLabel.setPreferredSize(null);
                 mapLabel.revalidate();
+                resetScrollPolicies();
                 configureAnimation(null);
                 updateSpeedWalkState();
                 return;
             }
-            BufferedImage scaled = scaleImage(image, zoomPercent);
-            Dimension scaledSize = scaleDimension(imageSize, zoomPercent);
-            Point focus = scalePoint(focusPoint, zoomPercent);
+            boolean fitToView = mapImage != null && mapImage.staticBackground();
+            double scale = fitToView ? calculateFitScale(imageSize, mapLabel.getInsets(), zoomPercent) : zoomPercent / 100.0;
+            BufferedImage scaled = scaleImage(image, scale);
+            Dimension scaledSize = scaleDimension(imageSize, scale);
+            Point focus = scalePoint(focusPoint, scale);
             if (UULibraryService.getInstance().isActive()) {
-                int scale = (mapImage != null) ? mapImage.imageScale() : 1;
-                focus = scalePoint(new Point(UULibraryService.getInstance().getX() * scale, UULibraryService.getInstance().getY() * scale), zoomPercent);
+                int imageScale = (mapImage != null) ? mapImage.imageScale() : 1;
+                focus = scalePoint(new Point(UULibraryService.getInstance().getX() * imageScale, UULibraryService.getInstance().getY() * imageScale), scale);
             }
             final Point scaledFocus = focus;
-            List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, zoomPercent);
-            int markerDiameter = scaledMarkerDiameter(zoomPercent);
+            List<Point> scaledPath = buildScaledSpeedwalkPath(mapImage, mapId, scale);
+            int markerDiameter = scaledMarkerDiameter(scale);
             AnimatedMapIcon icon = new AnimatedMapIcon(scaled, scaledFocus, markerDiameter, scaledPath, invertMap);
             mapLabel.setIcon(icon);
             mapLabel.setText("");
@@ -374,14 +385,19 @@ public final class MapPanel extends JPanel {
             mapLabel.setPreferredSize(preferredSize);
             mapLabel.revalidate();
             configureAnimation(icon);
-            if (shouldCenter && scaledFocus != null && scaledSize != null) {
+            if (fitToView) {
+                disableScrollPolicies();
+            } else {
+                resetScrollPolicies();
+            }
+            if (shouldCenter && scaledFocus != null && scaledSize != null && !fitToView) {
                 centerViewOnPoint(scaledFocus, scaledSize);
             }
             updateSpeedWalkState();
         });
     }
 
-    private List<Point> buildScaledSpeedwalkPath(RoomMapService.MapImage mapImage, Integer mapId, int zoomPercent) {
+    private List<Point> buildScaledSpeedwalkPath(RoomMapService.MapImage mapImage, Integer mapId, double scale) {
         if (mapImage == null || mapId == null) {
             return List.of();
         }
@@ -402,7 +418,7 @@ public final class MapPanel extends JPanel {
             if (basePoint == null) {
                 continue;
             }
-            points.add(scalePoint(basePoint, zoomPercent));
+            points.add(scalePoint(basePoint, scale));
             previousOnMap = true;
         }
         return Collections.unmodifiableList(points);
@@ -477,6 +493,16 @@ public final class MapPanel extends JPanel {
             return image;
         }
         double scale = zoomPercent / 100.0;
+        return scaleImage(image, scale);
+    }
+
+    private static BufferedImage scaleImage(BufferedImage image, double scale) {
+        if (image == null) {
+            return null;
+        }
+        if (scale == 1.0) {
+            return image;
+        }
         int width = Math.max(1, (int) Math.round(image.getWidth() * scale));
         int height = Math.max(1, (int) Math.round(image.getHeight() * scale));
         int type = image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType();
@@ -498,6 +524,16 @@ public final class MapPanel extends JPanel {
             return new Dimension(dimension);
         }
         double scale = zoomPercent / 100.0;
+        return scaleDimension(dimension, scale);
+    }
+
+    private static Dimension scaleDimension(Dimension dimension, double scale) {
+        if (dimension == null) {
+            return null;
+        }
+        if (scale == 1.0) {
+            return new Dimension(dimension);
+        }
         int width = Math.max(1, (int) Math.round(dimension.width * scale));
         int height = Math.max(1, (int) Math.round(dimension.height * scale));
         return new Dimension(width, height);
@@ -511,9 +547,40 @@ public final class MapPanel extends JPanel {
             return new Point(point);
         }
         double scale = zoomPercent / 100.0;
+        return scalePoint(point, scale);
+    }
+
+    private static Point scalePoint(Point point, double scale) {
+        if (point == null) {
+            return null;
+        }
+        if (scale == 1.0) {
+            return new Point(point);
+        }
         int x = (int) Math.round(point.x * scale);
         int y = (int) Math.round(point.y * scale);
         return new Point(x, y);
+    }
+
+    private double calculateFitScale(Dimension imageSize, Insets insets, int zoomPercent) {
+        if (imageSize == null) {
+            return zoomPercent / 100.0;
+        }
+        JViewport viewport = scrollPane.getViewport();
+        Dimension viewSize = viewport != null ? viewport.getExtentSize() : null;
+        if (viewSize == null || viewSize.width <= 0 || viewSize.height <= 0) {
+            return zoomPercent / 100.0;
+        }
+        int availableWidth = Math.max(1, viewSize.width - insets.left - insets.right);
+        int availableHeight = Math.max(1, viewSize.height - insets.top - insets.bottom);
+        double fitScale = Math.min(availableWidth / (double) imageSize.width, availableHeight / (double) imageSize.height);
+        double zoomScale = Math.min(1.0, zoomPercent / 100.0);
+        return fitScale * zoomScale;
+    }
+
+    private static int scaledMarkerDiameter(double scale) {
+        int diameter = (int) Math.round(AnimatedMapIcon.MARKER_DIAMETER_BASE * scale);
+        return Math.max(4, diameter);
     }
 
     private void handleMapClick(Point clickPoint) {
@@ -655,9 +722,7 @@ public final class MapPanel extends JPanel {
     }
 
     private static int scaledMarkerDiameter(int zoomPercent) {
-        double scale = zoomPercent / 100.0;
-        int diameter = (int) Math.round(AnimatedMapIcon.MARKER_DIAMETER_BASE * scale);
-        return Math.max(4, diameter);
+        return scaledMarkerDiameter(zoomPercent / 100.0);
     }
 
     private void centerViewOnPoint(Point point, Dimension imageSize) {
@@ -734,6 +799,24 @@ public final class MapPanel extends JPanel {
         }
         animationTimer = new Timer(60, this::onAnimationTick);
         animationTimer.start();
+    }
+
+    private void disableScrollPolicies() {
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+    }
+
+    private void resetScrollPolicies() {
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    }
+
+    private void handleViewportResize() {
+        RoomMapService.MapImage mapImage = lastMapImage;
+        if (mapImage == null || !mapImage.staticBackground()) {
+            return;
+        }
+        updateDisplayedImage(false);
     }
 
     private void onAnimationTick(ActionEvent event) {
