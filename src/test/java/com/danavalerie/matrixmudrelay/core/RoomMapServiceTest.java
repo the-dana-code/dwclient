@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
+import com.danavalerie.matrixmudrelay.core.data.RoomData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -115,6 +116,39 @@ public class RoomMapServiceTest {
     }
 
     @Test
+    public void testNoTeleportFlagPreventsTeleportOutOfRoom() throws Exception {
+        MapDataService dataService = new MapDataService();
+        dataService.getRooms().clear();
+
+        RoomData start = new RoomData("A", 1, 0, 0, "Start", "outside");
+        start.setExits(Map.of("e", "B"));
+        start.setFlags(List.of(RoomData.FLAG_NO_TELEPORT));
+        RoomData mid = new RoomData("B", 1, 1, 0, "Mid", "outside");
+        mid.setExits(Map.of("e", "C"));
+        RoomData target = new RoomData("C", 1, 2, 0, "Target", "outside");
+        target.setExits(Map.of());
+
+        dataService.getRooms().put(start.getRoomId(), start);
+        dataService.getRooms().put(mid.getRoomId(), mid);
+        dataService.getRooms().put(target.getRoomId(), target);
+
+        ClientConfig.CharacterConfig tester = new ClientConfig.CharacterConfig();
+        tester.teleports.speedwalkingPenalty = 0;
+        tester.teleports.locations = List.of(
+                new ClientConfig.TeleportLocation("tp town", "C")
+        );
+        TeleportRegistry.initialize(Map.of("tester", tester));
+
+        RoomMapService service = new RoomMapService(dataService);
+        RoomMapService.RouteResult result = service.findRoute("A", "C", true, "tester");
+
+        assertNotNull(result);
+        assertEquals(2, result.steps().size(), "Expected walk + teleport route");
+        assertEquals("e", result.steps().get(0).exit(), "Should walk out before teleporting");
+        assertEquals("tp town", result.steps().get(1).exit(), "Should allow teleport after leaving flagged room");
+    }
+
+    @Test
     public void testRenderDarkMap() throws Exception {
         RoomMapService service = new RoomMapService(new MapDataService());
         // Drum teleport room ID
@@ -130,4 +164,3 @@ public class RoomMapServiceTest {
         assertNotEquals(lightImage.data().length, darkImage.data().length);
     }
 }
-

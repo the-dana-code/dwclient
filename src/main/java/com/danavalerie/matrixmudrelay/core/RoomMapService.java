@@ -536,7 +536,8 @@ public class RoomMapService {
             if (useTeleports) {
                 boolean isOutside = (currentData != null && "outside".equalsIgnoreCase(currentData.getRoomType()))
                         || currentData == null; // Assume outside if unknown
-                if (!outdoorOnly || isOutside) {
+                boolean noTeleport = currentData != null && currentData.hasFlag(RoomData.FLAG_NO_TELEPORT);
+                if (!noTeleport && (!outdoorOnly || isOutside)) {
                     for (ResolvedTeleport teleport : teleports) {
                         if (teleport.roomId.equals(current.roomId)) {
                             continue;

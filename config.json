@@ -563,21 +563,14 @@
       "sendToChitchat": false
     },
     {
-      "pattern": "^\\([^)]*\\) .*",
+      "pattern": "^\\((?!under\\)).*\\) .*",
       "foreground": "#B478FF",
       "bold": false,
       "systemBeep": false,
       "sendToChitchat": true
     },
     {
-      "pattern": "^.+ asks you: .*$",
-      "foreground": "#FFEB50",
-      "bold": false,
-      "systemBeep": true,
-      "sendToChitchat": true
-    },
-    {
-      "pattern": "^.+ tells you: .*$",
+      "pattern": "^.+ (asks you|tells you|exclaims to you): .*$",
       "foreground": "#FFEB50",
       "bold": false,
       "systemBeep": true,

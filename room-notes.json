@@ -925,6 +925,43 @@
       }
     ]
   },
+  "5e5775038575d590c474183a9a4a02b0b8aae5f9": {
+    "name": "Zorgo\u0027s operating room",
+    "buttons": [
+      {
+        "name": "Say \"Yes\"",
+        "command": "say yes"
+      },
+      {
+        "name": "Say \"No\"",
+        "command": "say no"
+      },
+      {
+        "name": "Request Retrophrenology",
+        "command": "say help me please"
+      },
+      {
+        "name": "Say \"Constitution\"",
+        "command": "say constitution"
+      },
+      {
+        "name": "Say \"Dexterity\"",
+        "command": "say dexterity"
+      },
+      {
+        "name": "Say \"Intelligence\"",
+        "command": "say intelligence"
+      },
+      {
+        "name": "Say \"Strength\"",
+        "command": "say strength"
+      },
+      {
+        "name": "Say \"Wisdom\"",
+        "command": "say wisdom"
+      }
+    ]
+  },
   "5f065d44f883d89852acc7e7712f950f81e68d09": {
     "name": "\"Get \u0027em while we still got \u0027em\" shop",
     "buttons": [
