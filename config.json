@@ -600,6 +600,14 @@
       "bold": true,
       "systemBeep": true,
       "sendToChitchat": false
+    },
+    {
+      "pattern": "^Removed queue.$",
+      "foreground": "#FFFFFF",
+      "background": "#FF0000",
+      "bold": true,
+      "systemBeep": true,
+      "sendToChitchat": false
     }
   ],
   "characters": {
