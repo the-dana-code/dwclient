@@ -950,6 +950,11 @@
             "name": "Sto Lat",
             "command": "tp stolat",
             "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
+          },
+          {
+            "name": "Escrow",
+            "command": "tp escrow",
+            "roomId": "cb25eab957d9df770af6787786a8e5001123a246"
           }
         ]
       },
