@@ -70,13 +70,11 @@ public class MudClient {
     private final AtomicReference<InputStream> in = new AtomicReference<>();
     private final AtomicReference<OutputStream> out = new AtomicReference<>();
     private final CurrentRoomInfo currentRoomInfo = new CurrentRoomInfo();
-    private Thread readerThread;
     private final ExecutorService writer = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "mud-write");
         t.setDaemon(true);
         return t;
     });
-    ;
 
     public MudClient(ClientConfig.Mud cfg,
                      MudLineListener lineListener,
@@ -111,7 +109,6 @@ public class MudClient {
             Socket s = new Socket();
             s.connect(new InetSocketAddress(cfg.host, cfg.port), cfg.connectTimeoutMs);
             s.setTcpNoDelay(true);
-            s.setSoTimeout(250);
 
             socket.set(s);
             in.set(s.getInputStream());
@@ -148,7 +145,7 @@ public class MudClient {
     }
 
     private void startReader() {
-        readerThread = new Thread(this::readLoop, "mud-read");
+        Thread readerThread = new Thread(this::readLoop, "mud-read");
         readerThread.setDaemon(true);
         readerThread.start();
     }
@@ -176,12 +173,7 @@ public class MudClient {
         try {
             InputStream currentIn = in.get();
             while (connected.get() && currentIn != null) {
-                int b;
-                try {
-                    b = currentIn.read();
-                } catch (java.net.SocketTimeoutException e) {
-                    continue;
-                }
+                int b = currentIn.read();
 
                 if (b == -1) {
                     SwingUtilities.invokeLater(() -> disconnect("eof", null));
@@ -293,11 +285,7 @@ public class MudClient {
         if (!connected.get()) {
             throw new IllegalStateException("Not connected to MUD");
         }
-        ExecutorService w = writer;
-        if (w == null) {
-            throw new IllegalStateException("Writer not initialized");
-        }
-        w.submit(() -> doWrite(lines));
+        writer.submit(() -> doWrite(lines));
     }
 
     private void doWrite(List<String> lines) {
@@ -352,4 +340,3 @@ public class MudClient {
         }
     }
 }
-
