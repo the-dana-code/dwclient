@@ -189,8 +189,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JLabel teleportTargetLabel;
     private JButton restartSpeedwalkButton;
     private JButton cancelTeleportButton;
-    private String teleportQueuedTargetRoomId;
-    private String teleportQueuedTargetName;
 
 
     public DesktopClientFrame(ClientConfig cfg, UiConfig uiCfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
@@ -1067,23 +1065,11 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     @Override
     public void setTeleportQueued(String command, String targetName) {
-        setTeleportQueued(command, targetName, null);
-    }
-
-    @Override
-    public void setTeleportQueued(String command, String targetName, String targetRoomId) {
         SwingUtilities.invokeLater(() -> {
-            teleportQueuedTargetRoomId = targetRoomId;
-            teleportQueuedTargetName = targetName;
             teleportCommandLabel.setText("Command: " + command);
             teleportTargetLabel.setText("Target: " + targetName);
             teleportInfoPanel.setVisible(true);
             updateComponentTree(teleportInfoPanel, currentBg, currentFg);
-            if (isTeleportQueuedTargetRoom(currentRoomId, currentRoomName)) {
-                teleportInfoPanel.setVisible(false);
-                teleportQueuedTargetRoomId = null;
-                teleportQueuedTargetName = null;
-            }
             revalidate();
             repaint();
         });
@@ -1093,8 +1079,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     public void clearTeleportQueued() {
         SwingUtilities.invokeLater(() -> {
             teleportInfoPanel.setVisible(false);
-            teleportQueuedTargetRoomId = null;
-            teleportQueuedTargetName = null;
             revalidate();
             repaint();
         });
@@ -2397,33 +2381,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mapPanel.updateCurrentRoom(roomId);
         roomButtonBarPanel.updateRoom(roomId, roomName);
         roomNotePanel.updateRoom(roomId, roomName);
-        clearTeleportQueuedIfReached(roomId, roomName);
-    }
-
-    private void clearTeleportQueuedIfReached(String roomId, String roomName) {
-        if (teleportInfoPanel == null || !teleportInfoPanel.isVisible()) {
-            return;
-        }
-        if (isTeleportQueuedTargetRoom(roomId, roomName)) {
-            clearTeleportQueued();
-        }
-    }
-
-    private boolean isTeleportQueuedTargetRoom(String roomId, String roomName) {
-        if (teleportQueuedTargetRoomId != null && roomId != null && teleportQueuedTargetRoomId.equals(roomId)) {
-            return true;
-        }
-        if (teleportQueuedTargetName == null) {
-            return false;
-        }
-        String target = teleportQueuedTargetName.trim();
-        if (target.isEmpty()) {
-            return false;
-        }
-        if (roomName != null && target.equalsIgnoreCase(roomName.trim())) {
-            return true;
-        }
-        return roomId != null && target.equalsIgnoreCase(roomId.trim());
     }
 
     @Override
