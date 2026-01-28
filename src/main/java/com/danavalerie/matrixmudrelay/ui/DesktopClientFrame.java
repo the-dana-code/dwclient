@@ -158,7 +158,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JMenu bookmarksMenu;
     private JMenu writTopMenu;
     private JMenu resultsTopMenu;
-    private KeepOpenMenuItem repeatLastSpeedwalkItem;
+    private SpeedwalkMenuItem repeatLastSpeedwalkItem;
     private KeepOpenMenuItem writRouteMenuItem;
     private String currentCharacterName = null;
     private final StringBuilder writLineBuffer = new StringBuilder();
@@ -533,7 +533,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
 
-        repeatLastSpeedwalkItem = new KeepOpenMenuItem("", false);
+        repeatLastSpeedwalkItem = new SpeedwalkMenuItem("", false);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
         }
@@ -652,7 +652,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     updateMenuTheme(bmSubMenu, currentBg, currentFg);
                 }
 
-                KeepOpenMenuItem speedwalkNow = new KeepOpenMenuItem("Speedwalk Now", false);
+                SpeedwalkMenuItem speedwalkNow = new SpeedwalkMenuItem("Speedwalk Now", false);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(speedwalkNow, currentBg, currentFg);
                 }
@@ -1175,7 +1175,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         });
         optionsMenu.add(outdoorTpItem);
 
-        KeepOpenMenuItem penaltyItem = new KeepOpenMenuItem("Speedwalking Teleport Penalty...", false);
+        SpeedwalkMenuItem penaltyItem = new SpeedwalkMenuItem("Speedwalking Teleport Penalty...", false);
         if (charCfg != null && charCfg.teleports != null) {
             penaltyItem.addActionListener(e -> showSpeedwalkingPenaltyDialog(charCfg.teleports));
         } else {
