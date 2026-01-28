@@ -835,7 +835,8 @@
             "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
           }
         ]
-      }
+      },
+      "gpRegenRateOverride": 4
     },
     "Maemot": {
       "useTeleports": true,
@@ -905,7 +906,8 @@
             "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
           }
         ]
-      }
+      },
+      "gpRegenRateOverride": 4
     },
     "Ngao": {
       "useTeleports": true,
