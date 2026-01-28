@@ -188,6 +188,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JLabel teleportTargetLabel;
     private JButton restartSpeedwalkButton;
     private JButton cancelTeleportButton;
+    private String restartSpeedwalkTargetName;
+    private boolean restartSpeedwalkTargetReached;
+    private Color restartSpeedwalkDefaultBg;
+    private Color restartSpeedwalkDefaultFg;
 
 
     public DesktopClientFrame(ClientConfig cfg, UiConfig uiCfg, Path configPath, DeliveryRouteMappings routeMappings, RoomMapService routeMapService) {
@@ -1068,6 +1072,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             teleportTargetLabel.setText("Target: " + targetName);
             teleportInfoPanel.setVisible(true);
             updateComponentTree(teleportInfoPanel, currentBg, currentFg);
+            restartSpeedwalkTargetName = targetName;
+            restartSpeedwalkTargetReached = false;
+            captureRestartSpeedwalkDefaultColors();
+            updateRestartSpeedwalkButtonColors();
             revalidate();
             repaint();
         });
@@ -1077,6 +1085,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     public void clearTeleportQueued() {
         SwingUtilities.invokeLater(() -> {
             teleportInfoPanel.setVisible(false);
+            restartSpeedwalkTargetName = null;
+            restartSpeedwalkTargetReached = false;
             revalidate();
             repaint();
         });
@@ -2363,6 +2373,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         mapPanel.updateCurrentRoom(roomId);
         roomButtonBarPanel.updateRoom(roomId, roomName);
         roomNotePanel.updateRoom(roomId, roomName);
+        updateRestartSpeedwalkButtonColors();
     }
 
     @Override
@@ -2699,7 +2710,49 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         menuBar.revalidate();
         menuBar.repaint();
 
+        captureRestartSpeedwalkDefaultColors();
+        updateRestartSpeedwalkButtonColors();
         repaint();
+    }
+
+    private void updateRestartSpeedwalkButtonColors() {
+        if (restartSpeedwalkButton == null || teleportInfoPanel == null || !teleportInfoPanel.isVisible()) {
+            return;
+        }
+        if (!restartSpeedwalkTargetReached
+                && restartSpeedwalkTargetName != null
+                && currentRoomName != null
+                && currentRoomName.equals(restartSpeedwalkTargetName)) {
+            restartSpeedwalkTargetReached = true;
+        }
+        if (restartSpeedwalkTargetReached) {
+            restartSpeedwalkButton.setBackground(Color.RED);
+            restartSpeedwalkButton.setForeground(Color.WHITE);
+        } else {
+            restoreRestartSpeedwalkDefaultColors();
+        }
+    }
+
+    private void captureRestartSpeedwalkDefaultColors() {
+        if (restartSpeedwalkButton == null) {
+            return;
+        }
+        restartSpeedwalkDefaultBg = restartSpeedwalkButton.getBackground();
+        restartSpeedwalkDefaultFg = restartSpeedwalkButton.getForeground();
+    }
+
+    private void restoreRestartSpeedwalkDefaultColors() {
+        if (restartSpeedwalkButton == null) {
+            return;
+        }
+        Color bg = restartSpeedwalkDefaultBg != null ? restartSpeedwalkDefaultBg : currentBg;
+        Color fg = restartSpeedwalkDefaultFg != null ? restartSpeedwalkDefaultFg : currentFg;
+        if (bg != null) {
+            restartSpeedwalkButton.setBackground(bg);
+        }
+        if (fg != null) {
+            restartSpeedwalkButton.setForeground(fg);
+        }
     }
 
     private void updateComponentTree(Component c, Color bg, Color fg) {
