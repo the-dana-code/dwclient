@@ -52,6 +52,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class MudCommandProcessor implements MudClient.MudGmcpListener, MudClient.MudConnectListener {
+    public static final String SPEEDWALK_ALIAS_NAME = "spdwlk";
     private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
     private static final int ROOM_SEARCH_LIMIT = 999;
     private static final Pattern UU_LIBRARY_RE_ENABLE_PATTERN = Pattern.compile("^Cannot find \"distortion\", no match\\.$");
@@ -1069,10 +1070,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 }
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
-                String aliasName = "LesaClientSpeedwalk";
-                String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
-                sendToMud(List.of(aliasCommand, aliasName));
-                out.append("\nAlias: ").append(aliasName);
+                String aliasCommand = "alias " + SPEEDWALK_ALIAS_NAME + " " + String.join(";", exits);
+                sendToMud(List.of(aliasCommand, SPEEDWALK_ALIAS_NAME));
+                out.append("\nAlias: ").append(SPEEDWALK_ALIAS_NAME);
             }
             output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
@@ -1160,9 +1160,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             for (RoomMapService.RouteStep step : route.steps()) {
                 checkAndShowTeleportBanner(step.exit());
             }
-            String aliasName = "LesaClientSpeedwalk";
-            String aliasCommand = "alias " + aliasName + " " + String.join(";", exits);
-            sendToMud(List.of(aliasCommand, aliasName));
+            String aliasCommand = "alias " + SPEEDWALK_ALIAS_NAME + " " + String.join(";", exits);
+            sendToMud(List.of(aliasCommand, SPEEDWALK_ALIAS_NAME));
             output.appendSystem("Speedwalking to room " + targetRoomId + " (" + exits.size() + " steps)");
         }
     }
