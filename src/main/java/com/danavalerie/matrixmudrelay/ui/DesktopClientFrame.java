@@ -238,6 +238,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 this.writMenuVisits.putAll(saved.writMenuVisits());
             }
         }
+        selectedWritIndex = resolveSelectedWritIndex();
 
         mud = new MudClient(
                 cfg.mud,
@@ -952,6 +953,42 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         saveUiConfig();
     }
 
+    private int resolveSelectedWritIndex() {
+        String charName = writCharacterName;
+        if (charName == null || charName.isBlank()) {
+            return selectedWritIndex;
+        }
+        UiConfig.CharacterUiData charCfg = uiCfg.characters.get(charName);
+        if (charCfg == null || charCfg.selectedWritIndex == null || charCfg.selectedWritIndex < 0) {
+            return selectedWritIndex;
+        }
+        return charCfg.selectedWritIndex;
+    }
+
+    private void persistSelectedWritIndex(int index) {
+        String charName = writCharacterName;
+        if (charName == null || charName.isBlank()) {
+            return;
+        }
+        UiConfig.CharacterUiData charCfg = uiCfg.characters.computeIfAbsent(charName, k -> new UiConfig.CharacterUiData());
+        if (charCfg.selectedWritIndex != null && charCfg.selectedWritIndex == index) {
+            return;
+        }
+        charCfg.selectedWritIndex = index;
+        saveUiConfig();
+    }
+
+    private void setSelectedWritIndex(int index) {
+        if (index < 0) {
+            index = 0;
+        }
+        if (selectedWritIndex == index) {
+            return;
+        }
+        selectedWritIndex = index;
+        persistSelectedWritIndex(index);
+    }
+
     private void saveConfig() {
         ConfigLoader.save(configPath, cfg);
     }
@@ -1020,7 +1057,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         if (resetVisits) {
             writMenuVisits.clear();
-            selectedWritIndex = 0;
+            setSelectedWritIndex(0);
         }
         rebuildWritMenus();
         saveMenus();
@@ -1723,7 +1760,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             if (selectedWritIndex >= writRequirements.size()) {
-                selectedWritIndex = 0;
+                setSelectedWritIndex(0);
             }
 
             KeepOpenRadioMenuItem.RadioMenuGroup menuGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
@@ -1733,7 +1770,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 boolean selected = (i == selectedWritIndex);
                 KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, writTopMenu);
                 radioItem.addActionListener(e -> {
-                    selectedWritIndex = index;
+                    setSelectedWritIndex(index);
                     rebuildWritMenus();
                 });
                 writTopMenu.add(radioItem);

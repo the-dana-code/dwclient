@@ -42,6 +42,7 @@ public final class UiConfig {
         public List<Integer> gpRateSamples = new ArrayList<>();
         public List<Integer> hpRateSamples = new ArrayList<>();
         public UULibraryState uuLibrary;
+        public Integer selectedWritIndex;
     }
 
     public static final class UULibraryState {
