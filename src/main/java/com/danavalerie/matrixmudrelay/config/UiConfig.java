@@ -26,6 +26,8 @@ import java.util.Map;
 public final class UiConfig {
     public Integer windowWidth;
     public Integer windowHeight;
+    public Integer windowX;
+    public Integer windowY;
     public Boolean windowMaximized;
     public Double mudMapSplitRatio;
     public Double mapNotesSplitRatio;

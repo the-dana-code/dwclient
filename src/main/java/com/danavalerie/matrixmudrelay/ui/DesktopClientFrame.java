@@ -86,6 +86,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -304,7 +305,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         applyConfiguredFont();
         pack();
         applyWindowConfiguration();
-        if (!isWindowMaximized()) {
+        if (!isWindowMaximized() && !hasStoredWindowPosition()) {
             setLocationRelativeTo(null);
         }
         installInputFocusForwarding();
@@ -331,9 +332,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (width != null && height != null && width > 0 && height > 0) {
             setSize(new Dimension(width, height));
         }
+        Integer posX = uiCfg.windowX;
+        Integer posY = uiCfg.windowY;
+        if (posX != null && posY != null) {
+            setLocation(posX, posY);
+        }
         if (Boolean.TRUE.equals(uiCfg.windowMaximized)) {
             setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         }
+    }
+
+    private boolean hasStoredWindowPosition() {
+        return uiCfg.windowX != null && uiCfg.windowY != null;
     }
 
     private void installWindowStatePersistence() {
@@ -345,6 +355,14 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
                 persistWindowSize(getSize());
             }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                if (!isShowing() || isWindowMaximized()) {
+                    return;
+                }
+                persistWindowPosition(getLocation());
+            }
         });
 
         addWindowStateListener(new WindowAdapter() {
@@ -354,6 +372,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 persistWindowMaximized(maximized);
                 if (!maximized) {
                     persistWindowSize(getSize());
+                    persistWindowPosition(getLocation());
                 }
             }
         });
@@ -372,6 +391,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         uiCfg.windowWidth = size.width;
         uiCfg.windowHeight = size.height;
+        saveUiConfig();
+    }
+
+    private void persistWindowPosition(Point location) {
+        if (location == null) {
+            return;
+        }
+        if (Objects.equals(uiCfg.windowX, location.x) && Objects.equals(uiCfg.windowY, location.y)) {
+            return;
+        }
+        uiCfg.windowX = location.x;
+        uiCfg.windowY = location.y;
         saveUiConfig();
     }
 

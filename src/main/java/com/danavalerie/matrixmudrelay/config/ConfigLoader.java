@@ -104,6 +104,8 @@ public final class ConfigLoader {
             JsonObject uiObj = configObj.getAsJsonObject("ui");
             if (uiObj.has("windowWidth")) { uiCfg.windowWidth = uiObj.get("windowWidth").getAsInt(); migrated = true; }
             if (uiObj.has("windowHeight")) { uiCfg.windowHeight = uiObj.get("windowHeight").getAsInt(); migrated = true; }
+            if (uiObj.has("windowX")) { uiCfg.windowX = uiObj.get("windowX").getAsInt(); migrated = true; }
+            if (uiObj.has("windowY")) { uiCfg.windowY = uiObj.get("windowY").getAsInt(); migrated = true; }
             if (uiObj.has("windowMaximized")) { uiCfg.windowMaximized = uiObj.get("windowMaximized").getAsBoolean(); migrated = true; }
             if (uiObj.has("mudMapSplitRatio")) { uiCfg.mudMapSplitRatio = uiObj.get("mudMapSplitRatio").getAsDouble(); migrated = true; }
             if (uiObj.has("mapNotesSplitRatio")) { uiCfg.mapNotesSplitRatio = uiObj.get("mapNotesSplitRatio").getAsDouble(); migrated = true; }
