@@ -8,7 +8,7 @@
   "ui": {
     "fontFamily": "PT Mono",
     "fontSize": 20,
-    "mapZoomPercent": 100,
+    "mapZoomPercent": 80,
     "invertMap": true
   },
   "bookmarks": [
@@ -898,6 +898,11 @@
             "name": "Ankh-Morpork (Mended Drum)",
             "command": "tp drum",
             "roomId": "964ea3c5f971d538232e683612cd41900c232bdd"
+          },
+          {
+            "name": "BP - Middle Bridge",
+            "command": "tp bp-middlebridge",
+            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
           }
         ]
       }

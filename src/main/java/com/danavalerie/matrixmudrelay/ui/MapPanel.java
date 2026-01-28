@@ -371,7 +371,7 @@ public final class MapPanel extends JPanel {
                 return;
             }
             boolean fitToView = mapImage != null && mapImage.staticBackground();
-            double scale = fitToView ? calculateFitScale(imageSize, mapLabel.getInsets(), zoomPercent) : zoomPercent / 100.0;
+            double scale = fitToView ? calculateFitScale(imageSize, mapLabel.getInsets()) : zoomPercent / 100.0;
             BufferedImage scaled = scaleImage(image, scale);
             Dimension scaledSize = scaleDimension(imageSize, scale);
             Point focus = scalePoint(focusPoint, scale);
@@ -570,20 +570,18 @@ public final class MapPanel extends JPanel {
         return new Point(x, y);
     }
 
-    private double calculateFitScale(Dimension imageSize, Insets insets, int zoomPercent) {
+    private double calculateFitScale(Dimension imageSize, Insets insets) {
         if (imageSize == null) {
-            return zoomPercent / 100.0;
+            return 1.0;
         }
         JViewport viewport = scrollPane.getViewport();
         Dimension viewSize = viewport != null ? viewport.getExtentSize() : null;
         if (viewSize == null || viewSize.width <= 0 || viewSize.height <= 0) {
-            return zoomPercent / 100.0;
+            return 1.0;
         }
         int availableWidth = Math.max(1, viewSize.width - insets.left - insets.right);
         int availableHeight = Math.max(1, viewSize.height - insets.top - insets.bottom);
-        double fitScale = Math.min(availableWidth / (double) imageSize.width, availableHeight / (double) imageSize.height);
-        double zoomScale = Math.min(1.0, zoomPercent / 100.0);
-        return fitScale * zoomScale;
+        return Math.min(availableWidth / (double) imageSize.width, availableHeight / (double) imageSize.height);
     }
 
     private static int scaledMarkerDiameter(double scale) {
@@ -612,10 +610,11 @@ public final class MapPanel extends JPanel {
         int xOffset = insets.left + (labelWidth - insets.left - insets.right - iconWidth) / 2;
         int yOffset = insets.top + (labelHeight - insets.top - insets.bottom - iconHeight) / 2;
 
-        double scale = zoomPercent / 100.0;
-        if (scale <= 0) {
+        int iconWidth2 = icon.getIconWidth();
+        if (iconWidth2 <= 0 || lastImageSize.width <= 0) {
             return;
         }
+        double scale = iconWidth2 / (double) lastImageSize.width;
 
         int relativeX = clickPoint.x - xOffset;
         int relativeY = clickPoint.y - yOffset;
