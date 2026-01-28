@@ -55,6 +55,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     public static final String SPEEDWALK_ALIAS_NAME = "spdwlk";
     private static final Logger log = LoggerFactory.getLogger(MudCommandProcessor.class);
     private static final int ROOM_SEARCH_LIMIT = 999;
+    private static final int SPEEDWALK_MAX_PATH_LENGTH = 2000;
     private static final Pattern UU_LIBRARY_RE_ENABLE_PATTERN = Pattern.compile("^Cannot find \"distortion\", no match\\.$");
     private static final Pattern UU_LIBRARY_DISTORTION_AHEAD = Pattern.compile("^There is a strange distortion in space and time up ahead of you!.*");
     private static final Pattern UU_LIBRARY_DISTORTION_BEHIND = Pattern.compile("^There is a strange distortion in space and time behind you!.*");
@@ -120,6 +121,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
     private List<String> lastSpeedwalkPostCommands = null;
     private String uuLibraryRestoredForChar = null;
     private final Runnable uuLibraryListener = this::saveUULibraryState;
+
+    private record SpeedwalkPlan(List<String> exits, int totalSteps, String lastRoomId, boolean truncated) {
+    }
 
     public MudCommandProcessor(ClientConfig cfg,
                                UiConfig uiCfg,
@@ -1055,6 +1059,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             List<String> exits = route.steps().stream()
                     .map(RoomMapService.RouteStep::exit)
                     .toList();
+            SpeedwalkPlan plan = buildSpeedwalkPlan(route.steps());
             StringBuilder out = new StringBuilder();
             out.append("Route to ")
                     .append(target.roomShort())
@@ -1065,14 +1070,32 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 out.append("\nAlready there.");
             } else {
                 output.clearTeleportQueued();
-                for (RoomMapService.RouteStep step : route.steps()) {
-                    checkAndShowTeleportBanner(step.exit());
+                for (String exit : plan.exits()) {
+                    checkAndShowTeleportBanner(exit);
                 }
                 out.append("\n").append(String.join(" -> ", exits));
                 out.append("\nSteps: ").append(exits.size());
-                String aliasCommand = "alias " + SPEEDWALK_ALIAS_NAME + " " + String.join(";", exits);
-                sendToMud(List.of(aliasCommand, SPEEDWALK_ALIAS_NAME));
-                out.append("\nAlias: ").append(SPEEDWALK_ALIAS_NAME);
+                if (!plan.exits().isEmpty()) {
+                    String aliasCommand = "alias " + SPEEDWALK_ALIAS_NAME + " " + String.join(";", plan.exits());
+                    sendToMud(List.of(aliasCommand, SPEEDWALK_ALIAS_NAME));
+                    out.append("\nAlias: ").append(SPEEDWALK_ALIAS_NAME);
+                }
+                if (plan.exits().isEmpty() && plan.truncated()) {
+                    out.append("\nSpeedwalk too long: no steps fit within ")
+                            .append(SPEEDWALK_MAX_PATH_LENGTH)
+                            .append(" characters.");
+                } else if (plan.truncated()) {
+                    String targetName = resolveRoomDisplayName(plan.lastRoomId());
+                    output.setTeleportQueued(
+                            "Speedwalk Too Long (Taking " + plan.exits().size() + " of " + plan.totalSteps() + " steps)",
+                            targetName != null ? targetName : "Unknown"
+                    );
+                    out.append("\nSpeedwalk too long: sent ")
+                            .append(plan.exits().size())
+                            .append(" of ")
+                            .append(plan.totalSteps())
+                            .append(" steps. Use /restart to continue.");
+                }
             }
             output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
@@ -1130,6 +1153,56 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         }
     }
 
+    private SpeedwalkPlan buildSpeedwalkPlan(List<RoomMapService.RouteStep> steps) {
+        if (steps == null || steps.isEmpty()) {
+            return new SpeedwalkPlan(List.of(), 0, null, false);
+        }
+        int totalSteps = 0;
+        for (RoomMapService.RouteStep step : steps) {
+            String exit = step.exit();
+            if (exit == null || exit.isBlank()) {
+                continue;
+            }
+            totalSteps++;
+        }
+        List<String> exits = new ArrayList<>();
+        int pathLength = 0;
+        String lastRoomId = null;
+        for (RoomMapService.RouteStep step : steps) {
+            String exit = step.exit();
+            if (exit == null || exit.isBlank()) {
+                continue;
+            }
+            int segmentLength = exit.length() + (exits.isEmpty() ? 0 : 1);
+            if (pathLength + segmentLength > SPEEDWALK_MAX_PATH_LENGTH) {
+                break;
+            }
+            exits.add(exit);
+            pathLength += segmentLength;
+            if (step.roomId() != null && !step.roomId().isBlank()) {
+                lastRoomId = step.roomId();
+            }
+        }
+        boolean truncated = exits.size() < totalSteps;
+        return new SpeedwalkPlan(List.copyOf(exits), totalSteps, lastRoomId, truncated);
+    }
+
+    private String resolveRoomDisplayName(String roomId) {
+        if (roomId == null || roomId.isBlank()) {
+            return null;
+        }
+        if (mapService != null) {
+            try {
+                RoomMapService.RoomLocation location = mapService.lookupRoomLocation(roomId);
+                if (location != null && location.roomShort() != null && !location.roomShort().isBlank()) {
+                    return location.roomShort();
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return roomId;
+    }
+
     private void performSpeedwalk(String targetRoomId) throws Exception {
         if (!mud.isConnected()) {
             output.appendSystem("Error: MUD is disconnected. Send `/connect` first.");
@@ -1149,20 +1222,29 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         String characterName = mud.getCurrentRoomSnapshot().characterName();
         RoomMapService.RouteResult route = calculateSpeedwalkRoute(currentRoomId, targetRoomId, characterName);
 
-        List<String> exits = route.steps().stream()
-                .map(RoomMapService.RouteStep::exit)
-                .toList();
+        SpeedwalkPlan plan = buildSpeedwalkPlan(route.steps());
 
-        if (exits.isEmpty()) {
+        if (plan.totalSteps() == 0) {
             output.appendSystem("Already there.");
+        } else if (plan.exits().isEmpty()) {
+            output.appendSystem("Speedwalk too long: no steps fit within " + SPEEDWALK_MAX_PATH_LENGTH + " characters.");
         } else {
             output.clearTeleportQueued();
-            for (RoomMapService.RouteStep step : route.steps()) {
-                checkAndShowTeleportBanner(step.exit());
+            for (String exit : plan.exits()) {
+                checkAndShowTeleportBanner(exit);
             }
-            String aliasCommand = "alias " + SPEEDWALK_ALIAS_NAME + " " + String.join(";", exits);
+            String aliasCommand = "alias " + SPEEDWALK_ALIAS_NAME + " " + String.join(";", plan.exits());
             sendToMud(List.of(aliasCommand, SPEEDWALK_ALIAS_NAME));
-            output.appendSystem("Speedwalking to room " + targetRoomId + " (" + exits.size() + " steps)");
+            output.appendSystem("Speedwalking to room " + targetRoomId + " (" + plan.totalSteps() + " steps)");
+            if (plan.truncated()) {
+                String targetName = resolveRoomDisplayName(plan.lastRoomId());
+                output.setTeleportQueued(
+                        "Speedwalk Too Long (Taking " + plan.exits().size() + " of " + plan.totalSteps() + " steps)",
+                        targetName != null ? targetName : "Unknown"
+                );
+                output.appendSystem("Speedwalk too long: sent " + plan.exits().size()
+                        + " of " + plan.totalSteps() + " steps. Use /restart to continue.");
+            }
         }
     }
 
