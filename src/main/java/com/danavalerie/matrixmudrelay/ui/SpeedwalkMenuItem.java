@@ -3,7 +3,10 @@ package com.danavalerie.matrixmudrelay.ui;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.HierarchyEvent;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Supplier;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -15,6 +18,8 @@ public class SpeedwalkMenuItem extends KeepOpenMenuItem {
     private static final String ESTIMATE_PREFIX = "(";
     private static final String ESTIMATE_SUFFIX = ")";
 
+    private static final Set<SpeedwalkMenuItem> INSTANCES =
+            Collections.synchronizedSet(Collections.newSetFromMap(new WeakHashMap<>()));
     private static volatile String currentRoomId;
     private static volatile SpeedwalkEstimateProvider estimateProvider;
 
@@ -35,6 +40,7 @@ public class SpeedwalkMenuItem extends KeepOpenMenuItem {
     public SpeedwalkMenuItem(String text, boolean keepMenuOpen, Supplier<String> targetRoomIdSupplier) {
         super(text, keepMenuOpen);
         this.targetRoomIdSupplier = targetRoomIdSupplier;
+        registerInstance();
         addHierarchyListener(event -> {
             if ((event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
                 refreshEstimateIfNeeded();
@@ -53,6 +59,7 @@ public class SpeedwalkMenuItem extends KeepOpenMenuItem {
     public SpeedwalkMenuItem(String text, JComponent parentMenu, boolean keepMenuOpen, Supplier<String> targetRoomIdSupplier) {
         super(text, parentMenu, keepMenuOpen);
         this.targetRoomIdSupplier = targetRoomIdSupplier;
+        registerInstance();
         addHierarchyListener(event -> {
             if ((event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
                 refreshEstimateIfNeeded();
@@ -62,10 +69,32 @@ public class SpeedwalkMenuItem extends KeepOpenMenuItem {
 
     public static void setCurrentRoomId(String roomId) {
         currentRoomId = roomId;
+        refreshShowingItems();
     }
 
     public static void setEstimateProvider(SpeedwalkEstimateProvider provider) {
         estimateProvider = provider;
+    }
+
+    private void registerInstance() {
+        INSTANCES.add(this);
+    }
+
+    private static void refreshShowingItems() {
+        Runnable refresh = () -> {
+            synchronized (INSTANCES) {
+                for (SpeedwalkMenuItem item : INSTANCES) {
+                    if (item != null && item.isShowing()) {
+                        item.refreshEstimateIfNeeded();
+                    }
+                }
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            refresh.run();
+        } else {
+            SwingUtilities.invokeLater(refresh);
+        }
     }
 
     @Override

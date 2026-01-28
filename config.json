@@ -938,6 +938,11 @@
             "name": "Bad Ass",
             "command": "tp badass",
             "roomId": "29cb3cf6e2e9f48894ddf19a5c3151b90163f2e5"
+          },
+          {
+            "name": "Sto Lat",
+            "command": "tp stolat",
+            "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
           }
         ]
       }
