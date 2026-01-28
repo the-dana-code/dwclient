@@ -122,7 +122,11 @@ public final class GrammarUtils {
         
         tryReplaceSuffix(word, lower, "ies", new String[]{"ie", "y"}, candidates);
         tryReplaceSuffix(word, lower, "oes", new String[]{"oe", "o"}, candidates);
-        tryReplaceSuffix(word, lower, "ves", new String[]{"f", "fe"}, candidates);
+        if (lower.endsWith("knives") || lower.endsWith("wives") || lower.endsWith("lives")) {
+            tryReplaceSuffix(word, lower, "ves", new String[]{"fe", "f"}, candidates);
+        } else {
+            tryReplaceSuffix(word, lower, "ves", new String[]{"f", "fe"}, candidates);
+        }
         tryReplaceSuffix(word, lower, "men", new String[]{"man"}, candidates);
 
         if (lower.equals("auloi")) {
@@ -130,6 +134,9 @@ public final class GrammarUtils {
         }
         if (lower.equals("xiphoi")) {
             candidates.add(applyCase(word, "xiphos"));
+        }
+        if (lower.endsWith("kimonos")) {
+            candidates.add(applyCase(word, word.substring(0, word.length() - 1)));
         }
         
         if (!lower.endsWith("ies") && !lower.endsWith("oes")) {
