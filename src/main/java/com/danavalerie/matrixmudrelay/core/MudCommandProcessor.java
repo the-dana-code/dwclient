@@ -611,6 +611,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         return lastSpeedwalkTargetRoomId;
     }
 
+    public String getLastSpeedwalkTargetRoomId() {
+        return lastSpeedwalkTargetRoomId;
+    }
+
     private void handleHelp() {
         //noinspection StringBufferReplaceableByString
         StringBuilder sb = new StringBuilder("Available slash commands:\n");

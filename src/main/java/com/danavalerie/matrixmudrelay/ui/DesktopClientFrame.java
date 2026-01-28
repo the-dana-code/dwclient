@@ -33,6 +33,7 @@ import com.danavalerie.matrixmudrelay.core.StatsHudRenderer;
 import com.danavalerie.matrixmudrelay.core.TimerService;
 import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
+import com.danavalerie.matrixmudrelay.ui.SpeedwalkMenuItem.SpeedwalkEstimate;
 import java.util.regex.Pattern;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
@@ -254,6 +255,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         outputPane.setTriggers(cfg.triggers);
         commandProcessor = new MudCommandProcessor(cfg, uiCfg, configPath, mud, routeMapService, writTracker, storeInventoryTracker, timerService, () -> routeMappings, this);
         outputPane.setLineListener(line -> commandProcessor.onFullLineReceived(line));
+        SpeedwalkMenuItem.setEstimateProvider(this::estimateSpeedwalkForMenu);
         mapPanel.setSpeedwalkHandler(
                 location -> commandProcessor.speedwalkTo(location.roomId())
         );
@@ -533,7 +535,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updateMenuTheme(quickLinksMenu, currentBg, currentFg);
         }
 
-        repeatLastSpeedwalkItem = new SpeedwalkMenuItem("", false);
+        repeatLastSpeedwalkItem = new SpeedwalkMenuItem("", false, commandProcessor::getLastSpeedwalkTargetRoomId);
         if (currentBg != null && currentFg != null) {
             updateMenuTheme(repeatLastSpeedwalkItem, currentBg, currentFg);
         }
@@ -652,7 +654,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     updateMenuTheme(bmSubMenu, currentBg, currentFg);
                 }
 
-                SpeedwalkMenuItem speedwalkNow = new SpeedwalkMenuItem("Speedwalk Now", false);
+                SpeedwalkMenuItem speedwalkNow = new SpeedwalkMenuItem("Speedwalk Now", false, link.roomId);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(speedwalkNow, currentBg, currentFg);
                 }
@@ -1824,32 +1826,41 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             writTopMenu.addSeparator();
 
             WritTracker.WritRequirement req = writRequirements.get(selectedWritIndex);
-            boolean hasRoute = routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).isPresent();
+            DeliveryRouteMappings.RoutePlan routePlan = routeMappings != null
+                    ? routeMappings.findRoutePlan(req.npc(), req.locationDisplay()).orElse(null)
+                    : null;
+            boolean hasRoute = routePlan != null;
+            String routeTargetRoomId = routePlan != null ? routePlan.target().roomId() : null;
             boolean canWriteRoutes = Files.isWritable(routesPath);
             int index = selectedWritIndex;
 
             KeepOpenMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
                     "Item: " + req.quantity() + " " + req.item(),
+                    null,
                     () -> submitCommand("/item exact " + req.item()));
             writTopMenu.add(itemInfo);
 
             KeepOpenMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
                     "List Store",
+                    null,
                     () -> submitCommand("list"));
             writTopMenu.add(listItem);
 
             if (req.quantity() == 2) {
                 KeepOpenMenuItem buyOneItem = buildWritMenuItem(index, WritMenuAction.BUY_ONE_ITEM,
                         "Buy 1 Item",
+                        null,
                         () -> handleStoreBuy(index, 1));
                 writTopMenu.add(buyOneItem);
                 KeepOpenMenuItem buyTwoItems = buildWritMenuItem(index, WritMenuAction.BUY_TWO_ITEMS,
                         "Buy 2 Items",
+                        null,
                         () -> handleStoreBuy(index, 2));
                 writTopMenu.add(buyTwoItems);
             } else {
                 KeepOpenMenuItem buyItem = buildWritMenuItem(index, WritMenuAction.BUY_ITEM,
                         "Buy Item",
+                        null,
                         () -> handleStoreBuy(index, req.quantity()));
                 writTopMenu.add(buyItem);
             }
@@ -1857,6 +1868,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             if (hasRoute) {
                 KeepOpenMenuItem routeItem = buildWritMenuItem(index, WritMenuAction.ROUTE,
                         "Route",
+                        routeTargetRoomId,
                         () -> handleRoute(index));
                 routeItem.setKeepMenuOpen(shouldKeepRouteMenuOpen());
                 writRouteMenuItem = routeItem;
@@ -1871,6 +1883,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             KeepOpenMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
                     "Deliver",
+                    null,
                     () -> submitCommand("/writ " + (index + 1) + " deliver"));
             writTopMenu.add(deliverItem);
 
@@ -1903,10 +1916,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
     }
 
-    private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
+    private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, String speedwalkTargetRoomId, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
         KeepOpenMenuItem item = (action == WritMenuAction.ROUTE)
-                ? new SpeedwalkMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true)
+                ? new SpeedwalkMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true, speedwalkTargetRoomId)
                 : new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
@@ -2364,6 +2377,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     public void updateCurrentRoom(String roomId, String roomName) {
         this.currentRoomId = roomId;
         this.currentRoomName = roomName;
+        SpeedwalkMenuItem.setCurrentRoomId(roomId);
         mapPanel.updateCurrentRoom(roomId);
         roomButtonBarPanel.updateRoom(roomId, roomName);
         roomNotePanel.updateRoom(roomId, roomName);
@@ -2471,8 +2485,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
                 boolean visited = resultsMenuVisits.contains(index);
                 boolean isSpeedwalkResult = result.mapCommand() != null && !result.mapCommand().isBlank();
+                String speedwalkTargetRoomId = isSpeedwalkResult ? parseSpeedwalkTargetRoomId(result.command()) : null;
                 KeepOpenMenuItem item = isSpeedwalkResult
-                        ? new SpeedwalkMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true)
+                        ? new SpeedwalkMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true, speedwalkTargetRoomId)
                         : new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
                 if (isSpeedwalkResult) {
@@ -2522,7 +2537,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (targetRoomId == null) {
             return null;
         }
-        String startRoomId = currentRoomId;
+        return estimateSpeedwalkToRoom(currentRoomId, targetRoomId, true);
+    }
+
+    private SpeedwalkEstimate estimateSpeedwalkForMenu(String startRoomId, String targetRoomId) {
+        return estimateSpeedwalkToRoom(startRoomId, targetRoomId, false);
+    }
+
+    private SpeedwalkEstimate estimateSpeedwalkToRoom(String startRoomId, String targetRoomId, boolean logFailures) {
+        if (targetRoomId == null || targetRoomId.isBlank()) {
+            return null;
+        }
         if (startRoomId == null || startRoomId.isBlank()) {
             return null;
         }
@@ -2537,7 +2562,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             );
             return buildSpeedwalkEstimate(route);
         } catch (Exception e) {
-            log.warn("speedwalk step estimate failed err={}", e.toString());
+            if (logFailures) {
+                log.warn("speedwalk step estimate failed err={}", e.toString());
+            }
             return null;
         }
     }
@@ -2604,8 +2631,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         SpeedwalkEstimate estimate = estimateSpeedwalk(speedWalkCommand);
         String message = "Speed walk to this location?";
         if (estimate != null) {
-            String prefix = estimate.hasTeleport ? "Teleport+" : "";
-            message = "Speed walk to this location?\n(" + prefix + estimate.steps + " Steps)";
+            String prefix = estimate.hasTeleport() ? "Teleport+" : "";
+            message = "Speed walk to this location?\n(" + prefix + estimate.steps() + " Steps)";
         }
         Object[] options = {"Cancel", "Speed Walk"};
         int choice = javax.swing.JOptionPane.showOptionDialog(
@@ -2621,9 +2648,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (choice == 1) {
             submitCommand(speedWalkCommand);
         }
-    }
-
-    private record SpeedwalkEstimate(int steps, boolean hasTeleport) {
     }
 
     private void shutdown() {
