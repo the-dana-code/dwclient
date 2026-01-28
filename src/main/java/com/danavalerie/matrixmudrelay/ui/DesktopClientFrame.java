@@ -239,6 +239,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
         }
         selectedWritIndex = resolveSelectedWritIndex();
+        restoreResultsMenuState();
 
         mud = new MudClient(
                 cfg.mud,
@@ -989,6 +990,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         persistSelectedWritIndex(index);
     }
 
+    private void setSelectedResultsPageIndex(int index) {
+        if (index < 0) {
+            index = 0;
+        }
+        if (selectedResultsPageIndex == index) {
+            return;
+        }
+        selectedResultsPageIndex = index;
+        persistResultsMenuState();
+    }
+
     private void saveConfig() {
         ConfigLoader.save(configPath, cfg);
     }
@@ -999,6 +1011,39 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void saveMenus() {
         menuPersistenceService.save(writRequirements, writCharacterName, writMenuVisits);
+    }
+
+    private void restoreResultsMenuState() {
+        UiConfig.ResultsMenuState saved = uiCfg.resultsMenu;
+        if (saved == null) {
+            return;
+        }
+        currentResults = saved.results;
+        resultsMenuVisits.clear();
+        if (saved.visitedResults != null) {
+            resultsMenuVisits.addAll(saved.visitedResults);
+        }
+        if (saved.selectedPageIndex != null && saved.selectedPageIndex >= 0) {
+            selectedResultsPageIndex = saved.selectedPageIndex;
+        }
+    }
+
+    private void persistResultsMenuState() {
+        UiConfig.ResultsMenuState state = uiCfg.resultsMenu;
+        if (state == null) {
+            state = new UiConfig.ResultsMenuState();
+            uiCfg.resultsMenu = state;
+        }
+        state.results = currentResults;
+        if (resultsMenuVisits.isEmpty()) {
+            state.visitedResults = null;
+        } else {
+            List<Integer> visits = new ArrayList<>(resultsMenuVisits);
+            visits.sort(Integer::compareTo);
+            state.visitedResults = visits;
+        }
+        state.selectedPageIndex = selectedResultsPageIndex;
+        saveUiConfig();
     }
 
 
@@ -2343,15 +2388,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private void updateResultsMenu(com.danavalerie.matrixmudrelay.core.ContextualResultList results) {
         if (resultsTopMenu == null) return;
 
-        boolean resetResultsVisits = results != null && !Objects.equals(currentResults, results);
+        boolean resultsChanged = results != null && !Objects.equals(currentResults, results);
         if (results != null) {
             currentResults = results;
         }
-        if (resetResultsVisits) {
+        if (resultsChanged) {
             resultsMenuVisits.clear();
             selectedResultsPageIndex = 0;
         }
         rebuildResultsMenu();
+        if (resultsChanged) {
+            persistResultsMenuState();
+        }
     }
 
     private void rebuildResultsMenu() {
@@ -2381,7 +2429,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             int totalPages = (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE);
 
             if (selectedResultsPageIndex >= totalPages) {
-                selectedResultsPageIndex = 0;
+                setSelectedResultsPageIndex(0);
             }
 
             KeepOpenRadioMenuItem.RadioMenuGroup menuGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
@@ -2391,7 +2439,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 boolean selected = (i == selectedResultsPageIndex);
                 KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, resultsTopMenu);
                 radioItem.addActionListener(e -> {
-                    selectedResultsPageIndex = pageIndex;
+                    setSelectedResultsPageIndex(pageIndex);
                     rebuildResultsMenu();
                 });
                 resultsTopMenu.add(radioItem);
@@ -2453,7 +2501,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void markResultVisited(int index) {
-        resultsMenuVisits.add(index);
+        if (resultsMenuVisits.add(index)) {
+            persistResultsMenuState();
+        }
     }
 
     private String formatResultsMenuLabel(boolean visited, String label) {

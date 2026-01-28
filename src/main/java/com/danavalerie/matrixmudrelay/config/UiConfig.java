@@ -18,6 +18,8 @@
 
 package com.danavalerie.matrixmudrelay.config;
 
+import com.danavalerie.matrixmudrelay.core.ContextualResultList;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +38,7 @@ public final class UiConfig {
     public List<Integer> timerColumnWidths;
 
     public Map<String, CharacterUiData> characters = new LinkedHashMap<>();
+    public ResultsMenuState resultsMenu;
 
     public static final class CharacterUiData {
         public Map<String, ClientConfig.TimerData> timers = new LinkedHashMap<>();
@@ -55,5 +58,11 @@ public final class UiConfig {
             this.col = col;
             this.orientation = orientation;
         }
+    }
+
+    public static final class ResultsMenuState {
+        public ContextualResultList results;
+        public List<Integer> visitedResults = new ArrayList<>();
+        public Integer selectedPageIndex;
     }
 }
