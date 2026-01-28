@@ -1905,7 +1905,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
-        KeepOpenMenuItem item = new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
+        KeepOpenMenuItem item = (action == WritMenuAction.ROUTE)
+                ? new SpeedwalkMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true)
+                : new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
         item.addActionListener(event -> {
             markWritMenuVisited(index, action);
             item.setText(formatWritMenuLabel(true, label));
@@ -2468,9 +2470,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     continue;
                 }
                 boolean visited = resultsMenuVisits.contains(index);
-                KeepOpenMenuItem item = new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
+                boolean isSpeedwalkResult = result.mapCommand() != null && !result.mapCommand().isBlank();
+                KeepOpenMenuItem item = isSpeedwalkResult
+                        ? new SpeedwalkMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true)
+                        : new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
-                if (result.mapCommand() != null && !result.mapCommand().isBlank()) {
+                if (isSpeedwalkResult) {
                     item.setKeepMenuOpen(false);
                     item.addActionListener(event -> {
                         markResultVisited(resultIndex);
