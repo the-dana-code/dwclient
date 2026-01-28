@@ -70,6 +70,8 @@ public final class ClientConfig {
     public static final class CharacterConfig {
         public Boolean useTeleports;
         public CharacterTeleports teleports = new CharacterTeleports();
+        public Integer hpRegenRateOverride;
+        public Integer gpRegenRateOverride;
     }
 
 

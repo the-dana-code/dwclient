@@ -88,11 +88,13 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     private int gpRateIndex = 0;
     private int gpRateCount = 0;
     private int gpRateMode = 0;
+    private Integer gpRateOverride = null;
     private final int[] hpRateSamples = new int[HP_RATE_SAMPLE_SIZE];
     private final Timer hpTimer;
     private int hpRateIndex = 0;
     private int hpRateCount = 0;
     private int hpRateMode = 0;
+    private Integer hpRateOverride = null;
     private String lastCharacterName = null;
     private java.util.function.Function<String, List<Integer>> characterGpSamplesLoader;
     private java.util.function.Function<String, List<Integer>> characterHpSamplesLoader;
@@ -163,6 +165,18 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     public void setOnHpSamplesChanged(java.util.function.BiConsumer<String, List<Integer>> listener) {
         this.onHpSamplesChanged = listener;
+    }
+
+    public void setGpRateOverride(Integer rate) {
+        ThreadUtils.checkEdt();
+        gpRateOverride = normalizeOverride(rate);
+        updateGpTimerInterval();
+    }
+
+    public void setHpRateOverride(Integer rate) {
+        ThreadUtils.checkEdt();
+        hpRateOverride = normalizeOverride(rate);
+        updateHpTimerInterval();
     }
 
     public String getCurrentCharacterName() {
@@ -273,6 +287,8 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
             updateNameLabel(name);
             updateHpFromVitals(data.hp(), data.maxHp());
             updateGpFromVitals(data.gp(), data.maxGp());
+            updateHpTimerInterval();
+            updateGpTimerInterval();
 
             int burdenValue = clamp(data.burden(), 0, 100);
             updateBar(burdenBar, burdenValue, 100, burdenValue + "%");
@@ -392,6 +408,21 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     private static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    private static Integer normalizeOverride(Integer rate) {
+        if (rate == null || rate < 0) {
+            return null;
+        }
+        return rate;
+    }
+
+    private int resolveGpRate() {
+        return gpRateOverride != null ? gpRateOverride : gpRateMode;
+    }
+
+    private int resolveHpRate() {
+        return hpRateOverride != null ? hpRateOverride : hpRateMode;
     }
 
     private static String format(long value) {
@@ -557,7 +588,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     private void onGpTick(ActionEvent event) {
         ThreadUtils.checkEdt();
-        if (gpRateMode <= 0 || gpMillisPerPoint <= 0 || currentGp >= currentMaxGp) {
+        if (resolveGpRate() <= 0 || gpMillisPerPoint <= 0 || currentGp >= currentMaxGp) {
             return;
         }
         currentGp = Math.min(currentGp + 1, currentMaxGp);
@@ -566,7 +597,7 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
 
     private void onHpTick(ActionEvent event) {
         ThreadUtils.checkEdt();
-        if (hpRateMode <= 0 || hpMillisPerPoint <= 0 || currentHp >= currentMaxHp) {
+        if (resolveHpRate() <= 0 || hpMillisPerPoint <= 0 || currentHp >= currentMaxHp) {
             return;
         }
         currentHp = Math.min(currentHp + 1, currentMaxHp);
@@ -574,21 +605,23 @@ public final class StatsPanel extends JPanel implements FontChangeListener {
     }
 
     private void updateGpTimerInterval() {
-        if (gpRateMode <= 0) {
+        int rate = resolveGpRate();
+        if (rate <= 0) {
             gpMillisPerPoint = 0;
             return;
         }
-        gpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / gpRateMode));
+        gpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / rate));
         gpTimer.setDelay(gpMillisPerPoint);
         gpTimer.setInitialDelay(gpMillisPerPoint);
     }
 
     private void updateHpTimerInterval() {
-        if (hpRateMode <= 0) {
+        int rate = resolveHpRate();
+        if (rate <= 0) {
             hpMillisPerPoint = 0;
             return;
         }
-        hpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / hpRateMode));
+        hpMillisPerPoint = Math.max(1, (int) Math.round(2000.0 / rate));
         hpTimer.setDelay(hpMillisPerPoint);
         hpTimer.setInitialDelay(hpMillisPerPoint);
     }

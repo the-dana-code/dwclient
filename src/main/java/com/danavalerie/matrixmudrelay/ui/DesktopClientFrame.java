@@ -118,6 +118,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private static final int RESULTS_MENU_PAGE_SIZE = 15;
+    private static final int MAX_REGEN_RATE = 4;
     private static final Map<Integer, String> KEYPAD_DIRECTIONS = Map.of(
             KeyEvent.VK_NUMPAD8, "north",
             KeyEvent.VK_NUMPAD2, "south",
@@ -159,6 +160,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private JMenu bookmarksMenu;
     private JMenu writTopMenu;
     private JMenu resultsTopMenu;
+    private JMenu regenMenu;
+    private JMenu hpRegenMenu;
+    private JMenu gpRegenMenu;
     private SpeedwalkMenuItem repeatLastSpeedwalkItem;
     private KeepOpenMenuItem writRouteMenuItem;
     private String currentCharacterName = null;
@@ -294,6 +298,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             c.hpRateSamples = new ArrayList<>(samples);
             saveUiConfig();
         });
+        applyCharacterRegenOverrides();
         if (cfg.characters != null) {
             statsPanel.setConfigCharacters(new ArrayList<>(cfg.characters.keySet()));
         }
@@ -516,6 +521,37 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             zoomSubMenu.add(zoomItem);
         }
         mainMenu.add(zoomSubMenu);
+
+        mainMenu.addSeparator();
+
+        regenMenu = new JMenu("Regeneration Rates");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(regenMenu, currentBg, currentFg);
+        }
+        regenMenu.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                rebuildRegenMenus();
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+            }
+        });
+        hpRegenMenu = new JMenu("HP");
+        gpRegenMenu = new JMenu("GP");
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(hpRegenMenu, currentBg, currentFg);
+            updateMenuTheme(gpRegenMenu, currentBg, currentFg);
+        }
+        regenMenu.add(hpRegenMenu);
+        regenMenu.add(gpRegenMenu);
+        rebuildRegenMenus();
+        mainMenu.add(regenMenu);
 
         mainMenu.addSeparator();
         KeepOpenMenuItem exitItem = new KeepOpenMenuItem("Exit", false);
@@ -891,6 +927,99 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         updateTheme(invertMap);
     }
 
+    private Integer sanitizeRegenRateOverride(Integer rate) {
+        if (rate == null || rate < 0) {
+            return null;
+        }
+        return Math.min(rate, MAX_REGEN_RATE);
+    }
+
+    private Integer resolveCharacterRegenRateOverride(String characterName, boolean isHp) {
+        if (characterName == null || characterName.isBlank()) {
+            return null;
+        }
+        ClientConfig.CharacterConfig charCfg = cfg.characters.get(characterName);
+        if (charCfg == null) {
+            return null;
+        }
+        return sanitizeRegenRateOverride(isHp ? charCfg.hpRegenRateOverride : charCfg.gpRegenRateOverride);
+    }
+
+    private void applyCharacterRegenOverrides() {
+        String charName = currentCharacterName;
+        statsPanel.setHpRateOverride(resolveCharacterRegenRateOverride(charName, true));
+        statsPanel.setGpRateOverride(resolveCharacterRegenRateOverride(charName, false));
+    }
+
+    private void setHpRegenRateOverride(Integer rate) {
+        Integer sanitized = sanitizeRegenRateOverride(rate);
+        if (currentCharacterName == null || currentCharacterName.isBlank()) {
+            JOptionPane.showMessageDialog(this, "No character logged in.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(currentCharacterName, k -> new ClientConfig.CharacterConfig());
+        charCfg.hpRegenRateOverride = sanitized;
+        statsPanel.setHpRateOverride(charCfg.hpRegenRateOverride);
+        saveConfig();
+        rebuildRegenMenus();
+    }
+
+    private void setGpRegenRateOverride(Integer rate) {
+        Integer sanitized = sanitizeRegenRateOverride(rate);
+        if (currentCharacterName == null || currentCharacterName.isBlank()) {
+            JOptionPane.showMessageDialog(this, "No character logged in.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        ClientConfig.CharacterConfig charCfg = cfg.characters.computeIfAbsent(currentCharacterName, k -> new ClientConfig.CharacterConfig());
+        charCfg.gpRegenRateOverride = sanitized;
+        statsPanel.setGpRateOverride(charCfg.gpRegenRateOverride);
+        saveConfig();
+        rebuildRegenMenus();
+    }
+
+    private void rebuildRegenMenus() {
+        if (hpRegenMenu == null || gpRegenMenu == null) {
+            return;
+        }
+        hpRegenMenu.removeAll();
+        gpRegenMenu.removeAll();
+        String charName = currentCharacterName;
+        boolean enabled = charName != null && !charName.isBlank();
+        Integer hpRate = resolveCharacterRegenRateOverride(charName, true);
+        Integer gpRate = resolveCharacterRegenRateOverride(charName, false);
+        addRegenRateMenuItems(hpRegenMenu, hpRate, this::setHpRegenRateOverride, enabled);
+        addRegenRateMenuItems(gpRegenMenu, gpRate, this::setGpRegenRateOverride, enabled);
+        hpRegenMenu.setEnabled(enabled);
+        gpRegenMenu.setEnabled(enabled);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(hpRegenMenu, currentBg, currentFg);
+            updateMenuTheme(gpRegenMenu, currentBg, currentFg);
+        }
+    }
+
+    private void addRegenRateMenuItems(JMenu menu, Integer selectedRate, Consumer<Integer> onSelect, boolean enabled) {
+        KeepOpenRadioMenuItem.RadioMenuGroup group = new KeepOpenRadioMenuItem.RadioMenuGroup();
+        KeepOpenRadioMenuItem autoItem = new KeepOpenRadioMenuItem("Auto", selectedRate == null, group, null);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(autoItem, currentBg, currentFg);
+        }
+        autoItem.setEnabled(enabled);
+        autoItem.addActionListener(event -> onSelect.accept(null));
+        menu.add(autoItem);
+
+        for (int rate = 0; rate <= MAX_REGEN_RATE; rate++) {
+            boolean isSelected = selectedRate != null && selectedRate == rate;
+            KeepOpenRadioMenuItem rateItem = new KeepOpenRadioMenuItem(String.valueOf(rate), isSelected, group, null);
+            if (currentBg != null && currentFg != null) {
+                updateMenuTheme(rateItem, currentBg, currentFg);
+            }
+            rateItem.setEnabled(enabled);
+            int selectedValue = rate;
+            rateItem.addActionListener(event -> onSelect.accept(selectedValue));
+            menu.add(rateItem);
+        }
+    }
+
 
     private double resolveMudMapSplitRatio() {
         Double ratio = uiCfg.mudMapSplitRatio;
@@ -1121,6 +1250,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 refreshTeleportsMenu();
                 refreshBookmarksMenu();
                 updateRouteMenuKeepOpen();
+                applyCharacterRegenOverrides();
+                rebuildRegenMenus();
             });
         }
     }

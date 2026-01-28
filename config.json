@@ -950,7 +950,9 @@
             "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
           }
         ]
-      }
+      },
+      "hpRegenRateOverride": 3,
+      "gpRegenRateOverride": 4
     },
     "Bpla": {
       "useTeleports": false,
