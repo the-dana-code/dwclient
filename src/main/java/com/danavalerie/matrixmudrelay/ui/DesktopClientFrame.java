@@ -2645,6 +2645,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 options,
                 options[1]
         );
+        mapPanel.centerOnCurrentRoom();
         if (choice == 1) {
             submitCommand(speedWalkCommand);
         }

@@ -308,6 +308,14 @@ public final class MapPanel extends JPanel {
         });
     }
 
+    public void centerOnCurrentRoom() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            handleCenterAction();
+        } else {
+            SwingUtilities.invokeLater(this::handleCenterAction);
+        }
+    }
+
     public void setSpeedwalkHandler(Consumer<RoomMapService.RoomLocation> speedwalkHandler) {
         this.speedwalkHandler = speedwalkHandler;
     }
