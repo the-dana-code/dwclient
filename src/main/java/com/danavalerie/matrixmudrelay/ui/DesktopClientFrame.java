@@ -2521,14 +2521,100 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return (visited ? "\u2713 " : "  ") + label;
     }
 
+    private SpeedwalkEstimate estimateSpeedwalk(String speedWalkCommand) {
+        String targetRoomId = parseSpeedwalkTargetRoomId(speedWalkCommand);
+        if (targetRoomId == null) {
+            return null;
+        }
+        String startRoomId = currentRoomId;
+        if (startRoomId == null || startRoomId.isBlank()) {
+            return null;
+        }
+        boolean useTeleports = getUseTeleportsForPrompt();
+        try {
+            RoomMapService.RouteResult route = routeMapService.findRoute(
+                    startRoomId,
+                    targetRoomId,
+                    useTeleports,
+                    currentCharacterName,
+                    true
+            );
+            return buildSpeedwalkEstimate(route);
+        } catch (Exception e) {
+            log.warn("speedwalk step estimate failed err={}", e.toString());
+            return null;
+        }
+    }
+
+    private boolean getUseTeleportsForPrompt() {
+        String charName = currentCharacterName;
+        if (charName != null && cfg.characters.containsKey(charName)) {
+            Boolean val = cfg.characters.get(charName).useTeleports;
+            if (val != null) {
+                return val;
+            }
+        }
+        return false;
+    }
+
+    private String parseSpeedwalkTargetRoomId(String speedWalkCommand) {
+        if (speedWalkCommand == null) {
+            return null;
+        }
+        String trimmed = speedWalkCommand.trim();
+        if (!trimmed.regionMatches(true, 0, "/route", 0, 6)) {
+            return null;
+        }
+        String args = trimmed.substring(6).trim();
+        if (args.isBlank()) {
+            return null;
+        }
+        String token = args.split("\\s+")[0];
+        boolean isNumeric = true;
+        for (int i = 0; i < token.length(); i++) {
+            if (!Character.isDigit(token.charAt(i))) {
+                isNumeric = false;
+                break;
+            }
+        }
+        if (isNumeric) {
+            return null;
+        }
+        return token;
+    }
+
+    private SpeedwalkEstimate buildSpeedwalkEstimate(RoomMapService.RouteResult route) {
+        if (route == null) {
+            return new SpeedwalkEstimate(0, false);
+        }
+        int count = 0;
+        boolean hasTeleport = false;
+        for (RoomMapService.RouteStep step : route.steps()) {
+            String exit = step.exit();
+            if (exit != null && !exit.isBlank()) {
+                count++;
+                if (exit.regionMatches(true, 0, "tp ", 0, 3)) {
+                    hasTeleport = true;
+                }
+            }
+        }
+        return new SpeedwalkEstimate(count, hasTeleport);
+    }
+
     private void showSpeedWalkPrompt(String speedWalkCommand) {
         if (speedWalkCommand == null || speedWalkCommand.isBlank()) {
             return;
         }
+        SpeedwalkEstimate estimate = estimateSpeedwalk(speedWalkCommand);
+        String message = "Speed walk to this location?";
+        if (estimate != null) {
+            String prefix = estimate.hasTeleport ? "Teleport+" : "";
+            message = "Speed walk to this location?\n(" + prefix + estimate.steps + " Steps)";
+        }
         Object[] options = {"Cancel", "Speed Walk"};
         int choice = javax.swing.JOptionPane.showOptionDialog(
                 this,
-                "Speed walk to this location?",
+                message,
                 "Speed Walk",
                 javax.swing.JOptionPane.DEFAULT_OPTION,
                 javax.swing.JOptionPane.QUESTION_MESSAGE,
@@ -2539,6 +2625,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (choice == 1) {
             submitCommand(speedWalkCommand);
         }
+    }
+
+    private record SpeedwalkEstimate(int steps, boolean hasTeleport) {
     }
 
     private void shutdown() {

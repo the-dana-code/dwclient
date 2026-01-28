@@ -518,6 +518,15 @@ public class RoomMapService {
 
     public RouteResult findRoute(String startRoomId, String targetRoomId, boolean useTeleports, String characterName)
             throws MapLookupException {
+        return findRoute(startRoomId, targetRoomId, useTeleports, characterName, false);
+    }
+
+    public RouteResult findRoute(String startRoomId,
+                                 String targetRoomId,
+                                 boolean useTeleports,
+                                 String characterName,
+                                 boolean assumeReliableTeleports)
+            throws MapLookupException {
         if (startRoomId == null || startRoomId.isBlank()) {
             throw new MapLookupException("Start room not available.");
         }
@@ -547,7 +556,7 @@ public class RoomMapService {
         gScore.put(start.roomId, 0);
         open.add(new RouteNode(start.roomId, estimateDistance(start, target)));
         TeleportRegistry.CharacterTeleports characterTeleports = TeleportRegistry.forCharacter(characterName);
-        boolean teleportsReliable = characterTeleports.reliable();
+        boolean teleportsReliable = assumeReliableTeleports || characterTeleports.reliable();
         boolean outdoorOnly = characterTeleports.outdoorOnly();
         List<ResolvedTeleport> teleports = useTeleports ? resolveTeleports(roomCache, characterTeleports.teleports()) : List.of();
 
