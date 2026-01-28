@@ -606,7 +606,7 @@
       "foreground": "#FFFFFF",
       "background": "#FF0000",
       "bold": true,
-      "systemBeep": true,
+      "systemBeep": false,
       "sendToChitchat": false
     }
   ],
