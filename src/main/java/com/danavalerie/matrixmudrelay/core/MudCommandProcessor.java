@@ -438,22 +438,28 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 return;
             }
         } else {
-            if (lastRoomSearchResults.isEmpty()) {
-                output.appendSystem("Error: No recent room search results. Use /room first.");
-                return;
-            }
-            int selection;
+            Integer selection = null;
             try {
                 selection = Integer.parseInt(query);
-            } catch (NumberFormatException e) {
-                output.appendSystem("Usage: /map <number>");
-                return;
+            } catch (NumberFormatException ignored) {
             }
-            if (selection < 1 || selection > lastRoomSearchResults.size()) {
-                output.appendSystem("Error: Map selection must be between 1 and " + lastRoomSearchResults.size() + ".");
-                return;
+            if (selection != null) {
+                if (lastRoomSearchResults.isEmpty()) {
+                    output.appendSystem("Error: No recent room search results. Use /room first.");
+                    return;
+                }
+                if (selection < 1 || selection > lastRoomSearchResults.size()) {
+                    output.appendSystem("Error: Map selection must be between 1 and " + lastRoomSearchResults.size() + ".");
+                    return;
+                }
+                targetRoomId = lastRoomSearchResults.get(selection - 1).roomId();
+            } else {
+                targetRoomId = query.trim();
+                if (targetRoomId.isBlank()) {
+                    output.appendSystem("Usage: /map <number|roomId>");
+                    return;
+                }
             }
-            targetRoomId = lastRoomSearchResults.get(selection - 1).roomId();
         }
         output.updateMap(targetRoomId);
         output.appendSystem("Map updated.");
@@ -520,6 +526,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             } catch (NumberFormatException e) {
                 handleItemSearchQuery(query);
             }
+            return;
+        }
+        if ("itemloc".equals(subcommand)) {
+            handleItemLocationsByName(query);
             return;
         }
         if ("room".equals(subcommand)) {
@@ -614,8 +624,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         sb.append("  /room <query>   - Search for rooms by name\n");
         sb.append("  /npc <query>    - Search for NPCs by name\n");
         sb.append("  /item <query>   - Search for items in shops\n");
-        sb.append("  /map [number]   - Show map for current room or search result\n");
-        sb.append("  /route <number> - Calculate speedwalk to a search result\n");
+        sb.append("  /itemloc <name> - Show room locations for an item\n");
+        sb.append("  /map [number|roomId] - Show map for current room or search result\n");
+        sb.append("  /route <number|roomId> - Calculate speedwalk to a search result or room ID\n");
         sb.append("  /timers         - Show active timers for current character\n");
         sb.append("  /writ [number]  - Show tracked writ requirements or specific writ details\n");
         sb.append("  /pw             - Send the configured password\n");
@@ -873,7 +884,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             if (truncated) {
                 out.append("\nShowing first ").append(ROOM_SEARCH_LIMIT).append(" matches. Refine your search.");
             }
-            out.append("\nUse '/item <number>' to view room locations.");
+            out.append("\nUse '/item <number>' or '/itemloc <item name>' to view room locations.");
             output.appendSystem(out.toString());
         } catch (RoomMapService.MapLookupException e) {
             output.appendSystem("Error: " + e.getMessage());
@@ -930,20 +941,29 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return;
         }
         String itemName = lastItemSearchResults.get(selection - 1).itemName();
+        handleItemLocationsByName(itemName);
+    }
+
+    private void handleItemLocationsByName(String itemName) {
+        String trimmed = itemName == null ? "" : itemName.trim();
+        if (trimmed.isBlank()) {
+            output.appendSystem("Usage: /itemloc <item name>");
+            return;
+        }
         try {
-            List<RoomMapService.RoomSearchResult> results = mapService.searchRoomsByItemName(itemName, ROOM_SEARCH_LIMIT + 1);
+            List<RoomMapService.RoomSearchResult> results = mapService.searchRoomsByItemName(trimmed, ROOM_SEARCH_LIMIT + 1);
             boolean truncated = results.size() > ROOM_SEARCH_LIMIT;
             if (truncated) {
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
             }
             lastRoomSearchResults = List.copyOf(results);
-            updateContextualResults(buildItemLocationResultsList(itemName, results, truncated));
+            updateContextualResults(buildItemLocationResultsList(trimmed, results, truncated));
             if (results.isEmpty()) {
-                output.appendSystem("No rooms found for item \"" + itemName + "\".");
+                output.appendSystem("No rooms found for item \"" + trimmed + "\".");
                 return;
             }
             StringBuilder out = new StringBuilder();
-            out.append("Item locations for \"").append(itemName).append("\":");
+            out.append("Item locations for \"").append(trimmed).append("\":");
             for (int i = 0; i < results.size(); i++) {
                 RoomMapService.RoomSearchResult result = results.get(i);
                 out.append("\n")
@@ -1025,35 +1045,54 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             output.appendSystem("Error: MUD is disconnected. Send `/connect` first.");
             return;
         }
-        if (lastRoomSearchResults.isEmpty()) {
-            output.appendSystem("Error: No recent room search results.");
+        String trimmed = query == null ? "" : query.trim();
+        if (trimmed.isBlank()) {
+            output.appendSystem("Usage: /route <number|roomId>");
             return;
         }
-        int selection;
+        String targetRoomId;
+        String targetName;
+        Integer selection = null;
         try {
-            selection = Integer.parseInt(query);
-        } catch (NumberFormatException e) {
-            output.appendSystem("Usage: /route <number>");
+            selection = Integer.parseInt(trimmed);
+        } catch (NumberFormatException ignored) {
+        }
+        if (selection != null) {
+            if (lastRoomSearchResults.isEmpty()) {
+                output.appendSystem("Error: No recent room search results.");
+                return;
+            }
+            if (selection < 1 || selection > lastRoomSearchResults.size()) {
+                output.appendSystem("Error: Route selection must be between 1 and " + lastRoomSearchResults.size() + ".");
+                return;
+            }
+            RoomMapService.RoomSearchResult selectionResult = lastRoomSearchResults.get(selection - 1);
+            targetRoomId = selectionResult.roomId();
+            targetName = selectionResult.roomShort();
+        } else {
+            targetRoomId = trimmed;
+            targetName = resolveRoomDisplayName(targetRoomId);
+        }
+        if (targetRoomId == null || targetRoomId.isBlank()) {
+            output.appendSystem("Error: Target room ID is missing.");
             return;
         }
-        if (selection < 1 || selection > lastRoomSearchResults.size()) {
-            output.appendSystem("Error: Route selection must be between 1 and " + lastRoomSearchResults.size() + ".");
-            return;
+        if (targetName == null || targetName.isBlank()) {
+            targetName = targetRoomId;
         }
-        RoomMapService.RoomSearchResult target = lastRoomSearchResults.get(selection - 1);
         String currentRoomId = mud.getCurrentRoomSnapshot().roomId();
         if (currentRoomId == null || currentRoomId.isBlank()) {
             output.appendSystem("Error: No room info available yet.");
             return;
         }
         String characterName = mud.getCurrentRoomSnapshot().characterName();
-        if (currentRoomId.equals(target.roomId())) {
-            output.appendSystem("Already in " + target.roomShort() + ".");
+        if (currentRoomId.equals(targetRoomId)) {
+            output.appendSystem("Already in " + targetName + ".");
             return;
         }
         try {
-            RoomMapService.RouteResult route = calculateSpeedwalkRoute(currentRoomId, target.roomId(), characterName);
-            lastSpeedwalkTargetRoomId = target.roomId();
+            RoomMapService.RouteResult route = calculateSpeedwalkRoute(currentRoomId, targetRoomId, characterName);
+            lastSpeedwalkTargetRoomId = targetRoomId;
             lastSpeedwalkPostCommands = null;
             output.updateRepeatLastSpeedwalkItem();
             List<String> exits = route.steps().stream()
@@ -1062,9 +1101,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             SpeedwalkPlan plan = buildSpeedwalkPlan(route.steps());
             StringBuilder out = new StringBuilder();
             out.append("Route to ")
-                    .append(target.roomShort())
+                    .append(targetName)
                     .append(" (")
-                    .append(target.roomId())
+                    .append(targetRoomId)
                     .append("):");
             if (exits.isEmpty()) {
                 out.append("\nAlready there.");
@@ -1085,10 +1124,10 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                             .append(SPEEDWALK_MAX_PATH_LENGTH)
                             .append(" characters.");
                 } else if (plan.truncated()) {
-                    String targetName = resolveRoomDisplayName(plan.lastRoomId());
+                    String truncatedTargetName = resolveRoomDisplayName(plan.lastRoomId());
                     output.setTeleportQueued(
                             "Speedwalk Too Long (Taking " + plan.exits().size() + " of " + plan.totalSteps() + " steps)",
-                            targetName != null ? targetName : "Unknown"
+                            truncatedTargetName != null ? truncatedTargetName : "Unknown"
                     );
                     out.append("\nSpeedwalk too long: sent ")
                             .append(plan.exits().size())
@@ -1306,6 +1345,20 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         output.updateContextualResults(results);
     }
 
+    private String buildRouteCommand(String roomId, int index) {
+        if (roomId != null && !roomId.isBlank()) {
+            return "/route " + roomId;
+        }
+        return "/route " + (index + 1);
+    }
+
+    private String buildMapCommand(String roomId, int index) {
+        if (roomId != null && !roomId.isBlank()) {
+            return "/map " + roomId;
+        }
+        return "/map " + (index + 1);
+    }
+
     private ContextualResultList buildRoomResultsList(String query,
                                                       List<RoomMapService.RoomSearchResult> results,
                                                       boolean truncated) {
@@ -1318,8 +1371,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     + result.roomShort();
             list.add(new ContextualResultList.ContextualResult(
                     label,
-                    "/route " + (i + 1),
-                    "/map " + (i + 1)));
+                    buildRouteCommand(result.roomId(), i),
+                    buildMapCommand(result.roomId(), i)));
         }
         String title = "Room search for \"" + query + "\"";
         String shortTitle = "Rooms";
@@ -1338,7 +1391,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             RoomMapService.ItemSearchResult result = results.get(i);
             list.add(new ContextualResultList.ContextualResult(
                     result.itemName(),
-                    "/item " + (i + 1),
+                    "/itemloc " + result.itemName(),
                     null));
         }
         String title = (exact ? "Item exact search for \"" : "Item search for \"") + termUsed + "\"";
@@ -1379,8 +1432,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     + result.roomShort();
             list.add(new ContextualResultList.ContextualResult(
                     label,
-                    "/route " + (i + 1),
-                    "/map " + (i + 1)));
+                    buildRouteCommand(result.roomId(), i),
+                    buildMapCommand(result.roomId(), i)));
         }
         String title = "Item locations for \"" + itemName + "\"";
         String shortTitle = "Rooms";
@@ -1402,8 +1455,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     + result.roomShort();
             list.add(new ContextualResultList.ContextualResult(
                     label,
-                    "/route " + (i + 1),
-                    "/map " + (i + 1)));
+                    buildRouteCommand(result.roomId(), i),
+                    buildMapCommand(result.roomId(), i)));
         }
         String title = "NPC search for \"" + query + "\"";
         String shortTitle = "NPCs";
