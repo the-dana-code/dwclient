@@ -1,9 +1,14 @@
 package com.danavalerie.matrixmudrelay.ui;
 
+import java.awt.Container;
+import java.awt.Point;
 import java.awt.event.HierarchyEvent;
 import java.util.Objects;
 import java.util.function.Supplier;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 public class SpeedwalkMenuItem extends KeepOpenMenuItem {
     private static final String SPEEDWALK_SUFFIX = " →";
@@ -131,6 +136,7 @@ public class SpeedwalkMenuItem extends KeepOpenMenuItem {
         }
         display.append(SPEEDWALK_SUFFIX);
         super.setText(display.toString());
+        updatePopupSizeIfNeeded();
     }
 
     private String formatEstimate(SpeedwalkEstimate estimate) {
@@ -146,5 +152,33 @@ public class SpeedwalkMenuItem extends KeepOpenMenuItem {
     }
 
     static record SpeedwalkEstimate(int steps, boolean hasTeleport) {
+    }
+
+    private void updatePopupSizeIfNeeded() {
+        if (!isShowing()) {
+            return;
+        }
+        Object parentProp = getClientProperty(PARENT_MENU_KEY);
+        Container parent = (parentProp instanceof Container) ? (Container) parentProp : getParent();
+        if (parent instanceof JMenu) {
+            parent = ((JMenu) parent).getPopupMenu();
+        }
+        if (!(parent instanceof JPopupMenu popup)) {
+            return;
+        }
+        SwingUtilities.invokeLater(() -> {
+            if (!popup.isShowing()) {
+                return;
+            }
+            if (!popup.getSize().equals(popup.getPreferredSize())) {
+                Point p = popup.getLocationOnScreen();
+                popup.setVisible(false);
+                SwingUtilities.invokeLater(() -> {
+                    Point q = new Point(p);
+                    SwingUtilities.convertPointFromScreen(q, popup.getInvoker());
+                    popup.show(popup.getInvoker(), q.x, q.y);
+                });
+            }
+        });
     }
 }

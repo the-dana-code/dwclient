@@ -80,6 +80,9 @@ public class KeepOpenMenuItem extends JMenuItem {
                 JPopupMenu popup = (JPopupMenu) parent;
 
                 SwingUtilities.invokeLater(() -> {
+                    if (!popup.isShowing()) {
+                        return;
+                    }
                     if (! popup.getSize().equals(popup.getPreferredSize())) {
                         Point p = popup.getLocationOnScreen();
                         popup.setVisible(false);
