@@ -29,19 +29,19 @@
       "roomId": "c892f2464117eca48ca0e6c66289164a0f513e7f"
     },
     {
-      "name": "Witch/Gennie Applebottom\u0027s (Ankh-Morpork)",
+      "name": "Witches/Gennie Applebottom\u0027s (Ankh-Morpork)",
       "roomId": "ab67c0d13bad0617af66407c0de727ed68d65324"
     },
     {
-      "name": "Witch/Granny Weatherwax (Bad Ass)",
+      "name": "Witches/Granny Weatherwax (Bad Ass)",
       "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
     },
     {
-      "name": "Wizard/UU Library",
+      "name": "Wizards/UU Library",
       "roomId": "d13059580c4af9f874ed8d832d1b347cdf962855"
     },
     {
-      "name": "Wizard/Student Lounge",
+      "name": "Wizards/Student Lounge",
       "roomId": "3e2a6d718998453da8181c9f75c3a5efa612df99"
     },
     {
@@ -527,6 +527,10 @@
     {
       "name": "Special/Blue Water/Djelibeybi",
       "roomId": "305db9803d5911aa92ae761c3fb99249e2f08819"
+    },
+    {
+      "name": "Witches/Nanny Ogg (Bad Ass)",
+      "roomId": "127dbf2a52c7750d83a82368f8a411ba82ec9f37"
     }
   ],
   "triggers": [
