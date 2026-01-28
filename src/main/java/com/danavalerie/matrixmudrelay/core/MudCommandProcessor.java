@@ -96,6 +96,9 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
         void updateRepeatLastSpeedwalkItem();
         void appendTeleportBanner(String banner);
         default void setTeleportQueued(String command, String targetName) {}
+        default void setTeleportQueued(String command, String targetName, String targetRoomId) {
+            setTeleportQueued(command, targetName);
+        }
         default void clearTeleportQueued() {}
         void showEditPasswordDialog(Runnable onPasswordStored);
     }
@@ -1131,7 +1134,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                     String truncatedTargetName = resolveRoomDisplayName(plan.lastRoomId());
                     output.setTeleportQueued(
                             "Speedwalk Too Long (Taking " + plan.exits().size() + " of " + plan.totalSteps() + " steps)",
-                            truncatedTargetName != null ? truncatedTargetName : "Unknown"
+                            truncatedTargetName != null ? truncatedTargetName : "Unknown",
+                            plan.lastRoomId()
                     );
                     out.append("\nSpeedwalk too long: sent ")
                             .append(plan.exits().size())
@@ -1283,7 +1287,8 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 String targetName = resolveRoomDisplayName(plan.lastRoomId());
                 output.setTeleportQueued(
                         "Speedwalk Too Long (Taking " + plan.exits().size() + " of " + plan.totalSteps() + " steps)",
-                        targetName != null ? targetName : "Unknown"
+                        targetName != null ? targetName : "Unknown",
+                        plan.lastRoomId()
                 );
                 output.appendSystem("Speedwalk too long: sent " + plan.exits().size()
                         + " of " + plan.totalSteps() + " steps. Use /restart to continue.");
@@ -1494,7 +1499,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 String banner = TeleportBannerUtils.generateBanner(targetName, command);
                 output.appendTeleportBanner(banner);
                 if (!characterTeleports.reliable()) {
-                    output.setTeleportQueued(command, targetName);
+                    output.setTeleportQueued(command, targetName, tp.roomId());
                 }
                 return;
             }

@@ -943,6 +943,11 @@
             "name": "Sto Lat",
             "command": "tp stolat",
             "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
+          },
+          {
+            "name": "AM Least Gate",
+            "command": "tp am-leastgate",
+            "roomId": "30e57334cff90412a745179d3766d72c0ee41583"
           }
         ]
       }
