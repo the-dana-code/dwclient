@@ -914,7 +914,7 @@
       "teleports": {
         "reliable": false,
         "outdoorOnly": true,
-        "speedwalkingPenalty": 15,
+        "speedwalkingPenalty": 10,
         "locations": [
           {
             "name": "Mended Drum",
