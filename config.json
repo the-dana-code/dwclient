@@ -843,7 +843,7 @@
       "teleports": {
         "reliable": false,
         "outdoorOnly": false,
-        "speedwalkingPenalty": 30,
+        "speedwalkingPenalty": 15,
         "locations": [
           {
             "name": "Ephebe (Glaxos)",
