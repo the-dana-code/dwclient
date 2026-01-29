@@ -8,7 +8,7 @@
   "ui": {
     "fontFamily": "PT Mono",
     "fontSize": 20,
-    "mapZoomPercent": 80,
+    "mapZoomPercent": 100,
     "invertMap": true
   },
   "bookmarks": [
