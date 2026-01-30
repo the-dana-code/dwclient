@@ -277,7 +277,7 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
                 Runnable sound = null;
                 if (t.systemBeep) {
                     sound = () -> Toolkit.getDefaultToolkit().beep();
-                } else if (t.soundFile != null && !t.soundFile.isBlank()) {
+                } else if (t.useSoundFile && t.soundFile != null && !t.soundFile.isBlank()) {
                     File file = new File(t.soundFile);
                     sound = () -> playSound(file);
                 }

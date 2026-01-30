@@ -278,7 +278,7 @@ public class TriggerConfigDialog extends JDialog {
         boldCheckBox.setSelected(t.bold);
         if (t.systemBeep) {
             beepRadio.setSelected(true);
-        } else if (t.soundFile != null && !t.soundFile.isEmpty()) {
+        } else if (t.useSoundFile) {
             wavRadio.setSelected(true);
         } else {
             noSoundRadio.setSelected(true);
@@ -328,7 +328,8 @@ public class TriggerConfigDialog extends JDialog {
         t.background = selectedBackground;
         t.bold = boldCheckBox.isSelected();
         t.systemBeep = beepRadio.isSelected();
-        t.soundFile = wavRadio.isSelected() ? wavFileField.getText() : null;
+        t.useSoundFile = wavRadio.isSelected();
+        t.soundFile = wavFileField.getText();
         t.sendToChitchat = chitchatCheckBox.isSelected();
         
         triggerList.repaint();
@@ -342,6 +343,7 @@ public class TriggerConfigDialog extends JDialog {
         clone.bold = t.bold;
         clone.soundFile = t.soundFile;
         clone.systemBeep = t.systemBeep;
+        clone.useSoundFile = t.useSoundFile;
         clone.sendToChitchat = t.sendToChitchat;
         return clone;
     }

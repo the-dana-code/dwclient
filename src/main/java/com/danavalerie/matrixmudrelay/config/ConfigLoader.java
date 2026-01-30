@@ -283,6 +283,7 @@ public final class ConfigLoader {
         t.background = bg;
         t.bold = bold;
         t.soundFile = soundFile;
+        t.useSoundFile = soundFile != null && !soundFile.isBlank();
         t.systemBeep = beep;
         t.sendToChitchat = chitchat;
         return t;

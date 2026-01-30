@@ -119,6 +119,7 @@ public final class ClientConfig {
         public boolean bold;
         public String soundFile;
         public boolean systemBeep;
+        public boolean useSoundFile;
         public boolean sendToChitchat;
     }
 }
