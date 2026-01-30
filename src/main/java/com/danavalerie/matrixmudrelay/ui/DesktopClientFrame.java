@@ -2859,18 +2859,19 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (route == null) {
             return new SpeedwalkEstimate(0, false);
         }
-        int count = 0;
+        int walkCount = 0;
         boolean hasTeleport = false;
         for (RoomMapService.RouteStep step : route.steps()) {
             String exit = step.exit();
             if (exit != null && !exit.isBlank()) {
-                count++;
                 if (exit.regionMatches(true, 0, "tp ", 0, 3)) {
                     hasTeleport = true;
+                } else {
+                    walkCount++;
                 }
             }
         }
-        return new SpeedwalkEstimate(count, hasTeleport);
+        return new SpeedwalkEstimate(walkCount, hasTeleport);
     }
 
     private void showSpeedWalkPrompt(String speedWalkCommand) {
