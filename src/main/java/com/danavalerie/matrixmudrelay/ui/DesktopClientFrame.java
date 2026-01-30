@@ -104,6 +104,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -118,6 +119,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final MapPanel mapPanel;
     private final StatsPanel statsPanel = new StatsPanel();
     private static final int RESULTS_MENU_PAGE_SIZE = 15;
+    private static final int WRIT_ITEM_SEARCH_LIMIT = 999;
     private static final int MAX_REGEN_RATE = 4;
     private static final Map<Integer, String> KEYPAD_DIRECTIONS = Map.of(
             KeyEvent.VK_NUMPAD8, "north",
@@ -1965,11 +1967,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean canWriteRoutes = Files.isWritable(routesPath);
             int index = selectedWritIndex;
 
-            KeepOpenMenuItem itemInfo = buildWritMenuItem(index, WritMenuAction.ITEM_INFO,
-                    "Item: " + req.quantity() + " " + req.item(),
-                    null,
-                    () -> submitCommand("/item exact " + req.item()));
-            writTopMenu.add(itemInfo);
+            JMenu itemMenu = buildWritItemMenu(index, req);
+            writTopMenu.add(itemMenu);
 
             KeepOpenMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
                     "List Store",
@@ -2058,6 +2057,137 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             onSelect.run();
         });
         return item;
+    }
+
+    private JMenu buildWritItemMenu(int index, WritTracker.WritRequirement requirement) {
+        String label = "Item: " + requirement.quantity() + " " + requirement.item();
+        boolean visited = isWritMenuVisited(index, WritMenuAction.ITEM_INFO);
+        JMenu menu = new JMenu(formatWritMenuLabel(visited, label));
+        menu.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                rebuildWritItemMenu(menu, index, requirement, label);
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+            }
+        });
+        return menu;
+    }
+
+    private void rebuildWritItemMenu(JMenu menu, int index, WritTracker.WritRequirement requirement, String label) {
+        menu.removeAll();
+        markWritMenuVisited(index, WritMenuAction.ITEM_INFO);
+        menu.setText(formatWritMenuLabel(true, label));
+
+        try {
+            List<RoomMapService.ItemSearchResult> matches = searchExactItemMatches(requirement.item());
+            if (matches.isEmpty()) {
+                addDisabledWritItemMenuEntry(menu, "Item not found");
+                updateWritItemMenuTheme(menu);
+                return;
+            }
+            if (matches.size() > 1) {
+                addDisabledWritItemMenuEntry(menu, "ERROR: Multiple Matches");
+                updateWritItemMenuTheme(menu);
+                return;
+            }
+
+            String itemName = matches.get(0).itemName();
+            List<RoomMapService.RoomSearchResult> results = routeMapService.searchRoomsByItemName(itemName, WRIT_ITEM_SEARCH_LIMIT + 1);
+            boolean truncated = results.size() > WRIT_ITEM_SEARCH_LIMIT;
+            if (truncated) {
+                results = results.subList(0, WRIT_ITEM_SEARCH_LIMIT);
+            }
+
+            if (results.isEmpty()) {
+                addDisabledWritItemMenuEntry(menu, "No rooms or NPCs found");
+                updateWritItemMenuTheme(menu);
+                return;
+            }
+
+            RoomMapService.RoomSearchResult prev = null;
+            for (RoomMapService.RoomSearchResult result : results) {
+                if (prev != null && "Shop".equals(prev.sourceInfo())
+                        && result.sourceInfo() != null && result.sourceInfo().startsWith("NPC:")) {
+                    menu.addSeparator();
+                }
+                addWritItemLocationMenuEntry(menu, result);
+                prev = result;
+            }
+
+            if (truncated) {
+                menu.addSeparator();
+                addDisabledWritItemMenuEntry(menu, "Showing first " + WRIT_ITEM_SEARCH_LIMIT + " matches.");
+            }
+        } catch (RoomMapService.MapLookupException e) {
+            addDisabledWritItemMenuEntry(menu, "Error: " + e.getMessage());
+            log.warn("writ item menu lookup failed err={}", e.toString());
+        } catch (Exception e) {
+            addDisabledWritItemMenuEntry(menu, "Error: Unable to search items.");
+            log.warn("writ item menu search failed err={}", e.toString());
+        }
+        updateWritItemMenuTheme(menu);
+    }
+
+    private List<RoomMapService.ItemSearchResult> searchExactItemMatches(String query) throws Exception {
+        List<String> terms = buildItemSearchTerms(query);
+        for (String term : terms) {
+            List<RoomMapService.ItemSearchResult> results = routeMapService.searchItemsByExactName(term, WRIT_ITEM_SEARCH_LIMIT + 1);
+            if (!results.isEmpty()) {
+                return results;
+            }
+        }
+        return List.of();
+    }
+
+    private List<String> buildItemSearchTerms(String query) {
+        String trimmed = query == null ? "" : query.trim();
+        LinkedHashSet<String> terms = new LinkedHashSet<>();
+        if (!trimmed.isBlank()) {
+            terms.add(trimmed);
+            for (String singular : GrammarUtils.singularizePhrase(trimmed)) {
+                terms.add(singular);
+            }
+        }
+        return List.copyOf(terms);
+    }
+
+    private void addWritItemLocationMenuEntry(JMenu menu, RoomMapService.RoomSearchResult result) {
+        String label = (result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
+                + routeMapService.getMapDisplayName(result.mapId())
+                + ": "
+                + result.roomShort();
+        String roomId = result.roomId();
+        SpeedwalkMenuItem item = new SpeedwalkMenuItem(label, writTopMenu, true, roomId);
+        item.addActionListener(event -> {
+            submitCommand("/map " + roomId);
+            submitCommand("/route " + roomId);
+        });
+        menu.add(item);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(item, currentBg, currentFg);
+        }
+    }
+
+    private void addDisabledWritItemMenuEntry(JMenu menu, String text) {
+        KeepOpenMenuItem item = new KeepOpenMenuItem(text, writTopMenu, true);
+        item.setEnabled(false);
+        menu.add(item);
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(item, currentBg, currentFg);
+        }
+    }
+
+    private void updateWritItemMenuTheme(JMenu menu) {
+        if (currentBg != null && currentFg != null) {
+            updateMenuTheme(menu, currentBg, currentFg);
+        }
     }
 
     private JMenu buildWritSubMenu(int index, WritMenuAction action, String menuLabel, String itemLabel, Runnable onSelect, boolean keepMenuOpen) {
