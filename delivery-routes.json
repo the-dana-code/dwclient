@@ -237,7 +237,7 @@
   {
     "npc": "Gore Batchev",
     "location": "Batchev\u0027s World of Maps on Ankh Street",
-    "roomId": "1868a42594ca6312ceb74e540d8af08e6b50499e"
+    "roomId": "837b4ce0e3a8a2f563a4b4cbe08312cfeef1d9f7"
   },
   {
     "npc": "Greldik Marlinslayer",
@@ -1125,5 +1125,10 @@
     "npc": "Mr Jerdan",
     "location": "Jerdan and Hare, Clothiers on Edgeway Road",
     "roomId": "67cef069ceaecfef9d8b35b429ebf9e9ccd53653"
+  },
+  {
+    "npc": "Kenneth",
+    "location": "the discreet stall on Market Street",
+    "roomId": "3fd94ce76121082da1af6aefaa1806b18d9f8b37"
   }
 ]
