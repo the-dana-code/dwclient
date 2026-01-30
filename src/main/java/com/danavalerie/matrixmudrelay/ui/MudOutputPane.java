@@ -20,6 +20,7 @@ package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
+import com.danavalerie.matrixmudrelay.util.SoundUtils;
 import com.danavalerie.matrixmudrelay.util.ThreadUtils;
 
 import javax.sound.sampled.AudioInputStream;
@@ -276,20 +277,16 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
                 Color bg = (t.background != null && !t.background.isBlank()) ? Color.decode(t.background) : null;
                 Runnable sound = null;
                 if (t.systemBeep) {
-                    sound = () -> Toolkit.getDefaultToolkit().beep();
+                    sound = SoundUtils::playBeep;
                 } else if (t.useSoundFile && t.soundFile != null && !t.soundFile.isBlank()) {
-                    if (t.soundFile.startsWith("classpath:")) {
-                        String resourcePath = t.soundFile.substring("classpath:".length());
-                        java.net.URL url = getClass().getClassLoader().getResource(resourcePath);
-                        if (url != null) {
-                            sound = () -> playSound(url);
-                        } else {
-                            System.err.println("Classpath resource not found: " + resourcePath);
+                    final String soundFile = t.soundFile;
+                    sound = () -> {
+                        try {
+                            SoundUtils.playSound(soundFile);
+                        } catch (Exception e) {
+                            System.err.println("Error playing sound: " + e.getMessage());
                         }
-                    } else {
-                        File file = new File(t.soundFile);
-                        sound = () -> playSound(file);
-                    }
+                    };
                 }
                 patterns.add(new AlertPattern(p, fg, bg, t.bold, sound, t.sendToChitchat));
             } catch (Exception e) {
@@ -297,37 +294,6 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
             }
         }
         this.alertPatterns = patterns;
-    }
-
-    private void playSound(File file) {
-        if (!file.exists()) {
-            return;
-        }
-        try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
-            playAudioStream(audioIn);
-        } catch (Exception e) {
-            System.err.println("Error playing sound file: " + e.getMessage());
-        }
-    }
-
-    private void playSound(java.net.URL url) {
-        try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-            playAudioStream(audioIn);
-        } catch (Exception e) {
-            System.err.println("Error playing sound URL: " + e.getMessage());
-        }
-    }
-
-    private void playAudioStream(AudioInputStream audioIn) {
-        try {
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioIn);
-            clip.start();
-        } catch (Exception e) {
-            System.err.println("Error playing audio stream: " + e.getMessage());
-        }
     }
 
     private AlertPattern matchAlert(String line) {

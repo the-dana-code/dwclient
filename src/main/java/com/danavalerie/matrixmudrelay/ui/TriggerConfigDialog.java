@@ -1,6 +1,7 @@
 package com.danavalerie.matrixmudrelay.ui;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
+import com.danavalerie.matrixmudrelay.util.SoundUtils;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -22,6 +23,7 @@ public class TriggerConfigDialog extends JDialog {
     private JRadioButton noSoundRadio;
     private JRadioButton beepRadio;
     private JRadioButton wavRadio;
+    private JButton playSoundButton;
     private JTextField wavFileField;
     private JButton browseWavButton;
     private JCheckBox chitchatCheckBox;
@@ -122,7 +124,9 @@ public class TriggerConfigDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 4;
         editorPanel.add(new JLabel("Sound:"), gbc);
         gbc.gridx = 1;
-        JPanel soundPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JPanel soundPanel = new JPanel();
+        soundPanel.setLayout(new BoxLayout(soundPanel, BoxLayout.Y_AXIS));
+        
         noSoundRadio = new JRadioButton("None");
         beepRadio = new JRadioButton("Beep");
         wavRadio = new JRadioButton("WAV");
@@ -130,9 +134,18 @@ public class TriggerConfigDialog extends JDialog {
         soundGroup.add(noSoundRadio);
         soundGroup.add(beepRadio);
         soundGroup.add(wavRadio);
-        soundPanel.add(noSoundRadio);
-        soundPanel.add(beepRadio);
-        soundPanel.add(wavRadio);
+
+        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        radioPanel.add(noSoundRadio);
+        radioPanel.add(beepRadio);
+        radioPanel.add(wavRadio);
+        soundPanel.add(radioPanel);
+
+        playSoundButton = new JButton("Play Sound");
+        JPanel playButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        playButtonPanel.add(playSoundButton);
+        soundPanel.add(playButtonPanel);
+        
         editorPanel.add(soundPanel, gbc);
 
         // WAV file
@@ -219,12 +232,32 @@ public class TriggerConfigDialog extends JDialog {
         patternField.getDocument().addDocumentListener(dl);
         wavFileField.getDocument().addDocumentListener(dl);
 
-        ActionListener al = e -> saveCurrentTrigger();
+        ActionListener al = e -> {
+            saveCurrentTrigger();
+            updatePlayButtonEnabled();
+        };
         boldCheckBox.addActionListener(al);
         noSoundRadio.addActionListener(al);
         beepRadio.addActionListener(al);
         wavRadio.addActionListener(al);
         chitchatCheckBox.addActionListener(al);
+
+        playSoundButton.addActionListener(e -> {
+            try {
+                if (beepRadio.isSelected()) {
+                    SoundUtils.playBeep();
+                } else if (wavRadio.isSelected()) {
+                    String file = wavFileField.getText();
+                    if (file == null || file.isBlank()) {
+                        JOptionPane.showMessageDialog(this, "No WAV file specified.", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        SoundUtils.playSound(file);
+                    }
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error playing sound: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         browseWavButton.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
@@ -287,6 +320,11 @@ public class TriggerConfigDialog extends JDialog {
         wavFileField.setText(t.soundFile);
         chitchatCheckBox.setSelected(t.sendToChitchat);
         isUpdating = false;
+        updatePlayButtonEnabled();
+    }
+
+    private void updatePlayButtonEnabled() {
+        playSoundButton.setEnabled(beepRadio.isSelected() || wavRadio.isSelected());
     }
 
     private void setEnabledAll(boolean enabled) {
@@ -297,6 +335,7 @@ public class TriggerConfigDialog extends JDialog {
         noSoundRadio.setEnabled(enabled);
         beepRadio.setEnabled(enabled);
         wavRadio.setEnabled(enabled);
+        playSoundButton.setEnabled(enabled && (beepRadio.isSelected() || wavRadio.isSelected()));
         wavFileField.setEnabled(enabled);
         browseWavButton.setEnabled(enabled);
         chitchatCheckBox.setEnabled(enabled);
