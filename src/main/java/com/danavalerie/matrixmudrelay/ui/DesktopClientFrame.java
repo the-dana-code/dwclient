@@ -1251,7 +1251,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 }
                 refreshTeleportsMenu();
                 refreshBookmarksMenu();
-                updateRouteMenuKeepOpen();
                 applyCharacterRegenOverrides();
                 rebuildRegenMenus();
             });
@@ -1290,7 +1289,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 charCfg.teleports.reliable = reliableTpItem.isChecked();
                 com.danavalerie.matrixmudrelay.core.TeleportRegistry.initialize(cfg.characters);
                 saveConfig();
-                updateRouteMenuKeepOpen();
             }
         });
         optionsMenu.add(reliableTpItem);
@@ -2000,7 +1998,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         "Route",
                         routeTargetRoomId,
                         () -> handleRoute(index));
-                routeItem.setKeepMenuOpen(shouldKeepRouteMenuOpen());
+                routeItem.setKeepMenuOpen(true);
                 writRouteMenuItem = routeItem;
                 writTopMenu.add(routeItem);
             } else if (canWriteRoutes) {
@@ -2034,16 +2032,6 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         menuBar.revalidate();
         menuBar.repaint();
         saveMenus();
-    }
-
-    private boolean shouldKeepRouteMenuOpen() {
-        return RouteMenuPolicy.shouldKeepRouteMenuOpen(currentCharacterName, cfg.characters);
-    }
-
-    private void updateRouteMenuKeepOpen() {
-        if (writRouteMenuItem != null) {
-            writRouteMenuItem.setKeepMenuOpen(shouldKeepRouteMenuOpen());
-        }
     }
 
     private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, String speedwalkTargetRoomId, Runnable onSelect) {
@@ -2752,7 +2740,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         : new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
                 if (isSpeedwalkResult) {
-        item.setKeepMenuOpen(shouldKeepRouteMenuOpen());
+                    item.setKeepMenuOpen(true);
                     item.addActionListener(event -> {
                         markResultVisited(resultIndex);
                         item.setText(formatResultsMenuLabel(true, result.label()));
