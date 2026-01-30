@@ -606,6 +606,7 @@
       "pattern": "^Mr Werks selects a bit of chalk from the chalk tray and then scribbles noisily on the job board.$",
       "background": "#CC33FF",
       "bold": true,
+      "soundFile": "classpath:sounds/werks-chalk.wav",
       "systemBeep": false,
       "useSoundFile": true,
       "sendToChitchat": false

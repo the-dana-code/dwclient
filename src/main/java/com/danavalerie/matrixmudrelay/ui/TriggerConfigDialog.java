@@ -228,8 +228,9 @@ public class TriggerConfigDialog extends JDialog {
 
         browseWavButton.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
-            if (wavFileField.getText() != null && !wavFileField.getText().isEmpty()) {
-                fc.setSelectedFile(new File(wavFileField.getText()));
+            String current = wavFileField.getText();
+            if (current != null && !current.isEmpty() && !current.startsWith("classpath:")) {
+                fc.setSelectedFile(new File(current));
             }
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 wavFileField.setText(fc.getSelectedFile().getAbsolutePath());

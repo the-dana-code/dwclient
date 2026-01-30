@@ -278,8 +278,18 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
                 if (t.systemBeep) {
                     sound = () -> Toolkit.getDefaultToolkit().beep();
                 } else if (t.useSoundFile && t.soundFile != null && !t.soundFile.isBlank()) {
-                    File file = new File(t.soundFile);
-                    sound = () -> playSound(file);
+                    if (t.soundFile.startsWith("classpath:")) {
+                        String resourcePath = t.soundFile.substring("classpath:".length());
+                        java.net.URL url = getClass().getClassLoader().getResource(resourcePath);
+                        if (url != null) {
+                            sound = () -> playSound(url);
+                        } else {
+                            System.err.println("Classpath resource not found: " + resourcePath);
+                        }
+                    } else {
+                        File file = new File(t.soundFile);
+                        sound = () -> playSound(file);
+                    }
                 }
                 patterns.add(new AlertPattern(p, fg, bg, t.bold, sound, t.sendToChitchat));
             } catch (Exception e) {
@@ -295,11 +305,28 @@ public final class MudOutputPane extends JTextPane implements AutoScrollable {
         }
         try {
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
+            playAudioStream(audioIn);
+        } catch (Exception e) {
+            System.err.println("Error playing sound file: " + e.getMessage());
+        }
+    }
+
+    private void playSound(java.net.URL url) {
+        try {
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+            playAudioStream(audioIn);
+        } catch (Exception e) {
+            System.err.println("Error playing sound URL: " + e.getMessage());
+        }
+    }
+
+    private void playAudioStream(AudioInputStream audioIn) {
+        try {
             Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
             clip.start();
         } catch (Exception e) {
-            System.err.println("Error playing sound: " + e.getMessage());
+            System.err.println("Error playing audio stream: " + e.getMessage());
         }
     }
 
