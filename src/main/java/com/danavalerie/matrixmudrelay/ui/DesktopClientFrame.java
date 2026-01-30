@@ -2164,7 +2164,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 + ": "
                 + result.roomShort();
         String roomId = result.roomId();
-        SpeedwalkMenuItem item = new SpeedwalkMenuItem(label, writTopMenu, true, roomId);
+        SpeedwalkMenuItem item = new SpeedwalkMenuItem(label, menu, true, roomId);
         item.addActionListener(event -> {
             submitCommand("/map " + roomId);
             submitCommand("/route " + roomId);
@@ -2176,7 +2176,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void addDisabledWritItemMenuEntry(JMenu menu, String text) {
-        KeepOpenMenuItem item = new KeepOpenMenuItem(text, writTopMenu, true);
+        KeepOpenMenuItem item = new KeepOpenMenuItem(text, menu, true);
         item.setEnabled(false);
         menu.add(item);
         if (currentBg != null && currentFg != null) {
@@ -2752,7 +2752,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         : new KeepOpenMenuItem(formatResultsMenuLabel(visited, result.label()), resultsTopMenu, true);
                 int resultIndex = index;
                 if (isSpeedwalkResult) {
-                    item.setKeepMenuOpen(false);
+        item.setKeepMenuOpen(shouldKeepRouteMenuOpen());
                     item.addActionListener(event -> {
                         markResultVisited(resultIndex);
                         item.setText(formatResultsMenuLabel(true, result.label()));
