@@ -156,6 +156,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     private final Set<Integer> resultsMenuVisits = new HashSet<>();
     private final List<WritTracker.WritRequirement> writRequirements = new ArrayList<>();
     private final Map<Integer, EnumSet<WritMenuAction>> writMenuVisits = new HashMap<>();
+    private final Map<Integer, MenuPersistenceService.WritItemMenuState> writItemMenuStates = new HashMap<>();
     private int selectedWritIndex = 0;
     private int selectedResultsPageIndex = 0;
     private JMenu teleportsMenu;
@@ -243,6 +244,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
             if (saved.writMenuVisits() != null) {
                 this.writMenuVisits.putAll(saved.writMenuVisits());
+            }
+            if (saved.writItemMenuStates() != null) {
+                this.writItemMenuStates.putAll(saved.writItemMenuStates());
             }
         }
         selectedWritIndex = resolveSelectedWritIndex();
@@ -1143,7 +1147,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
     }
 
     private void saveMenus() {
-        menuPersistenceService.save(writRequirements, writCharacterName, writMenuVisits);
+        menuPersistenceService.save(writRequirements, writCharacterName, writMenuVisits, writItemMenuStates);
     }
 
     private void restoreResultsMenuState() {
@@ -1235,6 +1239,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         if (resetVisits) {
             writMenuVisits.clear();
+            writItemMenuStates.clear();
             setSelectedWritIndex(0);
         }
         rebuildWritMenus();
@@ -2049,7 +2054,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private JMenu buildWritItemMenu(int index, WritTracker.WritRequirement requirement) {
         String label = "Item: " + requirement.quantity() + " " + requirement.item();
-        boolean visited = isWritMenuVisited(index, WritMenuAction.ITEM_INFO);
+        boolean visited = hasVisitedWritItemEntries(index);
         JMenu menu = new JMenu(formatWritMenuLabel(visited, label));
         menu.addMenuListener(new MenuListener() {
             @Override
@@ -2070,18 +2075,21 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void rebuildWritItemMenu(JMenu menu, int index, WritTracker.WritRequirement requirement, String label) {
         menu.removeAll();
-        markWritMenuVisited(index, WritMenuAction.ITEM_INFO);
-        menu.setText(formatWritMenuLabel(true, label));
+        updateWritItemMenuLabel(menu, index, label);
 
         try {
             List<RoomMapService.ItemSearchResult> matches = searchExactItemMatches(requirement.item());
             if (matches.isEmpty()) {
                 addDisabledWritItemMenuEntry(menu, "Item not found");
+                updateWritItemMenuState(index, List.of(), false);
+                updateWritItemMenuLabel(menu, index, label);
                 updateWritItemMenuTheme(menu);
                 return;
             }
             if (matches.size() > 1) {
                 addDisabledWritItemMenuEntry(menu, "ERROR: Multiple Matches");
+                updateWritItemMenuState(index, List.of(), false);
+                updateWritItemMenuLabel(menu, index, label);
                 updateWritItemMenuTheme(menu);
                 return;
             }
@@ -2095,17 +2103,22 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
             if (results.isEmpty()) {
                 addDisabledWritItemMenuEntry(menu, "No rooms or NPCs found");
+                updateWritItemMenuState(index, List.of(), false);
+                updateWritItemMenuLabel(menu, index, label);
                 updateWritItemMenuTheme(menu);
                 return;
             }
 
+            List<MenuPersistenceService.WritItemMenuEntry> entries = new ArrayList<>(results.size());
             RoomMapService.RoomSearchResult prev = null;
             for (RoomMapService.RoomSearchResult result : results) {
                 if (prev != null && "Shop".equals(prev.sourceInfo())
                         && result.sourceInfo() != null && result.sourceInfo().startsWith("NPC:")) {
                     menu.addSeparator();
                 }
-                addWritItemLocationMenuEntry(menu, result);
+                boolean visited = isWritItemResultVisited(index, result);
+                entries.add(new MenuPersistenceService.WritItemMenuEntry(result, visited));
+                addWritItemLocationMenuEntry(menu, index, result, label, visited);
                 prev = result;
             }
 
@@ -2113,6 +2126,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 menu.addSeparator();
                 addDisabledWritItemMenuEntry(menu, "Showing first " + WRIT_ITEM_SEARCH_LIMIT + " matches.");
             }
+            updateWritItemMenuState(index, entries, truncated);
+            updateWritItemMenuLabel(menu, index, label);
         } catch (RoomMapService.MapLookupException e) {
             addDisabledWritItemMenuEntry(menu, "Error: " + e.getMessage());
             log.warn("writ item menu lookup failed err={}", e.toString());
@@ -2146,14 +2161,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         return List.copyOf(terms);
     }
 
-    private void addWritItemLocationMenuEntry(JMenu menu, RoomMapService.RoomSearchResult result) {
+    private void addWritItemLocationMenuEntry(JMenu menu, int index, RoomMapService.RoomSearchResult result, String menuLabel,
+                                              boolean visited) {
         String label = (result.sourceInfo() != null ? "[" + result.sourceInfo() + "] " : "")
                 + routeMapService.getMapDisplayName(result.mapId())
                 + ": "
                 + result.roomShort();
         String roomId = result.roomId();
-        SpeedwalkMenuItem item = new SpeedwalkMenuItem(label, menu, true, roomId);
+        SpeedwalkMenuItem item = new SpeedwalkMenuItem(formatWritItemMenuEntryLabel(visited, label), menu, true, roomId);
         item.addActionListener(event -> {
+            markWritItemResultVisited(index, result);
+            item.setText(formatWritItemMenuEntryLabel(true, label));
+            updateWritItemMenuLabel(menu, index, menuLabel);
             submitCommand("/map " + roomId);
             submitCommand("/route " + roomId);
         });
@@ -2194,6 +2213,78 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private String formatWritMenuLabel(boolean visited, String label) {
         return (visited ? "\u2713 " : "  ") + label;
+    }
+
+    private String formatWritItemMenuEntryLabel(boolean visited, String label) {
+        return (visited ? "\u2713 " : "  ") + label;
+    }
+
+    private void updateWritItemMenuLabel(JMenu menu, int index, String label) {
+        menu.setText(formatWritMenuLabel(hasVisitedWritItemEntries(index), label));
+    }
+
+    private boolean hasVisitedWritItemEntries(int index) {
+        MenuPersistenceService.WritItemMenuState state = writItemMenuStates.get(index);
+        if (state == null || state.entries() == null) {
+            return false;
+        }
+        for (MenuPersistenceService.WritItemMenuEntry entry : state.entries()) {
+            if (entry != null && entry.visited()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isWritItemResultVisited(int index, RoomMapService.RoomSearchResult result) {
+        if (result == null) {
+            return false;
+        }
+        MenuPersistenceService.WritItemMenuState state = writItemMenuStates.get(index);
+        if (state == null || state.entries() == null) {
+            return false;
+        }
+        for (MenuPersistenceService.WritItemMenuEntry entry : state.entries()) {
+            if (entry != null && result.equals(entry.result())) {
+                return entry.visited();
+            }
+        }
+        return false;
+    }
+
+    private void updateWritItemMenuState(int index, List<MenuPersistenceService.WritItemMenuEntry> entries, boolean truncated) {
+        List<MenuPersistenceService.WritItemMenuEntry> storedEntries = (entries == null) ? null : List.copyOf(entries);
+        MenuPersistenceService.WritItemMenuState nextState = new MenuPersistenceService.WritItemMenuState(storedEntries, truncated);
+        if (!Objects.equals(writItemMenuStates.get(index), nextState)) {
+            writItemMenuStates.put(index, nextState);
+            saveMenus();
+        }
+    }
+
+    private void markWritItemResultVisited(int index, RoomMapService.RoomSearchResult result) {
+        if (result == null) {
+            return;
+        }
+        MenuPersistenceService.WritItemMenuState state = writItemMenuStates.get(index);
+        List<MenuPersistenceService.WritItemMenuEntry> existing = (state != null && state.entries() != null)
+                ? state.entries()
+                : List.of();
+        List<MenuPersistenceService.WritItemMenuEntry> updated = new ArrayList<>(existing.size() + 1);
+        boolean found = false;
+        for (MenuPersistenceService.WritItemMenuEntry entry : existing) {
+            if (!found && result.equals(entry.result())) {
+                updated.add(new MenuPersistenceService.WritItemMenuEntry(entry.result(), true));
+                found = true;
+            } else {
+                updated.add(entry);
+            }
+        }
+        if (!found) {
+            updated.add(new MenuPersistenceService.WritItemMenuEntry(result, true));
+        }
+        boolean truncated = state != null && state.truncated();
+        writItemMenuStates.put(index, new MenuPersistenceService.WritItemMenuState(updated, truncated));
+        markWritMenuVisited(index, WritMenuAction.ITEM_INFO);
     }
 
     private boolean isWritMenuVisited(int index, WritMenuAction action) {

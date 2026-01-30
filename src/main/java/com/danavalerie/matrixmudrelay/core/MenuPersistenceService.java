@@ -18,9 +18,14 @@ public class MenuPersistenceService {
     private static final Gson GSON = GsonUtils.getGson();
     private final Path storagePath;
 
+    public record WritItemMenuEntry(RoomMapService.RoomSearchResult result, boolean visited) {}
+
+    public record WritItemMenuState(List<WritItemMenuEntry> entries, boolean truncated) {}
+
     public record SavedMenus(List<WritTracker.WritRequirement> writRequirements,
                             String writCharacterName,
-                            Map<Integer, EnumSet<WritMenuAction>> writMenuVisits) {}
+                            Map<Integer, EnumSet<WritMenuAction>> writMenuVisits,
+                            Map<Integer, WritItemMenuState> writItemMenuStates) {}
 
     public MenuPersistenceService(Path storagePath) {
         this.storagePath = storagePath;
@@ -28,8 +33,9 @@ public class MenuPersistenceService {
 
     public synchronized void save(List<WritTracker.WritRequirement> writRequirements,
                                  String writCharacterName,
-                                 Map<Integer, EnumSet<WritMenuAction>> writMenuVisits) {
-        SavedMenus savedMenus = new SavedMenus(writRequirements, writCharacterName, writMenuVisits);
+                                 Map<Integer, EnumSet<WritMenuAction>> writMenuVisits,
+                                 Map<Integer, WritItemMenuState> writItemMenuStates) {
+        SavedMenus savedMenus = new SavedMenus(writRequirements, writCharacterName, writMenuVisits, writItemMenuStates);
         String json = GSON.toJson(savedMenus);
         BackgroundSaver.save(storagePath, json);
     }
