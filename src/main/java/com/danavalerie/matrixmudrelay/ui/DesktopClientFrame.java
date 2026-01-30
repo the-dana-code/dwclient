@@ -692,7 +692,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     updateMenuTheme(bmSubMenu, currentBg, currentFg);
                 }
 
-                SpeedwalkMenuItem speedwalkNow = new SpeedwalkMenuItem("Speedwalk Now", false, link.roomId);
+                SpeedwalkMenuItem speedwalkNow = new SpeedwalkMenuItem("Speedwalk Now", true, link.roomId);
                 if (currentBg != null && currentFg != null) {
                     updateMenuTheme(speedwalkNow, currentBg, currentFg);
                 }
