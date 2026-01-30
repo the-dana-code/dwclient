@@ -19,6 +19,7 @@
 package com.danavalerie.matrixmudrelay.core;
 
 import com.danavalerie.matrixmudrelay.config.ClientConfig;
+import com.danavalerie.matrixmudrelay.core.data.ItemData;
 import com.danavalerie.matrixmudrelay.core.data.RoomData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -162,5 +163,25 @@ public class RoomMapServiceTest {
         assertTrue(darkImage.isDark());
         assertFalse(lightImage.isDark());
         assertNotEquals(lightImage.data().length, darkImage.data().length);
+    }
+
+    @Test
+    public void testItemSearchDedupesCaseVariantsPrefersCapitalized() throws Exception {
+        MapDataService dataService = new MapDataService();
+        dataService.getItems().clear();
+
+        ItemData lower = new ItemData();
+        lower.setItemName("meat pie");
+        ItemData upper = new ItemData();
+        upper.setItemName("Meat Pie");
+
+        dataService.getItems().put(lower.getItemName(), lower);
+        dataService.getItems().put(upper.getItemName(), upper);
+
+        RoomMapService service = new RoomMapService(dataService);
+        List<RoomMapService.ItemSearchResult> results = service.searchItemsByName("meat pie", 10);
+
+        assertEquals(1, results.size());
+        assertEquals("Meat Pie", results.get(0).itemName());
     }
 }

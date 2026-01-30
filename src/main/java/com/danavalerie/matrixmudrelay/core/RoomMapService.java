@@ -30,16 +30,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -365,12 +368,9 @@ public class RoomMapService {
             throw new MapLookupException("Search term cannot be blank.");
         }
         String trimmed = term.trim().toLowerCase();
-        return dataService.getItems().values().stream()
-                .filter(i -> i.getItemName().toLowerCase().contains(trimmed))
-                .map(i -> new ItemSearchResult(i.getItemName()))
-                .sorted(Comparator.comparing(ItemSearchResult::itemName))
-                .limit(limit)
-                .collect(Collectors.toList());
+        return collectItemSearchResults(dataService.getItems().values().stream()
+                .map(i -> i.getItemName())
+                .filter(name -> name != null && name.toLowerCase().contains(trimmed)), limit);
     }
 
     public List<ItemSearchResult> searchItemsByExactName(String term, int limit) throws MapLookupException {
@@ -378,11 +378,22 @@ public class RoomMapService {
             throw new MapLookupException("Search term cannot be blank.");
         }
         String trimmed = term.trim().toLowerCase();
-        return dataService.getItems().values().stream()
-                .filter(i -> i.getItemName().equalsIgnoreCase(trimmed))
-                .map(i -> new ItemSearchResult(i.getItemName()))
-                .sorted(Comparator.comparing(ItemSearchResult::itemName))
+        return collectItemSearchResults(dataService.getItems().values().stream()
+                .map(i -> i.getItemName())
+                .filter(name -> name != null && name.equalsIgnoreCase(trimmed)), limit);
+    }
+
+    private static List<ItemSearchResult> collectItemSearchResults(Stream<String> itemNames, int limit) {
+        if (limit <= 0) {
+            return List.of();
+        }
+        Map<String, String> uniqueNames = new LinkedHashMap<>();
+        itemNames.filter(Objects::nonNull)
+                .sorted()
+                .forEach(name -> uniqueNames.putIfAbsent(name.toLowerCase(), name));
+        return uniqueNames.values().stream()
                 .limit(limit)
+                .map(ItemSearchResult::new)
                 .collect(Collectors.toList());
     }
 

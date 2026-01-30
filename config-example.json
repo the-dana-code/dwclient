@@ -540,6 +540,7 @@
       "background": "#FF0000",
       "bold": true,
       "systemBeep": true,
+      "useSoundFile": false,
       "sendToChitchat": false
     },
     {
@@ -548,6 +549,7 @@
       "background": "#FF0000",
       "bold": true,
       "systemBeep": true,
+      "useSoundFile": false,
       "sendToChitchat": false
     },
     {
@@ -556,6 +558,7 @@
       "background": "#FFFFFF",
       "bold": false,
       "systemBeep": true,
+      "useSoundFile": false,
       "sendToChitchat": false
     },
     {
@@ -564,6 +567,7 @@
       "background": "#FFFFFF",
       "bold": false,
       "systemBeep": true,
+      "useSoundFile": false,
       "sendToChitchat": false
     },
     {
@@ -571,6 +575,7 @@
       "foreground": "#B478FF",
       "bold": false,
       "systemBeep": false,
+      "useSoundFile": false,
       "sendToChitchat": true
     },
     {
@@ -578,6 +583,7 @@
       "foreground": "#FFEB50",
       "bold": false,
       "systemBeep": true,
+      "useSoundFile": false,
       "sendToChitchat": true
     },
     {
@@ -585,6 +591,7 @@
       "foreground": "#FFEB50",
       "bold": false,
       "systemBeep": true,
+      "useSoundFile": false,
       "sendToChitchat": true
     },
     {
@@ -592,13 +599,16 @@
       "foreground": "#FFFFFF",
       "bold": true,
       "systemBeep": false,
+      "useSoundFile": false,
       "sendToChitchat": false
     },
     {
       "pattern": "^Mr Werks selects a bit of chalk from the chalk tray and then scribbles noisily on the job board.$",
       "background": "#CC33FF",
       "bold": true,
-      "systemBeep": true,
+      "soundFile": "classpath:sounds/werks-chalk.wav",
+      "systemBeep": false,
+      "useSoundFile": true,
       "sendToChitchat": false
     },
     {
@@ -607,6 +617,7 @@
       "background": "#FF0000",
       "bold": true,
       "systemBeep": false,
+      "useSoundFile": false,
       "sendToChitchat": false
     }
   ]
