@@ -275,4 +275,28 @@ class MudCommandShortcutTest {
         assertTrue(mud.sentLines.contains("deliver wicker tube to the teacher"),
                 "Should use NPC override 'the teacher' in deliver command. Sent: " + mud.sentLines);
     }
+
+    @Test
+    void testDeliverCaseInsensitiveAndRemoval() {
+        ClientConfig cfg = new ClientConfig();
+        UiConfig uiCfg = new UiConfig();
+        StubMudClient mud = new StubMudClient();
+        StubClientOutput output = new StubClientOutput();
+        TimerService timerService = new TimerService(cfg, uiCfg, Paths.get("config.json"));
+        WritTracker writTracker = new WritTracker();
+
+        String npc = "Stuck";
+        String loc = "Stuck's Bar";
+        String item = "a bright and colourful kimono";
+
+        RoomMapService mapService = new RoomMapService(new MapDataService());
+        MudCommandProcessor processor = new MudCommandProcessor(cfg, uiCfg, Paths.get("config.json"), mud, mapService, writTracker, new StoreInventoryTracker(), timerService, () -> new DeliveryRouteMappings(List.of()), output);
+
+        writTracker.ingest("You read the official employment writ\n[ ] " + item + " to " + npc + " at " + loc);
+
+        processor.handleInput("/writ 1 deliver");
+
+        assertTrue(mud.sentLines.contains("deliver bright colourful kimono to Stuck"),
+                "Should remove 'and' case-insensitively. Sent: " + mud.sentLines);
+    }
 }

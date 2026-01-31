@@ -753,7 +753,7 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                         "deliver "
                                 + req.item()
                                 // "bright and colourful kimono" -> "bright colourful kimono" -- the 'and' messes up the game's parser
-                                .replaceAll(" and ", " ")
+                                .replaceAll("(?i) and ", " ")
                                 + " to "
                                 + npcName
                 );

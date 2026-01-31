@@ -1269,6 +1269,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         if (requirements != null) {
             writRequirements.addAll(optimizeWritOrder(requirements));
         }
+        writTracker.setRequirements(new ArrayList<>(writRequirements));
         writMenuVisits.clear();
         writItemMenuStates.clear();
         setSelectedWritIndex(0);
@@ -2104,6 +2105,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             KeepOpenRadioMenuItem.RadioMenuGroup menuGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
             for (int i = 0; i < writRequirements.size(); i++) {
                 int index = i;
+                WritTracker.WritRequirement r = writRequirements.get(i);
                 String label = "Writ " + (i + 1);
                 boolean selected = (i == selectedWritIndex);
                 KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(label, selected, menuGroup, writTopMenu);
@@ -2125,7 +2127,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             boolean canWriteRoutes = Files.isWritable(routesPath);
             int originalIndex = req.originalIndex();
 
-            JMenu itemMenu = buildWritItemMenu(originalIndex, req);
+            JMenu itemMenu = buildWritItemMenu(selectedWritIndex, req);
             writTopMenu.add(itemMenu);
 
             writTopMenu.addSeparator();
@@ -2133,7 +2135,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             if (req.shopRoomName() != null && !req.shopRoomName().isEmpty()) {
                 String shopLabel = "Shop: " + req.shopRoomName();
                 String shopRoomId = req.shopRoomId();
-                KeepOpenMenuItem shopItem = buildWritMenuItem(originalIndex, WritMenuAction.SHOP,
+                KeepOpenMenuItem shopItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.SHOP,
                         shopLabel,
                         shopRoomId,
                         () -> handleShop(selectedWritIndex));
@@ -2147,25 +2149,25 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 writTopMenu.add(shopItem);
             }
 
-            KeepOpenMenuItem listItem = buildWritMenuItem(originalIndex, WritMenuAction.LIST_STORE,
+            KeepOpenMenuItem listItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.LIST_STORE,
                     "List Store",
                     null,
                     () -> submitCommand("list"));
             writTopMenu.add(listItem);
 
             if (req.quantity() == 2) {
-                KeepOpenMenuItem buyOneItem = buildWritMenuItem(originalIndex, WritMenuAction.BUY_ONE_ITEM,
+                KeepOpenMenuItem buyOneItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.BUY_ONE_ITEM,
                         "Buy 1 Item",
                         null,
                         () -> handleStoreBuy(selectedWritIndex, 1));
                 writTopMenu.add(buyOneItem);
-                KeepOpenMenuItem buyTwoItems = buildWritMenuItem(originalIndex, WritMenuAction.BUY_TWO_ITEMS,
+                KeepOpenMenuItem buyTwoItems = buildWritMenuItem(selectedWritIndex, WritMenuAction.BUY_TWO_ITEMS,
                         "Buy 2 Items",
                         null,
                         () -> handleStoreBuy(selectedWritIndex, 2));
                 writTopMenu.add(buyTwoItems);
             } else {
-                KeepOpenMenuItem buyItem = buildWritMenuItem(originalIndex, WritMenuAction.BUY_ITEM,
+                KeepOpenMenuItem buyItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.BUY_ITEM,
                         "Buy Item",
                         null,
                         () -> handleStoreBuy(selectedWritIndex, req.quantity()));
@@ -2173,7 +2175,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             if (hasRoute) {
-                KeepOpenMenuItem routeItem = buildWritMenuItem(originalIndex, WritMenuAction.ROUTE,
+                KeepOpenMenuItem routeItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.ROUTE,
                         "Route",
                         routeTargetRoomId,
                         () -> handleRoute(selectedWritIndex));
@@ -2181,30 +2183,30 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                 writRouteMenuItem = routeItem;
                 writTopMenu.add(routeItem);
             } else if (canWriteRoutes) {
-                JMenu addRouteMenu = buildWritSubMenu(originalIndex, WritMenuAction.ADD_ROUTE,
+                JMenu addRouteMenu = buildWritSubMenu(selectedWritIndex, WritMenuAction.ADD_ROUTE,
                         "Add Current Room", "Confirm",
                         () -> handleAddRoute(selectedWritIndex),
                         false);
                 writTopMenu.add(addRouteMenu);
             }
 
-            KeepOpenMenuItem deliverItem = buildWritMenuItem(originalIndex, WritMenuAction.DELIVER,
+            KeepOpenMenuItem deliverItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.DELIVER,
                     "Deliver",
                     null,
-                    () -> submitCommand("/writ " + (req.originalIndex() + 1) + " deliver"));
+                    () -> handleWritDeliver(selectedWritIndex));
             writTopMenu.add(deliverItem);
 
             writTopMenu.addSeparator();
 
-            JMenu npcMenu = buildWritSubMenu(originalIndex, WritMenuAction.NPC_INFO,
+            JMenu npcMenu = buildWritSubMenu(selectedWritIndex, WritMenuAction.NPC_INFO,
                     "Deliver to: " + req.npc(), "Search",
-                    () -> submitCommand("/writ " + (req.originalIndex() + 1) + " npc"), true);
+                    () -> handleWritNpc(selectedWritIndex), true);
             writTopMenu.add(npcMenu);
 
             String locationText = req.locationDisplay();
-            JMenu locMenu = buildWritSubMenu(originalIndex, WritMenuAction.LOCATION_INFO,
+            JMenu locMenu = buildWritSubMenu(selectedWritIndex, WritMenuAction.LOCATION_INFO,
                     "Location: " + locationText, "Search",
-                    () -> submitCommand("/writ " + (req.originalIndex() + 1) + " loc"), true);
+                    () -> handleWritLoc(selectedWritIndex), true);
             writTopMenu.add(locMenu);
         }
         updateTheme(mapPanel.isInverted());
@@ -2571,6 +2573,18 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             routeMappings = updated;
             rebuildWritMenus();
         }, outputPane::appendErrorText);
+    }
+
+    private void handleWritDeliver(int index) {
+        submitCommand("/writ " + (index + 1) + " deliver");
+    }
+
+    private void handleWritNpc(int index) {
+        submitCommand("/writ " + (index + 1) + " npc");
+    }
+
+    private void handleWritLoc(int index) {
+        submitCommand("/writ " + (index + 1) + " loc");
     }
 
     private JSplitPane buildSplitLayout() {
