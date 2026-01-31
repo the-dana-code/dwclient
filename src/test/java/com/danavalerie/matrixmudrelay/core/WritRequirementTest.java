@@ -27,8 +27,35 @@ class WritRequirementTest {
 
     @Test
     void testLocationDisplayWithNulls() {
-        WritTracker.WritRequirement req = new WritTracker.WritRequirement(1, "item", "npc", "loc", null);
+        WritTracker.WritRequirement req = new WritTracker.WritRequirement(1, "item", "npc", "loc", null, null, null);
         // locationDisplay already handles null locationSuffix
         assertEquals("loc", req.locationDisplay());
+    }
+
+    @Test
+    void testTriggerOnlyAtTheEnd() {
+        WritTracker tracker = new WritTracker();
+        String text = "read writ\n" +
+                "You read the official employment writ:\n" +
+                "Written in carefully printed text:\n" +
+                "\n" +
+                "You are required to deliver:\n" +
+                "[ ] a braided leather belt to Nathan at the Curio Shop on Artorollo Alley\n" +
+                "[ ] a blue and gold snake anklet to Marvin at Marvin's Mantels on Street of Cunning Artificers\n" +
+                "[ ] a strawberry cheese cake to Ulora Icta at the Laughing Falafel, All Nite Grocery\n" +
+                "[ ] a beribboned hairpin to Mr Graves at the premises of Grangrid, Graves, and Descendants on Chrononhotonthologos Street\n" +
+                "\n" +
+                "You have until Sat Jan 31 20:37:03 2026 to complete this job.";
+
+        String[] lines = text.split("\n");
+        int updateCount = 0;
+        for (String line : lines) {
+            if (tracker.ingest(line)) {
+                updateCount++;
+            }
+        }
+
+        assertEquals(1, updateCount, "Should only trigger update once");
+        assertEquals(4, tracker.getRequirements().size(), "Should have 4 requirements");
     }
 }

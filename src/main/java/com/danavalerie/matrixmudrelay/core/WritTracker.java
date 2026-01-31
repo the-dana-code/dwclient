@@ -73,13 +73,12 @@ public final class WritTracker {
             readingWrit = true;
             if (!requirements.isEmpty()) {
                 requirements.clear();
-                return true;
             }
             return false;
         }
         if (trimmed.startsWith("You have until ")) {
             readingWrit = false;
-            return false;
+            return true;
         }
         if (!readingWrit) {
             return false;
@@ -103,8 +102,8 @@ public final class WritTracker {
         QuantityResult qtyResult = parseQuantity(itemText);
         LocationParts locationParts = parseLocationParts(location);
         requirements.add(new WritRequirement(qtyResult.quantity, qtyResult.item, npc,
-                locationParts.locationName, locationParts.locationSuffix));
-        return true;
+                locationParts.locationName, locationParts.locationSuffix, null, null));
+        return false;
     }
 
     private static QuantityResult parseQuantity(String itemText) {
@@ -163,12 +162,17 @@ public final class WritTracker {
     }
 
     public record WritRequirement(int quantity, String item, String npc,
-                                  String locationName, String locationSuffix) {
+                                  String locationName, String locationSuffix,
+                                  String shopRoomId, String shopRoomName) {
         public WritRequirement {
             item = item == null ? "" : item;
             npc = npc == null ? "" : npc;
             locationName = locationName == null ? "" : locationName;
             locationSuffix = locationSuffix == null ? "" : locationSuffix;
+        }
+
+        public WritRequirement withShop(String shopRoomId, String shopRoomName) {
+            return new WritRequirement(quantity, item, npc, locationName, locationSuffix, shopRoomId, shopRoomName);
         }
 
         public String locationDisplay() {

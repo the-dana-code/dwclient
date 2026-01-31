@@ -34,6 +34,9 @@ import com.danavalerie.matrixmudrelay.core.TimerService;
 import com.danavalerie.matrixmudrelay.core.RoomNoteService;
 import com.danavalerie.matrixmudrelay.core.WritTracker;
 import com.danavalerie.matrixmudrelay.ui.SpeedwalkMenuItem.SpeedwalkEstimate;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import com.danavalerie.matrixmudrelay.core.TeleportRegistry;
 import java.util.regex.Pattern;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.util.AnsiColorParser;
@@ -1265,7 +1268,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         boolean resetVisits = !Objects.equals(writRequirements, requirements);
         writRequirements.clear();
         if (requirements != null) {
-            writRequirements.addAll(requirements);
+            writRequirements.addAll(optimizeWritOrder(requirements));
         }
         if (resetVisits) {
             writMenuVisits.clear();
@@ -1274,6 +1277,131 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         }
         rebuildWritMenus();
         saveMenus();
+    }
+
+    private List<WritTracker.WritRequirement> optimizeWritOrder(List<WritTracker.WritRequirement> requirements) {
+        if (requirements == null || requirements.size() <= 1) {
+            return requirements != null ? requirements : List.of();
+        }
+
+        String startRoomId = "a5846b0acd26afec87c2dc20daa7ccadecc94cff";
+        List<List<Integer>> permutations = new ArrayList<>();
+        generatePermutations(requirements.size(), new ArrayList<>(), new boolean[requirements.size()], permutations);
+
+        double minTotalCost = Double.MAX_VALUE;
+        List<WritTracker.WritRequirement> bestPath = null;
+
+        for (List<Integer> p : permutations) {
+            double currentTotalCost = 0;
+            String currentRoom = startRoomId;
+            List<WritTracker.WritRequirement> currentWritPath = new ArrayList<>();
+            boolean validPermutation = true;
+
+            for (int index : p) {
+                WritTracker.WritRequirement req = requirements.get(index);
+                try {
+                    List<RoomMapService.ItemSearchResult> itemMatches = searchExactItemMatches(req.item());
+                    if (itemMatches.isEmpty()) {
+                        validPermutation = false;
+                        break;
+                    }
+                    String itemName = itemMatches.get(0).itemName();
+                    List<RoomMapService.RoomSearchResult> shops = routeMapService.searchRoomsByItemName(itemName, 100).stream()
+                            .filter(r -> "Shop".equals(r.sourceInfo()))
+                            .collect(Collectors.toList());
+
+                    if (shops.isEmpty()) {
+                        validPermutation = false;
+                        break;
+                    }
+
+                    RoomMapService.RoomSearchResult bestShop = null;
+                    double minShopCost = Double.MAX_VALUE;
+
+                    for (RoomMapService.RoomSearchResult shop : shops) {
+                        try {
+                            RoomMapService.RouteResult routeToShop = routeMapService.findRoute(currentRoom, shop.roomId(), getUseTeleportsForPrompt(), currentCharacterName, true);
+                            double costToShop = calculateRouteCost(routeToShop);
+                            if (costToShop < minShopCost) {
+                                minShopCost = costToShop;
+                                bestShop = shop;
+                            }
+                        } catch (RoomMapService.MapLookupException ignored) {}
+                    }
+
+                    if (bestShop == null) {
+                        validPermutation = false;
+                        break;
+                    }
+
+                    currentTotalCost += minShopCost;
+                    currentRoom = bestShop.roomId();
+
+                    Optional<DeliveryRouteMappings.RoutePlan> deliveryPlan = routeMappings != null
+                            ? routeMappings.findRoutePlan(req.npc(), req.locationDisplay())
+                            : Optional.empty();
+
+                    if (deliveryPlan.isPresent()) {
+                        String deliveryRoomId = deliveryPlan.get().target().roomId();
+                        RoomMapService.RouteResult routeToDelivery = routeMapService.findRoute(currentRoom, deliveryRoomId, getUseTeleportsForPrompt(), currentCharacterName, true);
+                        currentTotalCost += calculateRouteCost(routeToDelivery);
+                        currentRoom = deliveryRoomId;
+                    } else {
+                        // If no delivery route is found, we can't accurately calculate the total path.
+                        // However, the prompt says "navigate to the delivery location", implying it exists.
+                        // If we can't find it, we might have to treat it as 0 distance or skip.
+                        // Given the instructions, let's assume if we can't find a delivery location, we still proceed but cost is unknown.
+                        // But usually, these exist in delivery-routes.json.
+                    }
+                    currentWritPath.add(req.withShop(bestShop.roomId(), bestShop.roomShort()));
+
+                } catch (Exception e) {
+                    validPermutation = false;
+                    break;
+                }
+            }
+
+            if (validPermutation && currentTotalCost < minTotalCost) {
+                minTotalCost = currentTotalCost;
+                bestPath = currentWritPath;
+            }
+        }
+
+        return bestPath != null ? bestPath : requirements;
+    }
+
+    private void generatePermutations(int n, List<Integer> current, boolean[] used, List<List<Integer>> result) {
+        if (current.size() == n) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+        for (int i = 0; i < n; i++) {
+            if (!used[i]) {
+                used[i] = true;
+                current.add(i);
+                generatePermutations(n, current, used, result);
+                current.remove(current.size() - 1);
+                used[i] = false;
+            }
+        }
+    }
+
+    private double calculateRouteCost(RoomMapService.RouteResult route) {
+        if (route == null || route.steps().isEmpty()) return 0;
+        double cost = 0;
+        TeleportRegistry.CharacterTeleports tpCfg = TeleportRegistry.forCharacter(currentCharacterName);
+        int tpPenalty = tpCfg.speedwalkingPenalty();
+        Set<String> tpCommands = tpCfg.teleports().stream().map(TeleportRegistry.TeleportLocation::command).collect(Collectors.toSet());
+
+        for (RoomMapService.RouteStep step : route.steps()) {
+            boolean isTp = tpCommands.contains(step.exit()) || step.exit().startsWith("tp ");
+            if (isTp) {
+                cost += tpPenalty;
+            } else {
+                cost += 1;
+            }
+        }
+        return cost;
     }
 
     @Override
@@ -2003,6 +2131,25 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             JMenu itemMenu = buildWritItemMenu(index, req);
             writTopMenu.add(itemMenu);
 
+            writTopMenu.addSeparator();
+
+            if (req.shopRoomName() != null && !req.shopRoomName().isEmpty()) {
+                String shopLabel = "Shop: " + req.shopRoomName();
+                String shopRoomId = req.shopRoomId();
+                KeepOpenMenuItem shopItem = buildWritMenuItem(index, WritMenuAction.SHOP,
+                        shopLabel,
+                        shopRoomId,
+                        () -> handleShop(index));
+                if (shopItem instanceof SpeedwalkMenuItem swi) {
+                    swi.setEstimateProvider(this::estimateSpeedwalkForMenu);
+                }
+                writTopMenu.add(shopItem);
+            } else {
+                KeepOpenMenuItem shopItem = new KeepOpenMenuItem("Shop: [no path found]", writTopMenu, true);
+                shopItem.setEnabled(false);
+                writTopMenu.add(shopItem);
+            }
+
             KeepOpenMenuItem listItem = buildWritMenuItem(index, WritMenuAction.LIST_STORE,
                     "List Store",
                     null,
@@ -2071,7 +2218,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private KeepOpenMenuItem buildWritMenuItem(int index, WritMenuAction action, String label, String speedwalkTargetRoomId, Runnable onSelect) {
         boolean visited = isWritMenuVisited(index, action);
-        KeepOpenMenuItem item = (action == WritMenuAction.ROUTE)
+        KeepOpenMenuItem item = (action == WritMenuAction.ROUTE || action == WritMenuAction.SHOP)
                 ? new SpeedwalkMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true, speedwalkTargetRoomId)
                 : new KeepOpenMenuItem(formatWritMenuLabel(visited, label), writTopMenu, true);
         item.addActionListener(event -> {
@@ -2410,6 +2557,15 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             commandProcessor.speedwalkTo(plan.target().roomId());
         }, () -> outputPane.appendErrorText("No route mapping for \"" + requirement.npc()
                 + "\" at \"" + requirement.locationDisplay() + "\"."));
+    }
+
+    private void handleShop(int index) {
+        WritTracker.WritRequirement requirement = writRequirements.get(index);
+        if (requirement.shopRoomId() != null && !requirement.shopRoomId().isEmpty()) {
+            commandProcessor.speedwalkTo(requirement.shopRoomId());
+        } else {
+            outputPane.appendErrorText("No shop found for this writ requirement.");
+        }
     }
 
     private void handleAddRoute(int index) {

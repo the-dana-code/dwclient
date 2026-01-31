@@ -10,5 +10,6 @@ public enum WritMenuAction {
     LOCATION_INFO,
     ADD_ROUTE,
     ROUTE,
-    DELIVER
+    DELIVER,
+    SHOP
 }
