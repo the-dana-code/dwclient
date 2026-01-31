@@ -1138,6 +1138,36 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
         persistResultsMenuState();
     }
 
+    private int getWritItemSelectedPageIndex(int index) {
+        MenuPersistenceService.WritItemMenuState state = writItemMenuStates.get(index);
+        Integer selected = state != null ? state.selectedPageIndex() : null;
+        return (selected == null || selected < 0) ? 0 : selected;
+    }
+
+    private void setWritItemSelectedPageIndex(int index, int pageIndex) {
+        if (pageIndex < 0) {
+            pageIndex = 0;
+        }
+        MenuPersistenceService.WritItemMenuState state = writItemMenuStates.get(index);
+        Integer selected = state != null ? state.selectedPageIndex() : null;
+        if (Objects.equals(selected, pageIndex)) {
+            return;
+        }
+        List<MenuPersistenceService.WritItemMenuEntry> entries = state != null ? state.entries() : null;
+        boolean truncated = state != null && state.truncated();
+        writItemMenuStates.put(index, new MenuPersistenceService.WritItemMenuState(entries, truncated, pageIndex));
+        saveMenus();
+    }
+
+    private int resolveWritItemSelectedPageIndex(int index, int totalPages) {
+        int pageIndex = getWritItemSelectedPageIndex(index);
+        if (totalPages > 0 && pageIndex >= totalPages) {
+            pageIndex = 0;
+            setWritItemSelectedPageIndex(index, pageIndex);
+        }
+        return pageIndex;
+    }
+
     private void saveConfig() {
         ConfigLoader.save(configPath, cfg);
     }
@@ -2110,23 +2140,49 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             List<MenuPersistenceService.WritItemMenuEntry> entries = new ArrayList<>(results.size());
-            RoomMapService.RoomSearchResult prev = null;
             for (RoomMapService.RoomSearchResult result : results) {
+                boolean visited = isWritItemResultVisited(index, result);
+                entries.add(new MenuPersistenceService.WritItemMenuEntry(result, visited));
+            }
+            updateWritItemMenuState(index, entries, truncated);
+
+            int totalResults = results.size();
+            int totalPages = (int) Math.ceil(totalResults / (double) RESULTS_MENU_PAGE_SIZE);
+            int selectedPageIndex = resolveWritItemSelectedPageIndex(index, totalPages);
+
+            KeepOpenRadioMenuItem.RadioMenuGroup menuGroup = new KeepOpenRadioMenuItem.RadioMenuGroup();
+            for (int i = 0; i < totalPages; i++) {
+                int pageIndex = i;
+                String pageLabel = "Results " + (i + 1);
+                boolean selected = (i == selectedPageIndex);
+                KeepOpenRadioMenuItem radioItem = new KeepOpenRadioMenuItem(pageLabel, selected, menuGroup, menu);
+                radioItem.addActionListener(e -> {
+                    setWritItemSelectedPageIndex(index, pageIndex);
+                    rebuildWritItemMenu(menu, index, requirement, label);
+                });
+                menu.add(radioItem);
+            }
+
+            menu.addSeparator();
+
+            int start = selectedPageIndex * RESULTS_MENU_PAGE_SIZE;
+            int end = Math.min(start + RESULTS_MENU_PAGE_SIZE, totalResults);
+            RoomMapService.RoomSearchResult prev = start > 0 ? results.get(start - 1) : null;
+            for (int resultIndex = start; resultIndex < end; resultIndex++) {
+                RoomMapService.RoomSearchResult result = results.get(resultIndex);
                 if (prev != null && "Shop".equals(prev.sourceInfo())
                         && result.sourceInfo() != null && result.sourceInfo().startsWith("NPC:")) {
                     menu.addSeparator();
                 }
                 boolean visited = isWritItemResultVisited(index, result);
-                entries.add(new MenuPersistenceService.WritItemMenuEntry(result, visited));
                 addWritItemLocationMenuEntry(menu, index, result, label, visited);
                 prev = result;
             }
 
-            if (truncated) {
+            if (truncated && selectedPageIndex == totalPages - 1) {
                 menu.addSeparator();
                 addDisabledWritItemMenuEntry(menu, "Showing first " + WRIT_ITEM_SEARCH_LIMIT + " matches.");
             }
-            updateWritItemMenuState(index, entries, truncated);
             updateWritItemMenuLabel(menu, index, label);
         } catch (RoomMapService.MapLookupException e) {
             addDisabledWritItemMenuEntry(menu, "Error: " + e.getMessage());
@@ -2254,7 +2310,9 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
 
     private void updateWritItemMenuState(int index, List<MenuPersistenceService.WritItemMenuEntry> entries, boolean truncated) {
         List<MenuPersistenceService.WritItemMenuEntry> storedEntries = (entries == null) ? null : List.copyOf(entries);
-        MenuPersistenceService.WritItemMenuState nextState = new MenuPersistenceService.WritItemMenuState(storedEntries, truncated);
+        MenuPersistenceService.WritItemMenuState existing = writItemMenuStates.get(index);
+        Integer selectedPageIndex = existing != null ? existing.selectedPageIndex() : null;
+        MenuPersistenceService.WritItemMenuState nextState = new MenuPersistenceService.WritItemMenuState(storedEntries, truncated, selectedPageIndex);
         if (!Objects.equals(writItemMenuStates.get(index), nextState)) {
             writItemMenuStates.put(index, nextState);
             saveMenus();
@@ -2283,7 +2341,8 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             updated.add(new MenuPersistenceService.WritItemMenuEntry(result, true));
         }
         boolean truncated = state != null && state.truncated();
-        writItemMenuStates.put(index, new MenuPersistenceService.WritItemMenuState(updated, truncated));
+        Integer selectedPageIndex = state != null ? state.selectedPageIndex() : null;
+        writItemMenuStates.put(index, new MenuPersistenceService.WritItemMenuState(updated, truncated, selectedPageIndex));
         markWritMenuVisited(index, WritMenuAction.ITEM_INFO);
     }
 

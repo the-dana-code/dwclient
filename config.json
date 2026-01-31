@@ -830,10 +830,6 @@
             "roomId": "eb5de57e4ca48dfd9324bd3c9cd66f5c0e1aeddf"
           },
           {
-            "command": "tp slipperyhollow",
-            "roomId": "fe1bf5763a4420f441744cc8cebb01be4f1a5ee9"
-          },
-          {
             "command": "tp stickenplace",
             "roomId": "514c484b96d69e11b531189bca3ed3a066f08e66"
           },
@@ -844,6 +840,11 @@
           {
             "command": "tp tosg",
             "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
+          },
+          {
+            "name": "Slippery Hollow",
+            "command": "tp slipperyhollow",
+            "roomId": "707dc39c76bd7840e0c293414972d8d07ef6588a"
           }
         ]
       },

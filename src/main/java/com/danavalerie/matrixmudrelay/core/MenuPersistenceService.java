@@ -20,7 +20,7 @@ public class MenuPersistenceService {
 
     public record WritItemMenuEntry(RoomMapService.RoomSearchResult result, boolean visited) {}
 
-    public record WritItemMenuState(List<WritItemMenuEntry> entries, boolean truncated) {}
+    public record WritItemMenuState(List<WritItemMenuEntry> entries, boolean truncated, Integer selectedPageIndex) {}
 
     public record SavedMenus(List<WritTracker.WritRequirement> writRequirements,
                             String writCharacterName,
