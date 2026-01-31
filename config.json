@@ -630,219 +630,272 @@
         "speedwalkingPenalty": 8,
         "locations": [
           {
+            "name": "[Ankh-Morpork] Fiddley\u0027s Music Shop",
             "command": "tp am-fiddleys-music",
             "roomId": "ca679a04ebf851ef96d9ee9c42429e4d943909be"
           },
           {
+            "name": "[Ankh-Morpork] Milords",
             "command": "tp am-milords",
             "roomId": "f653670a6ee9e7868919a5b6b15ce7148acb16d0"
           },
           {
+            "name": "[Ankh-Morpork] Pishe",
             "command": "tp am-pishe",
             "roomId": "a6bfcd86381816a351d3ca14221aa6fce511b5d9"
           },
           {
+            "name": "[Ankh-Morpork] Rimwards Gate",
             "command": "tp am-rimwards-gate",
             "roomId": "606154467ffc43ee165c891889bb597925f7588d"
           },
           {
+            "name": "[Ramtops] Bad Ass",
             "command": "tp badass",
             "roomId": "1a146e63d6e3a52afca87b52f074688342a5f974"
           },
           {
+            "name": "[Sto Lat] Balance",
             "command": "tp balance",
             "roomId": "375905c93d0b436477125681c2282feeef4232cc"
           },
           {
+            "name": "[Ramtops] Bandit Camp",
             "command": "tp banditcamp",
             "roomId": "89af9ca7d2be71875cd11eed35e49b2b99d55cac"
           },
           {
+            "name": "[Ramtops] Barbarian Camp (Summer)",
             "command": "tp barbariancamp-summer",
             "roomId": "0252ca10d1535e5384ec9890ebe8d2729f18d914"
           },
           {
+            "name": "[Uberwald] Barbarian Camp (Winter)",
             "command": "tp barbariancamp-winter",
             "roomId": "8776b0c4669c4710590c2a6bd7769e2e790da7df"
           },
           {
+            "name": "[Brown Islands] Brown Islands",
             "command": "tp bi",
             "roomId": "ef740e3f6cb0aec56ba6f4c71620cb817b0bb1f0"
           },
           {
+            "name": "[Uberwald] Blackglass",
             "command": "tp blackglass",
             "roomId": "087e9ce0a29cb5e1885352a7965d744bf398dfaf"
           },
           {
+            "name": "[Sto Plains] Bleak Prospect",
             "command": "tp bleak",
             "roomId": "153638d11334e4e573fc0a6dc8fd9efc2ed1627d"
           },
           {
+            "name": "[Bes Pelargic] Bes Pelargic",
             "command": "tp bp",
             "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
           },
           {
+            "name": "[Bes Pelargic] Sour-Toe-May School of Martial Arts",
             "command": "tp bp-dojo",
             "roomId": "62c1d0d4a3449a4db14dc64554fecb13f663ad03"
           },
           {
+            "name": "[Bes Pelargic] Fish Market",
             "command": "tp bp-fish",
             "roomId": "31170af0c11ebb1cd0f647f1034db5e7f7b7bd86"
           },
           {
+            "name": "[Bes Pelargic] Ninja Guild",
             "command": "tp bp-ninja",
             "roomId": "e52e482a9e087500b71dca1ddb4f46c140d8987d"
           },
           {
+            "name": "[Bes Pelargic] Tuna Walk",
             "command": "tp bp-tunawalk",
             "roomId": "649635b91636ddf97c6b70c4ee513ffc0f865963"
           },
           {
+            "name": "[Ramtops] Brass Neck",
             "command": "tp brassneck",
             "roomId": "6fbb4a53491fe3ee652b0babe7181ebf3b8dd4a1"
           },
           {
+            "name": "[Klatch] Chronides Farmstead",
             "command": "tp chronides",
             "roomId": "64ee40a06178cbddb80935725cb463e2e21770b5"
           },
           {
+            "name": "[Death\u0027s Domain] Death\u0027s Domain",
             "command": "tp death",
             "roomId": "1bcacf98716e201caca070f20d7299012402ffc5"
           },
           {
+            "name": "[Djelibeybi] Djelibeybi",
             "command": "tp dj",
             "roomId": "7b09e78f281d3c4b443e98aef58986913b0f3448"
           },
           {
+            "name": "[Ankh-Morpork] Doctor",
             "command": "tp doctor",
             "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
           },
           {
+            "name": "[Ankh-Morpork] Mended Drum",
             "command": "tp drum",
             "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
           },
           {
+            "name": "[Ephebe] Ephebe",
             "command": "tp ephebe",
             "roomId": "bb138a9349adf67346cc5819aa31c990084ef2f6"
           },
           {
+            "name": "[Uberwald] Escrow",
             "command": "tp escrow",
             "roomId": "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585"
           },
           {
+            "name": "[Ramtops] Pishe Forest",
             "command": "tp forest-pishe",
             "roomId": "288f14413021b378e72076615d07d4ddc6089622"
           },
           {
+            "name": "[Genua] Genua",
             "command": "tp genua",
             "roomId": "88a5a8639b1f92da0b1130c9a491ea28542a0fd5"
           },
           {
+            "name": "[Ankh-Morpork] Goose Gate",
             "command": "tp goosegate",
             "roomId": "cca3b4a788b6f7025afe023905c73514ceb395a8"
           },
           {
+            "name": "[Ramtops] Granny Weatherwax",
             "command": "tp granny",
             "roomId": "dd6ea42f55c3aa6c5feef300bcfc27634bda217a"
           },
           {
+            "name": "[Sto Plains] Hillshire",
             "command": "tp hillshire",
             "roomId": "e957156f0f75d89cf263b661f630435099b44b66"
           },
           {
+            "name": "[Sto Plains] Holy Wood",
             "command": "tp holywood",
             "roomId": "4bc88d12c0917d4380ee024b526595b832df490a"
           },
           {
+            "name": "[Ephebe] Wooden Horse",
             "command": "tp horse",
             "roomId": "4da8fd81aa0b5a2f2ee06cc4ca52ed5c618a95cd"
           },
           {
+            "name": "[Ankh-Morpork] Job Market",
             "command": "tp jobs",
             "roomId": "a5846b0acd26afec87c2dc20daa7ccadecc94cff"
           },
           {
+            "name": "[Klatch] Klatchian Foreign Legion",
             "command": "tp klatch-foreign-legion",
             "roomId": "31bf3a3c04cb0009a32aee364747be7761530556"
           },
           {
+            "name": "[Ramtops] Lancre",
             "command": "tp lancre",
             "roomId": "6ef1fc26cedacd2ab099c282942533a74b98c086"
           },
           {
+            "name": "[Ankh-Morpork] Lanfear\u0027s House",
             "command": "tp lanfear",
             "roomId": "a4a00bc993f97216ace642c94f4bf7cb5ced3764"
           },
           {
+            "name": "[Ramtops] Mad Stoat",
             "command": "tp madstoat",
             "roomId": "36e23a9697d5123e220744d9fc82ed544d765078"
           },
           {
+            "name": "[Ramtops] Mad Wolf Butchers",
             "command": "tp madwolf",
             "roomId": "19b30aabaecbf5960ad7066d6eba782ba173ac91"
           },
           {
+            "name": "[Sto Plains] Nowhere",
             "command": "tp nowhere",
             "roomId": "ef8dea6037376b168f48c9b68d436be95bb342b1"
           },
           {
+            "name": "[Klatch] Oasis",
             "command": "tp oasis",
             "roomId": "482f82180dfd58da05af5e4ae5c7c2b5b159f06e"
           },
           {
+            "name": "[Ramtops] Ohulan Cutash",
             "command": "tp oc",
             "roomId": "93bf68291d0dbc25680ffb5f42e35e6516b264eb"
           },
           {
+            "name": "[Sto Plains] Pekanford",
             "command": "tp pekanford",
             "roomId": "3e8df84018719b734c59d5e7e14793f9b5040c70"
           },
           {
+            "name": "[Sto Plains] Pishe",
             "command": "tp pishe",
             "roomId": "3e8df84018719b734c59d5e7e14793f9b5040c70"
           },
           {
+            "name": "[Ankh-Morpork] Post Office",
             "command": "tp postoffice",
             "roomId": "109a9d6ff64b288e95580099e5b72864d67e4d33"
           },
           {
+            "name": "[Ramtops] Razorback",
             "command": "tp razorback",
             "roomId": "1212b8ffdc79082c01580ff424356b7d032c31b5"
           },
           {
+            "name": "[Ankh-Morpork] Sator Square",
             "command": "tp satorsquare",
             "roomId": "28cb1a4206a92b895d0941164d516491748ef4ef"
           },
           {
+            "name": "[Sto Plains] Scrogden",
             "command": "tp scrogden",
             "roomId": "5c2ff14f357b50a676d3ee02a73e3710e2d34020"
           },
           {
+            "name": "[Ankh-Morpork] Scryers\u0027 Guild",
             "command": "tp scry",
             "roomId": "3bbc93f1a0af0f4be503ce2969fc5b83061d68a8"
           },
           {
+            "name": "[Sto Plains] Sheepridge",
             "command": "tp sheepridge",
             "roomId": "7cdff063a132319a743af7d7d4c38c51ddb6e2d2"
           },
           {
+            "name": "[Ramtops] Slice",
             "command": "tp slice",
             "roomId": "eb5de57e4ca48dfd9324bd3c9cd66f5c0e1aeddf"
           },
           {
+            "name": "[Ankh-Morpork] Sticken Place",
             "command": "tp stickenplace",
             "roomId": "514c484b96d69e11b531189bca3ed3a066f08e66"
           },
           {
+            "name": "[Sto Lat] Sto Lat",
             "command": "tp stolat",
             "roomId": "326449a847b703d051fd8efcc2717087a2de429e"
           },
           {
+            "name": "[Ankh-Morpork] Temple of Small Gods",
             "command": "tp tosg",
             "roomId": "66554124844ec7ce36bf94728b529c27a2618016"
           },
           {
-            "name": "Slippery Hollow",
+            "name": "[Sto Plains] Slippery Hollow",
             "command": "tp slipperyhollow",
             "roomId": "707dc39c76bd7840e0c293414972d8d07ef6588a"
           }
@@ -858,62 +911,62 @@
         "speedwalkingPenalty": 15,
         "locations": [
           {
-            "name": "Ephebe (Glaxos)",
+            "name": "[Ephebe] Temple of Glaxos",
             "command": "tp glaxos",
             "roomId": "c4ef5a570d4d747808791e2181c848fc7443fefe"
           },
           {
-            "name": "Ankh-Morpork (Five Ways)",
+            "name": "[Ankh-Morpork] Five Ways",
             "command": "tp fiveways",
             "roomId": "5d05e86948b486a3d01a21ded57ba1c1b2ba3d4c"
           },
           {
-            "name": "Genua (Genua National Bank)",
+            "name": "[Genua] Genua",
             "command": "tp genua",
             "roomId": "35ea94550b0f3b7a800e5141e1f0251278ecfe3c"
           },
           {
-            "name": "Escrow",
+            "name": "[Uberwald] Escrow",
             "command": "tp escrow",
             "roomId": "c8eb2874de9ad3cf41e7120edf09a0dbb5a77585"
           },
           {
-            "name": "OC (Temple of Small Gods)",
+            "name": "[Ramtops] Ohulan Cutash",
             "command": "tp oc",
             "roomId": "30f530dcf0577d89df22f09a26aa48df3debd7b6"
           },
           {
-            "name": "Doctor (Flintwick Building)",
+            "name": "[Ankh-Morpork] Doctor",
             "command": "tp doctor",
             "roomId": "efae39d6e661d1f4aea47518b616116cccf81538"
           },
           {
-            "name": "Bleak Prospect",
+            "name": "[Sto Plains] Bleak Prospect",
             "command": "tp bleak",
             "roomId": "e04e13e7dceeeb0e3338e0a3bcc80a4c3c226362"
           },
           {
-            "name": "Bes Pelargic",
+            "name": "[Bes Pelargic] Bes Pelargic",
             "command": "tp bp",
             "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
           },
           {
-            "name": "Djelibeybi",
+            "name": "[Djelibeybi] Djelibeybi",
             "command": "tp dj",
             "roomId": "8996c145b1b02f540f510abc850d8d952ca26b33"
           },
           {
-            "name": "Sto Lat",
+            "name": "[Sto Lat] Sto Lat",
             "command": "tp stolat",
             "roomId": "572f3c54b5dece1f8fd35b74eb87f99482004a7d"
           },
           {
-            "name": "Ankh-Morpork (Mended Drum)",
+            "name": "[Ankh-Morpork] Mended Drum",
             "command": "tp drum",
             "roomId": "964ea3c5f971d538232e683612cd41900c232bdd"
           },
           {
-            "name": "BP - Middle Bridge",
+            "name": "[Bes Pelargic] Middle Bridge",
             "command": "tp bp-middlebridge",
             "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
           }
@@ -929,42 +982,42 @@
         "speedwalkingPenalty": 10,
         "locations": [
           {
-            "name": "Mended Drum",
+            "name": "[Ankh-Morpork] Mended Drum",
             "command": "tp drum",
             "roomId": "4b11616f93c94e3c766bb5ad9cba3b61dcc73979"
           },
           {
-            "name": "Bes Pelargic",
+            "name": "[Bes Pelargic] Bes Pelargic",
             "command": "tp bp",
             "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
           },
           {
-            "name": "Djelibeybi",
+            "name": "[Djelibeybi] Djelibeybi",
             "command": "tp dj",
             "roomId": "4ed9b9006731e04ade1ed9c34d41861fbe8ae1b1"
           },
           {
-            "name": "Genua",
+            "name": "[Genua] Genua",
             "command": "tp genua",
             "roomId": "c0c0f25581192506bc62dea1f925ae50e4c9e1ab"
           },
           {
-            "name": "Ephebe",
+            "name": "[Ephebe] Ephebe",
             "command": "tp ephebe",
             "roomId": "10052aaf26ad35faa0d7d5a48351aec96cf306ce"
           },
           {
-            "name": "Bad Ass",
+            "name": "[Ramtops] Bad Ass",
             "command": "tp badass",
             "roomId": "29cb3cf6e2e9f48894ddf19a5c3151b90163f2e5"
           },
           {
-            "name": "Sto Lat",
+            "name": "[Sto Lat] Sto Lat",
             "command": "tp stolat",
             "roomId": "267190649b1394ef19b4a92aa4a8b552c0fed383"
           },
           {
-            "name": "Escrow",
+            "name": "[Uberwald] Escrow",
             "command": "tp escrow",
             "roomId": "cb25eab957d9df770af6787786a8e5001123a246"
           }
