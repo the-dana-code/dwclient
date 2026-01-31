@@ -1306,6 +1306,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     String itemName = itemMatches.get(0).itemName();
                     List<RoomMapService.RoomSearchResult> shops = routeMapService.searchRoomsByItemName(itemName, 100).stream()
                             .filter(r -> "Shop".equals(r.sourceInfo()))
+                            .filter(r -> !r.restricted())
                             .collect(Collectors.toList());
 
                     if (shops.isEmpty()) {

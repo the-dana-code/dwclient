@@ -4,15 +4,21 @@ import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.config.UiConfig;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
+import com.danavalerie.matrixmudrelay.core.data.RoomData;
+import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WritOptimizationCommandTest {
 
@@ -78,7 +84,12 @@ class WritOptimizationCommandTest {
 
         // Set up MudCommandProcessor
         StubMudClient mud = new StubMudClient();
-        RoomMapService mapService = new RoomMapService(new MapDataService());
+        RoomMapService mapService = new RoomMapService(new MapDataService() {
+            @Override
+            public Map<String, RoomData> getRooms() {
+                return Collections.emptyMap();
+            }
+        });
         Supplier<DeliveryRouteMappings> routeMappingsSupplier = () -> new DeliveryRouteMappings(Collections.emptyList());
         
         MudCommandProcessor processor = new MudCommandProcessor(
@@ -97,5 +108,52 @@ class WritOptimizationCommandTest {
         processor.handleInput("/writ 3 deliver");
         assertEquals(2, mud.sentCommands.size());
         assertEquals("deliver petit fours to Stuck", mud.sentCommands.get(1));
+    }
+
+    @Test
+    void testRestrictedShopsAreIgnoredByOptimizer() throws RoomMapService.MapLookupException {
+        // Since optimizeWritOrder is private in DesktopClientFrame, we can't easily call it.
+        // But we can verify that RoomMapService.RoomSearchResult has the restricted flag,
+        // and that RoomMapService correctly populates it.
+        
+        RoomData restrictedRoom = new RoomData("restricted-room", 1, 100, 100, "Restricted Shop", "inside");
+        restrictedRoom.setFlags(List.of("restricted"));
+        restrictedRoom.setShopItems(List.of(new ShopItem("forbidden item")));
+        
+        RoomData normalRoom = new RoomData("normal-room", 1, 200, 200, "Normal Shop", "inside");
+        normalRoom.setShopItems(List.of(new ShopItem("forbidden item")));
+        
+        Map<String, RoomData> roomMap = new TreeMap<>();
+        roomMap.put(restrictedRoom.getRoomId(), restrictedRoom);
+        roomMap.put(normalRoom.getRoomId(), normalRoom);
+        
+        MapDataService stubDataService = new MapDataService() {
+            @Override
+            public Map<String, RoomData> getRooms() {
+                return roomMap;
+            }
+            @Override
+            public RoomData getRoom(String roomId) {
+                return roomMap.get(roomId);
+            }
+        };
+        
+        RoomMapService mapService = new RoomMapService(stubDataService);
+        List<RoomMapService.RoomSearchResult> results = mapService.searchRoomsByItemName("forbidden item", 10);
+        
+        assertEquals(2, results.size());
+        
+        RoomMapService.RoomSearchResult restrictedResult = results.stream()
+                .filter(r -> r.roomId().equals("restricted-room"))
+                .findFirst().orElseThrow();
+        assertTrue(restrictedResult.restricted(), "Restricted room should have restricted flag set to true");
+        
+        RoomMapService.RoomSearchResult normalResult = results.stream()
+                .filter(r -> r.roomId().equals("normal-room"))
+                .findFirst().orElseThrow();
+        assertTrue(!normalResult.restricted(), "Normal room should have restricted flag set to false");
+        
+        // Note: DesktopClientFrame.optimizeWritOrder filters these out via:
+        // .filter(r -> !r.restricted())
     }
 }

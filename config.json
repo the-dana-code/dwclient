@@ -946,7 +946,7 @@
             "roomId": "e04e13e7dceeeb0e3338e0a3bcc80a4c3c226362"
           },
           {
-            "name": "[Bes Pelargic] Bes Pelargic",
+            "name": "[Bes Pelargic] Tuna Walk",
             "command": "tp bp",
             "roomId": "24b2ffde15897df53f685128b8cc6fe22a534c51"
           },
@@ -966,9 +966,9 @@
             "roomId": "964ea3c5f971d538232e683612cd41900c232bdd"
           },
           {
-            "name": "[Bes Pelargic] Middle Bridge",
-            "command": "tp bp-middlebridge",
-            "roomId": "d062363d6b2bfc7c0168ed1f87121cda103657f0"
+            "name": "[Bes Pelargic] Northwest",
+            "command": "tp bp-nw",
+            "roomId": "cfafda64493124a021171bc73240fbed9c7bb11e"
           }
         ]
       },

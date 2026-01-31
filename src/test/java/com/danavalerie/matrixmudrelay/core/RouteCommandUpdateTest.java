@@ -99,7 +99,7 @@ class RouteCommandUpdateTest {
         // Inject last room search results
         java.lang.reflect.Field resultsField = MudCommandProcessor.class.getDeclaredField("lastRoomSearchResults");
         resultsField.setAccessible(true);
-        RoomMapService.RoomSearchResult searchResult = new RoomMapService.RoomSearchResult("targetRoom", 1, 0, 0, "Target Room", "type", "source");
+        RoomMapService.RoomSearchResult searchResult = new RoomMapService.RoomSearchResult("targetRoom", 1, 0, 0, "Target Room", "type", "source", false);
         resultsField.set(processor, List.of(searchResult));
 
         // Initially no speedwalk

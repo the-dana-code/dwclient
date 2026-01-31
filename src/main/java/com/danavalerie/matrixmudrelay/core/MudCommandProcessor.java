@@ -22,6 +22,8 @@ import com.danavalerie.matrixmudrelay.config.ClientConfig;
 import com.danavalerie.matrixmudrelay.config.ConfigLoader;
 import com.danavalerie.matrixmudrelay.config.DeliveryRouteMappings;
 import com.danavalerie.matrixmudrelay.config.UiConfig;
+import com.danavalerie.matrixmudrelay.core.data.RoomData;
+import com.danavalerie.matrixmudrelay.core.data.ShopItem;
 import com.danavalerie.matrixmudrelay.mud.CurrentRoomInfo;
 import com.danavalerie.matrixmudrelay.mud.MudClient;
 import com.danavalerie.matrixmudrelay.mud.TelnetDecoder;
@@ -1007,14 +1009,18 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
                 results = results.subList(0, ROOM_SEARCH_LIMIT);
             }
             lastRoomSearchResults = results.stream()
-                    .map(result -> new RoomMapService.RoomSearchResult(
+                    .map(result -> {
+                        RoomData rd = mapService.getDataService().getRoom(result.roomId());
+                        return new RoomMapService.RoomSearchResult(
                             result.roomId(),
                             result.mapId(),
                             result.xpos(),
                             result.ypos(),
                             result.roomShort(),
                             result.roomType(),
-                            null))
+                            null,
+                            rd != null && rd.hasFlag("restricted"));
+                    })
                     .toList();
             updateContextualResults(buildNpcResultsList(query, results, truncated));
             if (results.isEmpty()) {

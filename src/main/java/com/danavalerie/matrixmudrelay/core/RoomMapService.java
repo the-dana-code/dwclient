@@ -329,7 +329,7 @@ public class RoomMapService {
         }
         return dataService.getRooms().values().stream()
                 .filter(r -> r.getRoomShort().toLowerCase().contains(normalized))
-                .map(r -> new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), null))
+                .map(r -> new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), null, r.hasFlag("restricted")))
                 .sorted(Comparator.comparing(RoomSearchResult::roomShort).thenComparing(RoomSearchResult::mapId).thenComparing(RoomSearchResult::roomId))
                 .limit(limit)
                 .collect(Collectors.toList());
@@ -407,7 +407,7 @@ public class RoomMapService {
         // Search in shops
         dataService.getRooms().values().stream()
                 .filter(r -> r.getShopItems().stream().anyMatch(si -> si.getName().equalsIgnoreCase(trimmed)))
-                .forEach(r -> results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "Shop")));
+                .forEach(r -> results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "Shop", r.hasFlag("restricted"))));
 
         // Search in NPCs
         dataService.getNpcs().values().stream()
@@ -415,7 +415,7 @@ public class RoomMapService {
                 .forEach(n -> {
                     RoomData r = dataService.getRoom(n.getRoomId());
                     if (r != null) {
-                        results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "NPC: " + n.getNpcName()));
+                        results.add(new RoomSearchResult(r.getRoomId(), r.getMapId(), r.getXpos(), r.getYpos(), r.getRoomShort(), r.getRoomType(), "NPC: " + n.getNpcName(), r.hasFlag("restricted")));
                     }
                 });
 
@@ -819,10 +819,14 @@ public class RoomMapService {
     private record RoomRecord(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType) {
     }
 
+    public MapDataService getDataService() {
+        return dataService;
+    }
+
     public record RoomLocation(String roomId, int mapId, int xpos, int ypos, String roomShort) {
     }
 
-    public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType, String sourceInfo) {
+    public record RoomSearchResult(String roomId, int mapId, int xpos, int ypos, String roomShort, String roomType, String sourceInfo, boolean restricted) {
     }
 
     public record NpcSearchResult(String npcId, String npcName, String roomId, int mapId, int xpos, int ypos,
