@@ -192,12 +192,14 @@ public final class MudCommandProcessor implements MudClient.MudGmcpListener, Mud
             return;
         }
 
+        String lower = trimmed.toLowerCase(Locale.ROOT);
         output.addToHistory(trimmed);
+        if (lower.startsWith("/")) {
+            output.appendCommandEcho(trimmed);
+        }
         if (fromSystem) {
             checkAndShowTeleportBanner(trimmed);
         }
-
-        String lower = trimmed.toLowerCase(Locale.ROOT);
 
         if (lower.startsWith("//")) {
             sendToMud(trimmed.substring(1));

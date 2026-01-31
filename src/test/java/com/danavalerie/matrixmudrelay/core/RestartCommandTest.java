@@ -18,8 +18,9 @@ class RestartCommandTest {
 
     static class MockOutput implements MudCommandProcessor.ClientOutput {
         List<String> systemMessages = new ArrayList<>();
+        List<String> echoes = new ArrayList<>();
         @Override public void appendSystem(String text) { systemMessages.add(text); }
-        @Override public void appendCommandEcho(String text) {}
+        @Override public void appendCommandEcho(String text) { echoes.add(text); }
         @Override public void addToHistory(String command) {}
         @Override public void updateCurrentRoom(String roomId, String roomName) {}
         @Override public void updateMap(String roomId) {}
@@ -59,6 +60,7 @@ class RestartCommandTest {
         
         // Execute /restart -> error message
         processor.handleInput("/restart");
+        assertTrue(output.echoes.contains("/restart"));
         assertTrue(output.systemMessages.stream().anyMatch(m -> m.contains("No previous speedwalk available")));
         
         // Set speedwalk
