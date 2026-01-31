@@ -2194,20 +2194,20 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             KeepOpenMenuItem deliverItem = buildWritMenuItem(index, WritMenuAction.DELIVER,
                     "Deliver",
                     null,
-                    () -> submitCommand("/writ " + (index + 1) + " deliver"));
+                    () -> submitCommand("/writ " + (req.originalIndex() + 1) + " deliver"));
             writTopMenu.add(deliverItem);
 
             writTopMenu.addSeparator();
 
             JMenu npcMenu = buildWritSubMenu(index, WritMenuAction.NPC_INFO,
                     "Deliver to: " + req.npc(), "Search",
-                    () -> submitCommand("/writ " + (index + 1) + " npc"), true);
+                    () -> submitCommand("/writ " + (req.originalIndex() + 1) + " npc"), true);
             writTopMenu.add(npcMenu);
 
             String locationText = req.locationDisplay();
             JMenu locMenu = buildWritSubMenu(index, WritMenuAction.LOCATION_INFO,
                     "Location: " + locationText, "Search",
-                    () -> submitCommand("/writ " + (index + 1) + " loc"), true);
+                    () -> submitCommand("/writ " + (req.originalIndex() + 1) + " loc"), true);
             writTopMenu.add(locMenu);
         }
         updateTheme(mapPanel.isInverted());
@@ -2851,6 +2851,17 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             }
 
             if (event.getID() == KeyEvent.KEY_PRESSED) {
+                if (event.isControlDown()) {
+                    if (event.getKeyCode() == KeyEvent.VK_R) {
+                        submitCommand("/restart");
+                        event.consume();
+                        return true;
+                    } else if (event.getKeyCode() == KeyEvent.VK_P) {
+                        submitCommand("/pw");
+                        event.consume();
+                        return true;
+                    }
+                }
                 suppressNextKeyTyped = false;
                 if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
                     String command = KEYPAD_DIRECTIONS.get(event.getKeyCode());

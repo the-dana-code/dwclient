@@ -56,6 +56,11 @@ class WritRequirementTest {
         }
 
         assertEquals(1, updateCount, "Should only trigger update once");
-        assertEquals(4, tracker.getRequirements().size(), "Should have 4 requirements");
+        var requirements = tracker.getRequirements();
+        assertEquals(4, requirements.size(), "Should have 4 requirements");
+        assertEquals(0, requirements.get(0).originalIndex());
+        assertEquals(1, requirements.get(1).originalIndex());
+        assertEquals(2, requirements.get(2).originalIndex());
+        assertEquals(3, requirements.get(3).originalIndex());
     }
 }
