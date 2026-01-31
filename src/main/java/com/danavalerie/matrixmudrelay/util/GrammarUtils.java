@@ -155,8 +155,12 @@ public final class GrammarUtils {
                 }
             }
         }
-        if (!lower.endsWith("ss") && (!lower.endsWith("is") || lower.endsWith("shis") || lower.endsWith("ais")) && !lower.endsWith("os")) {
-            tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
+        if (!lower.endsWith("ss") && !lower.endsWith("os")) {
+            if (lower.endsWith("is") && !lower.endsWith("shis") && !lower.endsWith("ais") && !lower.equalsIgnoreCase("broccolis")) {
+                // do nothing for xiphos, sagaris, etc.
+            } else {
+                tryReplaceSuffix(word, lower, "s", new String[]{""}, candidates);
+            }
         }
         return new ArrayList<>(candidates);
     }
