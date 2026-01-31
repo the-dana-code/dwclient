@@ -1355,7 +1355,7 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                         validPermutation = false;
                         break;
                     }
-                    currentWritPath.add(req.withShop(bestShop.roomId(), bestShop.roomShort()));
+                    currentWritPath.add(req.withShop(bestShop.roomId(), bestShop.roomShort(), routeMapService.getMapDisplayName(bestShop.mapId())));
 
                 } catch (Exception e) {
                     validPermutation = false;
@@ -2137,7 +2137,10 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
             writTopMenu.addSeparator();
 
             if (req.shopRoomName() != null && !req.shopRoomName().isEmpty()) {
-                String shopLabel = "Shop: " + req.shopRoomName();
+                String shopZone = req.shopRoomZone();
+                String shopLabel = (shopZone != null && !shopZone.isEmpty())
+                        ? "Shop: " + shopZone + ": " + req.shopRoomName()
+                        : "Shop: " + req.shopRoomName();
                 String shopRoomId = req.shopRoomId();
                 KeepOpenMenuItem shopItem = buildWritMenuItem(selectedWritIndex, WritMenuAction.SHOP,
                         shopLabel,

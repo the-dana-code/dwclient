@@ -103,7 +103,7 @@ public final class WritTracker {
         LocationParts locationParts = parseLocationParts(location);
         int originalIndex = requirements.size();
         requirements.add(new WritRequirement(qtyResult.quantity, qtyResult.item, npc,
-                locationParts.locationName, locationParts.locationSuffix, null, null, originalIndex));
+                locationParts.locationName, locationParts.locationSuffix, null, null, null, originalIndex));
         return false;
     }
 
@@ -164,7 +164,7 @@ public final class WritTracker {
 
     public record WritRequirement(int quantity, String item, String npc,
                                   String locationName, String locationSuffix,
-                                  String shopRoomId, String shopRoomName,
+                                  String shopRoomId, String shopRoomName, String shopRoomZone,
                                   int originalIndex) {
         public WritRequirement {
             item = item == null ? "" : item;
@@ -176,11 +176,11 @@ public final class WritTracker {
         public WritRequirement(int quantity, String item, String npc,
                                String locationName, String locationSuffix,
                                String shopRoomId, String shopRoomName) {
-            this(quantity, item, npc, locationName, locationSuffix, shopRoomId, shopRoomName, 0);
+            this(quantity, item, npc, locationName, locationSuffix, shopRoomId, shopRoomName, null, 0);
         }
 
-        public WritRequirement withShop(String shopRoomId, String shopRoomName) {
-            return new WritRequirement(quantity, item, npc, locationName, locationSuffix, shopRoomId, shopRoomName, originalIndex);
+        public WritRequirement withShop(String shopRoomId, String shopRoomName, String shopRoomZone) {
+            return new WritRequirement(quantity, item, npc, locationName, locationSuffix, shopRoomId, shopRoomName, shopRoomZone, originalIndex);
         }
 
         public String locationDisplay() {
