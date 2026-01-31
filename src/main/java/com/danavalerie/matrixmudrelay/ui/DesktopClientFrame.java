@@ -1319,10 +1319,12 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     for (RoomMapService.RoomSearchResult shop : shops) {
                         try {
                             RoomMapService.RouteResult routeToShop = routeMapService.findRoute(currentRoom, shop.roomId(), getUseTeleportsForPrompt(), currentCharacterName, true);
-                            double costToShop = calculateRouteCost(routeToShop);
-                            if (costToShop < minShopCost) {
-                                minShopCost = costToShop;
-                                bestShop = shop;
+                            if (routeToShop != null && !routeToShop.steps().isEmpty()) {
+                                double costToShop = calculateRouteCost(routeToShop);
+                                if (costToShop < minShopCost) {
+                                    minShopCost = costToShop;
+                                    bestShop = shop;
+                                }
                             }
                         } catch (RoomMapService.MapLookupException ignored) {}
                     }
@@ -1342,14 +1344,16 @@ public final class DesktopClientFrame extends JFrame implements MudCommandProces
                     if (deliveryPlan.isPresent()) {
                         String deliveryRoomId = deliveryPlan.get().target().roomId();
                         RoomMapService.RouteResult routeToDelivery = routeMapService.findRoute(currentRoom, deliveryRoomId, getUseTeleportsForPrompt(), currentCharacterName, true);
+                        if (routeToDelivery == null || routeToDelivery.steps().isEmpty()) {
+                            validPermutation = false;
+                            break;
+                        }
                         currentTotalCost += calculateRouteCost(routeToDelivery);
                         currentRoom = deliveryRoomId;
                     } else {
-                        // If no delivery route is found, we can't accurately calculate the total path.
-                        // However, the prompt says "navigate to the delivery location", implying it exists.
-                        // If we can't find it, we might have to treat it as 0 distance or skip.
-                        // Given the instructions, let's assume if we can't find a delivery location, we still proceed but cost is unknown.
-                        // But usually, these exist in delivery-routes.json.
+                        // If no delivery route is found, we throw out this option as per requirements.
+                        validPermutation = false;
+                        break;
                     }
                     currentWritPath.add(req.withShop(bestShop.roomId(), bestShop.roomShort()));
 
