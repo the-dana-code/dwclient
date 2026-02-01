@@ -969,6 +969,11 @@
             "name": "[Bes Pelargic] Northwest",
             "command": "tp bp-nw",
             "roomId": "cfafda64493124a021171bc73240fbed9c7bb11e"
+          },
+          {
+            "name": "[Ankh-Morpork] Northwest",
+            "command": "tp am-nw",
+            "roomId": "7c35ae25cc389ae0226ae2b2603f2c0f8a582158"
           }
         ]
       },
